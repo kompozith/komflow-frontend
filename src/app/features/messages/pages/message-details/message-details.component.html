@@ -1,0 +1,141 @@
+<div class="row">
+  <div class="col-12">
+    <mat-card class="cardWithShadow">
+      <mat-card-header>
+        <mat-card-title>Message Details</mat-card-title>
+        <mat-card-subtitle>View message template information</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content *ngIf="!isLoading && message">
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <button mat-stroked-button (click)="onBack()">
+            <mat-icon>arrow_back</mat-icon>
+            Back to List
+          </button>
+          <button mat-flat-button color="primary" (click)="onEdit()">
+            <mat-icon>edit</mat-icon>
+            Edit Message
+          </button>
+        </div>
+
+        <!-- Message Info -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="info-section">
+              <h6 class="text-muted mb-2">Basic Information</h6>
+              <div class="mb-2">
+                <strong>Title:</strong> {{ message.title }}
+              </div>
+              <div class="mb-2">
+                <strong>Channel:</strong>
+                <app-badge [variant]="getChannelColor(message.channel)" [pill]="true" class="ms-2">
+                  {{ message.channel }}
+                </app-badge>
+              </div>
+              <div class="mb-2">
+                <strong>Type:</strong>
+                <app-badge [variant]="getTypeColor(message.type)" [pill]="true" class="ms-2">
+                  {{ message.type }}
+                </app-badge>
+              </div>
+              <div class="mb-2">
+                <strong>Status:</strong>
+                <app-badge [variant]="getStatusColor(message.status)" [pill]="true" class="ms-2">
+                  {{ message.status }}
+                </app-badge>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-section">
+              <h6 class="text-muted mb-2">Timestamps</h6>
+              <div class="mb-2">
+                <strong>Created:</strong> {{ message.createdAt | date:'dd/MM/yyyy HH:mm' }}
+              </div>
+              <div class="mb-2">
+                <strong>Updated:</strong> {{ message.updatedAt | date:'dd/MM/yyyy HH:mm' }}
+              </div>
+              <div class="mb-2">
+                <strong>Created By:</strong> {{ message.createdBy }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message Content -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>Message Content</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="message-content p-3 bg-light rounded">
+                  <pre style="white-space: pre-wrap; font-family: inherit;">{{ message.body }}</pre>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+
+        <!-- Variables -->
+        <div class="row">
+          <div class="col-12">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>Dynamic Variables ({{ message.variables.length }})</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div *ngIf="message.variables.length > 0; else noVariables">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Type</th>
+                          <th>Required</th>
+                          <th>Default Value</th>
+                          <th>Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let variable of message.variables">
+                          <td><code>{{ variable.name }}</code></td>
+                          <td>
+                            <app-badge variant="secondary" [pill]="true">
+                              {{ variable.type }}
+                            </app-badge>
+                          </td>
+                          <td>
+                            <mat-icon *ngIf="variable.required" class="text-success">check_circle</mat-icon>
+                            <mat-icon *ngIf="!variable.required" class="text-muted">radio_button_unchecked</mat-icon>
+                          </td>
+                          <td>{{ variable.defaultValue || '-' }}</td>
+                          <td>{{ variable.description || '-' }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <ng-template #noVariables>
+                  <div class="text-center text-muted py-4">
+                    <mat-icon class="large-icon">info</mat-icon>
+                    <p>No dynamic variables defined for this message.</p>
+                  </div>
+                </ng-template>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-content *ngIf="isLoading">
+        <div class="d-flex justify-content-center align-items-center p-4">
+          <mat-spinner diameter="40"></mat-spinner>
+          <span class="ml-2">Loading message details...</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
