@@ -45,10 +45,9 @@ export class MessageCreateComponent implements OnInit {
   ) {
     this.messageForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-      body: ['', [Validators.required, Validators.maxLength(1000)]],
+      content: ['', [Validators.required, Validators.maxLength(1000)]],
       channel: [MessageChannel.EMAIL, [Validators.required]],
       type: [MessageType.MARKETING, [Validators.required]],
-      status: ['ACTIVE'],
       variables: this.fb.array([])
     });
   }
@@ -81,10 +80,9 @@ export class MessageCreateComponent implements OnInit {
 
       const messageData: CreateMessageRequest = {
         title: formValue.title,
-        body: formValue.body,
+        content: formValue.content,
         channel: formValue.channel,
         type: formValue.type,
-        status: formValue.status,
         variables: formValue.variables.map((v: any) => ({
           name: v.name,
           type: v.type,
@@ -130,7 +128,7 @@ export class MessageCreateComponent implements OnInit {
 
   // Preview content with variables highlighted
   getPreviewContent(): string {
-    const content = this.messageForm.get('body')?.value || '';
+    const content = this.messageForm.get('content')?.value || '';
     const variables = this.variables.value;
 
     let preview = content;

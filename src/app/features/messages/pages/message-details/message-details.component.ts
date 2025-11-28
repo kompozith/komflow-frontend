@@ -93,7 +93,4 @@ export class MessageDetailsComponent implements OnInit {
     }
   }
 
-  getStatusColor(status: string): BadgeVariant {
-    return status === 'ACTIVE' ? 'success' : 'warning';
-  }
 }

@@ -40,10 +40,7 @@
                 </app-badge>
               </div>
               <div class="mb-2">
-                <strong>Status:</strong>
-                <app-badge [variant]="getStatusColor(message.status)" [pill]="true" class="ms-2">
-                  {{ message.status }}
-                </app-badge>
+                <strong>Attachments:</strong> {{ message.attachmentCount }}
               </div>
             </div>
           </div>
@@ -72,7 +69,7 @@
               </mat-card-header>
               <mat-card-content>
                 <div class="message-content p-3 bg-light rounded">
-                  <pre style="white-space: pre-wrap; font-family: inherit;">{{ message.body }}</pre>
+                  <pre style="white-space: pre-wrap; font-family: inherit;">{{ message.content }}</pre>
                 </div>
               </mat-card-content>
             </mat-card>

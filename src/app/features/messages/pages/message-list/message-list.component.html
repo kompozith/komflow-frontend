@@ -1,40 +1,39 @@
-<mat-card class="cardWithShadow">
+<div class="d-flex justify-content-end align-items-center mb-3">
+  <button mat-stroked-button (click)="toggleFilter()" class="me-2">
+    <mat-icon>filter_list</mat-icon>
+    Filter
+  </button>
+  <button mat-flat-button color="primary" (click)="createMessage()">
+    Create Message
+  </button>
+</div>
+<mat-card class="cardWithShadow" *ngIf="showFilter">
   <mat-card-content>
-    <div class="d-flex justify-content-end align-items-center mb-3">
-      <button mat-flat-button (click)="createMessage()" color="primary">
-        Create Message
-      </button>
-    </div>
-    <div class="row mt-3">
+    <div class="row align-items-start mt-3">
+      <div class="col-md-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Start Date</mat-label>
+          <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate">
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>End Date</mat-label>
+          <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate">
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
       <div class="col-md-3">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Channel</mat-label>
-          <mat-select [(ngModel)]="selectedChannel" (selectionChange)="onChannelFilterChange($event.value)">
+          <mat-select [(ngModel)]="selectedChannel">
             <mat-option value="">All Channels</mat-option>
             <mat-option value="EMAIL">Email</mat-option>
             <mat-option value="SMS">SMS</mat-option>
             <mat-option value="WHATSAPP">WhatsApp</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col-md-3">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Type</mat-label>
-          <mat-select [(ngModel)]="selectedType" (selectionChange)="onTypeFilterChange($event.value)">
-            <mat-option value="">All Types</mat-option>
-            <mat-option value="MARKETING">Marketing</mat-option>
-            <mat-option value="TRANSACTIONAL">Transactional</mat-option>
-            <mat-option value="NOTIFICATION">Notification</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col-md-3">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Status</mat-label>
-          <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilterChange($event.value)">
-            <mat-option value="">All Status</mat-option>
-            <mat-option value="ACTIVE">Active</mat-option>
-            <mat-option value="INACTIVE">Inactive</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -51,6 +50,11 @@
           </mat-icon>
         </mat-form-field>
       </div>
+    </div>
+    <div class="d-flex justify-content-end">
+      <button mat-stroked-button class="b-1 border-primary text-primary" (click)="applyFilter()">
+        Apply Filter
+      </button>
     </div>
   </mat-card-content>
 </mat-card>
@@ -73,33 +77,31 @@
              </div>
            </th>
            <td mat-cell *matCellDef="let element">
-             <div class="d-flex align-items-center gap-8">
-               <mat-icon [style.color]="getChannelColor(element.channel)">
+             <div class="d-flex align-items-start gap-8">
+               <mat-icon [style.color]="getChannelColor(element.channel)" class="mt-1">
                  <i-tabler [name]="getChannelIcon(element.channel)" class="icon-20"></i-tabler>
                </mat-icon>
-               <div>
-                 <h6 class="f-w-600 f-s-16 m-t-0">{{ element.title }}</h6>
-                 <small class="text-muted">{{ element.body | slice:0:50 }}{{ element.body?.length > 50 ? '...' : '' }}</small>
+               <div class="flex-grow-1">
+                 <h6 class="f-w-600 f-s-16 mb-0" *ngIf="element.title">{{ element.title }}</h6>
+                 <small class="text-muted" [class.mt-1]="!element.title">{{ element.content | slice:0:50 }}{{ element.content?.length > 50 ? '...' : '' }}</small>
                </div>
              </div>
            </td>
          </ng-container>
 
-        <ng-container matColumnDef="type">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Type</th>
+        <ng-container matColumnDef="channel">
+           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Channel</th>
            <td mat-cell *matCellDef="let element" class="f-s-14">
-             <app-badge [variant]="getTypeColor(element.type)" [pill]="true">
-               {{ element.type }}
+             <app-badge [variant]="getChannelColor(element.channel)" [pill]="true">
+               {{ element.channel }}
              </app-badge>
            </td>
          </ng-container>
 
-        <ng-container matColumnDef="status">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Status</th>
+        <ng-container matColumnDef="attachmentCount">
+           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Attachments</th>
            <td mat-cell *matCellDef="let element" class="f-s-14">
-             <app-badge [variant]="element.status === 'ACTIVE' ? 'success' : 'warning'" [pill]="true">
-               {{ element.status }}
-             </app-badge>
+             {{ element.attachmentCount }}
            </td>
          </ng-container>
 

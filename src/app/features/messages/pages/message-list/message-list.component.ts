@@ -51,8 +51,8 @@ export class MessageListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'rowNumber',
     'title',
-    'type',
-    'status',
+    'channel',
+    'attachmentCount',
     'createdAt',
     'actions',
   ];
@@ -68,10 +68,11 @@ export class MessageListComponent implements OnInit, AfterViewInit {
   // Filters
   searchText = '';
   selectedChannel: MessageChannel | '' = '';
-  selectedType: MessageType | '' = '';
-  selectedStatus: 'ACTIVE' | 'INACTIVE' | '' = '';
+  startDate: Date | null = null;
+  endDate: Date | null = null;
   sortBy = 'title';
   sortDirection: 'asc' | 'desc' = 'asc';
+  showFilter = false;
 
   // Search debounce
   private searchSubject = new Subject<string>();
@@ -126,8 +127,8 @@ export class MessageListComponent implements OnInit, AfterViewInit {
       sort: [`${this.sortBy},${this.sortDirection}`],
       search: this.searchText || undefined,
       channel: this.selectedChannel || undefined,
-      type: this.selectedType || undefined,
-      status: this.selectedStatus || undefined,
+      startDate: this.startDate ? this.formatDate(this.startDate) : undefined,
+      endDate: this.endDate ? this.formatDate(this.endDate) : undefined,
     };
 
     this.messageService.getMessages(filters).subscribe({
@@ -170,18 +171,21 @@ export class MessageListComponent implements OnInit, AfterViewInit {
     this.searchSubject.next(searchText);
   }
 
+  applyFilter(): void {
+    this.loadMessages();
+  }
+
+  toggleFilter(): void {
+    this.showFilter = !this.showFilter;
+  }
+
+  private formatDate(date: Date): string {
+    // Format as ISO instant string for backend Instant parsing
+    return date.toISOString();
+  }
+
   onChannelFilterChange(channel: MessageChannel | ''): void {
     this.selectedChannel = channel;
-    this.loadMessages();
-  }
-
-  onTypeFilterChange(type: MessageType | ''): void {
-    this.selectedType = type;
-    this.loadMessages();
-  }
-
-  onStatusFilterChange(status: 'ACTIVE' | 'INACTIVE' | ''): void {
-    this.selectedStatus = status;
     this.loadMessages();
   }
 
@@ -227,15 +231,6 @@ export class MessageListComponent implements OnInit, AfterViewInit {
       case MessageChannel.EMAIL: return 'info';
       case MessageChannel.SMS: return 'success';
       case MessageChannel.WHATSAPP: return 'warning';
-      default: return 'primary';
-    }
-  }
-
-  getTypeColor(type: MessageType): BadgeVariant {
-    switch (type) {
-      case MessageType.MARKETING: return 'info';
-      case MessageType.TRANSACTIONAL: return 'success';
-      case MessageType.NOTIFICATION: return 'warning';
       default: return 'primary';
     }
   }

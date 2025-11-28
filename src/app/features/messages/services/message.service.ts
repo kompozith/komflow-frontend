@@ -39,8 +39,9 @@ export class MessageService {
     }
     if (filters.channel) params = params.set('channel', filters.channel);
     if (filters.type) params = params.set('type', filters.type);
-    if (filters.status) params = params.set('status', filters.status);
     if (filters.search) params = params.set('search', filters.search);
+    if (filters.startDate) params = params.set('createdAtFrom', filters.startDate);
+    if (filters.endDate) params = params.set('createdAtTo', filters.endDate);
 
     const headers = this.getAuthHeaders();
 

@@ -12,11 +12,11 @@ export interface MessageVariable {
 export interface Message {
   id: string;
   title: string;
-  body: string;
+  content: string;
   channel: MessageChannel;
   type: MessageType;
   variables: MessageVariable[];
-  status: 'ACTIVE' | 'INACTIVE';
+  attachmentCount: number;
   createdAt: string;
   updatedAt: string;
   createdBy: string;
@@ -42,8 +42,9 @@ export interface MessageFilters {
   sort?: string[];
   channel?: MessageChannel;
   type?: MessageType;
-  status?: 'ACTIVE' | 'INACTIVE';
   search?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export enum MessageChannel {
@@ -60,20 +61,18 @@ export enum MessageType {
 
 export interface CreateMessageRequest {
   title: string;
-  body: string;
+  content: string;
   channel: MessageChannel;
   type: MessageType;
   variables: Omit<MessageVariable, 'id'>[];
-  status?: 'ACTIVE' | 'INACTIVE';
 }
 
 export interface UpdateMessageRequest {
   title?: string;
-  body?: string;
+  content?: string;
   channel?: MessageChannel;
   type?: MessageType;
   variables?: MessageVariable[];
-  status?: 'ACTIVE' | 'INACTIVE';
 }
 
 export interface SendMessageRequest {

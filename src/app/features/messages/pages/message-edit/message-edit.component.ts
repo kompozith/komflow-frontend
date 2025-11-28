@@ -49,10 +49,9 @@ export class MessageEditComponent implements OnInit {
   ) {
     this.messageForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-      body: ['', [Validators.required, Validators.maxLength(1000)]],
+      content: ['', [Validators.required, Validators.maxLength(1000)]],
       channel: [MessageChannel.EMAIL, [Validators.required]],
       type: [MessageType.MARKETING, [Validators.required]],
-      status: ['ACTIVE'],
       variables: this.fb.array([])
     });
   }
@@ -88,10 +87,9 @@ export class MessageEditComponent implements OnInit {
   populateForm(message: Message): void {
     this.messageForm.patchValue({
       title: message.title,
-      body: message.body,
+      content: message.content,
       channel: message.channel,
-      type: message.type,
-      status: message.status
+      type: message.type
     });
 
     // Clear existing variables
@@ -127,10 +125,9 @@ export class MessageEditComponent implements OnInit {
 
       const messageData: UpdateMessageRequest = {
         title: formValue.title,
-        body: formValue.body,
+        content: formValue.content,
         channel: formValue.channel,
         type: formValue.type,
-        status: formValue.status,
         variables: formValue.variables.map((v: any) => ({
           name: v.name,
           type: v.type,
