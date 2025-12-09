@@ -1,0 +1,154 @@
+.stat-card {
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  .stat-icon {
+    font-size: 32px;
+    opacity: 0.8;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #495057;
+
+    &.small {
+      font-size: 1rem;
+    }
+  }
+}
+
+.content-card {
+  mat-card-header {
+    background: #f8f9fa;
+    margin: -16px -16px 16px -16px;
+    padding: 16px;
+  }
+}
+
+.message-content {
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+
+  .variable-highlight {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+    border: 1px solid #bbdefb;
+  }
+}
+
+.variables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.variable-chip {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background: #e9ecef;
+    border-color: #dee2e6;
+  }
+
+  .variable-icon {
+    color: #6c757d;
+    margin-right: 0.75rem;
+    font-size: 20px;
+  }
+
+  .variable-key {
+    background: #ffffff;
+    color: #1976d2;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid #bbdefb;
+    margin-right: 0.75rem;
+  }
+
+  .variable-desc {
+    color: #6c757d;
+    font-size: 0.9rem;
+    flex: 1;
+  }
+}
+
+.info-section {
+  h6 {
+    color: #495057;
+    font-weight: 600;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    .info-icon {
+      color: #6c757d;
+      margin-right: 1rem;
+      font-size: 24px;
+    }
+
+    .info-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: #495057;
+      font-weight: 500;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .variables-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card .stat-icon {
+    font-size: 28px;
+  }
+
+  .stat-value {
+    font-size: 1.2rem !important;
+
+    &.small {
+      font-size: 0.9rem !important;
+    }
+  }
+}

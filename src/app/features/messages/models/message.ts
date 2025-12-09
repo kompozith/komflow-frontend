@@ -9,12 +9,16 @@ export interface MessageVariable {
   description?: string;
 }
 
+export interface Variable {
+  key: string;
+  description: string;
+}
+
 export interface Message {
   id: string;
   title: string;
   content: string;
   channel: MessageChannel;
-  type: MessageType;
   variables: MessageVariable[];
   attachmentCount: number;
   createdAt: string;
@@ -41,7 +45,6 @@ export interface MessageFilters {
   size?: number;
   sort?: string[];
   channel?: MessageChannel;
-  type?: MessageType;
   search?: string;
   startDate?: string;
   endDate?: string;
@@ -53,17 +56,10 @@ export enum MessageChannel {
   WHATSAPP = 'WHATSAPP'
 }
 
-export enum MessageType {
-  MARKETING = 'MARKETING',
-  TRANSACTIONAL = 'TRANSACTIONAL',
-  NOTIFICATION = 'NOTIFICATION'
-}
-
 export interface CreateMessageRequest {
   title: string;
   content: string;
   channel: MessageChannel;
-  type: MessageType;
   variables: Omit<MessageVariable, 'id'>[];
 }
 
@@ -71,7 +67,6 @@ export interface UpdateMessageRequest {
   title?: string;
   content?: string;
   channel?: MessageChannel;
-  type?: MessageType;
   variables?: MessageVariable[];
 }
 

@@ -1,0 +1,64 @@
+<div class="d-flex align-items-center justify-content-between mb-3 px-3 pt-3">
+  <h5 class="mb-0">Confirm Message Deletion</h5>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="px-3">
+  <div class="alert alert-warning mb-3">
+    <div class="d-flex align-items-center">
+      <mat-icon class="text-warning me-2">warning</mat-icon>
+      <strong>Danger Zone</strong>
+    </div>
+    <p class="mb-0 mt-2">
+      You are about to permanently delete the message <strong>{{message.title}}</strong>.
+      This action cannot be undone.
+    </p>
+  </div>
+
+  <div class="message-info mb-3 p-3 bg-light rounded">
+    <h6 class="mb-2">Message Details:</h6>
+    <p class="mb-1"><strong>Title:</strong> {{ message.title }}</p>
+    <p class="mb-1"><strong>Channel:</strong> {{ message.channel }}</p>
+    <p class="mb-1"><strong>Attachments:</strong> {{ message.attachmentCount }}</p>
+    <p class="mb-0"><strong>Variables:</strong> {{ message.variables?.length || 0 }}</p>
+  </div>
+
+  <p class="mb-3">
+    To confirm deletion, please type the message title <strong>{{message.title}}</strong> in the field below:
+  </p>
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Type message title to confirm</mat-label>
+    <input
+      matInput
+      [(ngModel)]="confirmationText"
+      placeholder="Enter message title here"
+    />
+    <mat-hint *ngIf="!isConfirmationValid && confirmationText.length > 0" class="text-danger">
+      Message title doesn't match
+    </mat-hint>
+  </mat-form-field>
+
+  <div class="mt-3 p-3 bg-light rounded" *ngIf="confirmationText.length > 0">
+    <small class="text-muted">
+      Expected: <strong>{{message.title}}</strong><br>
+      You typed: <strong>{{confirmationText}}</strong>
+    </small>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="px-3 pb-3">
+  <button mat-button (click)="closeDialog()">
+    Cancel
+  </button>
+  <button
+    mat-flat-button
+    color="warn"
+    [disabled]="!isConfirmationValid"
+    (click)="doAction()"
+  >
+    Delete Message
+  </button>
+</mat-dialog-actions>

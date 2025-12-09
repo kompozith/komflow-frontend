@@ -1,0 +1,109 @@
+<div class="message-editor">
+  <!-- Content Editor -->
+  <div class="message-editor-field w-100">
+    <mat-label class="mat-label">{{ label }}</mat-label>
+    <div
+      #contentEditor
+      class="message-editor-content"
+      [attr.data-placeholder]="placeholder"
+      contenteditable="true"
+      [style.min-height.px]="rows * 20">
+    </div>
+    <mat-hint class="mat-hint">Click on variables below or type #/@ to insert dynamic content</mat-hint>
+  </div>
+
+  <!-- Autocomplete Overlay -->
+  <div
+    *ngIf="showAutocomplete"
+    class="autocomplete-overlay"
+    [style.top.px]="autocompletePosition.top"
+    [style.left.px]="autocompletePosition.left">
+    <mat-form-field appearance="outline" class="autocomplete-field">
+      <input
+        #autocompleteInput
+        matInput
+        [formControl]="variableControl"
+        placeholder="Search variables..."
+        (blur)="hideAutocomplete()">
+    </mat-form-field>
+    <div class="autocomplete-list">
+      <div *ngFor="let variable of filteredVariables | async" (click)="selectVariable(variable)" class="autocomplete-option">
+        <strong>{{ variable.key }}</strong>
+        <br>
+        <small class="text-muted">{{ variable.description }}</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Variables Panel -->
+  <div class="variables-panel mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="mb-0">Available Variables</h6>
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search variables</mat-label>
+        <input
+          matInput
+          [formControl]="variableControl"
+          [matAutocomplete]="auto"
+          placeholder="Type to search...">
+        <mat-icon matSuffix>search</mat-icon>
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          [displayWith]="displayVariable"
+          (optionSelected)="selectVariable($event.option.value)">
+          <mat-option *ngFor="let variable of filteredVariables | async" [value]="variable">
+            <div class="variable-option">
+              <strong>{{ variable.key }}</strong>
+              <br>
+              <small class="text-muted">{{ variable.description }}</small>
+            </div>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+    <div class="variables-grid">
+      <mat-chip-set>
+        <mat-chip
+          *ngFor="let variable of variables"
+          (click)="insertVariable(variable)"
+          class="variable-chip"
+          matTooltip="Click to insert {{variable.key}} into message">
+          <mat-icon>code</mat-icon>
+          {{ variable.key }}
+        </mat-chip>
+      </mat-chip-set>
+    </div>
+
+    <div *ngIf="variables.length === 0" class="text-center text-muted py-4">
+      <mat-icon class="large-icon">info</mat-icon>
+      <p>Loading variables...</p>
+    </div>
+  </div>
+
+  <!-- Preview Section -->
+  <div class="preview-section mt-3" *ngIf="contentControl.value">
+    <mat-card class="preview-card">
+      <mat-card-header>
+        <mat-card-title>Preview</mat-card-title>
+        <mat-card-subtitle>Message with highlighted variables</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="preview-content" [innerHTML]="previewContent"></div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Detected Variables Section -->
+  <div class="detected-variables mt-3" *ngIf="getDetectedVariables().length > 0">
+    <h6>Variables Detected in Message:</h6>
+    <mat-chip-set>
+      <mat-chip
+        *ngFor="let variable of getDetectedVariables()"
+        class="detected-chip">
+        <mat-icon>check_circle</mat-icon>
+        {{ variable.key }} - {{ variable.description }}
+      </mat-chip>
+    </mat-chip-set>
+  </div>
+</div>

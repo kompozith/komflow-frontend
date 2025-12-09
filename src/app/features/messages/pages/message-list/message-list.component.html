@@ -77,15 +77,11 @@
              </div>
            </th>
            <td mat-cell *matCellDef="let element">
-             <div class="d-flex align-items-start gap-8">
-               <mat-icon [style.color]="getChannelColor(element.channel)" class="mt-1">
-                 <i-tabler [name]="getChannelIcon(element.channel)" class="icon-20"></i-tabler>
-               </mat-icon>
-               <div class="flex-grow-1">
-                 <h6 class="f-w-600 f-s-16 mb-0" *ngIf="element.title">{{ element.title }}</h6>
-                 <small class="text-muted" [class.mt-1]="!element.title">{{ element.content | slice:0:50 }}{{ element.content?.length > 50 ? '...' : '' }}</small>
-               </div>
-             </div>
+            <div class="d-flex justiify-content-center align-items-start gap-8">
+                <i-tabler [name]="getChannelIcon(element.channel)" [style.color]="getChannelColor(element.channel)"></i-tabler>
+              <h6 class="f-w-600 f-s-16 mb-0" *ngIf="element.title">{{ element.title }}</h6>
+            </div>
+            <small class="text-muted" [class.mt-1]="!element.title">{{ element.content | slice:0:50 }}{{ element.content?.length > 50 ? '...' : '' }}</small>
            </td>
          </ng-container>
 

@@ -5,13 +5,13 @@ import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { CommonModule } from '@angular/common';
 import { MessageService } from '../../services/message.service';
-import { Message, MessageChannel, MessageType } from '../../models/message';
+import { Message, MessageChannel, Variable } from '../../models/message';
 import { BadgeComponent, BadgeVariant } from '../../../../shared/components/badge/badge.component';
 
 @Component({
   selector: 'app-message-details',
   templateUrl: './message-details.component.html',
-  styleUrls: [],
+  styleUrls: ['./message-details.component.scss'],
   imports: [
     MaterialModule,
     TablerIconsModule,
@@ -23,10 +23,10 @@ export class MessageDetailsComponent implements OnInit {
   message: Message | null = null;
   isLoading = false;
   messageId: string = '';
+  variables: Variable[] = [];
 
   // Enums for template
   MessageChannel = MessageChannel;
-  MessageType = MessageType;
 
   constructor(
     private messageService: MessageService,
@@ -38,8 +38,21 @@ export class MessageDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.messageId = this.route.snapshot.params['id'];
     if (this.messageId) {
+      this.loadVariables();
       this.loadMessage();
     }
+  }
+
+  loadVariables(): void {
+    this.messageService.getVariables().subscribe({
+      next: (variables) => {
+        this.variables = variables;
+      },
+      error: (error) => {
+        console.error('Error loading variables:', error);
+        this.variables = [];
+      }
+    });
   }
 
   loadMessage(): void {
@@ -84,13 +97,29 @@ export class MessageDetailsComponent implements OnInit {
     }
   }
 
-  getTypeColor(type: MessageType): BadgeVariant {
-    switch (type) {
-      case MessageType.MARKETING: return 'info';
-      case MessageType.TRANSACTIONAL: return 'success';
-      case MessageType.NOTIFICATION: return 'warning';
-      default: return 'primary';
+  getHighlightedContent(): string {
+    if (!this.message) return '';
+    let content = this.message.content;
+
+    this.variables.forEach(variable => {
+      const regex = new RegExp(`{{${variable.key}}}`, 'g');
+      content = content.replace(regex, `<span class="variable-highlight">{{${variable.key}}}</span>`);
+    });
+
+    return content;
+  }
+
+  getDetectedVariables(): Variable[] {
+    if (!this.message) return [];
+    const detectedKeys = new Set<string>();
+
+    const regex = /\{\{([^}]+)\}\}/g;
+    let match;
+    while ((match = regex.exec(this.message.content)) !== null) {
+      detectedKeys.add(match[1]);
     }
+
+    return this.variables.filter(v => detectedKeys.has(v.key));
   }
 
 }

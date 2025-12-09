@@ -6,7 +6,8 @@ import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { CommonModule } from '@angular/common';
 import { MessageService } from '../../services/message.service';
-import { CreateMessageRequest, MessageChannel, MessageType, MessageVariable } from '../../models/message';
+import { CreateMessageRequest, MessageChannel, MessageVariable } from '../../models/message';
+import { MessageEditorComponent } from '../../components/message-editor/message-editor.component';
 
 @Component({
   selector: 'app-message-create',
@@ -18,24 +19,14 @@ import { CreateMessageRequest, MessageChannel, MessageType, MessageVariable } fr
     FormsModule,
     TablerIconsModule,
     CommonModule,
+    MessageEditorComponent,
   ],
 })
 export class MessageCreateComponent implements OnInit {
   messageForm: FormGroup;
   isLoading = false;
-  recipientName = 'John Doe'; // Example recipient name for template preview
-
   // Enums for template
   MessageChannel = MessageChannel;
-  MessageType = MessageType;
-
-  // Variable types
-  variableTypes = [
-    { value: 'TEXT', label: 'Text' },
-    { value: 'NUMBER', label: 'Number' },
-    { value: 'DATE', label: 'Date' },
-    { value: 'EMAIL', label: 'Email' },
-  ];
 
   constructor(
     private fb: FormBuilder,
@@ -44,34 +35,35 @@ export class MessageCreateComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {
     this.messageForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      title: ['', [Validators.minLength(2), Validators.maxLength(100)]],
       content: ['', [Validators.required, Validators.maxLength(1000)]],
       channel: [MessageChannel.EMAIL, [Validators.required]],
-      type: [MessageType.MARKETING, [Validators.required]],
-      variables: this.fb.array([])
+    });
+
+    // Update title validators based on channel
+    this.updateTitleValidators();
+
+    // Subscribe to channel changes to update title validators
+    this.messageForm.get('channel')?.valueChanges.subscribe(channel => {
+      this.updateTitleValidators();
     });
   }
 
   ngOnInit(): void {}
 
-  get variables(): FormArray {
-    return this.messageForm.get('variables') as FormArray;
+  private updateTitleValidators(): void {
+    const channel = this.messageForm.get('channel')?.value;
+    const titleControl = this.messageForm.get('title');
+
+    if (channel === MessageChannel.EMAIL) {
+      titleControl?.setValidators([Validators.required, Validators.minLength(2), Validators.maxLength(100)]);
+    } else {
+      titleControl?.setValidators([Validators.minLength(2), Validators.maxLength(100)]);
+    }
+
+    titleControl?.updateValueAndValidity();
   }
 
-  addVariable(): void {
-    const variableForm = this.fb.group({
-      name: ['', [Validators.required, Validators.pattern(/^[a-zA-Z_][a-zA-Z0-9_]*$/)]],
-      type: ['TEXT', [Validators.required]],
-      defaultValue: [''],
-      required: [false],
-      description: ['']
-    });
-    this.variables.push(variableForm);
-  }
-
-  removeVariable(index: number): void {
-    this.variables.removeAt(index);
-  }
 
   onSubmit(): void {
     if (this.messageForm.valid) {
@@ -82,14 +74,7 @@ export class MessageCreateComponent implements OnInit {
         title: formValue.title,
         content: formValue.content,
         channel: formValue.channel,
-        type: formValue.type,
-        variables: formValue.variables.map((v: any) => ({
-          name: v.name,
-          type: v.type,
-          defaultValue: v.defaultValue || undefined,
-          required: v.required,
-          description: v.description || undefined
-        }))
+        variables: [] // No custom variables, using API variables instead
       };
 
       this.messageService.createMessage(messageData).subscribe({
@@ -117,26 +102,6 @@ export class MessageCreateComponent implements OnInit {
       const control = this.messageForm.get(key);
       control?.markAsTouched();
     });
-    // Also mark variables array controls as touched
-    this.variables.controls.forEach(control => {
-      Object.keys(control.value).forEach(key => {
-        const fieldControl = control.get(key);
-        fieldControl?.markAsTouched();
-      });
-    });
   }
 
-  // Preview content with variables highlighted
-  getPreviewContent(): string {
-    const content = this.messageForm.get('content')?.value || '';
-    const variables = this.variables.value;
-
-    let preview = content;
-    variables.forEach((variable: any) => {
-      const regex = new RegExp(`{{${variable.name}}}`, 'g');
-      preview = preview.replace(regex, `<span class="variable-highlight">{{${variable.name}}}</span>`);
-    });
-
-    return preview;
-  }
 }

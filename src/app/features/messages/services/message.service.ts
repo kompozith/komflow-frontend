@@ -10,7 +10,8 @@ import {
   CreateMessageRequest,
   UpdateMessageRequest,
   SendMessageRequest,
-  MessageSendResult
+  MessageSendResult,
+  Variable
 } from '../models/message';
 
 @Injectable({
@@ -38,7 +39,6 @@ export class MessageService {
       filters.sort.forEach(sort => params = params.append('sort', sort));
     }
     if (filters.channel) params = params.set('channel', filters.channel);
-    if (filters.type) params = params.set('type', filters.type);
     if (filters.search) params = params.set('search', filters.search);
     if (filters.startDate) params = params.set('createdAtFrom', filters.startDate);
     if (filters.endDate) params = params.set('createdAtTo', filters.endDate);
@@ -91,8 +91,8 @@ export class MessageService {
   }
 
   // Get available variables
-  getVariables(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/variables`, { headers: this.getAuthHeaders() });
+  getVariables(): Observable<Variable[]> {
+    return this.http.get<Variable[]>(`${this.apiUrl}/variables`, { headers: this.getAuthHeaders() });
   }
 
   // Test message sending with specific contact

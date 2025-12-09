@@ -22,8 +22,9 @@ import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { MessageService } from '../../services/message.service';
-import { Message, MessagePage, MessageFilters, MessageChannel, MessageType } from '../../models/message';
+import { Message, MessagePage, MessageFilters, MessageChannel } from '../../models/message';
 import { BadgeComponent, BadgeVariant } from '../../../../shared/components/badge/badge.component';
+import { DeleteMessageDialogComponent } from './delete-message-dialog/delete-message-dialog.component';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
@@ -79,7 +80,6 @@ export class MessageListComponent implements OnInit, AfterViewInit {
 
   // Enums for template
   MessageChannel = MessageChannel;
-  MessageType = MessageType;
 
   constructor(
       public dialog: MatDialog,
@@ -212,9 +212,16 @@ export class MessageListComponent implements OnInit, AfterViewInit {
   }
 
   deleteMessage(message: Message): void {
-    // Delete functionality not available - backend doesn't support message deletion
-    this.snackBar.open('Message deletion not supported', 'Close', { duration: 3000 });
-    return;
+    const dialogRef = this.dialog.open(DeleteMessageDialogComponent, {
+      width: '600px',
+      data: { message }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.event === 'Delete') {
+        this.loadMessages();
+      }
+    });
   }
 
   getChannelIcon(channel: MessageChannel): string {
@@ -229,8 +236,8 @@ export class MessageListComponent implements OnInit, AfterViewInit {
   getChannelColor(channel: MessageChannel): BadgeVariant {
     switch (channel) {
       case MessageChannel.EMAIL: return 'info';
-      case MessageChannel.SMS: return 'success';
-      case MessageChannel.WHATSAPP: return 'warning';
+      case MessageChannel.WHATSAPP: return 'success';
+      case MessageChannel.SMS: return 'warning';
       default: return 'primary';
     }
   }

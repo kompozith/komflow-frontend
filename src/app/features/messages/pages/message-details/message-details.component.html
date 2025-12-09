@@ -2,7 +2,10 @@
   <div class="col-12">
     <mat-card class="cardWithShadow">
       <mat-card-header>
-        <mat-card-title>Message Details</mat-card-title>
+        <mat-card-title class="d-flex align-items-center">
+          <mat-icon class="me-2">message</mat-icon>
+          {{ message?.title || 'Message Details' }}
+        </mat-card-title>
         <mat-card-subtitle>View message template information</mat-card-subtitle>
       </mat-card-header>
 
@@ -19,43 +22,38 @@
           </button>
         </div>
 
-        <!-- Message Info -->
+        <!-- Quick Stats -->
         <div class="row mb-4">
-          <div class="col-md-6">
-            <div class="info-section">
-              <h6 class="text-muted mb-2">Basic Information</h6>
-              <div class="mb-2">
-                <strong>Title:</strong> {{ message.title }}
-              </div>
-              <div class="mb-2">
-                <strong>Channel:</strong>
-                <app-badge [variant]="getChannelColor(message.channel)" [pill]="true" class="ms-2">
-                  {{ message.channel }}
-                </app-badge>
-              </div>
-              <div class="mb-2">
-                <strong>Type:</strong>
-                <app-badge [variant]="getTypeColor(message.type)" [pill]="true" class="ms-2">
-                  {{ message.type }}
-                </app-badge>
-              </div>
-              <div class="mb-2">
-                <strong>Attachments:</strong> {{ message.attachmentCount }}
-              </div>
+          <div class="col-md-3">
+            <div class="stat-card text-center p-3 bg-light rounded">
+              <mat-icon class="stat-icon mb-2" [style.color]="getChannelColor(message.channel)">
+                {{ getChannelIcon(message.channel) }}
+              </mat-icon>
+              <div class="stat-label">Channel</div>
+              <app-badge [variant]="getChannelColor(message.channel)" [pill]="true" class="mt-1">
+                {{ message.channel }}
+              </app-badge>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="info-section">
-              <h6 class="text-muted mb-2">Timestamps</h6>
-              <div class="mb-2">
-                <strong>Created:</strong> {{ message.createdAt | date:'dd/MM/yyyy HH:mm' }}
-              </div>
-              <div class="mb-2">
-                <strong>Updated:</strong> {{ message.updatedAt | date:'dd/MM/yyyy HH:mm' }}
-              </div>
-              <div class="mb-2">
-                <strong>Created By:</strong> {{ message.createdBy }}
-              </div>
+          <div class="col-md-3">
+            <div class="stat-card text-center p-3 bg-light rounded">
+              <mat-icon class="stat-icon mb-2">attach_file</mat-icon>
+              <div class="stat-label">Attachments</div>
+              <div class="stat-value">{{ message.attachmentCount }}</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card text-center p-3 bg-light rounded">
+              <mat-icon class="stat-icon mb-2">code</mat-icon>
+              <div class="stat-label">Variables</div>
+              <div class="stat-value">{{ getDetectedVariables().length }}</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card text-center p-3 bg-light rounded">
+              <mat-icon class="stat-icon mb-2">schedule</mat-icon>
+              <div class="stat-label">Created</div>
+              <div class="stat-value small">{{ message.createdAt | date:'dd/MM/yyyy' }}</div>
             </div>
           </div>
         </div>
@@ -63,74 +61,77 @@
         <!-- Message Content -->
         <div class="row mb-4">
           <div class="col-12">
-            <mat-card>
+            <mat-card class="content-card">
               <mat-card-header>
-                <mat-card-title>Message Content</mat-card-title>
+                <mat-card-title class="d-flex align-items-center">
+                  <mat-icon class="me-2">description</mat-icon>
+                  Message Content
+                </mat-card-title>
               </mat-card-header>
               <mat-card-content>
-                <div class="message-content p-3 bg-light rounded">
-                  <pre style="white-space: pre-wrap; font-family: inherit;">{{ message.content }}</pre>
+                <div class="message-content p-4 bg-light rounded" [innerHTML]="getHighlightedContent()"></div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+
+        <!-- Detected Variables -->
+        <div class="row" *ngIf="getDetectedVariables().length > 0">
+          <div class="col-12">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title class="d-flex align-items-center">
+                  <mat-icon class="me-2">code</mat-icon>
+                  Variables Detected in Message
+                </mat-card-title>
+                <mat-card-subtitle>Variables found in the message content</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="variables-grid">
+                  <div class="variable-chip" *ngFor="let variable of getDetectedVariables()">
+                    <mat-icon class="variable-icon">label</mat-icon>
+                    <span class="variable-key">{{ variable.key }}</span>
+                    <span class="variable-desc">{{ variable.description }}</span>
+                  </div>
                 </div>
               </mat-card-content>
             </mat-card>
           </div>
         </div>
 
-        <!-- Variables -->
-        <div class="row">
-          <div class="col-12">
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title>Dynamic Variables ({{ message.variables.length }})</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div *ngIf="message.variables.length > 0; else noVariables">
-                  <div class="table-responsive">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Type</th>
-                          <th>Required</th>
-                          <th>Default Value</th>
-                          <th>Description</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let variable of message.variables">
-                          <td><code>{{ variable.name }}</code></td>
-                          <td>
-                            <app-badge variant="secondary" [pill]="true">
-                              {{ variable.type }}
-                            </app-badge>
-                          </td>
-                          <td>
-                            <mat-icon *ngIf="variable.required" class="text-success">check_circle</mat-icon>
-                            <mat-icon *ngIf="!variable.required" class="text-muted">radio_button_unchecked</mat-icon>
-                          </td>
-                          <td>{{ variable.defaultValue || '-' }}</td>
-                          <td>{{ variable.description || '-' }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+        <!-- Additional Info -->
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <div class="info-section">
+              <h6 class="text-muted mb-3">Additional Information</h6>
+              <div class="info-item">
+                <mat-icon class="info-icon">person</mat-icon>
+                <div>
+                  <div class="info-label">Created By</div>
+                  <div class="info-value">{{ message.createdBy }}</div>
                 </div>
-                <ng-template #noVariables>
-                  <div class="text-center text-muted py-4">
-                    <mat-icon class="large-icon">info</mat-icon>
-                    <p>No dynamic variables defined for this message.</p>
-                  </div>
-                </ng-template>
-              </mat-card-content>
-            </mat-card>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-section">
+              <h6 class="text-muted mb-3">Timestamps</h6>
+              <div class="info-item">
+                <mat-icon class="info-icon">update</mat-icon>
+                <div>
+                  <div class="info-label">Last Updated</div>
+                  <div class="info-value">{{ message.updatedAt | date:'dd/MM/yyyy HH:mm' }}</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </mat-card-content>
 
       <mat-card-content *ngIf="isLoading">
-        <div class="d-flex justify-content-center align-items-center p-4">
-          <mat-spinner diameter="40"></mat-spinner>
-          <span class="ml-2">Loading message details...</span>
+        <div class="d-flex justify-content-center align-items-center p-5">
+          <mat-spinner diameter="40" class="me-3"></mat-spinner>
+          <span>Loading message details...</span>
         </div>
       </mat-card-content>
     </mat-card>
