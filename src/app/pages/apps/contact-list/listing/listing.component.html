@@ -120,31 +120,30 @@
               @if(filteredContacts().length){
               <div class="position-relative">
                 <mat-nav-list class="p-x-8 contact-listing">
-                  @for(contact of filteredContacts(); track contact.id ){
+                  @for(contact of filteredContacts(); track contact.id){
 
                   <mat-list-item
                     (click)="selectContact(contact)"
                     class="gap-10 m-b-2"
                     [ngClass]="{
                       'bg-light-primary':
-                        contact.id === contactService.getSelectedContact()?.id
+                        contact.id === selectedContact()?.id
                     }"
                   >
                     <span matListItemIcon>
-                      <img
-                        [src]="contact.image"
-                        alt="Contact Image"
-                        width="40px"
-                        height="40px"
-                        class="rounded-circle"
-                      />
+                      <div
+                        class="rounded-circle d-flex align-items-center justify-content-center f-w-600 bg-light-primary text-primary"
+                        style="width: 40px; height: 40px; font-size: 16px;"
+                      >
+                        {{ (contact.person?.firstName?.charAt(0) || '') + (contact.person?.lastName?.charAt(0) || '') }}
+                      </div>
                     </span>
                     <div
                       class="d-flex align-items-center justify-content-between w-100"
                       matListItemTitle
                     >
                       <h6 class="f-w-600 f-s-14 lh-sm">
-                        {{ contact.firstname }} {{ contact.lastname }}
+                        {{ contact.person?.firstName }} {{ contact.person?.lastName }}
                       </h6>
                       <div class="d-flex justify-content-center gap-8 m-l-auto">
                         <!-- star icon -->
@@ -152,13 +151,13 @@
                           class="d-flex align-items-center gap-8"
                           (click)="toggleStarred(contact, $event)"
                         >
-                          @if(contact.starred){
+                          @if(false){ <!-- Disable starred feature for now since backend doesn't support it -->
                           <i-tabler
                             name="star"
                             class="icon-16 fill-warning"
                           ></i-tabler>
                           }@else{
-                          <i-tabler name="star" class="icon-16"></i-tabler>
+                          <i-tabler name="star" class="icon-16 text-muted"></i-tabler>
                           }
                         </span>
                         <!-- Delete Icon -->
@@ -170,7 +169,7 @@
                       </div>
                     </div>
                     <p class="f-s-12 m-0" matListItemLine>
-                      {{ contact.department }}
+                      {{ contact.person?.email }}
                     </p>
                   </mat-list-item>
                   }

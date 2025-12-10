@@ -16,13 +16,12 @@ import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { MediaMatcher } from '@angular/cdk/layout';
-import { ContactService } from 'src/app/services/apps/contact-list/contact-list.service';
+import { ContactService } from 'src/app/features/contacts/services/contact.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { ContactBox } from 'src/app/pages/apps/contact-list/contact-list';
+import { Contact } from 'src/app/features/contacts/models/contact';
 
 import { AppDeleteDialogComponent } from '../delete-dialog/delete-dialog.component';
-import { AppSearchDialogComponent } from 'src/app/layouts/full/vertical/header/header.component';
 import { CommonModule } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 
@@ -68,8 +67,12 @@ export class AppListingComponent implements OnInit, OnDestroy {
   labels: Category[] = [];
   selectedFilter: Category | null = null;
   selectedCategory: Category | null = null;
-  selectedContact = signal<ContactBox | null>(null);
+  selectedContact = signal<Contact | null>(null);
   isActiveContact: boolean = false;
+
+  // Store contacts directly from the new API
+  contacts = signal<Contact[]>([]);
+  isLoading = signal<boolean>(false);
 
   mailnav = true;
 
@@ -78,7 +81,7 @@ export class AppListingComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(AppSearchDialogComponent, {
+    const dialogRef = this.dialog.open(AppContactListDetailComponent, {
       autoFocus: false,
     });
 
@@ -88,29 +91,32 @@ export class AppListingComponent implements OnInit, OnDestroy {
   }
 
   filteredContacts = computed(() => {
-    let filtered = this.contactService.contactList();
+    let filtered = this.contacts();
 
     // Apply category filter if selected
     if (
-      this.contactService.selectedCategory() &&
-      this.contactService.selectedCategory()?.name !== 'All'
+      this.selectedCategory &&
+      this.selectedCategory?.name !== 'All'
     ) {
+      // Filter by tags if category matches tag name
       filtered = filtered.filter(
         (contact) =>
-          contact.department === this.contactService.selectedCategory()?.name
+          contact.tags?.some((tag) => tag.name === this.selectedCategory?.name)
       );
     }
 
     // Apply filter based on selectedFilter only if no category is selected
     if (
-      !this.contactService.selectedCategory() ||
-      this.contactService.selectedCategory()?.name === 'All'
+      !this.selectedCategory ||
+      this.selectedCategory?.name === 'All'
     ) {
-      if (this.contactService.selectedFilter()) {
-        if (this.contactService.selectedFilter()?.name === 'Frequent') {
-          filtered = filtered.filter((contact) => contact.frequentlycontacted);
-        } else if (this.contactService.selectedFilter()?.name === 'Starred') {
-          filtered = filtered.filter((contact) => contact.starred);
+      if (this.selectedFilter) {
+        // Note: Backend doesn't have starred/frequent fields, so these filters may not work
+        // You might need to add these fields to the backend or remove these filters
+        if (this.selectedFilter?.name === 'Frequent') {
+          // filtered = filtered.filter((contact) => contact.frequentlycontacted);
+        } else if (this.selectedFilter?.name === 'Starred') {
+          // filtered = filtered.filter((contact) => contact.starred);
         }
       }
     }
@@ -118,95 +124,127 @@ export class AppListingComponent implements OnInit, OnDestroy {
     // Apply search term filter
     const searchTermLower = this.searchTerm().toLowerCase();
     filtered = filtered.filter(
-      (contact) =>
-        contact.firstname.toLowerCase().includes(searchTermLower) ||
-        contact.lastname.toLowerCase().includes(searchTermLower)
+      (contact) => {
+        const firstName = contact.person?.firstName || '';
+        const lastName = contact.person?.lastName || '';
+        const email = contact.person?.email || '';
+        return (
+          firstName.toLowerCase().includes(searchTermLower) ||
+          lastName.toLowerCase().includes(searchTermLower) ||
+          email.toLowerCase().includes(searchTermLower)
+        );
+      }
     );
     return filtered;
   });
 
   ngOnInit() {
-    // Set up the data after the service has been initialized
-
-    this.filters = this.contactService.filters();
-    this.labels = this.contactService.labels();
-    this.selectedFilter = this.contactService.selectedFilter();
-    this.selectedCategory = this.contactService.selectedCategory();
-
-    this.contactService.contactList.set(this.contactService.contactList());
-
-    // Set the selected contact to the first contact if available
-    const contacts = this.contactService.contactList();
-    this.selectedContact.set(contacts[0]);
+    this.loadContacts();
 
     // Initialize labels and filters from the data file
-    this.contactService.labels.set(label);
-    this.contactService.filters.set(filter);
+    this.labels = label;
+    this.filters = filter;
 
     // Set the first filter as active by default
-    const firstFilter = this.contactService.filters()[0];
+    const firstFilter = this.filters[0];
     if (firstFilter) {
-      this.contactService.selectedFilter.set(firstFilter);
-      this.contactService.filters.set(
-        this.contactService
-          .filters()
-          .map((f) => ({ ...f, active: f === firstFilter }))
-      );
+      this.selectedFilter = firstFilter;
+      this.filters = this.filters.map((f) => ({ ...f, active: f === firstFilter }));
     }
+  }
+
+  loadContacts() {
+    this.isLoading.set(true);
+    this.contactService.getContacts().subscribe({
+      next: (response) => {
+        this.contacts.set(response.content);
+        this.isLoading.set(false);
+
+        // Set the selected contact to the first contact if available
+        if (response.content.length > 0) {
+          this.selectedContact.set(response.content[0]);
+          this.contactService.legacySetSelectedContact(response.content[0]);
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching contacts:', error);
+        this.isLoading.set(false);
+        this.snackBar.open('Error loading contacts', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   goBack() {
     this.selectedContact.set(null);
     this.isActiveContact = false;
   }
-  selectContact(contact: ContactBox): void {
+
+  selectContact(contact: Contact): void {
     this.isActiveContact = true;
     this.selectedContact.set(contact);
-    this.contactService.setSelectedContact(contact);
+    this.contactService.legacySetSelectedContact(contact);
   }
 
   applyFilter(filter: Category): void {
-    this.contactService.applyFilter(filter);
+    this.selectedFilter = filter;
+    this.filters = this.filters.map((f) => ({ ...f, active: f === filter }));
+    this.selectedCategory = null;
   }
 
   applyCategory(category: Category): void {
-    this.contactService.applyCategory(category);
+    this.selectedCategory = category;
+    this.labels.forEach((lab) => (lab.active = lab === category));
+    this.selectedFilter = null;
   }
 
-  toggleStarred(contact: ContactBox, $event: any): void {
-    this.contactService.toggleStarred(contact, $event);
+  toggleStarred(contact: any, $event: any): void {
+    // Note: The new backend doesn't support starred field, so this is just for UI
+    $event.stopPropagation();
   }
 
-  deleteContact(contact: ContactBox): void {
+  deleteContact(contact: Contact): void {
     const dialogRef = this.dialog.open(AppDeleteDialogComponent, {
       width: '300px',
       autoFocus: false,
       data: {
-        message: `Are you sure you want to delete ${contact.firstname} ${contact.lastname}?`,
+        message: `Are you sure you want to delete ${contact.person?.firstName} ${contact.person?.lastName}?`,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        // Delete the contact
-        this.contactService.deleteContact(contact);
-        // Check if the deleted contact was selected and clear selection if so
-        if (
-          this.selectedContact() &&
-          this.selectedContact()?.id === contact.id
-        ) {
-          this.contactService.setSelectedContact(null);
-          this.selectedContact.set(null);
-        }
-        this.snackBar.open(
-          `${contact.firstname} ${contact.lastname} deleted successfully!`,
-          'Close',
-          {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
+        // Delete the contact via API
+        this.contactService.deleteContact(contact.id.toString()).subscribe({
+          next: () => {
+            // Remove from local list
+            const updatedList = this.contacts().filter(c => c.id !== contact.id);
+            this.contacts.set(updatedList);
+
+            // Check if the deleted contact was selected and clear selection if so
+            if (this.selectedContact() && this.selectedContact()?.id === contact.id) {
+              this.contactService.legacySetSelectedContact(null);
+              this.selectedContact.set(null);
+            }
+
+            this.snackBar.open(
+              `${contact.person?.firstName} ${contact.person?.lastName} deleted successfully!`,
+              'Close',
+              {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              }
+            );
+          },
+          error: (error) => {
+            console.error('Error deleting contact:', error);
+            this.snackBar.open('Error deleting contact', 'Close', {
+              duration: 3000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
           }
-        );
+        });
       }
     });
   }
@@ -218,12 +256,11 @@ export class AppListingComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.contactService.contactList.set([
-          result,
-          ...this.contactService.contactList(),
-        ]);
+        // Add the new contact to our list
+        const updatedList = [result, ...this.contacts()];
+        this.contacts.set(updatedList);
 
-        this.contactService.setSelectedContact(result);
+        this.contactService.legacySetSelectedContact(result);
         this.selectedContact.set(result);
       }
     });

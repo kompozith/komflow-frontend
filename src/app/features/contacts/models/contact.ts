@@ -1,20 +1,54 @@
 // src/app/features/contacts/models/contact.ts
 
+// Contact model for listing (simplified structure)
 export interface Contact {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
+  id: number;
+  enabled: boolean;
+  lastMessageReceivedAt: string | null;
+  person: {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    language: string;
+    phoneNumber: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
+  tagCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ContactDetails model for detailed view (full structure)
+export interface ContactDetails {
+  id: number;
+  enabled: boolean;
+  lastMessageReceivedAt: string | null;
+  person: {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    language: string;
+    phoneNumber: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
   tags: Tag[];
   createdAt: string;
   updatedAt: string;
 }
 
 export interface Tag {
-  id: string;
+  id: number;
   name: string;
-  color?: string;
+  description: string;
+  colorCode: string;
+  contactCount: number | null;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ContactPage {

@@ -15,11 +15,10 @@ import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { ContactService } from '../../services/contact.service';
-import { Contact, ContactPage, ContactFilters } from '../../models/contact';
+import { Contact, ContactFilters } from '../../models/contact';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { DeleteContactDialogComponent } from './delete-contact-dialog/delete-contact-dialog.component';
 import { ContactCreateComponent } from '../contact-create/contact-create.component';
-import { ContactEditComponent } from '../contact-edit/contact-edit.component';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import {MatTableDataSource} from "@angular/material/table";
 
@@ -140,7 +139,7 @@ export class ContactListComponent implements OnInit {
     };
 
     this.contactService.getContacts(filters).subscribe({
-       next: (response: ContactPage) => {
+       next: (response) => {
          this.dataSource.data = response.content;
          this.totalElements = response.totalElements;
          this.totalPages = response.totalPages;

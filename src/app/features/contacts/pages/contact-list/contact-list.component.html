@@ -54,14 +54,14 @@
              <div class="d-flex align-items-center gap-16">
                <div
                  class="rounded-circle d-flex align-items-center justify-content-center f-w-600"
-                 [ngClass]="getContactBadgeClass(element.id)"
+                 [ngClass]="getContactBadgeClass(element.id.toString())"
                  style="width: 45px; height: 45px; font-size: 18px;"
                >
-                 {{ getContactInitials(element.firstName, element.lastName) }}
+                 {{ getContactInitials(element.person.firstName, element.person.lastName) }}
                </div>
                <div>
                  <h6 class="f-w-600 f-s-16 m-t-0">
-                   {{ element.firstName }} {{ element.lastName }}
+                   {{ element.person.firstName }} {{ element.person.lastName }}
                  </h6>
                </div>
              </div>
@@ -71,14 +71,14 @@
         <ng-container matColumnDef="email">
            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Email</th>
            <td mat-cell *matCellDef="let element" class="f-s-14">
-             {{ element.email }}
+             {{ element.person.email }}
            </td>
          </ng-container>
 
         <ng-container matColumnDef="phone">
            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Phone</th>
            <td mat-cell *matCellDef="let element" class="f-s-14">
-             {{ element.phone || '-' }}
+             {{ element.person.phoneNumber || '-' }}
            </td>
          </ng-container>
 
@@ -87,10 +87,9 @@
            <td mat-cell *matCellDef="let element" class="f-s-14">
              <div class="d-flex flex-wrap gap-1">
                <app-badge
-                 *ngFor="let tag of element.tags"
-                 [variant]="'info'"
+                 [variant]="'purple'"
                  [pill]="true"
-                 [content]="tag.name">
+                 [content]="element.tagCount">
                </app-badge>
              </div>
            </td>

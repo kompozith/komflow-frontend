@@ -5,7 +5,7 @@ import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { CommonModule } from '@angular/common';
 import { ContactService } from '../../services/contact.service';
-import { Contact } from '../../models/contact';
+import { ContactDetails } from '../../models/contact';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 
 @Component({
@@ -21,7 +21,7 @@ import { BadgeComponent } from '../../../../shared/components/badge/badge.compon
 })
 export class ContactDetailsComponent implements OnInit {
   contactId: string = '';
-  contact: Contact | null = null;
+  contact: ContactDetails | null = null;
   isLoading = false;
 
   constructor(

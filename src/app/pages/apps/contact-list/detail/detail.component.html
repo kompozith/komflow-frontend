@@ -10,21 +10,14 @@
     <div class="d-flex align-items-center">
       <button
         class="d-flex align-items-center justify-content-center"
-        [matTooltip]="contact()?.starred ? 'Unstar' : 'Star'"
+        [matTooltip]="'Star'" <!-- Disable starred feature for now -->
         mat-icon-button
-        (click)="toggleStarred(contact(), $event)"
+        (click)="$event.stopPropagation()" <!-- Disable starred feature for now -->
       >
-        @if(contact()?.starred){
         <i-tabler
           name="star"
-          class="icon-18 d-flex align-items-center fill-warning"
+          class="icon-18 d-flex align-items-center text-muted"
         ></i-tabler>
-        } @else {
-        <i-tabler
-          name="star"
-          class="icon-18 d-flex align-items-center"
-        ></i-tabler>
-        }
       </button>
       <button
         class="d-flex align-items-center justify-content-center"
@@ -62,22 +55,18 @@
     @if(!isEditing() && contact()) {
     <div class="p-24">
       <div class="d-flex align-items-center gap-16">
-        <img
-          [src]="contact().image"
-          class="rounded-circle"
-          alt="userimg"
-          width="72px"
-          height="72px"
-        />
+        <div
+          class="rounded-circle d-flex align-items-center justify-content-center f-w-600 bg-light-primary text-primary"
+          style="width: 72px; height: 72px; font-size: 24px;"
+        >
+          {{ (contact().person?.firstName?.charAt(0) || '') + (contact().person?.lastName?.charAt(0) || '') }}
+        </div>
         <div>
           <h5 class="f-w-600 f-s-16">
-            {{ contact().firstname }}
+            {{ contact().person?.firstName }} {{ contact().person?.lastName }}
           </h5>
           <span class="f-w-400 f-s-12">
-            {{ contact().department }}
-          </span>
-          <span class="f-w-400 f-s-12">
-            {{ contact().company }}
+            {{ contact().person?.email }}
           </span>
         </div>
       </div>
@@ -85,31 +74,31 @@
         <div class="col-lg-6 m-t-32">
           <span class="f-s-12">Phone Number</span>
           <h5 class="f-w-600 lh-sm f-s-14">
-            {{ contact().phone }}
+            {{ contact().person?.phoneNumbers?.[0]?.number || '-' }}
           </h5>
         </div>
         <div class="col-lg-6 m-t-32">
           <span class="f-s-12">Email address</span>
           <h5 class="f-w-600 lh-sm f-s-14">
-            {{ contact().email }}
+            {{ contact().person?.email }}
           </h5>
         </div>
         <div class="col-12 m-t-32">
           <span class="f-s-12">Address</span>
           <h5 class="f-w-600 lh-sm f-s-14">
-            {{ contact().address }}
+            {{ contact().person?.phoneNumbers?.[0]?.number || '-' }}
           </h5>
         </div>
         <div class="col-lg-6 m-t-32">
           <span class="f-s-12">Department</span>
           <h5 class="f-w-600 lh-sm f-s-14">
-            {{ contact().department }}
+            {{ contact().tags?.[0]?.name || 'No tags' }}
           </h5>
         </div>
         <div class="col-lg-6 m-t-32">
           <span class="f-s-12">Company</span>
           <h5 class="f-w-600 lh-sm f-s-14">
-            {{ contact().company }}
+            {{ contact().createdAt | date:'medium' }}
           </h5>
         </div>
         <div class="col-12 m-t-32">

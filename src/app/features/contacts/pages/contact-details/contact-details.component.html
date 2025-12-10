@@ -13,13 +13,13 @@
             <div class="text-center mb-4">
               <div
                 class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                [ngClass]="getContactBadgeClass(contact.id)"
+                [ngClass]="getContactBadgeClass(contact.id.toString())"
                 style="width: 80px; height: 80px; font-size: 32px; font-weight: 600;"
               >
-                {{ getContactInitials(contact.firstName, contact.lastName) }}
+                {{ getContactInitials(contact.person.firstName, contact.person.lastName) }}
               </div>
-              <h4 class="mb-1">{{ contact.firstName }} {{ contact.lastName }}</h4>
-              <p class="text-muted mb-0">{{ contact.email }}</p>
+              <h4 class="mb-1">{{ contact.person.firstName }} {{ contact.person.lastName }}</h4>
+              <p class="text-muted mb-0">{{ contact.person.email }}</p>
             </div>
 
             <!-- Action Buttons -->
@@ -41,13 +41,13 @@
               <div class="col-md-6">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>First Name</mat-label>
-                  <input matInput [value]="contact.firstName" readonly>
+                  <input matInput [value]="contact.person.firstName" readonly>
                 </mat-form-field>
               </div>
               <div class="col-md-6">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Last Name</mat-label>
-                  <input matInput [value]="contact.lastName" readonly>
+                  <input matInput [value]="contact.person.lastName" readonly>
                 </mat-form-field>
               </div>
             </div>
@@ -56,7 +56,7 @@
               <div class="col-md-6">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Email</mat-label>
-                  <input matInput [value]="contact.email" type="email" readonly>
+                  <input matInput [value]="contact.person.email" type="email" readonly>
                   <mat-icon matSuffix>
                     <i-tabler name="mail" class="icon-20 d-flex m-t-2"></i-tabler>
                   </mat-icon>
@@ -65,7 +65,7 @@
               <div class="col-md-6">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Phone</mat-label>
-                  <input matInput [value]="contact.phone || 'Not provided'" readonly>
+                  <input matInput [value]="contact.person.phoneNumber || 'Not provided'" readonly>
                   <mat-icon matSuffix>
                     <i-tabler name="phone" class="icon-20 d-flex m-t-2"></i-tabler>
                   </mat-icon>
@@ -84,7 +84,7 @@
                     [pill]="true"
                     [content]="tag.name">
                   </app-badge>
-                  <span *ngIf="contact.tags.length === 0" class="text-muted">No tags assigned</span>
+                  <span *ngIf="!contact.tags || contact.tags.length === 0" class="text-muted">No tags assigned</span>
                 </div>
               </div>
             </div>

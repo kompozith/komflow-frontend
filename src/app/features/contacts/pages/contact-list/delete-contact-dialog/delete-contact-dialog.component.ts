@@ -10,7 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   template: `
     <h2 mat-dialog-title>Delete Contact</h2>
     <mat-dialog-content>
-      <p>Are you sure you want to delete the contact <strong>{{ data.contact.firstName }} {{ data.contact.lastName }}</strong>?</p>
+      <p>Are you sure you want to delete the contact <strong>{{ data.contact.person.firstName }} {{ data.contact.person.lastName }}</strong>?</p>
       <p class="text-muted">This action cannot be undone.</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
@@ -39,7 +39,7 @@ export class DeleteContactDialogComponent {
 
   onConfirm(): void {
     this.isDeleting = true;
-    this.contactService.deleteContact(this.data.contact.id).subscribe({
+    this.contactService.deleteContact(this.data.contact.id.toString()).subscribe({
       next: () => {
         this.snackBar.open('Contact deleted successfully', 'Close', { duration: 3000 });
         this.dialogRef.close({ event: 'Delete' });

@@ -12,7 +12,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { CommonModule } from '@angular/common';
 import { ContactService } from '../../services/contact.service';
-import { Contact, UpdateContactRequest } from '../../models/contact';
+import { ContactDetails, UpdateContactRequest } from '../../models/contact';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -35,7 +35,7 @@ export class ContactEditComponent {
   contactForm: FormGroup;
   isLoading = false;
   isSaving = false;
-  contact: Contact | null = null;
+  contact: ContactDetails | null = null;
   availableTags: any[] = []; // TODO: Load from service
 
   constructor(
@@ -43,15 +43,15 @@ export class ContactEditComponent {
     private fb: FormBuilder,
     private contactService: ContactService,
     private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: { contact: Contact }
+    @Inject(MAT_DIALOG_DATA) public data: { contact: ContactDetails }
   ) {
     this.contact = data.contact;
     this.contactForm = this.fb.group({
-      firstName: [data.contact.firstName, [Validators.required, Validators.minLength(2)]],
-      lastName: [data.contact.lastName, [Validators.required, Validators.minLength(2)]],
-      email: [data.contact.email, [Validators.required, Validators.email]],
-      phone: [data.contact.phone || ''],
-      tagIds: [data.contact.tags.map(tag => tag.id)]
+      firstName: [data.contact.person.firstName, [Validators.required, Validators.minLength(2)]],
+      lastName: [data.contact.person.lastName, [Validators.required, Validators.minLength(2)]],
+      email: [data.contact.person.email, [Validators.required, Validators.email]],
+      phone: [data.contact.person.phoneNumber || ''],
+      tagIds: [data.contact.tags?.map(tag => tag.id) || []]
     });
   }
 
@@ -68,7 +68,7 @@ export class ContactEditComponent {
         tagIds: formValue.tagIds || []
       };
 
-      this.contactService.updateContact(this.contact!.id, contactData).subscribe({
+      this.contactService.updateContact(this.contact!.id.toString(), contactData).subscribe({
         next: (contact) => {
           this.snackBar.open('Contact updated successfully', 'Close', { duration: 3000 });
           this.dialogRef.close({ event: 'Update' });
