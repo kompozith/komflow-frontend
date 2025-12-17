@@ -19,16 +19,19 @@ export interface Campaign {
   messageId: string;
   message?: {
     id: string;
-    name: string;
+    title: string;
+    content: string;
     channel: string;
-    type: string;
+    createdAt: string;
+    updatedAt: string;
+    attachmentCount: number;
   };
+  contactIds?: string[];
   tagIds: string[];
-  tags?: {
-    id: string;
-    name: string;
-    color?: string;
-  }[];
+  mailCcContactIds?: string[];
+  mailCciContactIds?: string[];
+  mailCcTagIds?: string[];
+  mailCciTagIds?: string[];
   status: CampaignStatus;
   scheduledAt?: string;
   sentAt?: string;
@@ -39,7 +42,7 @@ export interface Campaign {
   failedCount: number;
   createdAt: string;
   updatedAt: string;
-  createdBy: string;
+  createdBy?: string;
 }
 
 export interface CampaignPage {
@@ -81,7 +84,13 @@ export interface CreateCampaignRequest {
   name: string;
   description?: string;
   messageId: string;
+  contactIds?: string[];
   tagIds: string[];
+  mailCcIds?: string[];
+  mailCciIds?: string[];
+  mailCcTagIds?: string[];
+  mailCciTagIds?: string[];
+  status?: string;
   scheduledAt?: string;
 }
 
@@ -92,6 +101,8 @@ export interface UpdateCampaignRequest {
   tagIds?: string[];
   scheduledAt?: string;
   status?: CampaignStatus;
+  cc?: string[];
+  bcc?: string[];
 }
 
 export interface CampaignSendRequest {

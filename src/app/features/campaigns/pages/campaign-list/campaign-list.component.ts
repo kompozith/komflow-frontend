@@ -172,7 +172,7 @@ export class CampaignListComponent implements OnInit {
   }
 
   createCampaign(): void {
-    this.router.navigate(['campaigns/create']);
+    this.router.navigate(['/campaigns/create']);
   }
 
   editCampaign(campaign: Campaign): void {
