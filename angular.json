@@ -19,7 +19,7 @@
           "options": {
             "allowedCommonJsDependencies": ["apexcharts", "bezier-easing", "chance"],
             "outputPath": {
-              "base": "dist/komflow-frontend"
+              "base": "dist/komflow"
             },
             "index": "src/index.html",
             "polyfills": ["zone.js"],
