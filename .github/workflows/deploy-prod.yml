@@ -48,7 +48,7 @@ jobs:
           
           # Copie les fichiers buildés vers le serveur
           rsync -avz --delete \
-            ./dist/komflow/ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/prod/komflow-frontend/
+            ./dist/komflow/browser/ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/prod/komflow-frontend/
           
           # Configure les permissions
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
