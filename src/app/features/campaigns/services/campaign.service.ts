@@ -11,7 +11,8 @@ import {
   UpdateCampaignRequest,
   CampaignSendRequest,
   CampaignStats,
-  CampaignRecipient
+  CampaignRecipient,
+  CampaignDetails
 } from '../models/campaign';
 
 @Injectable({
@@ -52,6 +53,14 @@ export class CampaignService {
 
   getCampaignById(id: string): Observable<Campaign> {
     return this.http.get<Campaign>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() });
+  }
+
+  getCampaignDetails(id: number): Observable<CampaignDetails> {
+    return this.http.get<CampaignDetails>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() });
+  }
+
+  submitCampaign(id: number): Observable<{ message: string; data: {} }> {
+    return this.http.put<{ message: string; data: {} }>(`${this.apiUrl}/${id}/submit`, {}, { headers: this.getAuthHeaders() });
   }
 
   createCampaign(campaign: CreateCampaignRequest): Observable<Campaign> {

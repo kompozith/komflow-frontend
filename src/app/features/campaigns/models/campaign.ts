@@ -117,3 +117,60 @@ export interface CampaignStats {
   totalMessagesDelivered: number;
   deliveryRate: number;
 }
+
+export interface Person {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  language: string;
+  phoneNumber: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Tag {
+  id: number;
+  name: string;
+  description: string;
+  colorCode: string;
+  contactCount: number;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Contact {
+  id: number;
+  enabled: boolean;
+  lastMessageReceivedAt: string;
+  person: Person;
+  tags: Tag[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CampaignDetails {
+  id: number;
+  name: string;
+  description: string;
+  message: {
+    id: number;
+    title: string;
+    content: string;
+    channel: string;
+    createdAt: string;
+    updatedAt: string;
+    attachmentCount: number;
+  };
+  contacts: Contact[];
+  tags: Tag[];
+  mailCcContacts: Contact[];
+  mailCcTags: Tag[];
+  mailCciContacts: Contact[];
+  mailCciTags: Tag[];
+  status: CampaignStatus;
+  scheduledAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
