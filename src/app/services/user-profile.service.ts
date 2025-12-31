@@ -23,8 +23,9 @@ export class UserProfileService {
     if (!user) {
       user = this.getCurrentUser();
     }
-    if (!user) return 'U';
-    return (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
+    return 'U';
+    // if (!user) return 'U';
+    // return (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase();
   }
 
   /**
