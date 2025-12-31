@@ -6,10 +6,11 @@ import { CampaignDetails, CampaignStatus } from '../../models/campaign';
 import { MaterialModule } from 'src/app/material.module';
 import { CommonModule } from '@angular/common';
 import { BadgeComponent, BadgeVariant } from 'src/app/shared/components/badge/badge.component';
+import { TablerIconsModule } from 'angular-tabler-icons';
 
 @Component({
   selector: 'app-campaign-details',
-  imports: [MaterialModule, CommonModule, BadgeComponent],
+  imports: [MaterialModule, CommonModule, BadgeComponent, TablerIconsModule],
   templateUrl: './campaign-details.component.html',
   styleUrl: './campaign-details.component.scss'
 })
