@@ -97,6 +97,15 @@ export class MessageDetailsComponent implements OnInit {
     }
   }
 
+  getChannelBadgeClass(channel: MessageChannel): string {
+    switch (channel) {
+      case MessageChannel.EMAIL: return 'bg-light-info text-info';
+      case MessageChannel.SMS: return 'bg-light-success text-success';
+      case MessageChannel.WHATSAPP: return 'bg-light-warning text-warning';
+      default: return 'bg-light-primary text-primary';
+    }
+  }
+
   getHighlightedContent(): string {
     if (!this.message) return '';
     let content = this.message.content;

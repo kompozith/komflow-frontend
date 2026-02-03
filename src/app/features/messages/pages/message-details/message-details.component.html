@@ -1,139 +1,166 @@
-<div class="row">
+<!-- Message Header -->
+<div *ngIf="!isLoading && message" class="row mb-3">
   <div class="col-12">
     <mat-card class="cardWithShadow">
-      <mat-card-header>
-        <mat-card-title class="d-flex align-items-center">
-          <mat-icon class="me-2">message</mat-icon>
-          {{ message?.title || 'Message Details' }}
-        </mat-card-title>
-        <mat-card-subtitle>View message template information</mat-card-subtitle>
-      </mat-card-header>
-
-      <mat-card-content *ngIf="!isLoading && message">
-        <!-- Action Buttons -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <button mat-stroked-button (click)="onBack()">
-            <mat-icon>arrow_back</mat-icon>
-            Back to List
-          </button>
-          <button mat-flat-button color="primary" (click)="onEdit()">
-            <mat-icon>edit</mat-icon>
-            Edit Message
-          </button>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="row mb-4">
-          <div class="col-md-3">
-            <div class="stat-card text-center p-3 bg-light rounded">
-              <mat-icon class="stat-icon mb-2" [style.color]="getChannelColor(message.channel)">
-                {{ getChannelIcon(message.channel) }}
-              </mat-icon>
-              <div class="stat-label">Channel</div>
-              <app-badge [variant]="getChannelColor(message.channel)" [pill]="true" class="mt-1">
-                {{ message.channel }}
-              </app-badge>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="stat-card text-center p-3 bg-light rounded">
-              <mat-icon class="stat-icon mb-2">attach_file</mat-icon>
-              <div class="stat-label">Attachments</div>
-              <div class="stat-value">{{ message.attachmentCount }}</div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="stat-card text-center p-3 bg-light rounded">
-              <mat-icon class="stat-icon mb-2">code</mat-icon>
-              <div class="stat-label">Variables</div>
-              <div class="stat-value">{{ getDetectedVariables().length }}</div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="stat-card text-center p-3 bg-light rounded">
-              <mat-icon class="stat-icon mb-2">schedule</mat-icon>
-              <div class="stat-label">Created</div>
-              <div class="stat-value small">{{ message.createdAt | date:'dd/MM/yyyy' }}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Message Content -->
-        <div class="row mb-4">
-          <div class="col-12">
-            <mat-card class="content-card">
-              <mat-card-header>
-                <mat-card-title class="d-flex align-items-center">
-                  <mat-icon class="me-2">description</mat-icon>
-                  Message Content
-                </mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="message-content p-4 bg-light rounded" [innerHTML]="getHighlightedContent()"></div>
-              </mat-card-content>
-            </mat-card>
-          </div>
-        </div>
-
-        <!-- Detected Variables -->
-        <div class="row" *ngIf="getDetectedVariables().length > 0">
-          <div class="col-12">
-            <mat-card>
-              <mat-card-header>
-                <mat-card-title class="d-flex align-items-center">
-                  <mat-icon class="me-2">code</mat-icon>
-                  Variables Detected in Message
-                </mat-card-title>
-                <mat-card-subtitle>Variables found in the message content</mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="variables-grid">
-                  <div class="variable-chip" *ngFor="let variable of getDetectedVariables()">
-                    <mat-icon class="variable-icon">label</mat-icon>
-                    <span class="variable-key">{{ variable.key }}</span>
-                    <span class="variable-desc">{{ variable.description }}</span>
-                  </div>
-                </div>
-              </mat-card-content>
-            </mat-card>
-          </div>
-        </div>
-
-        <!-- Additional Info -->
-        <div class="row mt-4">
-          <div class="col-md-6">
-            <div class="info-section">
-              <h6 class="text-muted mb-3">Additional Information</h6>
-              <div class="info-item">
-                <mat-icon class="info-icon">person</mat-icon>
-                <div>
-                  <div class="info-label">Created By</div>
-                  <div class="info-value">{{ message.createdBy }}</div>
-                </div>
+      <mat-card-content class="p-4">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-16">
+            <div>
+              <div class="d-flex align-items-center gap-8 mb-1">
+                <h3 class="m-t-10 f-w-600 mb-0">{{ message?.title || 'Message Details' }}</h3>
               </div>
+              <p class="m-t-1 f-s-14 f-w-500 text-muted mb-2">Message template for {{ message.channel }} channel</p>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="info-section">
-              <h6 class="text-muted mb-3">Timestamps</h6>
-              <div class="info-item">
-                <mat-icon class="info-icon">update</mat-icon>
-                <div>
-                  <div class="info-label">Last Updated</div>
-                  <div class="info-value">{{ message.updatedAt | date:'dd/MM/yyyy HH:mm' }}</div>
-                </div>
-              </div>
-            </div>
+          <div class="d-flex gap-8">
+            <button mat-flat-button color="primary" (click)="onEdit()">
+              <mat-icon class="me-2">edit</mat-icon>
+              Edit Message
+            </button>
           </div>
-        </div>
-      </mat-card-content>
-
-      <mat-card-content *ngIf="isLoading">
-        <div class="d-flex justify-content-center align-items-center p-5">
-          <mat-spinner diameter="40" class="me-3"></mat-spinner>
-          <span>Loading message details...</span>
         </div>
       </mat-card-content>
     </mat-card>
+  </div>
+</div>
+
+<!-- Statistics Cards -->
+<div *ngIf="!isLoading && message" class="row mb-3">
+  <div class="col-sm-6 col-lg-3">
+    <mat-card class="cardWithShadow cursor-pointer bg-light-primary shadow-none">
+      <mat-card-content class="d-flex align-items-center gap-16">
+        <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-primary text-white">
+          <mat-icon class="d-flex">{{ getChannelIcon(message.channel) }}</mat-icon>
+        </div>
+        <div class="info">
+          <h5 class="f-w-400 lh-sm f-s-14">Channel</h5>
+          <h5 class="f-w-500 lh-sm f-s-14">{{ message.channel }}</h5>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="col-sm-6 col-lg-3">
+    <mat-card class="cardWithShadow cursor-pointer bg-light-success shadow-none">
+      <mat-card-content class="d-flex align-items-center gap-16">
+        <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-success text-white">
+          <mat-icon class="d-flex">attach_file</mat-icon>
+        </div>
+        <div class="info">
+          <h5 class="f-w-400 lh-sm f-s-14">Attachments</h5>
+          <h5 class="f-w-500 lh-sm f-s-14">{{ message.attachmentCount }} attachments</h5>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="col-sm-6 col-lg-3">
+    <mat-card class="cardWithShadow cursor-pointer bg-light-warning shadow-none">
+      <mat-card-content class="d-flex align-items-center gap-16">
+        <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-warning text-white">
+          <mat-icon class="d-flex">code</mat-icon>
+        </div>
+        <div class="info">
+          <h5 class="f-w-400 lh-sm f-s-14">Variables</h5>
+          <h5 class="f-w-500 lh-sm f-s-14">{{ getDetectedVariables().length }} variables</h5>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="col-sm-6 col-lg-3">
+    <mat-card class="cardWithShadow cursor-pointer bg-light shadow-none">
+      <mat-card-content class="d-flex align-items-center gap-16">
+        <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-info text-white">
+          <mat-icon class="d-flex">schedule</mat-icon>
+        </div>
+        <div class="info">
+          <h5 class="f-w-400 lh-sm f-s-14">Created</h5>
+          <h5 class="f-w-500 lh-sm f-s-14">{{ message.createdAt | date:'dd/MM/yyyy' }}</h5>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Detected Variables -->
+<div *ngIf="!isLoading && message && getDetectedVariables().length > 0" class="row mb-3">
+  <div class="col-12">
+    <mat-card class="cardWithShadow">
+      <mat-card-header>
+        <mat-card-title>Variables Detected in Message</mat-card-title>
+        <mat-card-subtitle>Variables found in the message content</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="variables-grid">
+          <div class="variable-chip" *ngFor="let variable of getDetectedVariables()">
+            <mat-icon class="variable-icon">label</mat-icon>
+            <span class="variable-key">{{ variable.key }}</span>
+            <span class="variable-desc">{{ variable.description }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div *ngIf="!isLoading && message" class="row mb-3">
+
+  <!-- Additional Information -->
+  <div class="col-lg-6">
+    <mat-card class="cardWithShadow h-100">
+      <mat-card-header>
+        <mat-card-title>Additional Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="row">
+          <div class="col-6 mb-3">
+            <div class="info-item">
+              <mat-icon class="info-icon">update</mat-icon>
+              <div>
+                <label class="form-label fw-bold text-dark">Last Updated</label>
+                <p class="mb-0 text-muted">{{ message.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 mb-3">
+            <div class="info-item">
+              <mat-icon class="info-icon">schedule</mat-icon>
+              <div>
+                <label class="form-label fw-bold text-dark">Created</label>
+                <p class="mb-0 text-muted">{{ message.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 mb-3">
+            <div class="info-item">
+              <mat-icon class="info-icon">person</mat-icon>
+              <div>
+                <label class="form-label fw-bold text-dark">Created By</label>
+                <p class="mb-0 text-muted">{{ message.createdBy }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Message Content -->
+  <div class="col-lg-6">
+    <mat-card class="cardWithShadow h-100">
+      <mat-card-header>
+        <mat-card-title>Message Content</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="message-content p-20 bg-light rounded" [innerHTML]="getHighlightedContent()"></div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div *ngIf="isLoading">
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
   </div>
 </div>

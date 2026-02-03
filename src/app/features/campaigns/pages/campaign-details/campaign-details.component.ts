@@ -6,10 +6,11 @@ import { CampaignDetails, CampaignStatus } from '../../models/campaign';
 import { MaterialModule } from 'src/app/material.module';
 import { CommonModule } from '@angular/common';
 import { BadgeComponent, BadgeVariant } from 'src/app/shared/components/badge/badge.component';
+import { TablerIconsModule } from 'angular-tabler-icons';
 
 @Component({
   selector: 'app-campaign-details',
-  imports: [MaterialModule, CommonModule, BadgeComponent],
+  imports: [MaterialModule, CommonModule, BadgeComponent, TablerIconsModule],
   templateUrl: './campaign-details.component.html',
   styleUrl: './campaign-details.component.scss'
 })
@@ -106,6 +107,17 @@ export class CampaignDetailsComponent implements OnInit {
       'FAILED': 'alert-triangle'
     };
     return statusIcons[status] || 'circle';
+  }
+
+  getHighlightedContent(): string {
+    if (!this.campaign) return '';
+    let content = this.campaign.message.content;
+
+    // Highlight variables in the content
+    const variableRegex = /\{\{([^}]+)\}\}/g;
+    content = content.replace(variableRegex, '<span class="variable-highlight">{{$1}}</span>');
+
+    return content;
   }
 
   goBack(): void {
