@@ -73,6 +73,24 @@
               </div>
             </div>
 
+            <div class="row">
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Status</mat-label>
+                  <input matInput [value]="contact.enabled ? 'Enabled' : 'Disabled'" readonly>
+                </mat-form-field>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Last Message Received</mat-label>
+                  <input
+                    matInput
+                    [value]="contact.lastMessageReceivedAt ? (contact.lastMessageReceivedAt | date:'dd/MM/yyyy HH:mm') : 'N/A'"
+                    readonly>
+                </mat-form-field>
+              </div>
+            </div>
+
             <!-- Tags Section -->
             <div class="row">
               <div class="col-12">

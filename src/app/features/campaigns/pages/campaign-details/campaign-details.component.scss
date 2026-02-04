@@ -1,0 +1,79 @@
+.metric-card {
+  padding: 12px 16px;
+  background: #f7f8fb;
+  border-radius: 10px;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: #6c757d;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.live-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ced4da;
+  display: inline-block;
+}
+
+.live-indicator.active {
+  background: #20c997;
+  box-shadow: 0 0 0 4px rgba(32, 201, 151, 0.15);
+}
+
+.log-list {
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  max-height: 280px;
+  overflow-y: auto;
+  background: #ffffff;
+}
+
+.log-item {
+  display: grid;
+  grid-template-columns: 70px 90px 1fr;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f3f5;
+  font-size: 12px;
+}
+
+.log-item:last-child {
+  border-bottom: none;
+}
+
+.log-time {
+  color: #6c757d;
+}
+
+.log-type {
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.log-type.started {
+  color: #0d6efd;
+}
+
+.log-type.success {
+  color: #198754;
+}
+
+.log-type.failed {
+  color: #dc3545;
+}
+
+.log-type.completed {
+  color: #20c997;
+}
+
+.log-type.error {
+  color: #6c757d;
+}

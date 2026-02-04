@@ -95,4 +95,10 @@ export class CampaignService {
   previewCampaignRecipients(campaignId: string): Observable<{ count: number; sampleRecipients: any[] }> {
     return this.http.get<{ count: number; sampleRecipients: any[] }>(`${this.apiUrl}/${campaignId}/preview`, { headers: this.getAuthHeaders() });
   }
+
+  getCampaignEvents(campaignId: number): EventSource {
+    const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+    const tokenParam = token ? `?token=${encodeURIComponent(token)}` : '';
+    return new EventSource(`${this.apiUrl}/${campaignId}/events${tokenParam}`);
+  }
 }

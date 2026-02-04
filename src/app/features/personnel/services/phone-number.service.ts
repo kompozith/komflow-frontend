@@ -1,0 +1,28 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { CreatePhoneNumberRequest, PhoneNumber } from '../models/person';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PhoneNumberService {
+  private apiUrl = `${environment.apiUrl}/personnel`;
+
+  constructor(private http: HttpClient) {}
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      ...(token && { 'Authorization': `Bearer ${token}` })
+    });
+  }
+
+  addPhoneNumber(personId: number, payload: CreatePhoneNumberRequest): Observable<PhoneNumber> {
+    return this.http.post<PhoneNumber>(`${this.apiUrl}/${personId}/phone-numbers`, payload, {
+      headers: this.getAuthHeaders()
+    });
+  }
+}

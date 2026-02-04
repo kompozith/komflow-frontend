@@ -4,6 +4,7 @@
     mat-icon-button
     mat-dialog-close
     class="d-flex justify-content-center"
+    *ngIf="dialogRef"
   >
     <i-tabler name="x" class="icon-20 d-flex"></i-tabler>
   </button>
@@ -12,72 +13,110 @@
 <mat-dialog-content>
   <form [formGroup]="contactForm">
     <div class="row">
-      <div class="col-md-6">
-        <mat-label class="f-s-14 f-w-600 m-b-8 d-block">First Name</mat-label>
-        <mat-form-field appearance="outline" class="w-100">
-          <input
-            matInput
-            formControlName="firstName"
-            placeholder="Enter first name"
-            required
-          />
-          <mat-error *ngIf="contactForm.get('firstName')?.invalid && contactForm.get('firstName')?.touched">
-            <span *ngIf="contactForm.get('firstName')?.errors?.['required']">First name is required</span>
-            <span *ngIf="contactForm.get('firstName')?.errors?.['minlength']">First name must be at least 2 characters</span>
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <div class="col-md-6">
-        <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Last Name</mat-label>
-        <mat-form-field appearance="outline" class="w-100">
-          <input
-            matInput
-            formControlName="lastName"
-            placeholder="Enter last name"
-            required
-          />
-          <mat-error *ngIf="contactForm.get('lastName')?.invalid && contactForm.get('lastName')?.touched">
-            <span *ngIf="contactForm.get('lastName')?.errors?.['required']">Last name is required</span>
-            <span *ngIf="contactForm.get('lastName')?.errors?.['minlength']">Last name must be at least 2 characters</span>
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-6">
-        <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Email</mat-label>
-        <mat-form-field appearance="outline" class="w-100">
-          <input
-            matInput
-            formControlName="email"
-            type="email"
-            placeholder="Enter email address"
-            required
-          />
-          <mat-error *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
-            <span *ngIf="contactForm.get('email')?.errors?.['required']">Email is required</span>
-            <span *ngIf="contactForm.get('email')?.errors?.['email']">Please enter a valid email</span>
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <div class="col-md-6">
-        <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Phone (Optional)</mat-label>
-        <mat-form-field appearance="outline" class="w-100">
-          <input
-            matInput
-            formControlName="phone"
-            placeholder="Enter phone number"
-          />
-        </mat-form-field>
-      </div>
-    </div>
-
-    <div class="row">
       <div class="col-12">
-        <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Tags</mat-label>
+        <h5 class="m-b-8">Person</h5>
+        <mat-button-toggle-group
+          [value]="personMode"
+          (change)="setPersonMode($event.value)"
+          exclusive>
+          <mat-button-toggle value="existing">Select existing</mat-button-toggle>
+          <mat-button-toggle value="new">Create new</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+    <div class="row mt-3" *ngIf="personMode === 'existing'">
+      <div class="col-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select Person</mat-label>
+          <mat-select formControlName="personId" placeholder="Choose a person">
+            <mat-option *ngFor="let person of availablePersons" [value]="person.id">
+              {{ person.firstName || '' }} {{ person.lastName || '' }} — {{ person.email }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="contactForm.get('personId')?.invalid && contactForm.get('personId')?.touched">
+            <span>Person is required</span>
+          </mat-error>
+        </mat-form-field>
+        <small class="text-muted">Only persons already created are listed here.</small>
+      </div>
+    </div>
+
+    <div class="row mt-3" *ngIf="personMode === 'new'" formGroupName="newPerson">
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" placeholder="Enter email address" required />
+          <mat-error *ngIf="contactForm.get('newPerson.email')?.invalid && contactForm.get('newPerson.email')?.touched">
+            <span *ngIf="contactForm.get('newPerson.email')?.errors?.['required']">Email is required</span>
+            <span *ngIf="contactForm.get('newPerson.email')?.errors?.['email']">Please enter a valid email</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Language</mat-label>
+          <input matInput formControlName="language" placeholder="e.g. fr, en" />
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName" placeholder="Enter first name" />
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastName" placeholder="Enter last name" />
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 mt-2">
+        <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Phone Numbers</mat-label>
+        <div formArrayName="phoneNumbers">
+          <div
+            class="row mb-2"
+            *ngFor="let phoneGroup of phoneNumbers.controls; let i = index"
+            [formGroupName]="i">
+            <div class="col-md-8">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Number</mat-label>
+                <input matInput formControlName="number" placeholder="Enter phone number" />
+              </mat-form-field>
+            </div>
+            <div class="col-md-3 d-flex align-items-center">
+              <mat-checkbox formControlName="isWhatsapp">WhatsApp</mat-checkbox>
+            </div>
+            <div class="col-md-1 d-flex align-items-center">
+              <button mat-icon-button type="button" (click)="removePhoneNumber(i)" [disabled]="phoneNumbers.length === 1">
+                <i-tabler name="trash" class="icon-18 d-flex"></i-tabler>
+              </button>
+            </div>
+          </div>
+        </div>
+        <button mat-stroked-button type="button" (click)="addPhoneNumber()">Add phone number</button>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-12">
+        <h5 class="m-b-8">Contact Settings</h5>
+      </div>
+      <div class="col-md-6">
+        <mat-slide-toggle formControlName="enabled" color="primary">Enabled</mat-slide-toggle>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Last Message Received At</mat-label>
+          <input matInput type="datetime-local" formControlName="lastMessageReceivedAt" />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-12">
+        <h5 class="m-b-8">Tags</h5>
         <mat-form-field appearance="outline" class="w-100">
           <mat-select formControlName="tagIds" multiple>
             <mat-option *ngFor="let tag of availableTags" [value]="tag.id">

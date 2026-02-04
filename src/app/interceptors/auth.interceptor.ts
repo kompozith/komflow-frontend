@@ -9,11 +9,12 @@ import {
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, switchMap, filter, take } from 'rxjs/operators';
 import { AuthService } from '../features/authentication/services/auth.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
   constructor(private injector: Injector) {}
 
@@ -27,9 +28,21 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Handle 401 errors (token expired) but exclude auth endpoints
-        if (error.status === 401 && !this.isAuthEndpoint(request.url)) {
+        if (this.isAuthEndpoint(request.url)) {
+          return throwError(() => error);
+        }
+
+        if (error.status === 401) {
+          if (!token) {
+            this.forceLogout();
+            return throwError(() => error);
+          }
           return this.handle401Error(request, next);
+        }
+
+        if (error.status === 403) {
+          this.forceLogout();
+          return throwError(() => error);
         }
         return throwError(() => error);
       })
@@ -45,11 +58,15 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private isAuthEndpoint(url: string): boolean {
-    // Exclude auth-related endpoints from 401 handling
-    return url.includes('/auth/login') ||
-           url.includes('/auth/register') ||
-           url.includes('/auth/password-reset') ||
-           url.includes('/auth/forgot-password');
+    const clean = url.replace(/^https?:\/\/[^\/]+/, '');
+    return clean.includes('/auth');
+  }
+
+  private forceLogout(): void {
+    const auth = this.injector.get(AuthService);
+    const router = this.injector.get(Router);
+    auth.logout();
+    router.navigate(['/authentication/login']);
   }
 
   private handle401Error(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -64,14 +81,17 @@ export class AuthInterceptor implements HttpInterceptor {
         switchMap((tokenResponse: any) => {
           this.isRefreshing = false;
           const newToken = tokenResponse.accessToken;
+          if (!newToken) {
+            this.forceLogout();
+            return throwError(() => new Error('No access token'));
+          }
           this.refreshTokenSubject.next(newToken);
           return next.handle(this.addToken(request, newToken));
         }),
         catchError((err) => {
           this.isRefreshing = false;
-          this.refreshTokenSubject.next(null);
-          // Refresh token failed, logout user
-          authService.logout();
+          this.refreshTokenSubject.error(err);
+          this.forceLogout();
           return throwError(() => err);
         })
       );
@@ -80,7 +100,7 @@ export class AuthInterceptor implements HttpInterceptor {
         filter(token => token != null),
         take(1),
         switchMap(token => {
-          return next.handle(this.addToken(request, token));
+          return next.handle(this.addToken(request, token!));
         })
       );
     }

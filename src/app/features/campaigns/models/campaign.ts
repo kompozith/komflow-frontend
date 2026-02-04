@@ -75,9 +75,27 @@ export enum CampaignStatus {
   DRAFT = 'DRAFT',
   SCHEDULED = 'SCHEDULED',
   RUNNING = 'RUNNING',
+  PARTIAL_SUCCESS = 'PARTIAL_SUCCESS',
+  SUCCESS = 'SUCCESS',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
   FAILED = 'FAILED'
+}
+
+export type CampaignEventType = 'STARTED' | 'IN_PROGRESS' | 'SUCCESS' | 'FAILED' | 'COMPLETED';
+
+export interface CampaignEvent {
+  type: CampaignEventType;
+  campaignId: number;
+  timestamp: string;
+  total?: number;
+  processed?: number;
+  successCount?: number;
+  failureCount?: number;
+  contactId?: number;
+  recipient?: string;
+  message?: string;
+  status?: CampaignStatus;
 }
 
 export interface CreateCampaignRequest {

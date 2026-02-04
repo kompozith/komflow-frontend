@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Optional } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -14,6 +14,9 @@ import { CommonModule } from '@angular/common';
 import { ContactService } from '../../services/contact.service';
 import { ContactDetails, UpdateContactRequest } from '../../models/contact';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TagService } from '../../../tags/services/tag.service';
+import { Tag } from '../../../tags/models/tag';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-contact-edit',
@@ -36,23 +39,36 @@ export class ContactEditComponent {
   isLoading = false;
   isSaving = false;
   contact: ContactDetails | null = null;
-  availableTags: any[] = []; // TODO: Load from service
+  availableTags: Tag[] = [];
 
   constructor(
-    public dialogRef: MatDialogRef<ContactEditComponent>,
+    @Optional() public dialogRef: MatDialogRef<ContactEditComponent> | null,
     private fb: FormBuilder,
     private contactService: ContactService,
+    private tagService: TagService,
     private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: { contact: ContactDetails }
+    private route: ActivatedRoute,
+    private router: Router,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { contact: ContactDetails }
   ) {
-    this.contact = data.contact;
     this.contactForm = this.fb.group({
-      firstName: [data.contact.person.firstName, [Validators.required, Validators.minLength(2)]],
-      lastName: [data.contact.person.lastName, [Validators.required, Validators.minLength(2)]],
-      email: [data.contact.person.email, [Validators.required, Validators.email]],
-      phone: [data.contact.person.phoneNumber || ''],
-      tagIds: [data.contact.tags?.map(tag => tag.id) || []]
+      personId: [null, [Validators.required]],
+      enabled: [true],
+      lastMessageReceivedAt: [''],
+      tagIds: [[]],
     });
+
+    if (data?.contact) {
+      this.contact = data.contact;
+      this.patchForm(this.contact);
+    } else {
+      const id = this.route.snapshot.params['id'];
+      if (id) {
+        this.loadContact(id);
+      }
+    }
+
+    this.loadTags();
   }
 
   onSubmit(): void {
@@ -61,17 +77,29 @@ export class ContactEditComponent {
       const formValue = this.contactForm.value;
 
       const contactData: UpdateContactRequest = {
-        firstName: formValue.firstName,
-        lastName: formValue.lastName,
-        email: formValue.email,
-        phone: formValue.phone || undefined,
+        personId: Number(formValue.personId),
+        enabled: !!formValue.enabled,
+        lastMessageReceivedAt: formValue.lastMessageReceivedAt
+          ? new Date(formValue.lastMessageReceivedAt).toISOString()
+          : null,
         tagIds: formValue.tagIds || []
       };
 
-      this.contactService.updateContact(this.contact!.id.toString(), contactData).subscribe({
+      const contactId = this.contact?.id?.toString();
+      if (!contactId) {
+        this.snackBar.open('Contact not loaded', 'Close', { duration: 3000 });
+        this.isSaving = false;
+        return;
+      }
+
+      this.contactService.updateContact(contactId, contactData).subscribe({
         next: (contact) => {
           this.snackBar.open('Contact updated successfully', 'Close', { duration: 3000 });
-          this.dialogRef.close({ event: 'Update' });
+          if (this.dialogRef) {
+            this.dialogRef.close({ event: 'Update' });
+          } else {
+            this.router.navigate(['/contacts/details', contactId]);
+          }
         },
         error: (error) => {
           console.error('Error updating contact:', error);
@@ -85,7 +113,11 @@ export class ContactEditComponent {
   }
 
   onCancel(): void {
-    this.dialogRef.close({ event: 'Cancel' });
+    if (this.dialogRef) {
+      this.dialogRef.close({ event: 'Cancel' });
+    } else {
+      this.router.navigate(['/contacts/list']);
+    }
   }
 
   private markFormGroupTouched(): void {
@@ -93,5 +125,50 @@ export class ContactEditComponent {
       const control = this.contactForm.get(key);
       control?.markAsTouched();
     });
+  }
+
+  private loadContact(id: string): void {
+    this.isLoading = true;
+    this.contactService.getContactById(id).subscribe({
+      next: (contact) => {
+        this.contact = contact;
+        this.patchForm(contact);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading contact:', error);
+        this.snackBar.open('Error loading contact', 'Close', { duration: 3000 });
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private patchForm(contact: ContactDetails): void {
+    this.contactForm.patchValue({
+      personId: contact.person?.id ?? null,
+      enabled: contact.enabled,
+      lastMessageReceivedAt: contact.lastMessageReceivedAt
+        ? this.toDateTimeLocal(contact.lastMessageReceivedAt)
+        : '',
+      tagIds: contact.tags?.map(tag => tag.id) || [],
+    });
+  }
+
+  private loadTags(): void {
+    this.tagService.getTags({ page: 0, size: 200 }).subscribe({
+      next: (response) => {
+        this.availableTags = response.content || [];
+      },
+      error: (error) => {
+        console.error('Error loading tags:', error);
+        this.snackBar.open('Error loading tags', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  private toDateTimeLocal(iso: string): string {
+    const date = new Date(iso);
+    const pad = (value: number) => value.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
 }

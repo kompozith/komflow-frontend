@@ -21,6 +21,8 @@ import { DeleteContactDialogComponent } from './delete-contact-dialog/delete-con
 import { ContactCreateComponent } from '../contact-create/contact-create.component';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import {MatTableDataSource} from "@angular/material/table";
+import { TagService } from '../../../tags/services/tag.service';
+import { Tag } from '../../../tags/models/tag';
 
 @Component({
   selector: 'app-contact-list',
@@ -60,9 +62,11 @@ export class ContactListComponent implements OnInit {
 
   // Filters
   searchText = '';
-  selectedTagId: string | '' = '';
-  sortBy = 'firstName';
-  sortDirection: 'asc' | 'desc' = 'asc';
+  selectedTagIds: number[] = [];
+  selectedEnabled: boolean | '' = '';
+  createdAtFrom: string | null = null;
+  createdAtTo: string | null = null;
+  availableTags: Tag[] = [];
 
   // Search debounce
   private searchSubject = new Subject<string>();
@@ -71,11 +75,13 @@ export class ContactListComponent implements OnInit {
       public dialog: MatDialog,
       private router: Router,
       private contactService: ContactService,
+      private tagService: TagService,
       private snackBar: MatSnackBar
     ) {}
 
   ngOnInit(): void {
     this.loadContacts();
+    this.loadTags();
 
     // Setup search debounce
     this.searchSubject.pipe(
@@ -133,9 +139,11 @@ export class ContactListComponent implements OnInit {
     const filters: ContactFilters = {
       page: pageIndex,
       size: this.pageSize,
-      sort: [`${this.sortBy},${this.sortDirection}`],
       search: this.searchText || undefined,
-      tagId: this.selectedTagId || undefined,
+      enabled: this.selectedEnabled === '' ? undefined : this.selectedEnabled,
+      createdAtFrom: this.createdAtFrom ? this.formatDate(this.createdAtFrom) : undefined,
+      createdAtTo: this.createdAtTo ? this.formatDate(this.createdAtTo) : undefined,
+      tagIds: this.selectedTagIds.length > 0 ? this.selectedTagIds : undefined,
     };
 
     this.contactService.getContacts(filters).subscribe({
@@ -178,18 +186,17 @@ export class ContactListComponent implements OnInit {
     this.searchSubject.next(searchText);
   }
 
-  onTagFilterChange(tagId: string): void {
-    this.selectedTagId = tagId || '';
+  onTagFilterChange(tagIds: number[]): void {
+    this.selectedTagIds = tagIds || [];
     this.loadContacts();
   }
 
-  onSortChange(sortBy: string): void {
-    if (this.sortBy === sortBy) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortBy = sortBy;
-      this.sortDirection = 'asc';
-    }
+  onEnabledFilterChange(value: boolean | ''): void {
+    this.selectedEnabled = value;
+    this.loadContacts();
+  }
+
+  onDateFilterChange(): void {
     this.loadContacts();
   }
 
@@ -225,5 +232,21 @@ export class ContactListComponent implements OnInit {
         this.loadContacts(this.currentPage);
       }
     });
+  }
+
+  private loadTags(): void {
+    this.tagService.getTags({ page: 0, size: 200 }).subscribe({
+      next: (response) => {
+        this.availableTags = response.content || [];
+      },
+      error: (error) => {
+        console.error('Error loading tags:', error);
+        this.snackBar.open('Error loading tags', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  private formatDate(dateValue: string): string {
+    return new Date(dateValue).toISOString();
   }
 }

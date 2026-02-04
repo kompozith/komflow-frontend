@@ -38,11 +38,13 @@ export class ContactService {
 
     if (filters.page !== undefined) params = params.set('page', filters.page.toString());
     if (filters.size !== undefined) params = params.set('size', filters.size.toString());
-    if (filters.sort && filters.sort.length > 0) {
-      filters.sort.forEach(sort => params = params.append('sort', sort));
-    }
     if (filters.search) params = params.set('search', filters.search);
-    if (filters.tagId) params = params.set('tagId', filters.tagId);
+    if (filters.enabled !== undefined) params = params.set('enabled', filters.enabled.toString());
+    if (filters.createdAtFrom) params = params.set('createdAtFrom', filters.createdAtFrom);
+    if (filters.createdAtTo) params = params.set('createdAtTo', filters.createdAtTo);
+    if (filters.tagIds && filters.tagIds.length > 0) {
+      params = params.set('tagIds', this.formatTagIds(filters.tagIds));
+    }
 
     const headers = this.getAuthHeaders();
 
@@ -154,5 +156,9 @@ export class ContactService {
 
   legacyGetContactList() {
     return this.contactList();
+  }
+
+  private formatTagIds(tagIds: number[]): string {
+    return `{${tagIds.join(',')}}`;
   }
 }

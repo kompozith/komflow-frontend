@@ -1,40 +1,33 @@
 // src/app/features/contacts/models/contact.ts
 
-// Contact model for listing (simplified structure)
+export interface PersonSummary {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  language: string;
+  phoneNumber: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Contact model for listing (backend: ContactWithTagCountDto)
 export interface Contact {
   id: number;
   enabled: boolean;
   lastMessageReceivedAt: string | null;
-  person: {
-    id: number;
-    email: string;
-    firstName: string;
-    lastName: string;
-    language: string;
-    phoneNumber: string | null;
-    createdAt: string;
-    updatedAt: string;
-  };
+  person: PersonSummary;
   tagCount: number;
   createdAt: string;
   updatedAt: string;
 }
 
-// ContactDetails model for detailed view (full structure)
+// ContactDetails model for detailed view (backend: ContactDetailsDto)
 export interface ContactDetails {
   id: number;
   enabled: boolean;
   lastMessageReceivedAt: string | null;
-  person: {
-    id: number;
-    email: string;
-    firstName: string;
-    lastName: string;
-    language: string;
-    phoneNumber: string | null;
-    createdAt: string;
-    updatedAt: string;
-  };
+  person: PersonSummary;
   tags: Tag[];
   createdAt: string;
   updatedAt: string;
@@ -68,23 +61,33 @@ export interface ContactPage {
 export interface ContactFilters {
   page?: number;
   size?: number;
-  sort?: string[];
   search?: string;
-  tagId?: string;
+  enabled?: boolean;
+  createdAtFrom?: string;
+  createdAtTo?: string;
+  tagIds?: number[];
 }
 
 export interface CreateContactRequest {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  tagIds?: string[];
+  enabled: boolean;
+  lastMessageReceivedAt?: string | null;
+  personId?: number;
+  person?: {
+    email: string;
+    firstName?: string;
+    lastName?: string;
+    language?: string;
+  };
+  phoneNumbers?: {
+    number: string;
+    isWhatsapp?: boolean;
+  }[];
+  tagIds?: number[];
 }
 
 export interface UpdateContactRequest {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string;
-  tagIds?: string[];
+  enabled: boolean;
+  lastMessageReceivedAt?: string | null;
+  personId: number;
+  tagIds?: number[];
 }

@@ -14,6 +14,8 @@
             <mat-option value="DRAFT">Draft</mat-option>
             <mat-option value="SCHEDULED">Scheduled</mat-option>
             <mat-option value="RUNNING">Running</mat-option>
+            <mat-option value="PARTIAL_SUCCESS">Partial Success</mat-option>
+            <mat-option value="SUCCESS">Success</mat-option>
             <mat-option value="COMPLETED">Completed</mat-option>
             <mat-option value="CANCELLED">Cancelled</mat-option>
             <mat-option value="FAILED">Failed</mat-option>
@@ -166,7 +168,7 @@
                   <span>Cancel</span>
                 </div>
               </button>
-              <button mat-menu-item *ngIf="element.status === 'DRAFT' || element.status === 'COMPLETED' || element.status === 'CANCELLED' || element.status === 'FAILED'">
+              <button mat-menu-item *ngIf="element.status === 'DRAFT' || element.status === 'SUCCESS' || element.status === 'PARTIAL_SUCCESS' || element.status === 'COMPLETED' || element.status === 'CANCELLED' || element.status === 'FAILED'">
                 <div class="d-flex align-items-center text-error" (click)="deleteCampaign(element)">
                   <tabler-icon name="trash" class="m-x-6"></tabler-icon>
                   <span>Delete</span>

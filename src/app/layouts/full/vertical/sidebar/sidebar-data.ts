@@ -67,6 +67,13 @@ export const navItems: NavItem[] = [
          roles: ['ADMIN', 'SUPER_ADMIN'],
        },
        {
+         displayName: 'Persons',
+         iconName: 'point',
+         route: 'user-management/persons',
+         roles: ['ADMIN', 'SUPER_ADMIN'],
+         permissions: ['PERSONNEL_VIEW'],
+       },
+       {
          displayName: 'Customers',
          iconName: 'point',
          route: 'user-management/customers',

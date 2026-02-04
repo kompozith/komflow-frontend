@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { UserListComponent } from './pages/user-list/user-list.component';
+import { PersonListComponent } from './pages/person-list/person-list.component';
 
 export const UserManagementRoutes: Routes = [
   {
@@ -14,6 +15,17 @@ export const UserManagementRoutes: Routes = [
           urls: [
             { title: 'User Management', url: 'user-management/all-users' },
             { title: 'All Users' },
+          ],
+        },
+      },
+      {
+        path: 'persons',
+        component: PersonListComponent,
+        data: {
+          title: 'Persons',
+          urls: [
+            { title: 'User Management', url: 'user-management/persons' },
+            { title: 'Persons' },
           ],
         },
       },

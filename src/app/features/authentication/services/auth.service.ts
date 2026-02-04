@@ -152,7 +152,7 @@ export class AuthService {
 
     return this.http.post<LoginResponse>(
       `${this.API_BASE_URL}/refresh`,
-      {}, // Empty body since token is in header
+      { refreshToken },
       { headers }
     ).pipe(
       tap(response => {

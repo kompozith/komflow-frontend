@@ -1,0 +1,9 @@
+<h2 mat-dialog-title>Submit Campaign</h2>
+<mat-dialog-content>
+  <p>Are you sure you want to submit the campaign "{{ data?.campaignName }}"?</p>
+  <p class="text-muted mb-0">This will start sending messages to recipients.</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button mat-dialog-close>Cancel</button>
+  <button mat-flat-button color="primary" (click)="confirm()">Submit</button>
+</mat-dialog-actions>

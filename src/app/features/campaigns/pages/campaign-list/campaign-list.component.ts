@@ -234,6 +234,8 @@ export class CampaignListComponent implements OnInit {
       case CampaignStatus.DRAFT: return 'secondary';
       case CampaignStatus.SCHEDULED: return 'info';
       case CampaignStatus.RUNNING: return 'warning';
+      case CampaignStatus.PARTIAL_SUCCESS: return 'warning';
+      case CampaignStatus.SUCCESS: return 'success';
       case CampaignStatus.COMPLETED: return 'success';
       case CampaignStatus.CANCELLED: return 'outline';
       case CampaignStatus.FAILED: return 'error';

@@ -40,7 +40,7 @@
   </div>
 
   <!-- Statistics Cards -->
-  <div *ngIf="!isLoading && campaign" class="row mb-3">
+  <div *ngIf="!isLoading && campaign && !isInSubmission" class="row mb-3">
     <div class="col-sm-6 col-lg-3">
       <mat-card class="cardWithShadow cursor-pointer bg-light-primary shadow-none">
         <mat-card-content class="d-flex align-items-center gap-16">
@@ -99,7 +99,7 @@
   </div>
 
   <!-- Message Details Card -->
-  <div *ngIf="!isLoading && campaign" class="row mb-3">
+  <div *ngIf="!isLoading && campaign && !isInSubmission" class="row mb-3">
     <div class="col-12">
       <mat-card class="cardWithShadow h-100">
         <mat-card-header>
@@ -144,7 +144,7 @@
   </div>
 
   <!-- Recipients and Tags Cards -->
-  <div *ngIf="!isLoading && campaign" class="row mb-3">
+  <div *ngIf="!isLoading && campaign && !isInSubmission" class="row mb-3">
     <!-- Direct Recipients -->
     <div class="col-lg-6" *ngIf="campaign.contacts.length > 0">
       <mat-card class="cardWithShadow h-100">
@@ -183,7 +183,7 @@
   </div>
 
   <!-- CC and BCC Recipients (for Email campaigns) -->
-  <div *ngIf="!isLoading && campaign && campaign.message.channel === 'EMAIL'" class="row mb-3">
+  <div *ngIf="!isLoading && campaign && !isInSubmission && campaign.message.channel === 'EMAIL'" class="row mb-3">
     <!-- CC Recipients -->
     <div class="col-lg-6" *ngIf="campaign.mailCcContacts.length > 0 || campaign.mailCcTags.length > 0">
       <mat-card class="cardWithShadow h-100">
@@ -249,8 +249,66 @@
     </div>
   </div>
 
+  <!-- Live Delivery -->
+  <div *ngIf="!isLoading && campaign && (isInSubmission || hasDeliveryReport)" class="row mb-3">
+    <div class="col-12">
+      <mat-card class="cardWithShadow">
+        <mat-card-header>
+          <mat-card-title>{{ isInSubmission ? 'Live Delivery' : 'Delivery Report' }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="f-s-14 f-w-600">Progress</div>
+            <div class="f-s-12 text-muted">
+              {{ progress.processed }} / {{ progress.total }} processed
+            </div>
+          </div>
+          <mat-progress-bar
+            mode="determinate"
+            [value]="progress.total ? (progress.processed / progress.total) * 100 : 0">
+          </mat-progress-bar>
+          <div class="row mt-3">
+            <div class="col-sm-4">
+              <div class="metric-card">
+                <div class="metric-label">Success</div>
+                <div class="metric-value text-success">{{ progress.success }}</div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="metric-card">
+                <div class="metric-label">Failed</div>
+                <div class="metric-value text-danger">{{ progress.failed }}</div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="metric-card">
+                <div class="metric-label">Remaining</div>
+                <div class="metric-value">{{ progress.total - progress.processed }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-8 mt-3">
+            <span class="live-indicator" [class.active]="isStreaming"></span>
+            <span class="f-s-12 text-muted">
+              {{ isStreaming ? 'Streaming updates in real time' : 'Waiting for campaign execution' }}
+            </span>
+          </div>
+
+          <div class="log-list mt-3" *ngIf="liveLogs.length > 0">
+            <div class="log-item" *ngFor="let log of liveLogs">
+              <div class="log-time">{{ log.timestamp | date:'HH:mm:ss' }}</div>
+              <div class="log-type" [ngClass]="log.type.toLowerCase()">{{ log.type }}</div>
+              <div class="log-message">{{ log.message }}</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
   <!-- Campaign Status Card -->
-  <div *ngIf="!isLoading && campaign" class="row mb-3">
+  <div *ngIf="!isLoading && campaign && !isInSubmission" class="row mb-3">
     <div class="col-12">
       <mat-card class="cardWithShadow">
         <mat-card-header>
@@ -333,3 +391,4 @@
     <button mat-stroked-button color="accent" (click)="goBack()">Back to List</button>
   </div>
 </div>
+
