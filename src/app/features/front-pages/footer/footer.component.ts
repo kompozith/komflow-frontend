@@ -17,7 +17,7 @@ export class FooterComponent {
     },
     {
       title: 'Invoice List',
-      href: "/apps/invoice/list"
+      href: "/apps/invoice"
     },
     {
       title: 'eCommerce',

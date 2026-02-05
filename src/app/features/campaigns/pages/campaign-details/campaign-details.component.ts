@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { CampaignService } from '../../services/campaign.service';
-import { CampaignDetails, CampaignEvent, CampaignStatus } from '../../models/campaign';
+import { CampaignDetails, CampaignEvent, CampaignStatus, CampaignSubmissionReport } from '../../models/campaign';
 import { MaterialModule } from 'src/app/material.module';
 import { CommonModule } from '@angular/common';
 import { BadgeComponent, BadgeVariant } from 'src/app/shared/components/badge/badge.component';
@@ -26,6 +26,7 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
   isStreaming = false;
   progress = { total: 0, processed: 0, success: 0, failed: 0 };
   liveLogs: { timestamp: string; type: string; message: string }[] = [];
+  reportAvailable = false;
   private eventSource: EventSource | null = null;
 
   constructor(
@@ -50,6 +51,7 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
     this.campaignService.getCampaignDetails(this.campaignId).subscribe({
       next: (campaign) => {
         this.campaign = campaign;
+        this.hydrateReportFromCampaign(campaign);
         this.isLoading = false;
         if (campaign.status === CampaignStatus.RUNNING) {
           this.startEventStream();
@@ -100,7 +102,7 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
   }
 
   get hasDeliveryReport(): boolean {
-    return this.progress.total > 0 || this.liveLogs.length > 0;
+    return this.reportAvailable || this.progress.total > 0 || this.liveLogs.length > 0;
   }
 
   getStatusColor(status: CampaignStatus): BadgeVariant {
@@ -157,7 +159,7 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/campaigns/list']);
+    this.router.navigate(['/campaigns']);
   }
 
   private startEventStream(): void {
@@ -199,9 +201,11 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
   private resetDeliveryReport(): void {
     this.progress = { total: 0, processed: 0, success: 0, failed: 0 };
     this.liveLogs = [];
+    this.reportAvailable = false;
   }
 
   private applyEvent(event: CampaignEvent): void {
+    this.reportAvailable = true;
     if (event.total !== undefined) {
       this.progress.total = event.total;
     }
@@ -227,6 +231,37 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
         this.campaign.status = event.status;
       }
       this.stopEventStream();
+    }
+  }
+
+  private hydrateReportFromCampaign(campaign: CampaignDetails): void {
+    const report = (campaign.submissionReport ||
+      campaign.deliveryReport ||
+      (campaign as unknown as { report?: CampaignSubmissionReport }).report ||
+      null);
+
+    if (!report) {
+      return;
+    }
+
+    this.reportAvailable = true;
+    this.progress = {
+      total: report.total ?? this.progress.total,
+      processed: report.processed ?? this.progress.processed,
+      success: report.success ?? this.progress.success,
+      failed: report.failed ?? this.progress.failed
+    };
+
+    const rawLogs = report.logs || report.events || [];
+    if (rawLogs.length > 0) {
+      this.liveLogs = rawLogs
+        .map((log) => ({
+          timestamp: log.timestamp,
+          type: log.type,
+          message: log.message
+        }))
+        .filter((log) => log.timestamp && log.type && log.message)
+        .slice(0, 200);
     }
   }
 

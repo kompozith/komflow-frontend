@@ -56,7 +56,7 @@ export class ContactDetailsComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/contacts/list']);
+    this.router.navigate(['/contacts']);
   }
 
   getContactInitials(firstName: string, lastName: string): string {

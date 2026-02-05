@@ -116,7 +116,7 @@ export class ContactEditComponent {
     if (this.dialogRef) {
       this.dialogRef.close({ event: 'Cancel' });
     } else {
-      this.router.navigate(['/contacts/list']);
+      this.router.navigate(['/contacts']);
     }
   }
 

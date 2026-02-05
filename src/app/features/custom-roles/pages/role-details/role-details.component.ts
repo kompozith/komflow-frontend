@@ -87,13 +87,13 @@ export class RoleDetailsComponent implements OnInit {
         console.error('Error loading role details:', error);
         this.snackBar.open('Error loading role details', 'Close', { duration: 3000 });
         this.isLoading = false;
-        this.router.navigate(['/roles/list']);
+        this.router.navigate(['/roles']);
       }
     });
   }
 
   goBack(): void {
-    this.router.navigate(['/roles/list']);
+    this.router.navigate(['/roles']);
   }
 
   getRoleTypeBadgeClass(isSystem: boolean): string {

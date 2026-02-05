@@ -8,22 +8,17 @@ export const TagsRoutes: Routes = [
     path: '',
     children: [
       {
-        path: 'list',
+        path: '',
         component: TagListComponent,
         canActivate: [PermissionGuard],
         data: {
           title: 'Tag List',
           permissions: ['TAG_LIST'],
           urls: [
-            { title: 'Tags', url: 'tags/list' },
+            { title: 'Tags', url: 'tags' },
             { title: 'All Tags' },
           ],
         },
-      },
-      {
-        path: '',
-        redirectTo: 'list',
-        pathMatch: 'full',
       },
     ],
   },

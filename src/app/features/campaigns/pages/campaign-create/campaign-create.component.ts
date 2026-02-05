@@ -133,7 +133,7 @@ export class CampaignCreateComponent implements OnInit {
     this.campaignService.createCampaign(campaignData).subscribe({
       next: (createdCampaign) => {
         this.snackBar.open('Campaign created successfully', 'Close', { duration: 3000 });
-        this.router.navigate(['/campaigns/list']);
+        this.router.navigate(['/campaigns']);
       },
       error: (error) => {
         console.error('Error creating campaign:', error);

@@ -66,7 +66,7 @@ export class MessageDetailsComponent implements OnInit {
         console.error('Error loading message:', error);
         this.snackBar.open('Error loading message', 'Close', { duration: 3000 });
         this.isLoading = false;
-        this.router.navigate(['/messages/list']);
+        this.router.navigate(['/messages']);
       }
     });
   }
@@ -76,7 +76,7 @@ export class MessageDetailsComponent implements OnInit {
   }
 
   onBack(): void {
-    this.router.navigate(['/messages/list']);
+    this.router.navigate(['/messages']);
   }
 
   getChannelIcon(channel: MessageChannel): string {

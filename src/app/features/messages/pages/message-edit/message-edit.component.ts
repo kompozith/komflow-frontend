@@ -85,7 +85,7 @@ export class MessageEditComponent implements OnInit {
         console.error('Error loading message:', error);
         this.snackBar.open('Error loading message', 'Close', { duration: 3000 });
         this.isLoading = false;
-        this.router.navigate(['/messages/list']);
+        this.router.navigate(['/messages']);
       }
     });
   }
@@ -116,7 +116,7 @@ export class MessageEditComponent implements OnInit {
       this.messageService.updateMessage(this.messageId, messageData).subscribe({
         next: (message) => {
           this.snackBar.open('Message updated successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/messages/list']);
+          this.router.navigate(['/messages']);
         },
         error: (error) => {
           console.error('Error updating message:', error);
@@ -130,7 +130,7 @@ export class MessageEditComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/messages/list']);
+    this.router.navigate(['/messages']);
   }
 
   private markFormGroupTouched(): void {

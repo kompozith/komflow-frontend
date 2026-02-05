@@ -1,41 +1,19 @@
 <div class="profile-content">
-  <!-- Campaign Header Card -->
+  <!-- Standalone Submit Button (outside cards) -->
   <div *ngIf="!isLoading && campaign" class="row mb-3">
-    <div class="col-12">
-      <mat-card class="cardWithShadow">
-        <mat-card-content class="p-4">
-          <div class="d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center gap-16">
-              <div
-                class="rounded-circle d-flex align-items-center justify-content-center f-w-600 bg-primary text-white"
-                style="width: 80px; height: 80px; font-size: 32px;"
-              >
-                <i-tabler name="send" class="icon-48 d-flex"></i-tabler>
-              </div>
-              <div>
-                <div class="d-flex align-items-center gap-8 mb-1">
-                  <h3 class="m-t-10 f-w-600 mb-0">{{ campaign.name }}</h3>
-                </div>
-                <p class="m-t-1 f-s-14 f-w-500 text-muted mb-2">{{ campaign.description || 'No description available' }}</p>
-              </div>
-            </div>
-            <div class="d-flex gap-8">
-              @if(canSubmit() || !isSubmitting) {
-              <button mat-flat-button color="primary" (click)="submitCampaign()">
-                <span *ngIf="!isSubmitting">
-                  <i-tabler name="send" class="icon-18 me-2"></i-tabler>
-                  Submit Campaign
-                </span>
-                <span *ngIf="isSubmitting">
-                  <mat-spinner diameter="20" class="me-2"></mat-spinner>
-                  Submitting...
-                </span>
-              </button>
-              }
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
+    <div class="col-12 d-flex justify-content-end">
+      @if(canSubmit() || !isSubmitting) {
+      <button mat-flat-button color="primary" (click)="submitCampaign()" [disabled]="!canSubmit() || isSubmitting">
+        <span *ngIf="!isSubmitting">
+          <i-tabler name="send" class="icon-18 me-2"></i-tabler>
+          Submit Campaign
+        </span>
+        <span *ngIf="isSubmitting">
+          <mat-spinner diameter="20" class="me-2"></mat-spinner>
+          Submitting...
+        </span>
+      </button>
+      }
     </div>
   </div>
 
@@ -98,17 +76,23 @@
     </div>
   </div>
 
-  <!-- Message Details Card -->
+  <!-- Campaign Details Card -->
   <div *ngIf="!isLoading && campaign && !isInSubmission" class="row mb-3">
     <div class="col-12">
       <mat-card class="cardWithShadow h-100">
         <mat-card-header>
-          <mat-card-title>Message Details</mat-card-title>
+          <mat-card-title>Campaign Info</mat-card-title>
         </mat-card-header>
         <mat-card-content>
+          <div class="mb-3">
+            <h3 class="m-t-10 f-w-600 mb-0">{{ campaign.name }}</h3>
+            <p class="m-t-1 f-s-14 f-w-500 text-muted mb-0">
+              {{ campaign.description || 'No description available' }}
+            </p>
+          </div>
           <div class="row g-4">
             <!-- Message Info -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <div class="d-flex align-items-center gap-16">
                 <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-primary text-white">
                   <i-tabler name="message" class="icon-24 d-flex"></i-tabler>
@@ -120,7 +104,7 @@
               </div>
             </div>
 
-            <div class="col-md-6 mb-3">
+            <div class="col-md-4 mb-3">
               <div class="d-flex align-items-center gap-16">
                 <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-success text-white">
                   <i-tabler name="device-desktop" class="icon-24 d-flex"></i-tabler>
@@ -132,8 +116,64 @@
               </div>
             </div>
 
+            <!-- Status -->
+            <div class="col-md-4">
+              <div class="d-flex align-items-center gap-16">
+                <div class="rounded-circle d-flex align-items-center justify-content-center f-w-600"
+                     [ngClass]="getStatusBadgeClass(campaign.status)"
+                     style="width: 40px; height: 40px; font-size: 16px;">
+                  <i-tabler [name]="getStatusIcon(campaign.status)" class="text-white"></i-tabler>
+                </div>
+                <div>
+                  <h6 class="f-s-16 f-w-600 mb-1">Status</h6>
+                  <p class="f-s-14 mb-0 d-flex align-items-center gap-8">
+                    <app-badge [variant]="getStatusColor(campaign.status)" [pill]="true">
+                      {{ campaign.status }}
+                    </app-badge>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dates -->
+            <div class="col-md-4">
+              <div class="d-flex align-items-center gap-16">
+                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-dark text-white">
+                  <i-tabler name="calendar-plus" class="icon-24 d-flex"></i-tabler>
+                </div>
+                <div>
+                  <h6 class="f-s-16 f-w-600 mb-1">Created</h6>
+                  <p class="f-s-14 mb-0">{{ campaign.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="d-flex align-items-center gap-16">
+                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-secondary text-white">
+                  <i-tabler name="calendar-check" class="icon-24 d-flex"></i-tabler>
+                </div>
+                <div>
+                  <h6 class="f-s-16 f-w-600 mb-1">Last Updated</h6>
+                  <p class="f-s-14 mb-0">{{ campaign.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4" *ngIf="campaign.scheduledAt">
+              <div class="d-flex align-items-center gap-16">
+                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-warning text-white">
+                  <i-tabler name="clock" class="icon-24 d-flex"></i-tabler>
+                </div>
+                <div>
+                  <h6 class="f-s-16 f-w-600 mb-1">Scheduled For</h6>
+                  <p class="f-s-14 mb-0">{{ campaign.scheduledAt | date:'dd/MM/yyyy HH:mm' }}</p>
+                </div>
+              </div>
+            </div>
+
             <!-- Message Content -->
-            <div class="col-12 mt-40">
+            <div class="col-12 mt-80">
               <h6 class="f-s-16 f-w-600 mb-3">Message Content</h6>
               <div class="message-content p-20 bg-light rounded" [innerHTML]="getHighlightedContent()"></div>
             </div>
@@ -300,76 +340,6 @@
               <div class="log-time">{{ log.timestamp | date:'HH:mm:ss' }}</div>
               <div class="log-type" [ngClass]="log.type.toLowerCase()">{{ log.type }}</div>
               <div class="log-message">{{ log.message }}</div>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
-
-  <!-- Campaign Status Card -->
-  <div *ngIf="!isLoading && campaign && !isInSubmission" class="row mb-3">
-    <div class="col-12">
-      <mat-card class="cardWithShadow">
-        <mat-card-header>
-          <mat-card-title>Campaign Status & Information</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="row g-4">
-            <!-- Status -->
-            <div class="col-md-6">
-              <div class="d-flex align-items-center gap-16">
-                <div class="rounded-circle d-flex align-items-center justify-content-center f-w-600"
-                     [ngClass]="getStatusBadgeClass(campaign.status)"
-                     style="width: 40px; height: 40px; font-size: 16px;">
-                  <i-tabler [name]="getStatusIcon(campaign.status)" class="text-white"></i-tabler>
-                </div>
-                <div>
-                  <h6 class="f-s-16 f-w-600 mb-1">Status</h6>
-                  <p class="f-s-14 mb-0 d-flex align-items-center gap-8">
-                    <app-badge [variant]="getStatusColor(campaign.status)" [pill]="true">
-                      {{ campaign.status }}
-                    </app-badge>
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Dates -->
-            <div class="col-md-6">
-              <div class="d-flex align-items-center gap-16">
-                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-dark text-white">
-                  <i-tabler name="calendar-plus" class="icon-24 d-flex"></i-tabler>
-                </div>
-                <div>
-                  <h6 class="f-s-16 f-w-600 mb-1">Created</h6>
-                  <p class="f-s-14 mb-0">{{ campaign.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="d-flex align-items-center gap-16">
-                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-secondary text-white">
-                  <i-tabler name="calendar-check" class="icon-24 d-flex"></i-tabler>
-                </div>
-                <div>
-                  <h6 class="f-s-16 f-w-600 mb-1">Last Updated</h6>
-                  <p class="f-s-14 mb-0">{{ campaign.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6" *ngIf="campaign.scheduledAt">
-              <div class="d-flex align-items-center gap-16">
-                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-warning text-white">
-                  <i-tabler name="clock" class="icon-24 d-flex"></i-tabler>
-                </div>
-                <div>
-                  <h6 class="f-s-16 f-w-600 mb-1">Scheduled For</h6>
-                  <p class="f-s-14 mb-0">{{ campaign.scheduledAt | date:'dd/MM/yyyy HH:mm' }}</p>
-                </div>
-              </div>
             </div>
           </div>
         </mat-card-content>

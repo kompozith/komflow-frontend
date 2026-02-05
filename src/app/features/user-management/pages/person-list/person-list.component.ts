@@ -81,8 +81,8 @@ export class PersonListComponent implements OnInit {
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading persons:', error);
-          this.snackBar.open('Error loading persons', 'Close', { duration: 3000 });
+          console.error('Error loading users:', error);
+          this.snackBar.open('Error loading users', 'Close', { duration: 3000 });
           this.isLoading = false;
         }
       });

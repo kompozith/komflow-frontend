@@ -111,7 +111,7 @@ export class ContactCreateComponent {
           if (this.dialogRef) {
             this.dialogRef.close({ event: 'Create' });
           } else {
-            this.router.navigate(['/contacts/list']);
+            this.router.navigate(['/contacts']);
           }
         },
         error: (error) => {
@@ -129,7 +129,7 @@ export class ContactCreateComponent {
     if (this.dialogRef) {
       this.dialogRef.close({ event: 'Cancel' });
     } else {
-      this.router.navigate(['/contacts/list']);
+      this.router.navigate(['/contacts']);
     }
   }
 

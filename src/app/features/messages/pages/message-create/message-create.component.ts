@@ -80,7 +80,7 @@ export class MessageCreateComponent implements OnInit {
       this.messageService.createMessage(messageData).subscribe({
         next: (message) => {
           this.snackBar.open('Message created successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/messages/list']);
+          this.router.navigate(['/messages'])
         },
         error: (error) => {
           console.error('Error creating message:', error);
@@ -94,7 +94,7 @@ export class MessageCreateComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/messages/list']);
+    this.router.navigate(['/messages'])
   }
 
   private markFormGroupTouched(): void {

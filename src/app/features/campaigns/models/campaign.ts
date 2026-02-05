@@ -98,6 +98,21 @@ export interface CampaignEvent {
   status?: CampaignStatus;
 }
 
+export interface CampaignSubmissionLog {
+  timestamp: string;
+  type: string;
+  message: string;
+}
+
+export interface CampaignSubmissionReport {
+  total?: number;
+  processed?: number;
+  success?: number;
+  failed?: number;
+  logs?: CampaignSubmissionLog[];
+  events?: CampaignSubmissionLog[];
+}
+
 export interface CreateCampaignRequest {
   name: string;
   description?: string;
@@ -191,4 +206,6 @@ export interface CampaignDetails {
   scheduledAt: string;
   createdAt: string;
   updatedAt: string;
+  submissionReport?: CampaignSubmissionReport;
+  deliveryReport?: CampaignSubmissionReport;
 }

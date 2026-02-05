@@ -7,12 +7,12 @@ export const RolesRoutes: Routes = [
     path: '',
     children: [
       {
-        path: 'list',
+        path: '',
         component: RolesListComponent,
         data: {
           title: 'Role List',
           urls: [
-            { title: 'Roles Management', url: 'roles/list' },
+            { title: 'Roles Management', url: 'roles' },
             { title: 'Roles List' },
           ],
         },
@@ -23,15 +23,10 @@ export const RolesRoutes: Routes = [
         data: {
           title: 'Role Details',
           urls: [
-            { title: 'Roles Management', url: 'roles/list' },
+            { title: 'Roles Management', url: 'roles' },
             { title: 'Role Details' },
           ],
         },
-      },
-      {
-        path: '',
-        redirectTo: 'list',
-        pathMatch: 'full',
       },
     ],
   },

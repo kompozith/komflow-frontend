@@ -2,8 +2,8 @@
   <mat-card-content>
     <div class="row">
       <div class="col-md-6">
-        <h4 class="m-b-0">Persons</h4>
-        <p class="text-muted m-b-0">Manage persons linked to users</p>
+        <h4 class="m-b-0">User Management</h4>
+        <p class="text-muted m-b-0">Manage users and their profiles</p>
       </div>
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100 hide-hint">
@@ -84,7 +84,7 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Action</th>
           <td mat-cell *matCellDef="let element" class="f-s-14">
-            <button mat-icon-button (click)="editPerson(element)" aria-label="Edit person">
+            <button mat-icon-button (click)="editPerson(element)" aria-label="Edit user">
               <mat-icon>
                 <tabler-icon name="edit"></tabler-icon>
               </mat-icon>

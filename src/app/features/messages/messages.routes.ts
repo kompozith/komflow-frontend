@@ -11,14 +11,14 @@ export const MessagesRoutes: Routes = [
     path: '',
     children: [
       {
-        path: 'list',
+        path: '',
         component: MessageListComponent,
         canActivate: [PermissionGuard],
         data: {
           title: 'Message List',
           permissions: ['MESSAGE_LIST'],
           urls: [
-            { title: 'Messages', url: 'messages/list' },
+            { title: 'Messages', url: 'messages' },
             { title: 'All Messages' },
           ],
         },
@@ -31,7 +31,7 @@ export const MessagesRoutes: Routes = [
           title: 'Create Message',
           permissions: ['MESSAGE_CREATE'],
           urls: [
-            { title: 'Messages', url: 'messages/list' },
+            { title: 'Messages', url: 'messages' },
             { title: 'Create Message' },
           ],
         },
@@ -44,7 +44,7 @@ export const MessagesRoutes: Routes = [
           title: 'Edit Message',
           permissions: ['MESSAGE_UPDATE'],
           urls: [
-            { title: 'Messages', url: 'messages/list' },
+            { title: 'Messages', url: 'messages' },
             { title: 'Edit Message' },
           ],
         },
@@ -57,15 +57,10 @@ export const MessagesRoutes: Routes = [
           title: 'Message Details',
           permissions: ['MESSAGE_SHOW'],
           urls: [
-            { title: 'Messages', url: 'messages/list' },
+            { title: 'Messages', url: 'messages' },
             { title: 'Message Details' },
           ],
         },
-      },
-      {
-        path: '',
-        redirectTo: 'list',
-        pathMatch: 'full',
       },
     ],
   },

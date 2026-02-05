@@ -11,14 +11,14 @@ export const ContactsRoutes: Routes = [
     path: '',
     children: [
       {
-        path: 'list',
+        path: '',
         component: ContactListComponent,
         canActivate: [PermissionGuard],
         data: {
           title: 'Contact List',
           permissions: ['CONTACT_LIST'],
           urls: [
-            { title: 'Contacts', url: 'contacts/list' },
+            { title: 'Contacts', url: 'contacts' },
             { title: 'All Contacts' },
           ],
         },
@@ -31,7 +31,7 @@ export const ContactsRoutes: Routes = [
           title: 'Contact Details',
           permissions: ['CONTACT_SHOW'],
           urls: [
-            { title: 'Contacts', url: 'contacts/list' },
+            { title: 'Contacts', url: 'contacts' },
             { title: 'Contact Details' },
           ],
         },
@@ -44,7 +44,7 @@ export const ContactsRoutes: Routes = [
           title: 'Create Contact',
           permissions: ['CONTACT_CREATE'],
           urls: [
-            { title: 'Contacts', url: 'contacts/list' },
+            { title: 'Contacts', url: 'contacts' },
             { title: 'Create Contact' },
           ],
         },
@@ -57,15 +57,10 @@ export const ContactsRoutes: Routes = [
           title: 'Edit Contact',
           permissions: ['CONTACT_UPDATE'],
           urls: [
-            { title: 'Contacts', url: 'contacts/list' },
+            { title: 'Contacts', url: 'contacts' },
             { title: 'Edit Contact' },
           ],
         },
-      },
-      {
-        path: '',
-        redirectTo: 'list',
-        pathMatch: 'full',
       },
     ],
   },

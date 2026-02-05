@@ -15,7 +15,7 @@ export const StoresRoutes: Routes = [
         data: {
           title: 'Store List',
           urls: [
-            { title: 'Stores', url: 'stores/list' },
+            { title: 'Stores', url: 'stores' },
             { title: 'All Stores' },
           ],
         },
@@ -26,7 +26,7 @@ export const StoresRoutes: Routes = [
         data: {
           title: 'Store Details',
           urls: [
-            { title: 'Stores', url: 'stores/list' },
+            { title: 'Stores', url: 'stores' },
             { title: 'Store Details' },
           ],
         },
@@ -37,7 +37,7 @@ export const StoresRoutes: Routes = [
         data: {
           title: 'Create Store',
           urls: [
-            { title: 'Stores', url: 'stores/list' },
+            { title: 'Stores', url: 'stores' },
             { title: 'Create Store' },
           ],
         },
@@ -48,7 +48,7 @@ export const StoresRoutes: Routes = [
         data: {
           title: 'Edit Store',
           urls: [
-            { title: 'Stores', url: 'stores/list' },
+            { title: 'Stores', url: 'stores' },
             { title: 'Edit Store' },
           ],
         },

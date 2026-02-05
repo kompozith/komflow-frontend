@@ -10,14 +10,14 @@ export const CampaignsRoutes: Routes = [
     path: '',
     children: [
       {
-        path: 'list',
+        path: '',
         component: CampaignListComponent,
         canActivate: [PermissionGuard],
         data: {
           title: 'Campaign List',
           permissions: ['CAMPAIGN_LIST'],
           urls: [
-            { title: 'Campaigns', url: 'campaigns/list' },
+            { title: 'Campaigns', url: 'campaigns' },
             { title: 'All Campaigns' },
           ],
         },
@@ -30,7 +30,7 @@ export const CampaignsRoutes: Routes = [
           title: 'Create Campaign',
           permissions: ['CAMPAIGN_CREATE'],
           urls: [
-            { title: 'Campaigns', url: 'campaigns/list' },
+            { title: 'Campaigns', url: 'campaigns' },
             { title: 'Create Campaign' },
           ],
         },
@@ -43,15 +43,10 @@ export const CampaignsRoutes: Routes = [
           title: 'Campaign Details',
           permissions: ['CAMPAIGN_LIST'],
           urls: [
-            { title: 'Campaigns', url: 'campaigns/list' },
+            { title: 'Campaigns', url: 'campaigns' },
             { title: 'Campaign Details' },
           ],
         },
-      },
-      {
-        path: '',
-        redirectTo: 'list',
-        pathMatch: 'full',
       },
     ],
   },

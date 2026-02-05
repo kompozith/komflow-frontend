@@ -15,7 +15,7 @@ export const FilesRoutes: Routes = [
           title: 'Files',
           permissions: ['FILE_LIST'],
           urls: [
-            { title: 'Files', url: 'files/list' },
+            { title: 'Files', url: 'files' },
             { title: 'All Files' },
           ],
         },
