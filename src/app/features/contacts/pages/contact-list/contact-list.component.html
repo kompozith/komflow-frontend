@@ -44,13 +44,17 @@
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Created From</mat-label>
-          <input matInput type="date" [(ngModel)]="createdAtFrom" (change)="onDateFilterChange()" />
+          <input matInput [matDatepicker]="createdFromPicker" [(ngModel)]="createdAtFrom" (dateChange)="onDateFilterChange()" />
+          <mat-datepicker-toggle matIconSuffix [for]="createdFromPicker"></mat-datepicker-toggle>
+          <mat-datepicker #createdFromPicker></mat-datepicker>
         </mat-form-field>
       </div>
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Created To</mat-label>
-          <input matInput type="date" [(ngModel)]="createdAtTo" (change)="onDateFilterChange()" />
+          <input matInput [matDatepicker]="createdToPicker" [(ngModel)]="createdAtTo" (dateChange)="onDateFilterChange()" />
+          <mat-datepicker-toggle matIconSuffix [for]="createdToPicker"></mat-datepicker-toggle>
+          <mat-datepicker #createdToPicker></mat-datepicker>
         </mat-form-field>
       </div>
     </div>

@@ -12,7 +12,8 @@ import {
   CampaignSendRequest,
   CampaignStats,
   CampaignRecipient,
-  CampaignDetails
+  CampaignDetails,
+  ScheduleCampaignRequest
 } from '../models/campaign';
 
 @Injectable({
@@ -94,6 +95,10 @@ export class CampaignService {
   // Preview campaign recipients before sending
   previewCampaignRecipients(campaignId: string): Observable<{ count: number; sampleRecipients: any[] }> {
     return this.http.get<{ count: number; sampleRecipients: any[] }>(`${this.apiUrl}/${campaignId}/preview`, { headers: this.getAuthHeaders() });
+  }
+
+  scheduleCampaign(request: ScheduleCampaignRequest): Observable<Campaign> {
+    return this.http.put<Campaign>(`${this.apiUrl}/${request.campaignId}/schedule`, { scheduledAt: request.scheduledAt }, { headers: this.getAuthHeaders() });
   }
 
   getCampaignEvents(campaignId: number): EventSource {

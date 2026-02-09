@@ -162,6 +162,12 @@
                   <span>Send Now</span>
                 </div>
               </button>
+              <button mat-menu-item *ngIf="element.status === 'DRAFT' || element.status === 'SCHEDULED'">
+                <div class="d-flex align-items-center text-accent" (click)="openScheduleDialog(element)">
+                  <tabler-icon name="calendar-clock" class="m-x-6"></tabler-icon>
+                  <span>{{ element.status === 'SCHEDULED' ? 'Reschedule' : 'Schedule' }}</span>
+                </div>
+              </button>
               <button mat-menu-item *ngIf="canCancelCampaign(element)">
                 <div class="d-flex align-items-center text-warning" (click)="cancelCampaign(element)">
                   <tabler-icon name="x" class="m-x-6"></tabler-icon>

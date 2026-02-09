@@ -1,8 +1,18 @@
 <div class="profile-content">
-  <!-- Standalone Submit Button (outside cards) -->
+  <!-- Standalone Submit and Schedule Buttons (outside cards) -->
   <div *ngIf="!isLoading && campaign" class="row mb-3">
-    <div class="col-12 d-flex justify-content-end">
-      @if(canSubmit() || !isSubmitting) {
+    <div class="col-12 d-flex justify-content-end gap-8">
+      @if(canSchedule() || !isSubmitting) {
+      <button mat-stroked-button color="accent" (click)="openScheduleDialog()" [disabled]="!canSchedule() || isSubmitting">
+        <span *ngIf="!isScheduled()">
+          <i-tabler name="calendar-clock" class="icon-18 me-2"></i-tabler>
+          Schedule
+        </span>
+        <span *ngIf="isScheduled()">
+          <i-tabler name="calendar-edit" class="icon-18 me-2"></i-tabler>
+          Reschedule
+        </span>
+      </button>
       <button mat-flat-button color="primary" (click)="submitCampaign()" [disabled]="!canSubmit() || isSubmitting">
         <span *ngIf="!isSubmitting">
           <i-tabler name="send" class="icon-18 me-2"></i-tabler>
@@ -27,7 +37,7 @@
           </div>
           <div class="info">
             <h5 class="f-w-400 lh-sm f-s-14">Direct Recipients</h5>
-            <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.contacts.length }} contacts</h5>
+            <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.contacts?.length }} contacts</h5>
           </div>
         </mat-card-content>
       </mat-card>
@@ -41,7 +51,7 @@
           </div>
           <div class="info">
             <h5 class="f-w-400 lh-sm f-s-14">CC Recipients</h5>
-            <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.mailCcContacts.length }} contacts, {{ campaign.mailCcTags.length }} tags</h5>
+            <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.mailCcContacts?.length }} contacts, {{ campaign.mailCcTags?.length }} tags</h5>
           </div>
         </mat-card-content>
       </mat-card>
@@ -55,7 +65,7 @@
           </div>
           <div class="info">
             <h5 class="f-w-400 lh-sm f-s-14">BCC Recipients</h5>
-            <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.mailCciContacts.length }} contacts, {{ campaign.mailCciTags.length }} tags</h5>
+            <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.mailCciContacts?.length }} contacts, {{ campaign.mailCciTags?.length }} tags</h5>
           </div>
         </mat-card-content>
       </mat-card>
@@ -69,7 +79,7 @@
           </div>
           <div class="info">
             <h5 class="f-w-400 lh-sm f-s-14">Tags</h5>
-            <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.tags.length }} tags</h5>
+            <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.tags?.length }} tags</h5>
           </div>
         </mat-card-content>
       </mat-card>
@@ -186,7 +196,7 @@
   <!-- Recipients and Tags Cards -->
   <div *ngIf="!isLoading && campaign && !isInSubmission" class="row mb-3">
     <!-- Direct Recipients -->
-    <div class="col-lg-6" *ngIf="campaign.contacts.length > 0">
+    <div class="col-lg-6" *ngIf="(campaign.contacts?.length ?? 0) > 0">
       <mat-card class="cardWithShadow h-100">
         <mat-card-header>
           <mat-card-title>Direct Recipients</mat-card-title>
@@ -204,7 +214,7 @@
     </div>
 
     <!-- Tags -->
-    <div class="col-lg-6" *ngIf="campaign.tags.length > 0">
+    <div class="col-lg-6" *ngIf="(campaign.tags?.length ?? 0) > 0">
       <mat-card class="cardWithShadow h-100">
         <mat-card-header>
           <mat-card-title>Tags</mat-card-title>
@@ -225,13 +235,13 @@
   <!-- CC and BCC Recipients (for Email campaigns) -->
   <div *ngIf="!isLoading && campaign && !isInSubmission && campaign.message.channel === 'EMAIL'" class="row mb-3">
     <!-- CC Recipients -->
-    <div class="col-lg-6" *ngIf="campaign.mailCcContacts.length > 0 || campaign.mailCcTags.length > 0">
+    <div class="col-lg-6" *ngIf="(campaign.mailCcContacts?.length ?? 0) > 0 || (campaign.mailCcTags?.length ?? 0) > 0">
       <mat-card class="cardWithShadow h-100">
         <mat-card-header>
           <mat-card-title>CC Recipients</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <div *ngIf="campaign.mailCcContacts.length > 0" class="mb-3">
+          <div *ngIf="(campaign.mailCcContacts?.length ?? 0) > 0" class="mb-3">
             <h6 class="f-s-14 f-w-600 mb-2">Contacts</h6>
             <div class="recipients-list">
               <mat-chip-listbox>
@@ -242,7 +252,7 @@
             </div>
           </div>
           
-          <div *ngIf="campaign.mailCcTags.length > 0">
+          <div *ngIf="(campaign.mailCcTags?.length ?? 0) > 0">
             <h6 class="f-s-14 f-w-600 mb-2">Tags</h6>
             <div class="tags-list">
               <mat-chip-listbox>
@@ -257,13 +267,13 @@
     </div>
 
     <!-- BCC Recipients -->
-    <div class="col-lg-6" *ngIf="campaign.mailCciContacts.length > 0 || campaign.mailCciTags.length > 0">
+    <div class="col-lg-6" *ngIf="(campaign.mailCciContacts?.length ?? 0) > 0 || (campaign.mailCciTags?.length ?? 0) > 0">
       <mat-card class="cardWithShadow h-100">
         <mat-card-header>
           <mat-card-title>BCC Recipients</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <div *ngIf="campaign.mailCciContacts.length > 0" class="mb-3">
+          <div *ngIf="(campaign.mailCciContacts?.length ?? 0) > 0" class="mb-3">
             <h6 class="f-s-14 f-w-600 mb-2">Contacts</h6>
             <div class="recipients-list">
               <mat-chip-listbox>
@@ -274,7 +284,7 @@
             </div>
           </div>
           
-          <div *ngIf="campaign.mailCciTags.length > 0">
+          <div *ngIf="(campaign.mailCciTags?.length ?? 0) > 0">
             <h6 class="f-s-14 f-w-600 mb-2">Tags</h6>
             <div class="tags-list">
               <mat-chip-listbox>
@@ -335,7 +345,7 @@
             </span>
           </div>
 
-          <div class="log-list mt-3" *ngIf="liveLogs.length > 0">
+          <div class="log-list mt-3" *ngIf="(liveLogs?.length ?? 0) > 0">
             <div class="log-item" *ngFor="let log of liveLogs">
               <div class="log-time">{{ log.timestamp | date:'HH:mm:ss' }}</div>
               <div class="log-type" [ngClass]="log.type.toLowerCase()">{{ log.type }}</div>

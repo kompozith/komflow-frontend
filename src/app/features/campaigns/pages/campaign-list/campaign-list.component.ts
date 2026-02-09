@@ -16,6 +16,7 @@ import { CampaignService } from '../../services/campaign.service';
 import { Campaign, CampaignPage, CampaignFilters, CampaignStatus } from '../../models/campaign';
 import {BadgeComponent, BadgeVariant} from '../../../../shared/components/badge/badge.component';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { ScheduleCampaignDialogComponent, ScheduleCampaignDialogData } from '../../pages/campaign-details/schedule-campaign-dialog.component';
 
 @Component({
   selector: 'app-campaign-list',
@@ -249,5 +250,36 @@ export class CampaignListComponent implements OnInit {
 
   canCancelCampaign(campaign: Campaign): boolean {
     return campaign.status === CampaignStatus.SCHEDULED || campaign.status === CampaignStatus.RUNNING;
+  }
+
+  openScheduleDialog(campaign: Campaign): void {
+    const dialogData: ScheduleCampaignDialogData = {
+      campaignId: campaign.id,
+      campaignName: campaign.name,
+      existingScheduledAt: campaign.scheduledAt
+    };
+
+    const dialogRef = this.dialog.open(ScheduleCampaignDialogComponent, {
+      data: dialogData,
+      width: '500px'
+    });
+
+    dialogRef.afterClosed().subscribe((result: { scheduledAt: string } | undefined) => {
+      if (!result?.scheduledAt) return;
+
+      this.campaignService.scheduleCampaign({
+        campaignId: campaign.id,
+        scheduledAt: result.scheduledAt
+      }).subscribe({
+        next: () => {
+          this.snackBar.open('Campaign scheduled successfully', 'Close', { duration: 3000 });
+          this.loadCampaigns(this.currentPage);
+        },
+        error: (error) => {
+          console.error('Error scheduling campaign:', error);
+          this.snackBar.open('Error scheduling campaign', 'Close', { duration: 3000 });
+        }
+      });
+    });
   }
 }

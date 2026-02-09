@@ -9,10 +9,11 @@ import { CommonModule } from '@angular/common';
 import { BadgeComponent, BadgeVariant } from 'src/app/shared/components/badge/badge.component';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { SubmitCampaignDialogComponent } from 'src/app/features/campaigns/pages/campaign-details/submit-campaign-dialog.component';
+import { ScheduleCampaignDialogComponent, ScheduleCampaignDialogData } from 'src/app/features/campaigns/pages/campaign-details/schedule-campaign-dialog.component';
 
 @Component({
   selector: 'app-campaign-details',
-  imports: [MaterialModule, CommonModule, BadgeComponent, TablerIconsModule, SubmitCampaignDialogComponent],
+  imports: [MaterialModule, CommonModule, BadgeComponent, TablerIconsModule, SubmitCampaignDialogComponent, ScheduleCampaignDialogComponent],
   templateUrl: './campaign-details.component.html',
   styleUrl: './campaign-details.component.scss'
 })
@@ -95,6 +96,47 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
 
   canSubmit(): boolean {
     return this.campaign?.status === CampaignStatus.DRAFT;
+  }
+
+  canSchedule(): boolean {
+    return this.campaign?.status === CampaignStatus.DRAFT || this.campaign?.status === CampaignStatus.SCHEDULED;
+  }
+
+  isScheduled(): boolean {
+    return this.campaign?.status === CampaignStatus.SCHEDULED;
+  }
+
+  openScheduleDialog(): void {
+    if (!this.campaign || (!this.canSchedule() && !this.isScheduled())) return;
+
+    const dialogData: ScheduleCampaignDialogData = {
+      campaignId: this.campaign.id.toString(),
+      campaignName: this.campaign.name,
+      existingScheduledAt: this.campaign.scheduledAt
+    };
+
+    const dialogRef = this.dialog.open(ScheduleCampaignDialogComponent, {
+      data: dialogData,
+      width: '500px'
+    });
+
+    dialogRef.afterClosed().subscribe((result: { scheduledAt: string } | undefined) => {
+      if (!result?.scheduledAt) return;
+
+      this.campaignService.scheduleCampaign({
+        campaignId: this.campaign!.id.toString(),
+        scheduledAt: result.scheduledAt
+      }).subscribe({
+        next: (updatedCampaign) => {
+          this.campaign = updatedCampaign as unknown as CampaignDetails;
+          this.snackBar.open('Campaign scheduled successfully', 'Close', { duration: 3000 });
+        },
+        error: (error) => {
+          console.error('Error scheduling campaign:', error);
+          this.snackBar.open('Error scheduling campaign', 'Close', { duration: 3000 });
+        }
+      });
+    });
   }
 
   get isInSubmission(): boolean {

@@ -2,7 +2,7 @@ import { AuthUser } from "./auth-user";
 
 export interface LoginResponse {
   accessToken: string;
-  refreshToken: string;
+  refreshToken?: string | null;
   tokenType: string;
   expiresIn: number;
   user: {

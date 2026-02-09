@@ -1,0 +1,63 @@
+<h2 mat-dialog-title class="d-flex align-items-center gap-8">
+  <i-tabler name="calendar-clock" class="icon-22 text-primary"></i-tabler>
+  Schedule Campaign
+</h2>
+
+<mat-dialog-content class="mat-mdc-dialog-content">
+  <p class="text-muted mb-4">
+    Schedule "<strong>{{ data.campaignName }}</strong>" to be sent at a specific date and time.
+  </p>
+
+  <form [formGroup]="form" class="schedule-form">
+    <div class="row g-3">
+      <!-- Date Picker -->
+      <div class="col-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select Date</mat-label>
+          <input matInput [matDatepicker]="datepicker" formControlName="scheduledDate" [min]="minDate">
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+          <mat-datepicker #datepicker></mat-datepicker>
+          <mat-error *ngIf="form.get('scheduledDate')?.hasError('required')">
+            Date is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Time Picker -->
+      <div class="col-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select Time</mat-label>
+          <input matInput type="time" formControlName="scheduledTime" placeholder="HH:mm">
+          <i-tabler name="clock" matTextSuffix class="text-muted"></i-tabler>
+          <mat-error *ngIf="form.get('scheduledTime')?.hasError('required')">
+            Time is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-section mt-4 p-3 bg-light rounded" *ngIf="form.get('scheduledDate')?.valid && form.get('scheduledTime')?.valid">
+      <div class="d-flex align-items-center gap-8">
+        <i-tabler name="calendar-check" class="text-success icon-20"></i-tabler>
+        <span class="f-s-14">
+          Campaign will be sent on
+          <strong>{{ form.value.scheduledDate | date:'EEEE, MMMM d, y' }}</strong>
+          at
+          <strong>{{ form.value.scheduledTime }}</strong>
+        </span>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="mat-mdc-dialog-actions">
+  <button mat-stroked-button (click)="onCancel()">
+    <i-tabler name="x" class="icon-18 me-2"></i-tabler>
+    Cancel
+  </button>
+  <button mat-flat-button color="primary" (click)="onSchedule()" [disabled]="form.invalid">
+    <i-tabler name="calendar-plus" class="icon-18 me-2"></i-tabler>
+    Schedule
+  </button>
+</mat-dialog-actions>

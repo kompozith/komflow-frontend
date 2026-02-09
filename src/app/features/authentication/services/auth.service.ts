@@ -59,7 +59,10 @@ export class AuthService {
       password: credentials.password
     };
 
-    return this.http.post<LoginResponse>(`${this.API_BASE_URL}/login`, loginData, { headers: this.getDefaultHeaders() }).pipe(
+    return this.http.post<LoginResponse>(`${this.API_BASE_URL}/login`, loginData, {
+      headers: this.getDefaultHeaders(),
+      withCredentials: true
+    }).pipe(
       tap(response => {
         this.setSession(response, rememberMe);
         // Set permissions and roles from login response
@@ -81,7 +84,7 @@ export class AuthService {
    */
   logout(): void {
     // Call backend logout endpoint. Use subscribe so callers don't need to change (keeps void signature).
-    this.http.post(`${this.API_BASE_URL}/logout`, {}, { headers: this.getDefaultHeaders() }).pipe(
+    this.http.post(`${this.API_BASE_URL}/logout`, {}, { headers: this.getDefaultHeaders(), withCredentials: true }).pipe(
       tap(() => {
         // Successfully logged out on server (no-op here)
       }),
@@ -137,23 +140,10 @@ export class AuthService {
    * Refresh token using refresh token in Authorization header
    */
   refreshToken(): Observable<LoginResponse> {
-    const refreshToken = this.getStorageItem(AUTH_CONFIG.REFRESH_TOKEN_KEY);
-
-    if (!refreshToken) {
-      this.logout();
-      return throwError(() => new Error('No refresh token available'));
-    }
-
-    // Send refresh token in Authorization header as per API docs
-    const headers = {
-      ...this.getDefaultHeaders(),
-      'Authorization': `Bearer ${refreshToken}`
-    };
-
     return this.http.post<LoginResponse>(
       `${this.API_BASE_URL}/refresh`,
-      { refreshToken },
-      { headers }
+      {},
+      { headers: this.getDefaultHeaders(), withCredentials: true }
     ).pipe(
       tap(response => {
         this.updateAccessToken(response.accessToken, response.expiresIn);
@@ -232,7 +222,7 @@ export class AuthService {
 
     // Tokens
     storage.setItem(AUTH_CONFIG.TOKEN_KEY, response.accessToken);
-    storage.setItem(AUTH_CONFIG.REFRESH_TOKEN_KEY, response.refreshToken);
+    // Refresh token is stored in HttpOnly cookie by backend
 
     // User - map backend user to AuthUser format
     const authUser: AuthUser = {
@@ -267,8 +257,7 @@ export class AuthService {
     // Clear both storages to be safe
     [localStorage, sessionStorage].forEach(storage => {
       storage.removeItem(AUTH_CONFIG.TOKEN_KEY);
-      // Ensure refresh token is also removed (was previously omitted)
-      storage.removeItem(AUTH_CONFIG.REFRESH_TOKEN_KEY);
+      // Refresh token is HttpOnly cookie, cleared server-side on logout
       storage.removeItem(AUTH_CONFIG.USER_KEY);
       storage.removeItem(AUTH_CONFIG.REMEMBER_KEY);
       storage.removeItem(`${AUTH_CONFIG.TOKEN_KEY_EXPIRES}`);
@@ -354,24 +343,35 @@ export class AuthService {
       errorMessage = `Client error: ${error.error.message}`;
     } else {
       // Server-side error
-      switch (error.status) {
-        case 400:
-          errorMessage = 'Invalid credentials provided';
-          break;
-        case 401:
-          errorMessage = 'Invalid email/phone or password';
-          break;
-        case 403:
-          errorMessage = 'Account is disabled or suspended';
-          break;
-        case 429:
-          errorMessage = 'Too many login attempts. Please try again later';
-          break;
-        case 500:
-          errorMessage = 'Server error. Please try again later';
-          break;
-        default:
-          errorMessage = `Server error: ${error.status}`;
+      const apiError = error.error || {};
+      const apiCode = typeof apiError.error === 'string' ? apiError.error : null;
+      const apiMessage = typeof apiError.message === 'string' ? apiError.message : null;
+
+      if (apiCode === 'INVALID_CREDENTIALS' || error.status === 401 || error.status === 404) {
+        errorMessage = 'Invalid credentials';
+      } else if (apiCode === 'ACCESS_DENIED') {
+        errorMessage = 'Account is disabled or suspended';
+      } else if (apiMessage === 'INVALID_DATA') {
+        errorMessage = 'Invalid input. Please check the form.';
+      } else if (apiMessage) {
+        errorMessage = apiMessage;
+      } else {
+        switch (error.status) {
+          case 400:
+            errorMessage = 'Invalid request';
+            break;
+          case 403:
+            errorMessage = 'Account is disabled or suspended';
+            break;
+          case 429:
+            errorMessage = 'Too many login attempts. Please try again later';
+            break;
+          case 500:
+            errorMessage = 'Server error. Please try again later';
+            break;
+          default:
+            errorMessage = `Server error: ${error.status}`;
+        }
       }
     }
 

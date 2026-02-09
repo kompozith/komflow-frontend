@@ -142,6 +142,11 @@ export interface CampaignSendRequest {
   campaignId: string;
 }
 
+export interface ScheduleCampaignRequest {
+  campaignId: string;
+  scheduledAt: string; // ISO 8601 datetime
+}
+
 export interface CampaignStats {
   totalCampaigns: number;
   activeCampaigns: number;
