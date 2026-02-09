@@ -102,6 +102,10 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
     return this.campaign?.status === CampaignStatus.DRAFT || this.campaign?.status === CampaignStatus.SCHEDULED;
   }
 
+  canCancelSchedule(): boolean {
+    return this.campaign?.status === CampaignStatus.SCHEDULED;
+  }
+
   isScheduled(): boolean {
     return this.campaign?.status === CampaignStatus.SCHEDULED;
   }
@@ -134,6 +138,33 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error scheduling campaign:', error);
           this.snackBar.open('Error scheduling campaign', 'Close', { duration: 3000 });
+        }
+      });
+    });
+  }
+
+  cancelSchedule(): void {
+    if (!this.campaign || !this.canCancelSchedule() || this.isSubmitting) return;
+
+    const dialogRef = this.dialog.open(SubmitCampaignDialogComponent, {
+      data: { campaignName: this.campaign.name }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
+      this.isSubmitting = true;
+      this.campaignService.cancelSchedule(this.campaignId).subscribe({
+        next: (response) => {
+          this.snackBar.open(response.message || 'Campaign schedule cancelled successfully', 'Close', { duration: 3000 });
+          this.loadCampaignDetails();
+          this.isSubmitting = false;
+        },
+        error: (error) => {
+          console.error('Error cancelling campaign schedule:', error);
+          const errorMessage = error.error?.message || error.error?.error || 'Error cancelling campaign schedule';
+          this.snackBar.open(errorMessage, 'Close', { duration: 5000 });
+          this.isSubmitting = false;
         }
       });
     });
@@ -179,10 +210,10 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
     const statusIcons: { [key: string]: string } = {
       'DRAFT': 'edit',
       'SCHEDULED': 'clock',
-      'RUNNING': 'play',
+      'RUNNING': 'player-play',
       'PARTIAL_SUCCESS': 'alert-circle',
-      'SUCCESS': 'check-circle',
-      'COMPLETED': 'check-circle',
+      'SUCCESS': 'check',
+      'COMPLETED': 'check',
       'CANCELLED': 'x',
       'FAILED': 'alert-triangle'
     };

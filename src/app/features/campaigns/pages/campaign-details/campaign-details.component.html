@@ -2,8 +2,18 @@
   <!-- Standalone Submit and Schedule Buttons (outside cards) -->
   <div *ngIf="!isLoading && campaign" class="row mb-3">
     <div class="col-12 d-flex justify-content-end gap-8">
-      @if(canSchedule() || !isSubmitting) {
-      <button mat-stroked-button color="accent" (click)="openScheduleDialog()" [disabled]="!canSchedule() || isSubmitting">
+      @if((canSchedule() || !isSubmitting) && (!isSubmitting)) {
+      <button *ngIf="canCancelSchedule()" mat-stroked-button color="warn" (click)="cancelSchedule()">
+        <span *ngIf="!isSubmitting">
+          <i-tabler name="calendar-x" class="icon-18 me-2"></i-tabler>
+          Cancel Schedule
+        </span>
+        <span *ngIf="isSubmitting">
+          <mat-spinner diameter="20" class="me-2"></mat-spinner>
+          Cancelling...
+        </span>
+      </button>
+      <button *ngIf="canSchedule()" mat-stroked-button color="accent" (click)="openScheduleDialog()">
         <span *ngIf="!isScheduled()">
           <i-tabler name="calendar-clock" class="icon-18 me-2"></i-tabler>
           Schedule
@@ -13,7 +23,7 @@
           Reschedule
         </span>
       </button>
-      <button mat-flat-button color="primary" (click)="submitCampaign()" [disabled]="!canSubmit() || isSubmitting">
+      <button *ngIf="canSubmit()" mat-flat-button color="primary" (click)="submitCampaign()">
         <span *ngIf="!isSubmitting">
           <i-tabler name="send" class="icon-18 me-2"></i-tabler>
           Submit Campaign

@@ -101,6 +101,10 @@ export class CampaignService {
     return this.http.put<Campaign>(`${this.apiUrl}/${request.campaignId}/schedule`, { scheduledAt: request.scheduledAt }, { headers: this.getAuthHeaders() });
   }
 
+  cancelSchedule(campaignId: number): Observable<{ message: string; data: Campaign }> {
+    return this.http.put<{ message: string; data: Campaign }>(`${this.apiUrl}/${campaignId}/cancel-schedule`, {}, { headers: this.getAuthHeaders() });
+  }
+
   getCampaignEvents(campaignId: number): EventSource {
     const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
     const tokenParam = token ? `?token=${encodeURIComponent(token)}` : '';
