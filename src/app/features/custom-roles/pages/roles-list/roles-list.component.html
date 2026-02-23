@@ -53,6 +53,7 @@
 <mat-card class="cardWithShadow">
   <mat-card-content>
     <div class="table-responsive">
+      <ng-container *ngIf="!isLoading; else rolesListSkeleton">
       <table mat-table [dataSource]="dataSource" class="w-100">
         <ng-container matColumnDef="rowNumber">
           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">#</th>
@@ -180,6 +181,11 @@
         [hidePageSize]="false"
       >
       </mat-paginator>
+      </ng-container>
+
+      <ng-template #rolesListSkeleton>
+        <app-skeleton-table [columns]="6" [rows]="6" [chipColumns]="[2]"></app-skeleton-table>
+      </ng-template>
     </div>
   </mat-card-content>
 </mat-card>

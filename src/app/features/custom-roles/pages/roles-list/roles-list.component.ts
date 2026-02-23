@@ -23,6 +23,7 @@ import { EditRoleDialogComponent } from './edit-role-dialog/edit-role-dialog.com
 import { DeleteRoleDialogComponent } from './delete-role-dialog/delete-role-dialog.component';
 import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog/confirm-delete-dialog.component';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
 
 @Component({
   selector: 'app-roles-list',
@@ -37,6 +38,7 @@ import { MatSlideToggleChange } from '@angular/material/slide-toggle';
     MatMenuModule,
     MatIconModule,
     BadgeComponent,
+    SkeletonTableComponent,
   ],
 })
 export class RolesListComponent implements OnInit {
