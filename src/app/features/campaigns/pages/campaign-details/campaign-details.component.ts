@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { CampaignService } from '../../services/campaign.service';
-import { CampaignDetails, CampaignEvent, CampaignStatus, CampaignSubmissionReport } from '../../models/campaign';
+import { CampaignDetails, CampaignEvent, CampaignMessageAttachment, CampaignStatus, CampaignSubmissionReport } from '../../models/campaign';
 import { MaterialModule } from 'src/app/material.module';
 import { CommonModule } from '@angular/common';
 import { BadgeComponent, BadgeVariant } from 'src/app/shared/components/badge/badge.component';
@@ -29,6 +29,19 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
   liveLogs: { timestamp: string; type: string; message: string }[] = [];
   reportAvailable = false;
   private eventSource: EventSource | null = null;
+  private readonly mockUserValues: Record<string, string> = {
+    '{{firstName}}': 'Alice',
+    '{{lastName}}': 'Johnson',
+    '{{email}}': 'alice.johnson@example.com',
+    '{{language}}': 'fr',
+    '{{country}}': 'France',
+    '{{city}}': 'Paris',
+    '{{contactId}}': '1024',
+    '{{contactEnabled}}': 'true',
+    '{{username}}': 'alice.j',
+    '{{phoneNumber}}': '+33 6 12 34 56 78',
+    '{{whatsappNumber}}': '+33 6 12 34 56 78',
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -106,8 +119,27 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
     return this.campaign?.status === CampaignStatus.SCHEDULED;
   }
 
+  canEditCampaign(): boolean {
+    if (!this.campaign) return false;
+
+    if (this.campaign.status === CampaignStatus.DRAFT) {
+      return true;
+    }
+
+    if (this.campaign.status === CampaignStatus.SCHEDULED && this.campaign.scheduledAt) {
+      return new Date(this.campaign.scheduledAt).getTime() > Date.now();
+    }
+
+    return false;
+  }
+
   isScheduled(): boolean {
     return this.campaign?.status === CampaignStatus.SCHEDULED;
+  }
+
+  editCampaign(): void {
+    if (!this.campaign || !this.canEditCampaign()) return;
+    this.router.navigate(['/campaigns/edit', this.campaign.id]);
   }
 
   openScheduleDialog(): void {
@@ -222,13 +254,105 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
 
   getHighlightedContent(): string {
     if (!this.campaign) return '';
-    let content = this.campaign.message.content;
+    return this.campaign.message.content.replace(/\{\{[^{}]+\}\}/g, (token) => {
+      const normalizedKey = this.normalizeVariableKey(token);
+      const value = this.getVariableValue(normalizedKey);
+      return `<span class="variable-highlight" title="${this.escapeHtml(normalizedKey)}">${this.escapeHtml(value)}</span>`;
+    });
+  }
 
-    // Highlight variables in the content
-    const variableRegex = /\{\{([^}]+)\}\}/g;
-    content = content.replace(variableRegex, '<span class="variable-highlight">{{$1}}</span>');
+  private normalizeVariableKey(key: string): string {
+    const trimmed = (key || '').trim();
+    if (!trimmed) return '';
+    if (trimmed.startsWith('{{') && trimmed.endsWith('}}')) {
+      return trimmed;
+    }
+    return `{{${trimmed}}}`;
+  }
 
-    return content;
+  private getVariableValue(variableKey: string): string {
+    const key = this.normalizeVariableKey(variableKey);
+    if (key.startsWith('{{event')) {
+      const linkedEvent = this.campaign?.message?.event;
+      if (!linkedEvent) {
+        return '[Event requis]';
+      }
+      const lowered = key.toLowerCase();
+      switch (key) {
+        case '{{eventTitle}}':
+          return linkedEvent.title || '';
+        case '{{eventStartDate}}':
+          return linkedEvent.startDate || '';
+        case '{{eventStartTime}}':
+          return this.normalizeTime(linkedEvent.startTime);
+        case '{{eventEndDate}}':
+          return linkedEvent.endDate || '';
+        case '{{eventEndTime}}':
+          return this.normalizeTime(linkedEvent.endTime);
+        case '{{eventLocation}}':
+          return linkedEvent.location || '';
+        case '{{eventTimezone}}':
+          return linkedEvent.timezone || '';
+        case '{{eventLocalTime}}':
+          return this.formatEventDateTime(linkedEvent.startDate, linkedEvent.startTime, linkedEvent.startAt);
+        case '{{eventEndLocalTime}}':
+          return this.formatEventDateTime(linkedEvent.endDate, linkedEvent.endTime, linkedEvent.endAt);
+        default:
+          if (lowered === '{{eventtitle}}') return linkedEvent.title || '';
+          if (lowered === '{{eventstartdate}}') return linkedEvent.startDate || '';
+          if (lowered === '{{eventstarttime}}') return this.normalizeTime(linkedEvent.startTime);
+          if (lowered === '{{eventenddate}}') return linkedEvent.endDate || '';
+          if (lowered === '{{eventendtime}}') return this.normalizeTime(linkedEvent.endTime);
+          if (lowered === '{{eventlocation}}') return linkedEvent.location || '';
+          if (lowered === '{{eventtimezone}}') return linkedEvent.timezone || '';
+          if (lowered === '{{eventlocaltime}}') return this.formatEventDateTime(linkedEvent.startDate, linkedEvent.startTime, linkedEvent.startAt);
+          if (lowered === '{{eventendlocaltime}}') return this.formatEventDateTime(linkedEvent.endDate, linkedEvent.endTime, linkedEvent.endAt);
+          return '[Variable event]';
+      }
+    }
+    return this.mockUserValues[key] ?? `[${key}]`;
+  }
+
+  private formatEventDateTime(date?: string | null, time?: string | null, fallback?: string | null): string {
+    if (date && time) {
+      return `${date} ${this.normalizeTime(time)}`;
+    }
+    return this.formatDateTime(fallback);
+  }
+
+  private normalizeTime(value?: string | null): string {
+    if (!value) return '';
+    return value.length >= 5 ? value.slice(0, 5) : value;
+  }
+
+  private formatDateTime(value?: string | null): string {
+    if (!value) return '';
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return value;
+    return parsed.toLocaleString('fr-FR');
+  }
+
+  private escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  getMessageAttachments(): CampaignMessageAttachment[] {
+    return this.campaign?.message?.attachments ?? [];
+  }
+
+  openAttachment(attachment: CampaignMessageAttachment): void {
+    if (!attachment?.url) return;
+    window.open(attachment.url, '_blank', 'noopener');
+  }
+
+  isImageAttachment(attachment: CampaignMessageAttachment): boolean {
+    const value = `${attachment?.name ?? ''} ${attachment?.url ?? ''}`.toLowerCase();
+    return /\.(png|jpe?g|gif|webp|svg|bmp|ico)$/.test(value);
   }
 
   goBack(): void {

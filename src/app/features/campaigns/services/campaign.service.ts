@@ -8,8 +8,8 @@ import {
   CampaignPage,
   CampaignFilters,
   CreateCampaignRequest,
-  UpdateCampaignRequest,
   CampaignSendRequest,
+  CampaignEditability,
   CampaignStats,
   CampaignRecipient,
   CampaignDetails,
@@ -60,6 +60,10 @@ export class CampaignService {
     return this.http.get<CampaignDetails>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() });
   }
 
+  getCampaignEditability(id: number | string): Observable<CampaignEditability> {
+    return this.http.get<CampaignEditability>(`${this.apiUrl}/${id}/editability`, { headers: this.getAuthHeaders() });
+  }
+
   submitCampaign(id: number): Observable<{ message: string; data: {} }> {
     return this.http.put<{ message: string; data: {} }>(`${this.apiUrl}/${id}/submit`, {}, { headers: this.getAuthHeaders() });
   }
@@ -68,7 +72,7 @@ export class CampaignService {
     return this.http.post<Campaign>(this.apiUrl, campaign, { headers: this.getAuthHeaders() });
   }
 
-  updateCampaign(id: string, campaign: UpdateCampaignRequest): Observable<Campaign> {
+  updateCampaign(id: string, campaign: CreateCampaignRequest): Observable<Campaign> {
     return this.http.put<Campaign>(`${this.apiUrl}/${id}`, campaign, { headers: this.getAuthHeaders() });
   }
 

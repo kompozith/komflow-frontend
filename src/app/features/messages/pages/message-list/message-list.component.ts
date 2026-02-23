@@ -26,6 +26,7 @@ import { Message, MessagePage, MessageFilters, MessageChannel } from '../../mode
 import { BadgeComponent, BadgeVariant } from '../../../../shared/components/badge/badge.component';
 import { DeleteMessageDialogComponent } from './delete-message-dialog/delete-message-dialog.component';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { excerptFromHtml } from '../../utils/message-rich-text.util';
 
 @Component({
   selector: 'app-message-list',
@@ -240,5 +241,9 @@ export class MessageListComponent implements OnInit, AfterViewInit {
       case MessageChannel.SMS: return 'warning';
       default: return 'primary';
     }
+  }
+
+  getContentExcerpt(content: string, maxLength = 80): string {
+    return excerptFromHtml(content, maxLength);
   }
 }

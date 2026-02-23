@@ -3,9 +3,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import {
-  MatDialog,
-} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -18,7 +16,6 @@ import { ContactService } from '../../services/contact.service';
 import { Contact, ContactFilters } from '../../models/contact';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { DeleteContactDialogComponent } from './delete-contact-dialog/delete-contact-dialog.component';
-import { ContactCreateComponent } from '../contact-create/contact-create.component';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import {MatTableDataSource} from "@angular/material/table";
 import { TagService } from '../../../tags/services/tag.service';
@@ -57,7 +54,8 @@ export class ContactListComponent implements OnInit {
    totalPages = 0;
    currentPage = 0;
    pageSize = 10;
-   isLoading = false;
+  isLoading = false;
+  isImporting = false;
 
 
   // Filters
@@ -200,17 +198,70 @@ export class ContactListComponent implements OnInit {
     this.loadContacts();
   }
 
-  createContact(): void {
-    const dialogRef = this.dialog.open(ContactCreateComponent, {
-      width: '600px',
-      data: {}
-    });
+  exportContacts(format: 'csv' | 'xlsx'): void {
+    const filters = this.getCurrentFilters();
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result?.event === 'Create') {
-        this.loadContacts(this.currentPage);
+    this.contactService.exportContacts(format, filters).subscribe({
+      next: (blob) => {
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const fileName = `contacts-${timestamp}.${format}`;
+        this.downloadBlob(blob, fileName);
+        this.snackBar.open(`Contacts exported to ${format.toUpperCase()}`, 'Close', { duration: 3000 });
+      },
+      error: (error) => {
+        console.error('Error exporting contacts:', error);
+        this.snackBar.open('Error exporting contacts', 'Close', { duration: 3000 });
       }
     });
+  }
+
+  triggerImport(fileInput: HTMLInputElement): void {
+    fileInput.click();
+  }
+
+  onImportFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files[0] ? input.files[0] : null;
+
+    if (!file) {
+      return;
+    }
+
+    const fileName = file.name.toLowerCase();
+    const isSupported = fileName.endsWith('.csv') || fileName.endsWith('.xlsx');
+    if (!isSupported) {
+      this.snackBar.open('Unsupported file type. Use CSV or XLSX.', 'Close', { duration: 3500 });
+      input.value = '';
+      return;
+    }
+
+    this.isImporting = true;
+    this.contactService.importContacts(file).subscribe({
+      next: (result) => {
+        const updated = result.updatedCount ?? 0;
+        const skipped = result.skippedCount ?? 0;
+        const details = `${result.importedCount} imported, ${updated} updated, ${skipped} skipped, ${result.failedCount} failed`;
+        this.snackBar.open(`Import completed: ${details}`, 'Close', { duration: 4500 });
+
+        if (result.errors && result.errors.length > 0) {
+          console.warn('Contact import errors:', result.errors);
+        }
+
+        this.loadContacts(this.currentPage);
+        this.isImporting = false;
+        input.value = '';
+      },
+      error: (error) => {
+        console.error('Error importing contacts:', error);
+        this.snackBar.open('Error importing contacts', 'Close', { duration: 3500 });
+        this.isImporting = false;
+        input.value = '';
+      }
+    });
+  }
+
+  createContact(): void {
+    this.router.navigate(['contacts/create']);
   }
 
   editContact(contact: Contact): void {
@@ -248,5 +299,24 @@ export class ContactListComponent implements OnInit {
 
   private formatDate(dateValue: string): string {
     return new Date(dateValue).toISOString();
+  }
+
+  private getCurrentFilters(): ContactFilters {
+    return {
+      search: this.searchText || undefined,
+      enabled: this.selectedEnabled === '' ? undefined : this.selectedEnabled,
+      createdAtFrom: this.createdAtFrom ? this.formatDate(this.createdAtFrom) : undefined,
+      createdAtTo: this.createdAtTo ? this.formatDate(this.createdAtTo) : undefined,
+      tagIds: this.selectedTagIds.length > 0 ? this.selectedTagIds : undefined,
+    };
+  }
+
+  private downloadBlob(blob: Blob, fileName: string): void {
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = fileName;
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 }

@@ -150,7 +150,7 @@
                   <span>View Details</span>
                 </div>
               </button>
-              <button mat-menu-item *ngIf="element.status === 'DRAFT'">
+              <button mat-menu-item *ngIf="canEditCampaign(element)">
                 <div class="d-flex align-items-center" (click)="editCampaign(element)">
                   <tabler-icon name="edit" class="m-x-6"></tabler-icon>
                   <span>Edit</span>

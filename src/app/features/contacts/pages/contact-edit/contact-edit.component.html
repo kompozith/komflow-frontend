@@ -3,7 +3,7 @@
     <mat-card class="cardWithShadow">
       <mat-card-header>
         <mat-card-title>Edit Contact</mat-card-title>
-        <mat-card-subtitle>Update contact information</mat-card-subtitle>
+        <mat-card-subtitle>Update contact and person information</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content *ngIf="!isLoading">
@@ -12,13 +12,9 @@
             <div class="col-md-6">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Person ID</mat-label>
-                <input matInput formControlName="personId" type="number" placeholder="Enter person ID">
-                <mat-error *ngIf="contactForm.get('personId')?.invalid && contactForm.get('personId')?.touched">
-                  <span *ngIf="contactForm.get('personId')?.errors?.['required']">Person ID is required</span>
-                </mat-error>
+                <input matInput formControlName="personId" type="number" placeholder="Person ID" readonly>
               </mat-form-field>
             </div>
-
             <div class="col-md-6 d-flex align-items-center">
               <mat-slide-toggle formControlName="enabled" color="primary">Enabled</mat-slide-toggle>
             </div>
@@ -27,8 +23,60 @@
           <div class="row">
             <div class="col-md-6">
               <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Last Message Received At</mat-label>
-                <input matInput formControlName="lastMessageReceivedAt" type="datetime-local">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" type="email" placeholder="Enter email address" />
+                <mat-error *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
+                  <span *ngIf="contactForm.get('email')?.errors?.['required']">Email is required</span>
+                  <span *ngIf="contactForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Language</mat-label>
+                <mat-select formControlName="language">
+                  <mat-option *ngFor="let option of languageOptions" [value]="option.value">
+                    {{ option.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="firstName" placeholder="Enter first name" />
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="lastName" placeholder="Enter last name" />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div [ngClass]="hasMultipleTimezones() ? 'col-md-6' : 'col-12'">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Country</mat-label>
+                <mat-select formControlName="country" (selectionChange)="onCountryChange($event.value)">
+                  <mat-option *ngFor="let country of countries" [value]="country.code">
+                    {{ country.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-md-6" *ngIf="hasMultipleTimezones()">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>City</mat-label>
+                <mat-select formControlName="city" (selectionChange)="onCityChange($event.value)" [disabled]="!contactForm.get('country')?.value">
+                  <mat-option *ngFor="let city of cities" [value]="city.name">
+                    {{ city.name }}
+                  </mat-option>
+                </mat-select>
               </mat-form-field>
             </div>
           </div>

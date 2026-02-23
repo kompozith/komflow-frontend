@@ -83,27 +83,6 @@
   </div>
 </div>
 
-<!-- Detected Variables -->
-<div *ngIf="!isLoading && message && getDetectedVariables().length > 0" class="row mb-3">
-  <div class="col-12">
-    <mat-card class="cardWithShadow">
-      <mat-card-header>
-        <mat-card-title>Variables Detected in Message</mat-card-title>
-        <mat-card-subtitle>Variables found in the message content</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="variables-grid">
-          <div class="variable-chip" *ngFor="let variable of getDetectedVariables()">
-            <mat-icon class="variable-icon">label</mat-icon>
-            <span class="variable-key">{{ variable.key }}</span>
-            <span class="variable-desc">{{ variable.description }}</span>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-</div>
-
 <div *ngIf="!isLoading && message" class="row mb-3">
 
   <!-- Additional Information -->
@@ -141,6 +120,16 @@
               </div>
             </div>
           </div>
+          <div class="col-6 mb-3" *ngIf="message.event">
+            <div class="info-item">
+              <mat-icon class="info-icon">event</mat-icon>
+              <div>
+                <label class="form-label fw-bold text-dark">Linked Event</label>
+                <p class="mb-0 text-muted">{{ message.event?.title }}</p>
+                <small class="text-muted">{{ getLinkedEventDateTime() }}</small>
+              </div>
+            </div>
+          </div>
         </div>
       </mat-card-content>
     </mat-card>
@@ -151,9 +140,55 @@
     <mat-card class="cardWithShadow h-100">
       <mat-card-header>
         <mat-card-title>Message Content</mat-card-title>
+        <mat-card-subtitle>Preview rendered with mock user data and linked event values</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="message-content p-20 bg-light rounded" [innerHTML]="getHighlightedContent()"></div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Attachments -->
+<div *ngIf="!isLoading && message && getAttachments().length > 0" class="row mb-3">
+  <div class="col-12">
+    <mat-card class="cardWithShadow">
+      <mat-card-header>
+        <mat-card-title>Attachments</mat-card-title>
+        <mat-card-subtitle>Files sent with this message</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="row g-2">
+          <div class="col-sm-6 col-lg-4" *ngFor="let attachment of getAttachments()">
+            <div class="border rounded p-2 h-100 cursor-pointer" (click)="openAttachment(attachment)">
+              <div class="d-flex align-items-center justify-content-center bg-light rounded mb-2 overflow-hidden" style="height: 112px;">
+                <img
+                  *ngIf="isImageAttachment(attachment) && !hasPreviewFailed(attachment)"
+                  [src]="attachment.url"
+                  [alt]="attachment.name"
+                  class="img-fluid rounded"
+                  style="max-height: 108px;"
+                  (error)="markPreviewFailed(attachment)">
+
+                <iframe
+                  *ngIf="isPdfAttachment(attachment) && !hasPreviewFailed(attachment)"
+                  [src]="getPdfPreviewUrl(attachment)"
+                  title="PDF preview"
+                  class="w-100 h-100 border-0"
+                  (error)="markPreviewFailed(attachment)">
+                </iframe>
+
+                <div *ngIf="(!isImageAttachment(attachment) && !isPdfAttachment(attachment)) || hasPreviewFailed(attachment)" class="d-flex flex-column align-items-center justify-content-center text-muted">
+                  <mat-icon>{{ getAttachmentIcon(attachment) }}</mat-icon>
+                  <small class="mt-1">{{ getAttachmentTypeLabel(attachment) }}</small>
+                </div>
+              </div>
+              <div class="text-truncate">
+                <strong class="f-s-13">{{ attachment.name }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>

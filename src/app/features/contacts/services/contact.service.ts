@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Contact, ContactDetails, ContactPage, ContactFilters, CreateContactRequest, UpdateContactRequest } from '../models/contact';
+import { Contact, ContactDetails, ContactPage, ContactFilters, ContactImportResult, CreateContactRequest, UpdateContactRequest } from '../models/contact';
 import { signal, Signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
@@ -25,30 +25,24 @@ export class ContactService {
 
   constructor(private http: HttpClient) {}
 
-  private getAuthHeaders(): HttpHeaders {
+  private getAuthHeaders(includeJsonContentType: boolean = true): HttpHeaders {
     const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
+    const headers: Record<string, string> = {
       ...(token && { 'Authorization': `Bearer ${token}` })
-    });
+    };
+
+    if (includeJsonContentType) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    return new HttpHeaders(headers);
   }
 
   getContacts(filters: ContactFilters = {}): Observable<ContactPage> {
-    let params = new HttpParams();
-
-    if (filters.page !== undefined) params = params.set('page', filters.page.toString());
-    if (filters.size !== undefined) params = params.set('size', filters.size.toString());
-    if (filters.search) params = params.set('search', filters.search);
-    if (filters.enabled !== undefined) params = params.set('enabled', filters.enabled.toString());
-    if (filters.createdAtFrom) params = params.set('createdAtFrom', filters.createdAtFrom);
-    if (filters.createdAtTo) params = params.set('createdAtTo', filters.createdAtTo);
-    if (filters.tagIds && filters.tagIds.length > 0) {
-      params = params.set('tagIds', this.formatTagIds(filters.tagIds));
-    }
-
-    const headers = this.getAuthHeaders();
-
-    return this.http.get<ContactPage>(this.apiUrl, { params, headers });
+    return this.http.get<ContactPage>(this.apiUrl, {
+      params: this.buildFilterParams(filters),
+      headers: this.getAuthHeaders(),
+    });
   }
 
   getContactById(id: string): Observable<ContactDetails> {
@@ -65,6 +59,26 @@ export class ContactService {
 
   deleteContact(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() });
+  }
+
+  exportContacts(format: 'csv' | 'xlsx', filters: ContactFilters = {}): Observable<Blob> {
+    let params = this.buildFilterParams(filters);
+    params = params.set('format', format);
+
+    return this.http.get(`${this.apiUrl}/export`, {
+      params,
+      headers: this.getAuthHeaders(false),
+      responseType: 'blob',
+    });
+  }
+
+  importContacts(file: File): Observable<ContactImportResult> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+
+    return this.http.post<ContactImportResult>(`${this.apiUrl}/import`, formData, {
+      headers: this.getAuthHeaders(false),
+    });
   }
   // Add method to map Contact to ContactBox format for compatibility with legacy components
   mapContactToContactBox(contact: Contact): any {
@@ -160,5 +174,21 @@ export class ContactService {
 
   private formatTagIds(tagIds: number[]): string {
     return `{${tagIds.join(',')}}`;
+  }
+
+  private buildFilterParams(filters: ContactFilters = {}): HttpParams {
+    let params = new HttpParams();
+
+    if (filters.page !== undefined) params = params.set('page', filters.page.toString());
+    if (filters.size !== undefined) params = params.set('size', filters.size.toString());
+    if (filters.search) params = params.set('search', filters.search);
+    if (filters.enabled !== undefined) params = params.set('enabled', filters.enabled.toString());
+    if (filters.createdAtFrom) params = params.set('createdAtFrom', filters.createdAtFrom);
+    if (filters.createdAtTo) params = params.set('createdAtTo', filters.createdAtTo);
+    if (filters.tagIds && filters.tagIds.length > 0) {
+      params = params.set('tagIds', this.formatTagIds(filters.tagIds));
+    }
+
+    return params;
   }
 }

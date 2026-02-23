@@ -3,6 +3,10 @@
   <div *ngIf="!isLoading && campaign" class="row mb-3">
     <div class="col-12 d-flex justify-content-end gap-8">
       @if((canSchedule() || !isSubmitting) && (!isSubmitting)) {
+      <button *ngIf="canEditCampaign()" mat-stroked-button color="primary" (click)="editCampaign()">
+        <i-tabler name="edit" class="icon-18 me-2"></i-tabler>
+        Edit Campaign
+      </button>
       <button *ngIf="canCancelSchedule()" mat-stroked-button color="warn" (click)="cancelSchedule()">
         <span *ngIf="!isSubmitting">
           <i-tabler name="calendar-x" class="icon-18 me-2"></i-tabler>
@@ -136,6 +140,18 @@
               </div>
             </div>
 
+            <div class="col-md-4 mb-3">
+              <div class="d-flex align-items-center gap-16">
+                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-info text-white">
+                  <i-tabler name="paperclip" class="icon-24 d-flex"></i-tabler>
+                </div>
+                <div>
+                  <h6 class="f-s-16 f-w-600 mb-1">Attachments</h6>
+                  <p class="f-s-14 mb-0">{{ campaign.message.attachmentCount || 0 }}</p>
+                </div>
+              </div>
+            </div>
+
             <!-- Status -->
             <div class="col-md-4">
               <div class="d-flex align-items-center gap-16">
@@ -197,6 +213,7 @@
               <h6 class="f-s-16 f-w-600 mb-3">Message Content</h6>
               <div class="message-content p-20 bg-light rounded" [innerHTML]="getHighlightedContent()"></div>
             </div>
+
           </div>
         </mat-card-content>
       </mat-card>
@@ -302,6 +319,37 @@
                   {{ tag.name }}
                 </mat-chip>
               </mat-chip-listbox>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Message Attachments -->
+  <div *ngIf="!isLoading && campaign && !isInSubmission && getMessageAttachments().length > 0" class="row mb-3">
+    <div class="col-12">
+      <mat-card class="cardWithShadow h-100">
+        <mat-card-header>
+          <mat-card-title>Message Attachments</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="row g-2">
+            <div class="col-sm-6 col-lg-4" *ngFor="let attachment of getMessageAttachments()">
+              <div class="border rounded p-2 h-100 cursor-pointer" (click)="openAttachment(attachment)">
+                <div class="d-flex align-items-center justify-content-center bg-light rounded mb-2" style="height: 92px;">
+                  <img
+                    *ngIf="isImageAttachment(attachment)"
+                    [src]="attachment.url"
+                    [alt]="attachment.name"
+                    class="img-fluid rounded"
+                    style="max-height: 88px;">
+                  <mat-icon *ngIf="!isImageAttachment(attachment)" class="text-muted">description</mat-icon>
+                </div>
+                <div class="text-truncate">
+                  <strong class="f-s-13">{{ attachment.name }}</strong>
+                </div>
+              </div>
             </div>
           </div>
         </mat-card-content>

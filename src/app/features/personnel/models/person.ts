@@ -4,6 +4,9 @@ export interface Person {
   firstName: string;
   lastName: string;
   language: string | null;
+  country: string | null;
+  city: string | null;
+  timezone: string | null;
   phoneNumber: string | null;
   createdAt: string;
   updatedAt: string;
@@ -15,6 +18,9 @@ export interface PersonDetails {
   firstName: string;
   lastName: string;
   language: string | null;
+  country: string | null;
+  city: string | null;
+  timezone: string | null;
   phoneNumbers: PhoneNumber[];
   createdAt: string;
   updatedAt: string;
@@ -34,14 +40,20 @@ export interface CreatePersonRequest {
   email: string;
   firstName?: string;
   lastName?: string;
-  language?: string;
+  language?: 'fr' | 'en';
+  country?: string;
+  city?: string;
+  timezone?: string;
 }
 
 export interface UpdatePersonRequest {
   email: string;
   firstName?: string;
   lastName?: string;
-  language?: string;
+  language?: 'fr' | 'en';
+  country?: string;
+  city?: string;
+  timezone?: string;
 }
 
 export interface PersonPage {

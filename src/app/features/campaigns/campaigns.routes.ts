@@ -3,6 +3,7 @@ import { PermissionGuard } from '../../guards/permission.guard';
 
 import { CampaignListComponent } from './pages/campaign-list/campaign-list.component';
 import { CampaignCreateComponent } from './pages/campaign-create/campaign-create.component';
+import { CampaignEditComponent } from './pages/campaign-edit/campaign-edit.component';
 import { CampaignDetailsComponent } from './pages/campaign-details/campaign-details.component';
 
 export const CampaignsRoutes: Routes = [
@@ -32,6 +33,19 @@ export const CampaignsRoutes: Routes = [
           urls: [
             { title: 'Campaigns', url: 'campaigns' },
             { title: 'Create Campaign' },
+          ],
+        },
+      },
+      {
+        path: 'edit/:id',
+        component: CampaignEditComponent,
+        canActivate: [PermissionGuard],
+        data: {
+          title: 'Edit Campaign',
+          permissions: ['CAMPAIGN_UPDATE'],
+          urls: [
+            { title: 'Campaigns', url: 'campaigns' },
+            { title: 'Edit Campaign' },
           ],
         },
       },

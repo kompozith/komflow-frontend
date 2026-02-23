@@ -188,7 +188,8 @@ export class TagListComponent implements OnInit, AfterViewInit {
 
   createTag(): void {
     const dialogRef = this.dialog.open(TagCreateComponent, {
-      width: '600px'
+      width: '760px',
+      maxWidth: '95vw'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -200,7 +201,8 @@ export class TagListComponent implements OnInit, AfterViewInit {
 
   editTag(tag: Tag): void {
     const dialogRef = this.dialog.open(TagEditComponent, {
-      width: '600px',
+      width: '760px',
+      maxWidth: '95vw',
       data: { tag }
     });
 

@@ -5,7 +5,10 @@ export interface PersonSummary {
   email: string;
   firstName: string;
   lastName: string;
-  language: string;
+  language: string | null;
+  country: string | null;
+  city: string | null;
+  timezone: string | null;
   phoneNumber: string | null;
   createdAt: string;
   updatedAt: string;
@@ -76,7 +79,10 @@ export interface CreateContactRequest {
     email: string;
     firstName?: string;
     lastName?: string;
-    language?: string;
+    language?: 'fr' | 'en';
+    country?: string;
+    city?: string;
+    timezone?: string;
   };
   phoneNumbers?: {
     number: string;
@@ -90,4 +96,12 @@ export interface UpdateContactRequest {
   lastMessageReceivedAt?: string | null;
   personId: number;
   tagIds?: number[];
+}
+
+export interface ContactImportResult {
+  importedCount: number;
+  updatedCount?: number;
+  skippedCount?: number;
+  failedCount: number;
+  errors: string[];
 }

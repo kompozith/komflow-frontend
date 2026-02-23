@@ -91,6 +91,33 @@
               </div>
             </div>
 
+            <div class="row">
+              <div class="col-md-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Language</mat-label>
+                  <input matInput [value]="contact.person.language || 'Not provided'" readonly>
+                </mat-form-field>
+              </div>
+              <div class="col-md-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Country</mat-label>
+                  <input matInput [value]="contact.person.country || 'Not provided'" readonly>
+                </mat-form-field>
+              </div>
+              <div class="col-md-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>City</mat-label>
+                  <input matInput [value]="contact.person.city || 'Not provided'" readonly>
+                </mat-form-field>
+              </div>
+              <div class="col-md-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Timezone</mat-label>
+                  <input matInput [value]="contact.person.timezone || 'Not provided'" readonly>
+                </mat-form-field>
+              </div>
+            </div>
+
             <!-- Tags Section -->
             <div class="row">
               <div class="col-12">

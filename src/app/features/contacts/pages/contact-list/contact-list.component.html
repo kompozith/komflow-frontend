@@ -1,6 +1,23 @@
 <mat-card class="cardWithShadow">
   <mat-card-content>
-    <div class="d-flex justify-content-end align-items-center mb-3">
+    <div class="d-flex justify-content-end align-items-center mb-3 gap-2">
+      <input
+        #importFileInput
+        type="file"
+        accept=".csv,.xlsx"
+        class="d-none"
+        (change)="onImportFileSelected($event)"
+      />
+      <button mat-stroked-button [matMenuTriggerFor]="exportMenu">
+        Export
+      </button>
+      <mat-menu #exportMenu="matMenu">
+        <button mat-menu-item (click)="exportContacts('csv')">Export CSV</button>
+        <button mat-menu-item (click)="exportContacts('xlsx')">Export Excel</button>
+      </mat-menu>
+      <button mat-stroked-button (click)="triggerImport(importFileInput)" [disabled]="isImporting">
+        {{ isImporting ? 'Importing...' : 'Import' }}
+      </button>
       <button mat-flat-button (click)="createContact()" color="primary">
         Create Contact
       </button>

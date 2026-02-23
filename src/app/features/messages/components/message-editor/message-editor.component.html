@@ -2,6 +2,29 @@
   <!-- Content Editor -->
   <div class="message-editor-field w-100">
     <mat-label class="mat-label">{{ label }}</mat-label>
+    <div class="editor-toolbar mb-2">
+      <button mat-icon-button type="button" matTooltip="Bold" (mousedown)="$event.preventDefault()" (click)="applyFormatting('bold')">
+        <mat-icon>format_bold</mat-icon>
+      </button>
+      <button mat-icon-button type="button" matTooltip="Italic" (mousedown)="$event.preventDefault()" (click)="applyFormatting('italic')">
+        <mat-icon>format_italic</mat-icon>
+      </button>
+      <button mat-icon-button type="button" matTooltip="Underline" (mousedown)="$event.preventDefault()" (click)="applyFormatting('underline')">
+        <mat-icon>format_underlined</mat-icon>
+      </button>
+      <button mat-icon-button type="button" matTooltip="Bulleted list" (mousedown)="$event.preventDefault()" (click)="applyFormatting('insertUnorderedList')">
+        <mat-icon>format_list_bulleted</mat-icon>
+      </button>
+      <button mat-icon-button type="button" matTooltip="Numbered list" (mousedown)="$event.preventDefault()" (click)="applyFormatting('insertOrderedList')">
+        <mat-icon>format_list_numbered</mat-icon>
+      </button>
+      <button mat-icon-button type="button" matTooltip="Insert link" (mousedown)="$event.preventDefault()" (click)="insertLink()">
+        <mat-icon>link</mat-icon>
+      </button>
+      <button mat-icon-button type="button" matTooltip="Clear formatting" (mousedown)="$event.preventDefault()" (click)="clearFormatting()">
+        <mat-icon>format_clear</mat-icon>
+      </button>
+    </div>
     <div
       #contentEditor
       class="message-editor-content"
@@ -18,19 +41,20 @@
     class="autocomplete-overlay"
     [style.top.px]="autocompletePosition.top"
     [style.left.px]="autocompletePosition.left">
-    <mat-form-field appearance="outline" class="autocomplete-field">
-      <input
-        #autocompleteInput
-        matInput
-        [formControl]="variableControl"
-        placeholder="Search variables..."
-        (blur)="hideAutocomplete()">
-    </mat-form-field>
+    <div class="autocomplete-header">
+      Suggestions{{ autocompleteQuery ? ' - ' + autocompleteQuery : '' }}
+    </div>
     <div class="autocomplete-list">
-      <div *ngFor="let variable of filteredVariables | async" (click)="selectVariable(variable)" class="autocomplete-option">
+      <div
+        *ngFor="let variable of getInlineSuggestions()"
+        (mousedown)="onAutocompleteOptionMouseDown($event, variable)"
+        class="autocomplete-option">
         <strong>{{ variable.key }}</strong>
         <br>
         <small class="text-muted">{{ variable.description }}</small>
+      </div>
+      <div *ngIf="getInlineSuggestions().length === 0" class="autocomplete-empty">
+        No variable found
       </div>
     </div>
   </div>
@@ -65,9 +89,9 @@
     <div class="variables-grid">
       <mat-chip-set>
         <mat-chip
-          *ngFor="let variable of variables"
+          *ngFor="let variable of getSelectableVariables()"
           (click)="insertVariable(variable)"
-          class="variable-chip"
+          class="variable-insert-chip"
           matTooltip="Click to insert {{variable.key}} into message">
           <mat-icon>code</mat-icon>
           {{ variable.key }}
@@ -75,9 +99,9 @@
       </mat-chip-set>
     </div>
 
-    <div *ngIf="variables.length === 0" class="text-center text-muted py-4">
+    <div *ngIf="getSelectableVariables().length === 0" class="text-center text-muted py-4">
       <mat-icon class="large-icon">info</mat-icon>
-      <p>Loading variables...</p>
+      <p>{{ selectedEvent ? 'Loading variables...' : 'Select an event to unlock event variables' }}</p>
     </div>
   </div>
 
@@ -86,24 +110,11 @@
     <mat-card class="preview-card">
       <mat-card-header>
         <mat-card-title>Preview</mat-card-title>
-        <mat-card-subtitle>Message with highlighted variables</mat-card-subtitle>
+        <mat-card-subtitle>Rendered with mock user data and linked event values</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="preview-content" [innerHTML]="previewContent"></div>
       </mat-card-content>
     </mat-card>
-  </div>
-
-  <!-- Detected Variables Section -->
-  <div class="detected-variables mt-3" *ngIf="getDetectedVariables().length > 0">
-    <h6>Variables Detected in Message:</h6>
-    <mat-chip-set>
-      <mat-chip
-        *ngFor="let variable of getDetectedVariables()"
-        class="detected-chip">
-        <mat-icon>check_circle</mat-icon>
-        {{ variable.key }} - {{ variable.description }}
-      </mat-chip>
-    </mat-chip-set>
   </div>
 </div>

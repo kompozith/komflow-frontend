@@ -1,0 +1,21 @@
+.message-content {
+  line-height: 1.5;
+  white-space: normal;
+}
+
+:host ::ng-deep .message-content p {
+  margin-bottom: 0.75rem;
+}
+
+:host ::ng-deep .message-content ul,
+:host ::ng-deep .message-content ol {
+  margin: 0.75rem 0 0.75rem 1.25rem;
+}
+
+:host ::ng-deep .message-content .variable-highlight {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-weight: 600;
+}

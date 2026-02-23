@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   Inject,
   signal,
-  DOCUMENT
+  DOCUMENT,
 } from '@angular/core';
 import { CommonModule, NgSwitch } from '@angular/common';
 import {
@@ -20,13 +20,14 @@ import {
 } from '@angular/forms';
 import { CalendarFormDialogComponent } from './calendar-form-dialog/calendar-form-dialog.component';
 import {
-  startOfDay,
-  subDays,
-  addDays,
+  endOfDay,
   endOfMonth,
+  endOfWeek,
   isSameDay,
   isSameMonth,
-  addHours,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
   subMonths,
   addMonths,
 } from 'date-fns';
@@ -47,6 +48,8 @@ import {
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { TablerIconsModule } from 'angular-tabler-icons';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AppEvent, CreateEventRequest, EventService } from '../../core/services/event.service';
 
 const colors: any = {
   red: {
@@ -108,10 +111,10 @@ export class AppFullcalendarComponent {
   dialogRef = signal<MatDialogRef<CalendarDialogComponent> | any>(null);
   dialogRef2 = signal<MatDialogRef<CalendarFormDialogComponent> | any>(null);
   lastCloseResult = signal<string>('');
-  actionsAlignment = signal<string>('');
   view = signal<any>('month');
   viewDate = signal<Date>(new Date());
   activeDayIsOpen = signal<boolean>(true);
+  isLoading = signal<boolean>(false);
 
   config: MatDialogConfig = {
     disableClose: false,
@@ -128,63 +131,33 @@ export class AppFullcalendarComponent {
       event: [],
     },
   };
-  numTemplateOpens = 0;
 
   actions: CalendarEventAction[] = [
     {
-      label: '<span class="text-white link m-l-5">: Edit</span>',
+      label: '<span class="text-white link m-l-5">Edit</span>',
       onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.handleEvent('Edit', event);
+        this.openEventForm('edit', event);
       },
     },
     {
       label: '<span class="text-danger m-l-5">Delete</span>',
       onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events.set(
-          this.events().filter((iEvent: CalendarEvent<any>) => iEvent !== event)
-        );
-        this.handleEvent('Deleted', event);
+        this.deleteEvent(event);
       },
     },
   ];
 
   refresh: Subject<any> = new Subject();
+  events = signal<CalendarEvent[] | any>([]);
 
-  events = signal<CalendarEvent[] | any>([
-    {
-      start: subDays(startOfDay(new Date()), 1),
-      end: addDays(new Date(), 1),
-      title: 'A 3 day event',
-      color: colors.red,
-      actions: this.actions,
-    },
-    {
-      start: startOfDay(new Date()),
-      title: 'An event with no end date',
-      color: colors.blue,
-      actions: this.actions,
-    },
-    {
-      start: subDays(endOfMonth(new Date()), 3),
-      end: addDays(endOfMonth(new Date()), 3),
-      title: 'A long event that spans 2 months',
-      color: colors.blue,
-    },
-    {
-      start: addHours(startOfDay(new Date()), 2),
-      end: new Date(),
-      title: 'A draggable and resizable event',
-      color: colors.yellow,
-      actions: this.actions,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-  ]);
-
-  constructor(public dialog: MatDialog, @Inject(DOCUMENT) doc: any) {}
+  constructor(
+    public dialog: MatDialog,
+    @Inject(DOCUMENT) doc: any,
+    private snackBar: MatSnackBar,
+    private eventService: EventService
+  ) {
+    this.loadEventsForCurrentView();
+  }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate())) {
@@ -198,6 +171,10 @@ export class AppFullcalendarComponent {
         this.viewDate.set(date);
       }
     }
+
+    if (events.length === 0) {
+      this.openEventForm('add', undefined, date);
+    }
   }
 
   eventTimesChanged({
@@ -205,20 +182,27 @@ export class AppFullcalendarComponent {
     newStart,
     newEnd,
   }: CalendarEventTimesChangedEvent): void {
-    this.events.set(
-      this.events().map((iEvent: CalendarEvent<any>) => {
-        if (iEvent === event) {
-          return {
-            ...event,
-            start: newStart,
-            end: newEnd,
-          };
-        }
-        return iEvent;
-      })
-    );
+    const eventId = this.extractEventId(event);
+    if (!eventId) {
+      return;
+    }
 
-    this.handleEvent('Dropped or resized', event);
+    const payload = this.toCreateEventPayload({
+      ...event,
+      start: newStart,
+      end: newEnd,
+    });
+
+    this.eventService.updateEvent(eventId, payload).subscribe({
+      next: () => {
+        this.loadEventsForCurrentView();
+      },
+      error: (error) => {
+        console.error('Error moving event:', error);
+        this.snackBar.open('Unable to update event dates', 'Close', { duration: 3000 });
+        this.loadEventsForCurrentView();
+      },
+    });
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
@@ -235,52 +219,232 @@ export class AppFullcalendarComponent {
   }
 
   addEvent(): void {
+    this.openEventForm('add', undefined, this.viewDate());
+  }
+
+  private openEventForm(action: 'add' | 'edit', event?: CalendarEvent, date?: Date): void {
     this.dialogRef2.set(
       this.dialog.open(CalendarFormDialogComponent, {
         panelClass: 'calendar-form-dialog',
-        autoFocus: false, 
+        autoFocus: false,
         data: {
-          action: 'add',
-          date: new Date(),
+          action,
+          event,
+          date: date ?? new Date(),
         },
       })
     );
+
     this.dialogRef2()
       .afterClosed()
       .subscribe((res: { action: any; event: any }) => {
-        if (!res) {
+        if (!res || res.action !== 'save') {
           return;
         }
-        const dialogAction = res.action;
-        const responseEvent = res.event;
-        responseEvent.actions = this.actions;
-        this.events.set([...this.events(), responseEvent]);
-        this.dialogRef2.set(null);
-        this.refresh.next(res);
+
+        const payload = this.toCreateEventPayload(res.event);
+        const eventId = res.event?.id ?? this.extractEventId(event);
+
+        if (action === 'edit' && eventId) {
+          this.eventService.updateEvent(eventId, payload).subscribe({
+            next: () => {
+              this.snackBar.open('Event updated', 'Close', { duration: 2500 });
+              this.loadEventsForCurrentView();
+            },
+            error: (error) => {
+              console.error('Error updating event:', error);
+              this.snackBar.open('Unable to update event', 'Close', { duration: 3000 });
+            },
+          });
+        } else {
+          this.eventService.createEvent(payload).subscribe({
+            next: () => {
+              this.snackBar.open('Event created', 'Close', { duration: 2500 });
+              this.loadEventsForCurrentView();
+            },
+            error: (error) => {
+              console.error('Error creating event:', error);
+              this.snackBar.open('Unable to create event', 'Close', { duration: 3000 });
+            },
+          });
+        }
       });
   }
 
   deleteEvent(eventToDelete: CalendarEvent): void {
-    this.events.set(
-      this.events().filter(
-        (event: CalendarEvent<any>) => event !== eventToDelete
-      )
-    );
+    const eventId = this.extractEventId(eventToDelete);
+    if (!eventId) {
+      return;
+    }
+
+    const confirmed = window.confirm('Delete this event?');
+    if (!confirmed) {
+      return;
+    }
+
+    this.eventService.deleteEvent(eventId).subscribe({
+      next: () => {
+        this.snackBar.open('Event deleted', 'Close', { duration: 2500 });
+        this.loadEventsForCurrentView();
+      },
+      error: (error) => {
+        console.error('Error deleting event:', error);
+        this.snackBar.open('Unable to delete event', 'Close', { duration: 3000 });
+      },
+    });
   }
 
   setView(view: CalendarView | any): void {
     this.view.set(view);
+    this.loadEventsForCurrentView();
   }
 
   goToPreviousMonth(): void {
     this.viewDate.set(subMonths(this.viewDate(), 1));
+    this.loadEventsForCurrentView();
   }
 
   goToNextMonth(): void {
     this.viewDate.set(addMonths(this.viewDate(), 1));
+    this.loadEventsForCurrentView();
   }
 
-  goToToday() {
+  goToToday(): void {
     this.viewDate.set(new Date());
+    this.loadEventsForCurrentView();
+  }
+
+  private loadEventsForCurrentView(): void {
+    const range = this.getCurrentRange();
+    this.isLoading.set(true);
+
+    this.eventService.listEvents(range.start.toISOString(), range.end.toISOString()).subscribe({
+      next: (events) => {
+        this.events.set((events || []).map((event) => this.toCalendarEvent(event)));
+        this.refresh.next(true);
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading events:', error);
+        this.events.set([]);
+        this.refresh.next(true);
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  private getCurrentRange(): { start: Date; end: Date } {
+    if (this.view() === 'week') {
+      return {
+        start: startOfWeek(this.viewDate(), { weekStartsOn: 1 }),
+        end: endOfWeek(this.viewDate(), { weekStartsOn: 1 }),
+      };
+    }
+
+    if (this.view() === 'day') {
+      return {
+        start: startOfDay(this.viewDate()),
+        end: endOfDay(this.viewDate()),
+      };
+    }
+
+    return {
+      start: startOfMonth(this.viewDate()),
+      end: endOfMonth(this.viewDate()),
+    };
+  }
+
+  private toCalendarEvent(event: AppEvent): CalendarEvent {
+    const start = this.toDateFromEvent(event.startDate, event.startTime, event.startAt);
+    const end = this.toDateFromEvent(event.endDate, event.endTime, event.endAt);
+
+    return {
+      start,
+      end: end ?? undefined,
+      title: event.title,
+      color: event.allDay ? colors.blue : colors.yellow,
+      actions: this.actions,
+      allDay: !!event.allDay,
+      draggable: true,
+      resizable: {
+        beforeStart: true,
+        afterEnd: true,
+      },
+      meta: {
+        id: event.id,
+        description: event.description,
+        location: event.location,
+        timezone: event.timezone,
+      },
+    };
+  }
+
+  private extractEventId(event?: CalendarEvent): number | null {
+    const id = event?.meta?.id;
+    return typeof id === 'number' ? id : null;
+  }
+
+  private toCreateEventPayload(formEvent: any): CreateEventRequest {
+    const startDateTime = this.extractDateTimeParts(formEvent.start, formEvent.startDate, formEvent.startTime)
+      ?? this.extractDateTimeParts(new Date(), null, null)!;
+    const endDateTime = this.extractDateTimeParts(formEvent.end, formEvent.endDate, formEvent.endTime);
+
+    return {
+      title: formEvent.title,
+      description: formEvent.description || '',
+      location: formEvent.location || '',
+      startDate: startDateTime.date,
+      startTime: startDateTime.time,
+      endDate: endDateTime ? endDateTime.date : null,
+      endTime: endDateTime ? endDateTime.time : null,
+      timezone: formEvent.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+      allDay: !!formEvent.allDay,
+    };
+  }
+
+  private extractDateTimeParts(dateValue?: Date | string | null, dateText?: string | null, timeText?: string | null): { date: string; time: string } | null {
+    if (dateText && timeText) {
+      return { date: dateText, time: timeText };
+    }
+
+    if (!dateValue) {
+      return null;
+    }
+
+    const parsed = new Date(dateValue);
+    if (Number.isNaN(parsed.getTime())) {
+      return null;
+    }
+
+    return {
+      date: this.formatDateInput(parsed),
+      time: this.formatTimeInput(parsed),
+    };
+  }
+
+  private toDateFromEvent(date?: string | null, time?: string | null, fallbackIso?: string | null): Date {
+    if (date) {
+      const safeTime = time && time.trim().length > 0 ? time : '00:00';
+      const parsed = new Date(`${date}T${safeTime}:00`);
+      if (!Number.isNaN(parsed.getTime())) {
+        return parsed;
+      }
+    }
+
+    const fallback = fallbackIso ? new Date(fallbackIso) : new Date();
+    return Number.isNaN(fallback.getTime()) ? new Date() : fallback;
+  }
+
+  private formatDateInput(date: Date): string {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private formatTimeInput(date: Date): string {
+    const hours = `${date.getHours()}`.padStart(2, '0');
+    const minutes = `${date.getMinutes()}`.padStart(2, '0');
+    return `${hours}:${minutes}`;
   }
 }

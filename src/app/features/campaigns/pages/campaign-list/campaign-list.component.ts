@@ -177,6 +177,10 @@ export class CampaignListComponent implements OnInit {
   }
 
   editCampaign(campaign: Campaign): void {
+    if (!this.canEditCampaign(campaign)) {
+      this.snackBar.open('This campaign cannot be edited in its current status', 'Close', { duration: 3000 });
+      return;
+    }
     this.router.navigate(['campaigns/edit', campaign.id]);
   }
 
@@ -250,6 +254,18 @@ export class CampaignListComponent implements OnInit {
 
   canCancelCampaign(campaign: Campaign): boolean {
     return campaign.status === CampaignStatus.SCHEDULED || campaign.status === CampaignStatus.RUNNING;
+  }
+
+  canEditCampaign(campaign: Campaign): boolean {
+    if (campaign.status === CampaignStatus.DRAFT) {
+      return true;
+    }
+
+    if (campaign.status === CampaignStatus.SCHEDULED && campaign.scheduledAt) {
+      return new Date(campaign.scheduledAt).getTime() > Date.now();
+    }
+
+    return false;
   }
 
   openScheduleDialog(campaign: Campaign): void {

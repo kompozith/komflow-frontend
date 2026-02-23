@@ -12,6 +12,12 @@ export interface CampaignRecipient {
   errorMessage?: string;
 }
 
+export interface CampaignMessageAttachment {
+  id?: number;
+  name: string;
+  url: string;
+}
+
 export interface Campaign {
   id: string;
   name: string;
@@ -24,6 +30,7 @@ export interface Campaign {
     channel: string;
     createdAt: string;
     updatedAt: string;
+    attachments?: CampaignMessageAttachment[];
     attachmentCount: number;
   };
   contactIds?: string[];
@@ -147,6 +154,12 @@ export interface ScheduleCampaignRequest {
   scheduledAt: string; // ISO 8601 datetime
 }
 
+export interface CampaignEditability {
+  editable: boolean;
+  status: CampaignStatus;
+  reason?: string;
+}
+
 export interface CampaignStats {
   totalCampaigns: number;
   activeCampaigns: number;
@@ -161,8 +174,11 @@ export interface Person {
   email: string;
   firstName: string;
   lastName: string;
-  language: string;
-  phoneNumber: string;
+  language: string | null;
+  country: string | null;
+  city: string | null;
+  timezone: string | null;
+  phoneNumber: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -197,8 +213,23 @@ export interface CampaignDetails {
     title: string;
     content: string;
     channel: string;
+    event?: {
+      id: number;
+      title: string;
+      description?: string | null;
+      location?: string | null;
+      startDate: string;
+      startTime: string;
+      endDate?: string | null;
+      endTime?: string | null;
+      startAt?: string;
+      endAt?: string | null;
+      timezone?: string | null;
+      allDay: boolean;
+    } | null;
     createdAt: string;
     updatedAt: string;
+    attachments?: CampaignMessageAttachment[];
     attachmentCount: number;
   };
   contacts: Contact[];

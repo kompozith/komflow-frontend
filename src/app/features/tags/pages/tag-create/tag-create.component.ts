@@ -14,6 +14,8 @@ import { CommonModule } from '@angular/common';
 import { TagService } from '../../services/tag.service';
 import { CreateTagRequest } from '../../models/tag';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ContactService } from 'src/app/features/contacts/services/contact.service';
+import { Contact, ContactPage } from 'src/app/features/contacts/models/contact';
 
 @Component({
   selector: 'app-tag-create',
@@ -34,20 +36,25 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class TagCreateComponent {
   tagForm: FormGroup;
   isLoading = false;
+  contacts: Contact[] = [];
 
 
   constructor(
     public dialogRef: MatDialogRef<TagCreateComponent>,
     private fb: FormBuilder,
     private tagService: TagService,
+    private contactService: ContactService,
     private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.tagForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       color: ['#007bff'],
-      description: ['', [Validators.maxLength(255)]]
+      description: ['', [Validators.maxLength(255)]],
+      contactIds: [[]]
     });
+
+    this.loadContacts();
   }
 
   onSubmit(): void {
@@ -58,7 +65,8 @@ export class TagCreateComponent {
       const tagData: CreateTagRequest = {
         name: formValue.name,
         colorCode: formValue.color,
-        description: formValue.description || undefined
+        description: formValue.description || undefined,
+        contactIds: formValue.contactIds || []
       };
 
       this.tagService.createTag(tagData).subscribe({
@@ -79,6 +87,17 @@ export class TagCreateComponent {
 
   onCancel(): void {
     this.dialogRef.close({ event: 'Cancel' });
+  }
+
+  private loadContacts(): void {
+    this.contactService.getContacts().subscribe({
+      next: (response: ContactPage) => {
+        this.contacts = response.content || [];
+      },
+      error: () => {
+        this.contacts = [];
+      }
+    });
   }
 
   private markFormGroupTouched(): void {

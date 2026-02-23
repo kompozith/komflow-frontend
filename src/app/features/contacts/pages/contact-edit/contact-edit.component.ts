@@ -1,12 +1,4 @@
-import { Component, Inject, Optional } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
+import { Component } from '@angular/core';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -17,14 +9,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { TagService } from '../../../tags/services/tag.service';
 import { Tag } from '../../../tags/models/tag';
 import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
+import { PersonService } from '../../../personnel/services/person.service';
+import { GeoCity, GeoCountry, GeoService } from '../../../core/services/geo.service';
 
 @Component({
   selector: 'app-contact-edit',
   imports: [
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogTitle,
-    MatDialogContent,
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
@@ -40,35 +31,43 @@ export class ContactEditComponent {
   isSaving = false;
   contact: ContactDetails | null = null;
   availableTags: Tag[] = [];
+  readonly languageOptions = [
+    { value: 'fr', label: 'Francais' },
+    { value: 'en', label: 'English' },
+  ];
+  countries: GeoCountry[] = [];
+  cities: GeoCity[] = [];
 
   constructor(
-    @Optional() public dialogRef: MatDialogRef<ContactEditComponent> | null,
     private fb: FormBuilder,
     private contactService: ContactService,
     private tagService: TagService,
+    private personService: PersonService,
+    private geoService: GeoService,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
-    private router: Router,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { contact: ContactDetails }
+    private router: Router
   ) {
     this.contactForm = this.fb.group({
       personId: [null, [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      firstName: [''],
+      lastName: [''],
       enabled: [true],
-      lastMessageReceivedAt: [''],
+      language: ['fr'],
+      country: [''],
+      city: [''],
+      timezone: [''],
       tagIds: [[]],
     });
 
-    if (data?.contact) {
-      this.contact = data.contact;
-      this.patchForm(this.contact);
-    } else {
-      const id = this.route.snapshot.params['id'];
-      if (id) {
-        this.loadContact(id);
-      }
+    const id = this.route.snapshot.params['id'];
+    if (id) {
+      this.loadContact(id);
     }
 
     this.loadTags();
+    this.loadCountries();
   }
 
   onSubmit(): void {
@@ -79,9 +78,7 @@ export class ContactEditComponent {
       const contactData: UpdateContactRequest = {
         personId: Number(formValue.personId),
         enabled: !!formValue.enabled,
-        lastMessageReceivedAt: formValue.lastMessageReceivedAt
-          ? new Date(formValue.lastMessageReceivedAt).toISOString()
-          : null,
+        lastMessageReceivedAt: this.contact?.lastMessageReceivedAt ?? null,
         tagIds: formValue.tagIds || []
       };
 
@@ -92,14 +89,25 @@ export class ContactEditComponent {
         return;
       }
 
-      this.contactService.updateContact(contactId, contactData).subscribe({
-        next: (contact) => {
+      const personUpdate$ = this.contact?.person?.id
+        ? this.personService.updatePerson(this.contact.person.id, {
+            email: formValue.email,
+            firstName: formValue.firstName || undefined,
+            lastName: formValue.lastName || undefined,
+            language: formValue.language || undefined,
+            country: formValue.country || undefined,
+            city: formValue.city || undefined,
+            timezone: formValue.timezone || undefined,
+          })
+        : of(null);
+
+      forkJoin([
+        this.contactService.updateContact(contactId, contactData),
+        personUpdate$
+      ]).subscribe({
+        next: () => {
           this.snackBar.open('Contact updated successfully', 'Close', { duration: 3000 });
-          if (this.dialogRef) {
-            this.dialogRef.close({ event: 'Update' });
-          } else {
-            this.router.navigate(['/contacts/details', contactId]);
-          }
+          this.router.navigate(['/contacts/details', contactId]);
         },
         error: (error) => {
           console.error('Error updating contact:', error);
@@ -113,11 +121,12 @@ export class ContactEditComponent {
   }
 
   onCancel(): void {
-    if (this.dialogRef) {
-      this.dialogRef.close({ event: 'Cancel' });
-    } else {
-      this.router.navigate(['/contacts']);
+    const contactId = this.contact?.id;
+    if (contactId) {
+      this.router.navigate(['/contacts/details', contactId]);
+      return;
     }
+    this.router.navigate(['/contacts']);
   }
 
   private markFormGroupTouched(): void {
@@ -146,12 +155,20 @@ export class ContactEditComponent {
   private patchForm(contact: ContactDetails): void {
     this.contactForm.patchValue({
       personId: contact.person?.id ?? null,
+      email: contact.person?.email || '',
+      firstName: contact.person?.firstName || '',
+      lastName: contact.person?.lastName || '',
       enabled: contact.enabled,
-      lastMessageReceivedAt: contact.lastMessageReceivedAt
-        ? this.toDateTimeLocal(contact.lastMessageReceivedAt)
-        : '',
+      language: contact.person?.language || 'fr',
+      country: contact.person?.country || '',
+      city: contact.person?.city || '',
+      timezone: contact.person?.timezone || '',
       tagIds: contact.tags?.map(tag => tag.id) || [],
     });
+
+    if (contact.person?.country) {
+      this.loadCities(contact.person.country, contact.person?.city || undefined, contact.person?.timezone || undefined);
+    }
   }
 
   private loadTags(): void {
@@ -166,9 +183,58 @@ export class ContactEditComponent {
     });
   }
 
-  private toDateTimeLocal(iso: string): string {
-    const date = new Date(iso);
-    const pad = (value: number) => value.toString().padStart(2, '0');
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  private loadCountries(): void {
+    this.geoService.getCountries().subscribe({
+      next: (countries) => {
+        this.countries = countries || [];
+      },
+      error: (error) => {
+        console.error('Error loading countries:', error);
+      }
+    });
   }
+
+  onCountryChange(countryCode: string): void {
+    this.contactForm.get('city')?.setValue('');
+    this.contactForm.get('timezone')?.setValue('');
+    this.loadCities(countryCode);
+  }
+
+  onCityChange(cityName: string): void {
+    const city = this.cities.find(item => item.name === cityName);
+    this.contactForm.get('timezone')?.setValue(city?.timezone || '');
+  }
+
+  hasMultipleTimezones(): boolean {
+    return !!this.contactForm.get('country')?.value && this.cities.length > 1;
+  }
+
+  private loadCities(countryCode: string, cityName?: string, timezone?: string): void {
+    if (!countryCode) {
+      this.cities = [];
+      return;
+    }
+
+    this.geoService.getCitiesByCountry(countryCode).subscribe({
+      next: (cities) => {
+        this.cities = cities || [];
+        if (cityName) {
+          this.contactForm.get('city')?.setValue(cityName);
+        } else if (this.cities.length > 0) {
+          this.contactForm.get('city')?.setValue(this.cities[0].name);
+        }
+        if (timezone) {
+          this.contactForm.get('timezone')?.setValue(timezone);
+        } else if (this.cities.length > 0) {
+          this.contactForm.get('timezone')?.setValue(this.cities[0].timezone);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading cities:', error);
+        this.cities = [];
+        this.snackBar.open('Unable to load cities for this country', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
 }

@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { CommonModule } from '@angular/common';
 import { MessageService } from '../../services/message.service';
-import { Message, UpdateMessageRequest, MessageChannel, MessageVariable } from '../../models/message';
+import { Message, MessageAttachment, UpdateMessageRequest, MessageChannel } from '../../models/message';
 import { MessageEditorComponent } from '../../components/message-editor/message-editor.component';
+import { finalize } from 'rxjs/operators';
+import { AppEvent, EventService } from '../../../core/services/event.service';
 
 @Component({
   selector: 'app-message-edit',
@@ -26,22 +28,29 @@ export class MessageEditComponent implements OnInit {
   messageForm: FormGroup;
   isLoading = false;
   isSaving = false;
+  isUploadingAttachment = false;
   message: Message | null = null;
   messageId: string = '';
+  attachments: MessageAttachment[] = [];
+  availableEvents: AppEvent[] = [];
+  selectedEvent: AppEvent | null = null;
   // Enums for template
   MessageChannel = MessageChannel;
+  private readonly eventVariableRegex = /\{\{event[^{}]+\}\}/i;
 
   constructor(
     private fb: FormBuilder,
     private messageService: MessageService,
+    private eventService: EventService,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
   ) {
     this.messageForm = this.fb.group({
       title: ['', [Validators.minLength(2), Validators.maxLength(100)]],
-      content: ['', [Validators.required, Validators.maxLength(1000)]],
+      content: ['', [Validators.required, Validators.maxLength(10000)]],
       channel: [MessageChannel.EMAIL, [Validators.required]],
+      eventId: [null]
     });
 
     // Update title validators based on channel
@@ -50,14 +59,27 @@ export class MessageEditComponent implements OnInit {
     // Subscribe to channel changes to update title validators
     this.messageForm.get('channel')?.valueChanges.subscribe(channel => {
       this.updateTitleValidators();
+      if (channel !== MessageChannel.EMAIL) {
+        this.attachments = [];
+      }
+    });
+    this.messageForm.get('content')?.valueChanges.subscribe(() => {
+      this.updateEventRequirement();
+    });
+    this.messageForm.get('eventId')?.valueChanges.subscribe(() => {
+      this.syncSelectedEvent();
+      this.updateEventRequirement();
     });
   }
 
   ngOnInit(): void {
+    this.loadFutureEvents();
     this.messageId = this.route.snapshot.params['id'];
     if (this.messageId) {
       this.loadMessage();
     }
+    this.syncSelectedEvent();
+    this.updateEventRequirement();
   }
 
   private updateTitleValidators(): void {
@@ -91,14 +113,52 @@ export class MessageEditComponent implements OnInit {
   }
 
   populateForm(message: Message): void {
+    this.attachments = [...(message.attachments ?? [])];
+
     this.messageForm.patchValue({
       title: message.title,
       content: message.content,
       channel: message.channel,
+      eventId: message.event?.id ?? null,
     });
+    this.syncSelectedEvent();
 
     // Update validators based on the loaded channel
     this.updateTitleValidators();
+    this.updateEventRequirement();
+    this.loadFutureEvents();
+  }
+
+  hasEventVariables(): boolean {
+    const content = this.messageForm.get('content')?.value || '';
+    return this.eventVariableRegex.test(content);
+  }
+
+  private getSelectedEventFromControl(): AppEvent | null {
+    const rawId = this.messageForm.get('eventId')?.value;
+    if (rawId === null || rawId === undefined || rawId === '') {
+      return null;
+    }
+    const eventId = Number(rawId);
+    return this.availableEvents.find(event => event.id === eventId) ?? this.message?.event ?? null;
+  }
+
+  private syncSelectedEvent(): void {
+    this.selectedEvent = this.getSelectedEventFromControl();
+  }
+
+  private updateEventRequirement(): void {
+    const eventControl = this.messageForm.get('eventId');
+    if (!eventControl) {
+      return;
+    }
+
+    if (this.hasEventVariables()) {
+      eventControl.setValidators([Validators.required]);
+    } else {
+      eventControl.clearValidators();
+    }
+    eventControl.updateValueAndValidity({ emitEvent: false });
   }
 
   onSubmit(): void {
@@ -110,6 +170,8 @@ export class MessageEditComponent implements OnInit {
         title: formValue.title,
         content: formValue.content,
         channel: formValue.channel,
+        attachments: this.attachments,
+        eventId: formValue.eventId ? Number(formValue.eventId) : null,
         // No custom variables, using API variables instead
       };
 
@@ -133,10 +195,116 @@ export class MessageEditComponent implements OnInit {
     this.router.navigate(['/messages']);
   }
 
+  onAttachmentSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+    if (!files || files.length === 0) {
+      return;
+    }
+
+    this.isUploadingAttachment = true;
+    const selectedFiles = Array.from(files);
+    let completed = 0;
+
+    selectedFiles.forEach((file) => {
+      this.messageService.uploadAttachment(file)
+        .pipe(finalize(() => {
+          completed += 1;
+          if (completed === selectedFiles.length) {
+            this.isUploadingAttachment = false;
+            input.value = '';
+          }
+        }))
+        .subscribe({
+          next: (uploaded) => {
+            this.attachments = [...this.attachments, uploaded];
+          },
+          error: (error) => {
+            console.error('Error uploading attachment:', error);
+            this.snackBar.open(`Upload failed for "${file.name}"`, 'Close', { duration: 3000 });
+          }
+        });
+    });
+  }
+
+  removeAttachment(index: number): void {
+    this.attachments = this.attachments.filter((_, i) => i !== index);
+  }
+
+  openAttachment(attachment: MessageAttachment): void {
+    if (!attachment?.url) return;
+    window.open(attachment.url, '_blank', 'noopener');
+  }
+
+  isImageAttachment(attachment: MessageAttachment): boolean {
+    const value = `${attachment?.name ?? ''} ${attachment?.url ?? ''}`.toLowerCase();
+    return /\.(png|jpe?g|gif|webp|svg|bmp|ico)$/.test(value);
+  }
+
   private markFormGroupTouched(): void {
     Object.keys(this.messageForm.controls).forEach(key => {
       const control = this.messageForm.get(key);
       control?.markAsTouched();
     });
   }
+
+  private loadFutureEvents(): void {
+    this.eventService.listFutureEvents().subscribe({
+      next: (events) => {
+        const currentEvent = this.message?.event;
+        const merged = [...(events || [])];
+        if (currentEvent && !merged.some(event => event.id === currentEvent.id)) {
+          merged.push({
+            id: currentEvent.id,
+            title: currentEvent.title,
+            description: currentEvent.description,
+            location: currentEvent.location,
+            startDate: currentEvent.startDate,
+            startTime: currentEvent.startTime,
+            endDate: currentEvent.endDate,
+            endTime: currentEvent.endTime,
+            startAt: currentEvent.startAt,
+            endAt: currentEvent.endAt,
+            timezone: currentEvent.timezone,
+            allDay: currentEvent.allDay
+          });
+        }
+        this.availableEvents = merged.sort((a, b) => this.getEventSortValue(a) - this.getEventSortValue(b));
+        this.syncSelectedEvent();
+        this.updateEventRequirement();
+      },
+      error: (error) => {
+        console.error('Error loading events:', error);
+        this.availableEvents = [];
+        this.selectedEvent = this.message?.event ?? null;
+      }
+    });
+  }
+
+  getEventLabel(event: AppEvent): string {
+    const parts = [event.startDate, this.normalizeTime(event.startTime)].filter(Boolean);
+    return `${event.title} - ${parts.join(' ')}`;
+  }
+
+  private getEventSortValue(event: AppEvent): number {
+    const datePart = event.startDate || '';
+    const timePart = event.startTime || '00:00';
+    const parsed = new Date(`${datePart}T${timePart}:00`);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.getTime();
+    }
+    if (event.startAt) {
+      const fallback = new Date(event.startAt);
+      if (!Number.isNaN(fallback.getTime())) {
+        return fallback.getTime();
+      }
+    }
+    return 0;
+  }
+
+  private normalizeTime(value?: string | null): string {
+    if (!value) return '';
+    return value.length >= 5 ? value.slice(0, 5) : value;
+  }
 }
+

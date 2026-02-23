@@ -1,7 +1,7 @@
 <mat-card class="cardWithShadow">
   <mat-card-content>
     <div class="d-flex align-items-center">
-      <mat-card-title class="m-b-0">Angular Calendar</mat-card-title>
+      <mat-card-title class="m-b-0">Events Calendar</mat-card-title>
       <div class="m-l-auto">
         <button mat-flat-button color="primary" (click)="addEvent()">
           Add Event
@@ -80,6 +80,9 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <mat-card-content>
+    <div *ngIf="isLoading()" class="d-flex justify-content-center align-items-center p-3">
+      <mat-spinner diameter="28"></mat-spinner>
+    </div>
     <div [ngSwitch]="view()">
       <!-- month view -->
       <mwl-calendar-month-view

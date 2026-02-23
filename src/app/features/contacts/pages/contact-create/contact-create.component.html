@@ -1,149 +1,166 @@
-<div class="d-flex align-items-center justify-content-between m-b-16 p-x-20 p-t-16">
-  <h3>Create Contact</h3>
-  <button
-    mat-icon-button
-    mat-dialog-close
-    class="d-flex justify-content-center"
-    *ngIf="dialogRef"
-  >
-    <i-tabler name="x" class="icon-20 d-flex"></i-tabler>
-  </button>
-</div>
+<div class="row">
+  <div class="col-12">
+    <mat-card class="cardWithShadow">
+      <mat-card-header>
+        <mat-card-title>Create Contact</mat-card-title>
+        <mat-card-subtitle>Create a new contact or link an existing person</mat-card-subtitle>
+      </mat-card-header>
 
-<mat-dialog-content>
-  <form [formGroup]="contactForm">
-    <div class="row">
-      <div class="col-12">
-        <h5 class="m-b-8">Person</h5>
-        <mat-button-toggle-group
-          [value]="personMode"
-          (change)="setPersonMode($event.value)"
-          exclusive>
-          <mat-button-toggle value="existing">Select existing</mat-button-toggle>
-          <mat-button-toggle value="new">Create new</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
-    </div>
-
-    <div class="row mt-3" *ngIf="personMode === 'existing'">
-      <div class="col-12">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Select Person</mat-label>
-          <mat-select formControlName="personId" placeholder="Choose a person">
-            <mat-option *ngFor="let person of availablePersons" [value]="person.id">
-              {{ person.firstName || '' }} {{ person.lastName || '' }} — {{ person.email }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="contactForm.get('personId')?.invalid && contactForm.get('personId')?.touched">
-            <span>Person is required</span>
-          </mat-error>
-        </mat-form-field>
-        <small class="text-muted">Only persons already created are listed here.</small>
-      </div>
-    </div>
-
-    <div class="row mt-3" *ngIf="personMode === 'new'" formGroupName="newPerson">
-      <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email" placeholder="Enter email address" required />
-          <mat-error *ngIf="contactForm.get('newPerson.email')?.invalid && contactForm.get('newPerson.email')?.touched">
-            <span *ngIf="contactForm.get('newPerson.email')?.errors?.['required']">Email is required</span>
-            <span *ngIf="contactForm.get('newPerson.email')?.errors?.['email']">Please enter a valid email</span>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Language</mat-label>
-          <input matInput formControlName="language" placeholder="e.g. fr, en" />
-        </mat-form-field>
-      </div>
-      <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>First Name</mat-label>
-          <input matInput formControlName="firstName" placeholder="Enter first name" />
-        </mat-form-field>
-      </div>
-      <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Last Name</mat-label>
-          <input matInput formControlName="lastName" placeholder="Enter last name" />
-        </mat-form-field>
-      </div>
-
-      <div class="col-12 mt-2">
-        <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Phone Numbers</mat-label>
-        <div formArrayName="phoneNumbers">
-          <div
-            class="row mb-2"
-            *ngFor="let phoneGroup of phoneNumbers.controls; let i = index"
-            [formGroupName]="i">
-            <div class="col-md-8">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Number</mat-label>
-                <input matInput formControlName="number" placeholder="Enter phone number" />
-              </mat-form-field>
-            </div>
-            <div class="col-md-3 d-flex align-items-center">
-              <mat-checkbox formControlName="isWhatsapp">WhatsApp</mat-checkbox>
-            </div>
-            <div class="col-md-1 d-flex align-items-center">
-              <button mat-icon-button type="button" (click)="removePhoneNumber(i)" [disabled]="phoneNumbers.length === 1">
-                <i-tabler name="trash" class="icon-18 d-flex"></i-tabler>
-              </button>
+      <mat-card-content>
+        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-12">
+              <h5 class="m-b-8">Person</h5>
+              <mat-button-toggle-group
+                [value]="personMode"
+                (change)="setPersonMode($event.value)"
+                exclusive>
+                <mat-button-toggle value="existing">Select existing</mat-button-toggle>
+                <mat-button-toggle value="new">Create new</mat-button-toggle>
+              </mat-button-toggle-group>
             </div>
           </div>
-        </div>
-        <button mat-stroked-button type="button" (click)="addPhoneNumber()">Add phone number</button>
-      </div>
-    </div>
 
-    <div class="row mt-4">
-      <div class="col-12">
-        <h5 class="m-b-8">Contact Settings</h5>
-      </div>
-      <div class="col-md-6">
-        <mat-slide-toggle formControlName="enabled" color="primary">Enabled</mat-slide-toggle>
-      </div>
-      <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Last Message Received At</mat-label>
-          <input matInput type="datetime-local" formControlName="lastMessageReceivedAt" />
-        </mat-form-field>
-      </div>
-    </div>
+          <div class="row mt-3" *ngIf="personMode === 'existing'">
+            <div class="col-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Select Person</mat-label>
+                <mat-select formControlName="personId" placeholder="Choose a person">
+                  <mat-option *ngFor="let person of availablePersons" [value]="person.id">
+                    {{ person.firstName || '' }} {{ person.lastName || '' }} - {{ person.email }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="contactForm.get('personId')?.invalid && contactForm.get('personId')?.touched">
+                  <span>Person is required</span>
+                </mat-error>
+              </mat-form-field>
+              <small class="text-muted">Only persons already created are listed here.</small>
+            </div>
+          </div>
 
-    <div class="row mt-4">
-      <div class="col-12">
-        <h5 class="m-b-8">Tags</h5>
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-select formControlName="tagIds" multiple>
-            <mat-option *ngFor="let tag of availableTags" [value]="tag.id">
-              {{ tag.name }}
-            </mat-option>
-          </mat-select>
-          <mat-hint>Select tags to categorize this contact</mat-hint>
-        </mat-form-field>
-      </div>
-    </div>
+          <div class="row mt-3" *ngIf="personMode === 'new'" formGroupName="newPerson">
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email" type="email" placeholder="Enter email address" required />
+                <mat-error *ngIf="contactForm.get('newPerson.email')?.invalid && contactForm.get('newPerson.email')?.touched">
+                  <span *ngIf="contactForm.get('newPerson.email')?.errors?.['required']">Email is required</span>
+                  <span *ngIf="contactForm.get('newPerson.email')?.errors?.['email']">Please enter a valid email</span>
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Language</mat-label>
+                <mat-select formControlName="language">
+                  <mat-option *ngFor="let option of languageOptions" [value]="option.value">
+                    {{ option.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="firstName" placeholder="Enter first name" />
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="lastName" placeholder="Enter last name" />
+              </mat-form-field>
+            </div>
+            <div [ngClass]="hasMultipleTimezones() ? 'col-md-6' : 'col-12'">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Country</mat-label>
+                <mat-select formControlName="country" (selectionChange)="onCountryChange($event.value)">
+                  <mat-option *ngFor="let country of countries" [value]="country.code">
+                    {{ country.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-md-6" *ngIf="hasMultipleTimezones()">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>City</mat-label>
+                <mat-select formControlName="city" (selectionChange)="onCityChange($event.value)" [disabled]="!contactForm.get('newPerson.country')?.value">
+                  <mat-option *ngFor="let city of cities" [value]="city.name">
+                    {{ city.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
 
-    <div mat-dialog-actions align="end" class="px-0">
-      <button
-        mat-button
-        (click)="closeDialog()"
-      >
-        Cancel
-      </button>
-      <button
-        mat-flat-button
-        color="primary"
-        (click)="doAction()"
-        [disabled]="isLoading || contactForm.invalid"
-      >
-        <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
-        <span *ngIf="!isLoading">Create</span>
-      </button>
-    </div>
-  </form>
-</mat-dialog-content>
+            <div class="col-12 mt-2">
+              <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Phone Numbers</mat-label>
+              <div formArrayName="phoneNumbers" class="row">
+                <div
+                  class="col-12 col-lg-6 mb-2"
+                  *ngFor="let phoneGroup of phoneNumbers.controls; let i = index"
+                  [formGroupName]="i">
+                  <div class="d-flex align-items-start gap-2">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>Number {{ i + 1 }}</mat-label>
+                      <input matInput formControlName="number" placeholder="Enter phone number" />
+                    </mat-form-field>
+                    <button
+                      mat-icon-button
+                      type="button"
+                      (click)="removePhoneNumber(i)"
+                      [disabled]="phoneNumbers.length === 1"
+                      aria-label="Remove phone number">
+                      <i-tabler name="trash" class="text-error d-flex"></i-tabler>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <button mat-stroked-button type="button" (click)="addPhoneNumber()">Add phone number</button>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12">
+              <h5 class="m-b-8">Contact Settings</h5>
+            </div>
+            <div class="col-md-6">
+              <mat-slide-toggle formControlName="enabled" color="primary">Enabled</mat-slide-toggle>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12">
+              <h5 class="m-b-8">Tags</h5>
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-select formControlName="tagIds" multiple>
+                  <mat-option *ngFor="let tag of availableTags" [value]="tag.id">
+                    {{ tag.name }}
+                  </mat-option>
+                </mat-select>
+                <mat-hint>Select tags to categorize this contact</mat-hint>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-12">
+              <div class="d-flex justify-content-end gap-2">
+                <button mat-stroked-button type="button" (click)="closeDialog()">
+                  Cancel
+                </button>
+                <button
+                  mat-flat-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="isLoading || contactForm.invalid">
+                  <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+                  <span *ngIf="!isLoading">Create Contact</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

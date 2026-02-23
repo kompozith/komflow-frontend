@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import {
   Message,
+  MessageAttachment,
   MessagePage,
   MessageFilters,
   CreateMessageRequest,
@@ -26,6 +27,13 @@ export class MessageService {
     const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
     return new HttpHeaders({
       'Content-Type': 'application/json',
+      ...(token && { 'Authorization': `Bearer ${token}` })
+    });
+  }
+
+  private getMultipartAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+    return new HttpHeaders({
       ...(token && { 'Authorization': `Bearer ${token}` })
     });
   }
@@ -99,5 +107,14 @@ export class MessageService {
   testMessage(messageId: string, contactId: string, variableValues?: { [key: string]: string }): Observable<MessageSendResult> {
     const body = { contactId, variableValues };
     return this.http.post<MessageSendResult>(`${this.apiUrl}/${messageId}/test`, body, { headers: this.getAuthHeaders() });
+  }
+
+  uploadAttachment(file: globalThis.File): Observable<MessageAttachment> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post<MessageAttachment>(`${environment.apiUrl}/files/upload`, formData, {
+      headers: this.getMultipartAuthHeaders()
+    });
   }
 }

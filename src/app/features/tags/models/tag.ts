@@ -7,6 +7,7 @@ export interface Tag {
   color?: string;
   description?: string;
   enabled?: boolean;
+  contactIds?: number[];
   createdAt: string;
   updatedAt: string;
   contactCount?: number;
@@ -40,10 +41,12 @@ export interface CreateTagRequest {
   name: string;
   colorCode?: string;
   description?: string;
+  contactIds?: number[];
 }
 
 export interface UpdateTagRequest {
   name?: string;
   colorCode?: string;
   description?: string;
+  contactIds?: number[];
 }
