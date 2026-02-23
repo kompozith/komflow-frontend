@@ -199,7 +199,7 @@ export class PermissionService {
   }
 
   canSendCampaigns(): boolean {
-    return this.hasPermission('CAMPAIGN_SEND');
+    return this.hasPermission('CAMPAIGN_SUBMIT');
   }
 
   /**
@@ -270,11 +270,20 @@ export class PermissionService {
    * Load permissions and roles from localStorage
    */
   private loadFromStorage(): void {
-    const permissions = localStorage.getItem('user_permissions');
+    const permissions =
+      localStorage.getItem(AUTH_CONFIG.PERMISSIONS_KEY) ||
+      sessionStorage.getItem(AUTH_CONFIG.PERMISSIONS_KEY) ||
+      localStorage.getItem('user_permissions');
+
     if (permissions) {
       this.permissionsSubject.next(JSON.parse(permissions));
     }
-    const roles = localStorage.getItem('user_roles');
+
+    const roles =
+      localStorage.getItem(AUTH_CONFIG.ROLES_KEY) ||
+      sessionStorage.getItem(AUTH_CONFIG.ROLES_KEY) ||
+      localStorage.getItem('user_roles');
+
     if (roles) {
       this.rolesSubject.next(JSON.parse(roles));
     }
@@ -284,8 +293,10 @@ export class PermissionService {
    * Save permissions and roles to localStorage
    */
   private saveToStorage(): void {
-    localStorage.setItem('user_permissions', JSON.stringify(this.permissionsSubject.value));
-    localStorage.setItem('user_roles', JSON.stringify(this.rolesSubject.value));
+    localStorage.setItem(AUTH_CONFIG.PERMISSIONS_KEY, JSON.stringify(this.permissionsSubject.value));
+    localStorage.setItem(AUTH_CONFIG.ROLES_KEY, JSON.stringify(this.rolesSubject.value));
+    sessionStorage.setItem(AUTH_CONFIG.PERMISSIONS_KEY, JSON.stringify(this.permissionsSubject.value));
+    sessionStorage.setItem(AUTH_CONFIG.ROLES_KEY, JSON.stringify(this.rolesSubject.value));
   }
 
   /**
@@ -293,6 +304,8 @@ export class PermissionService {
     */
    clearPermissions(): void {
      this.permissionsSubject.next([]);
+     localStorage.removeItem(AUTH_CONFIG.PERMISSIONS_KEY);
+     sessionStorage.removeItem(AUTH_CONFIG.PERMISSIONS_KEY);
      localStorage.removeItem('user_permissions');
    }
 
@@ -301,6 +314,8 @@ export class PermissionService {
    */
   clearRoles(): void {
     this.rolesSubject.next([]);
+    localStorage.removeItem(AUTH_CONFIG.ROLES_KEY);
+    sessionStorage.removeItem(AUTH_CONFIG.ROLES_KEY);
     localStorage.removeItem('user_roles');
   }
 

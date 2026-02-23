@@ -36,7 +36,7 @@
       [(ngModel)]="confirmationText"
       placeholder="Enter store name here"
     />
-    <mat-hint *ngIf="!isConfirmationValid && confirmationText.length > 0" class="text-danger">
+    <mat-hint *ngIf="!isConfirmationValid && confirmationText.length > 0" class="text-error">
       Store name doesn't match
     </mat-hint>
   </mat-form-field>

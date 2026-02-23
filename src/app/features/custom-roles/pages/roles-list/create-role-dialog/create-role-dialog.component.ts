@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { RoleService } from '../../../services/role.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { RoleType } from '../../../models/role';
 
 @Component({
   selector: 'app-create-role-dialog',
@@ -30,6 +31,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class CreateRoleDialogComponent {
   action: string;
   local_data: any;
+  roleTypes: RoleType[] = ['CUSTOM'];
 
   constructor(
     public dialogRef: MatDialogRef<CreateRoleDialogComponent>,
@@ -38,13 +40,13 @@ export class CreateRoleDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.action = 'Add';
-    this.local_data = { name: '', displayName: '', description: '' };
+    this.local_data = { name: '', type: 'CUSTOM', description: '' };
   }
 
   doAction(): void {
     const roleData = {
       name: this.local_data.name,
-      displayName: this.local_data.displayName,
+      type: 'CUSTOM' as RoleType,
       description: this.local_data.description || '',
     };
 

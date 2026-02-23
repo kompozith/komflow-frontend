@@ -13,7 +13,7 @@ export const FilesRoutes: Routes = [
         canActivate: [PermissionGuard],
         data: {
           title: 'Files',
-          permissions: ['FILE_LIST'],
+          permissions: ['MESSAGE_LIST'],
           urls: [
             { title: 'Files', url: 'files' },
             { title: 'All Files' },

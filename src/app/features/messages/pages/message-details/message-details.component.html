@@ -195,7 +195,39 @@
 </div>
 
 <div *ngIf="isLoading">
-  <div class="loading-container">
-    <mat-spinner diameter="40"></mat-spinner>
+  <div class="skeleton-stack">
+    <div class="skeleton-card skeleton-stack">
+      <span class="skeleton-line skeleton-line--lg" style="width: 38%;"></span>
+      <span class="skeleton-line" style="width: 58%;"></span>
+    </div>
+
+    <div class="skeleton-detail-grid three-cols">
+      <div class="skeleton-card skeleton-stack" *ngFor="let _ of [1,2,3]">
+        <span class="skeleton-line" style="width: 45%;"></span>
+        <span class="skeleton-line skeleton-line--md"></span>
+      </div>
+    </div>
+
+    <div class="skeleton-detail-grid two-cols">
+      <div class="skeleton-card skeleton-stack">
+        <span class="skeleton-line" style="width: 42%;"></span>
+        <span class="skeleton-line"></span>
+        <span class="skeleton-line"></span>
+        <span class="skeleton-line" style="width: 62%;"></span>
+      </div>
+      <div class="skeleton-card skeleton-stack">
+        <span class="skeleton-line" style="width: 42%;"></span>
+        <span class="skeleton-block" style="height: 120px;"></span>
+      </div>
+    </div>
+
+    <div class="skeleton-card skeleton-stack">
+      <span class="skeleton-line" style="width: 28%;"></span>
+      <div class="skeleton-detail-grid three-cols">
+        <span class="skeleton-block" style="height: 90px;"></span>
+        <span class="skeleton-block" style="height: 90px;"></span>
+        <span class="skeleton-block" style="height: 90px;"></span>
+      </div>
+    </div>
   </div>
 </div>

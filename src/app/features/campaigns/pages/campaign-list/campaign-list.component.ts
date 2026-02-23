@@ -17,6 +17,7 @@ import { Campaign, CampaignPage, CampaignFilters, CampaignStatus } from '../../m
 import {BadgeComponent, BadgeVariant} from '../../../../shared/components/badge/badge.component';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ScheduleCampaignDialogComponent, ScheduleCampaignDialogData } from '../../pages/campaign-details/schedule-campaign-dialog.component';
+import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
 
 @Component({
   selector: 'app-campaign-list',
@@ -29,6 +30,7 @@ import { ScheduleCampaignDialogComponent, ScheduleCampaignDialogData } from '../
     TablerIconsModule,
     CommonModule,
     BadgeComponent,
+    SkeletonTableComponent,
   ],
 })
 export class CampaignListComponent implements OnInit {

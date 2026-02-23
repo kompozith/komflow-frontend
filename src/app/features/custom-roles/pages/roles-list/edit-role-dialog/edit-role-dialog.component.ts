@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { RoleService } from '../../../services/role.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { RoleType } from '../../../models/role';
 
 @Component({
   selector: 'app-edit-role-dialog',
@@ -30,6 +31,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class EditRoleDialogComponent {
   action: string;
   local_data: any;
+  roleTypes: RoleType[] = ['CUSTOM'];
 
   constructor(
     public dialogRef: MatDialogRef<EditRoleDialogComponent>,
@@ -42,10 +44,15 @@ export class EditRoleDialogComponent {
   }
 
   doAction(): void {
+    if (this.local_data.isSystem) {
+      this.snackBar.open('System roles cannot be modified', 'Close', { duration: 3000 });
+      return;
+    }
+
     const updateData = {
-      displayName: this.local_data.displayName,
+      name: this.local_data.name,
+      type: 'CUSTOM' as RoleType,
       description: this.local_data.description || '',
-      isActive: this.local_data.isActive,
     };
 
     this.roleService.updateRole(this.local_data.id, updateData).subscribe({

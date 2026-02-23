@@ -27,20 +27,6 @@
         </mat-form-field>
       </div>
       <div class="col-12">
-        <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Display Name</mat-label>
-        <mat-form-field appearance="outline" class="w-100">
-          <input
-            type="text"
-            matInput
-            required
-            id="displayName"
-            name="displayName"
-            [(ngModel)]="local_data.displayName"
-            placeholder="Enter display name"
-          />
-        </mat-form-field>
-      </div>
-      <div class="col-12">
         <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Description (Optional)</mat-label>
         <mat-form-field appearance="outline" class="w-100">
           <textarea
@@ -54,13 +40,20 @@
         </mat-form-field>
       </div>
       <div class="col-12">
-        <mat-checkbox
-          id="isActive"
-          name="isActive"
-          [(ngModel)]="local_data.isActive"
-        >
-          Active
-        </mat-checkbox>
+        <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Role Type</mat-label>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-select
+            id="type"
+            name="type"
+            [(ngModel)]="local_data.type"
+            [disabled]="true"
+          >
+            @for (type of roleTypes; track type) {
+              <mat-option [value]="type">{{ type }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <p class="text-muted f-s-12">Role type is managed by the backend. System roles are read-only.</p>
       </div>
     </div>
     <div mat-dialog-actions align="end">

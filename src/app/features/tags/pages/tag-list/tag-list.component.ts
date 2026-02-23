@@ -27,6 +27,7 @@ import { DeleteTagDialogComponent } from './delete-tag-dialog/delete-tag-dialog.
 import { TagCreateComponent } from '../tag-create/tag-create.component';
 import { TagEditComponent } from '../tag-edit/tag-edit.component';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
 
 @Component({
   selector: 'app-tag-list',
@@ -41,6 +42,7 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
     MatMenuModule,
     MatIconModule,
     BadgeComponent,
+    SkeletonTableComponent,
   ],
 })
 export class TagListComponent implements OnInit, AfterViewInit {

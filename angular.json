@@ -18,6 +18,11 @@
           "builder": "@angular/build:application",
           "options": {
             "allowedCommonJsDependencies": ["apexcharts", "bezier-easing", "chance"],
+            "optimization": {
+              "fonts": {
+                "inline": false
+              }
+            },
             "outputPath": {
               "base": "dist/komflow"
             },

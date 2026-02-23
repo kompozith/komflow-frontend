@@ -1,0 +1,22 @@
+<div class="skeleton-table">
+  <div class="skeleton-table-row header" [ngClass]="colsClass">
+    <span class="skeleton-line skeleton-line--sm" *ngFor="let _ of columnIndexes"></span>
+  </div>
+
+  <div class="skeleton-table-row" [ngClass]="colsClass" *ngFor="let _ of rowIndexes">
+    <ng-container *ngFor="let columnIndex of columnIndexes">
+      <span
+        *ngIf="!isChipColumn(columnIndex); else chipCell"
+        class="skeleton-line">
+      </span>
+      <ng-template #chipCell>
+        <span class="skeleton-chip"></span>
+      </ng-template>
+    </ng-container>
+  </div>
+</div>
+
+<div *ngIf="showPagination" class="skeleton-table-pagination">
+  <span class="skeleton-line left"></span>
+  <span class="skeleton-line right"></span>
+</div>

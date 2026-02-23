@@ -1,0 +1,44 @@
+.event-details-dialog {
+  min-width: 320px;
+}
+
+.event-summary-box {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #e9edf2;
+  background: #f9fbff;
+}
+
+.event-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #e8f1ff;
+  color: #1d4ed8;
+}
+
+.detail-row {
+  border: 1px solid #edf0f3;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.detail-label {
+  color: #6b7280;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.detail-value {
+  color: #111827;
+  font-size: 14px;
+}
+
+:host ::ng-deep .cal-event-actions a {
+  text-decoration: none;
+  font-weight: 600;
+}

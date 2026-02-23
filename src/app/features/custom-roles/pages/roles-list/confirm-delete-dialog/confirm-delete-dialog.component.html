@@ -28,7 +28,7 @@
       [(ngModel)]="confirmationText"
       placeholder="Enter role name here"
     />
-    <mat-hint *ngIf="!isConfirmationValid && confirmationText.length > 0" class="text-danger">
+    <mat-hint *ngIf="!isConfirmationValid && confirmationText.length > 0" class="text-error">
       Role name doesn't match
     </mat-hint>
   </mat-form-field>

@@ -36,7 +36,7 @@
       [(ngModel)]="confirmationText"
       placeholder="Enter message title here"
     />
-    <mat-hint *ngIf="!isConfirmationValid && confirmationText.length > 0" class="text-danger">
+    <mat-hint *ngIf="!isConfirmationValid && confirmationText.length > 0" class="text-error">
       Message title doesn't match
     </mat-hint>
   </mat-form-field>

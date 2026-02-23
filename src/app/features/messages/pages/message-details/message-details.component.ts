@@ -9,6 +9,7 @@ import { MessageService } from '../../services/message.service';
 import { Message, MessageAttachment, MessageChannel, Variable } from '../../models/message';
 import { BadgeComponent, BadgeVariant } from '../../../../shared/components/badge/badge.component';
 import { normalizeVariableKey, renderTemplatePreviewHtml } from '../../utils/message-rich-text.util';
+import { MediaPreviewService } from 'src/app/shared/services/media-preview.service';
 
 @Component({
   selector: 'app-message-details',
@@ -49,7 +50,8 @@ export class MessageDetailsComponent implements OnInit {
     private messageService: MessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private mediaPreviewService: MediaPreviewService
   ) {}
 
   ngOnInit(): void {
@@ -147,7 +149,7 @@ export class MessageDetailsComponent implements OnInit {
 
   openAttachment(attachment: MessageAttachment): void {
     if (!attachment?.url) return;
-    window.open(attachment.url, '_blank', 'noopener');
+    this.mediaPreviewService.openInNewTab(attachment.url);
   }
 
   isImageAttachment(attachment: MessageAttachment): boolean {

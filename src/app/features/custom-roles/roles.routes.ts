@@ -10,10 +10,10 @@ export const RolesRoutes: Routes = [
         path: '',
         component: RolesListComponent,
         data: {
-          title: 'Role List',
+          title: 'Roles & Permissions',
           urls: [
-            { title: 'Roles Management', url: 'roles' },
-            { title: 'Roles List' },
+            { title: 'Access Control', url: 'roles' },
+            { title: 'Roles & Permissions' },
           ],
         },
       },
@@ -23,7 +23,7 @@ export const RolesRoutes: Routes = [
         data: {
           title: 'Role Details',
           urls: [
-            { title: 'Roles Management', url: 'roles' },
+            { title: 'Access Control', url: 'roles' },
             { title: 'Role Details' },
           ],
         },

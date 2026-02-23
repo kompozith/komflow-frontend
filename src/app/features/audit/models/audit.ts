@@ -1,21 +1,19 @@
 // src/app/features/audit/models/audit.ts
 
 export interface AuditLog {
-  id: string;
+  id: string | number;
   timestamp: string;
-  userId: string;
-  username: string;
-  action: AuditAction;
+  userId?: string;
+  username?: string;
+  action: AuditAction | string;
   resource: string;
   resourceId?: string;
-  oldValue?: any;
-  newValue?: any;
+  details?: string;
   ipAddress?: string;
   userAgent?: string;
-  sessionId?: string;
+  channel?: string;
+  userLocation?: string;
   success: boolean;
-  errorMessage?: string;
-  metadata?: { [key: string]: any };
 }
 
 export enum AuditAction {
@@ -56,14 +54,14 @@ export interface AuditFilters {
   page?: number;
   size?: number;
   sort?: string[];
+  search?: string;
   userId?: string;
   username?: string;
-  action?: AuditAction;
+  action?: AuditAction | string;
   resource?: string;
   resourceId?: string;
   dateFrom?: string;
   dateTo?: string;
-  success?: boolean;
   ipAddress?: string;
 }
 

@@ -45,7 +45,7 @@ export const MULTI_HEADER_FOOTER_TABLE_HTML_SNIPPET = `  <div class="table-respo
 
         <!-- Disclaimer column -->
         <ng-container matColumnDef="disclaimer">
-          <td mat-footer-cell *matFooterCellDef colspan="2" class="text-danger fw-medium">
+          <td mat-footer-cell *matFooterCellDef colspan="2" class="text-error fw-medium">
             Please note that the cost of items displayed are completely and
             totally made up.
           </td>

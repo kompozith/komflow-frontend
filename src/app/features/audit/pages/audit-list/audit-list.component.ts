@@ -1,81 +1,53 @@
-import {
-  Component,
-  OnInit,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import {
-  MatDialog,
-} from '@angular/material/dialog';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { AuditService } from '../../services/audit.service';
 import { AuditLog, AuditLogPage, AuditFilters, AuditAction } from '../../models/audit';
-import {BadgeComponent, BadgeVariant} from '../../../../shared/components/badge/badge.component';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import {MatTableDataSource} from "@angular/material/table";
+import { BadgeComponent, BadgeVariant } from '../../../../shared/components/badge/badge.component';
+import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-audit-list',
   templateUrl: './audit-list.component.html',
-  styleUrls: [],
+  styleUrls: ['./audit-list.component.scss'],
   imports: [
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
     TablerIconsModule,
     CommonModule,
-    MatMenuModule,
     MatIconModule,
     BadgeComponent,
   ],
 })
-export class AuditListComponent implements OnInit {
+export class AuditListComponent implements OnInit, OnDestroy {
+  logs: AuditLog[] = [];
+  totalElements = 0;
+  totalPages = 0;
+  currentPage = 0;
+  pageSize = 8;
+  isLoading = false;
 
-
-  displayedColumns: string[] = [
-    'rowNumber',
-    'timestamp',
-    'username',
-    'action',
-    'resource',
-    'success',
-    'ipAddress',
-    'details',
-  ];
-
-  dataSource = new MatTableDataSource<AuditLog>([]);
-   totalElements = 0;
-   totalPages = 0;
-   currentPage = 0;
-   pageSize = 10;
-   isLoading = false;
-
-
-  // Filters
   searchText = '';
   selectedAction: AuditAction | '' = '';
   selectedResource: string | '' = '';
-  selectedSuccess: 'true' | 'false' | '' = '';
-  dateFrom: string = '';
-  dateTo: string = '';
+  dateFrom: Date | null = null;
+  dateTo: Date | null = null;
   sortBy = 'timestamp';
   sortDirection: 'asc' | 'desc' = 'desc';
 
-  // Search debounce
   private searchSubject = new Subject<string>();
+  private searchSubscription?: Subscription;
 
-  // Enums for template
   AuditAction = AuditAction;
+  logSkeletonItems = Array.from({ length: 6 }, (_, i) => i);
 
   constructor(
-      public dialog: MatDialog,
-      private router: Router,
       private auditService: AuditService,
       private snackBar: MatSnackBar
     ) {}
@@ -84,18 +56,21 @@ export class AuditListComponent implements OnInit {
     this.loadAuditLogs();
 
     // Setup search debounce
-    this.searchSubject.pipe(
+    this.searchSubscription = this.searchSubject.pipe(
       debounceTime(500),
       distinctUntilChanged()
     ).subscribe(searchText => {
       this.searchText = searchText;
-      this.loadAuditLogs();
+      this.loadAuditLogs(0);
     });
   }
 
+  ngOnDestroy(): void {
+    this.searchSubscription?.unsubscribe();
+  }
 
   getStartIndex(): number {
-    return (this.currentPage * this.pageSize) + 1;
+    return this.totalElements === 0 ? 0 : (this.currentPage * this.pageSize) + 1;
   }
 
   getEndIndex(): number {
@@ -103,8 +78,7 @@ export class AuditListComponent implements OnInit {
     return Math.min(endIndex, this.totalElements);
   }
 
-  loadAuditLogs(pageIndex: number = 0): void {
-    // Prevent multiple simultaneous requests
+  loadAuditLogs(pageIndex: number = this.currentPage): void {
     if (this.isLoading) {
       return;
     }
@@ -114,24 +88,21 @@ export class AuditListComponent implements OnInit {
       page: pageIndex,
       size: this.pageSize,
       sort: [`${this.sortBy},${this.sortDirection}`],
-      username: this.searchText || undefined,
+      search: this.searchText || undefined,
       action: this.selectedAction || undefined,
       resource: this.selectedResource || undefined,
-      success: this.selectedSuccess ? this.selectedSuccess === 'true' : undefined,
-      dateFrom: this.dateFrom || undefined,
-      dateTo: this.dateTo || undefined,
+      dateFrom: this.toIsoInstant(this.dateFrom),
+      dateTo: this.toIsoInstant(this.dateTo, true),
     };
 
     this.auditService.getAuditLogs(filters).subscribe({
        next: (response: AuditLogPage) => {
-         this.dataSource.data = response.content;
+         this.logs = response.content;
          this.totalElements = response.totalElements;
          this.totalPages = response.totalPages;
          this.currentPage = response.number;
          this.pageSize = response.size;
          this.isLoading = false;
-
-         // No paginator updates needed for custom pagination
        },
       error: (error) => {
         console.error('Error loading audit logs:', error);
@@ -146,16 +117,15 @@ export class AuditListComponent implements OnInit {
     const pageIndex = event.pageIndex;
     const newPageSize = event.pageSize;
 
-    // Only reload if something actually changed
-    if (pageIndex !== this.currentPage || newPageSize !== this.pageSize) {
+    if (newPageSize !== this.pageSize) {
       this.pageSize = newPageSize;
+      this.loadAuditLogs(0);
+      return;
+    }
+
+    if (pageIndex !== this.currentPage) {
       this.loadAuditLogs(pageIndex);
     }
-  }
-
-  onPageSizeChange(newPageSize: number): void {
-    this.pageSize = newPageSize;
-    this.loadAuditLogs(0); // Reset to first page when page size changes
   }
 
   onSearchChange(searchText: string): void {
@@ -164,21 +134,16 @@ export class AuditListComponent implements OnInit {
 
   onActionFilterChange(action: AuditAction | ''): void {
     this.selectedAction = action;
-    this.loadAuditLogs();
+    this.loadAuditLogs(0);
   }
 
   onResourceFilterChange(resource: string | ''): void {
     this.selectedResource = resource;
-    this.loadAuditLogs();
-  }
-
-  onSuccessFilterChange(success: 'true' | 'false' | ''): void {
-    this.selectedSuccess = success;
-    this.loadAuditLogs();
+    this.loadAuditLogs(0);
   }
 
   onDateRangeChange(): void {
-    this.loadAuditLogs();
+    this.loadAuditLogs(0);
   }
 
   onSortChange(sortBy: string): void {
@@ -186,16 +151,24 @@ export class AuditListComponent implements OnInit {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       this.sortBy = sortBy;
-      this.sortDirection = 'asc';
+      this.sortDirection = sortBy === 'timestamp' ? 'desc' : 'asc';
     }
-    this.loadAuditLogs();
+    this.loadAuditLogs(0);
   }
 
-  getActionColor(action: AuditAction): BadgeVariant {
+  onSortDirectionChange(direction: 'asc' | 'desc'): void {
+    if (this.sortDirection === direction) {
+      return;
+    }
+    this.sortDirection = direction;
+    this.loadAuditLogs(0);
+  }
+
+  getActionColor(action: AuditAction | string): BadgeVariant {
     return this.auditService.getActionColor(action);
   }
 
-  getActionIcon(action: AuditAction): string {
+  getActionIcon(action: AuditAction | string): string {
     return this.auditService.getActionIcon(action);
   }
 
@@ -203,17 +176,36 @@ export class AuditListComponent implements OnInit {
     return this.auditService.getResourceDisplayName(resource);
   }
 
-  formatAuditValue(value: any): string {
-    return this.auditService.formatAuditValue(value);
+  getActionLabel(action: AuditAction | string): string {
+    return this.auditService.formatActionLabel(action);
   }
 
-  viewAuditDetails(auditLog: AuditLog): void {
-    // TODO: Implement audit details modal or navigation
-    this.snackBar.open('Audit details view coming soon!', 'Close', { duration: 3000 });
+  getUserInitial(log: AuditLog): string {
+    const value = (log.username || log.userId || 'S').trim();
+    return value.charAt(0).toUpperCase();
+  }
+
+  trackByLogId(_: number, item: AuditLog): string | number {
+    return item.id;
+  }
+
+  private toIsoInstant(value?: string | Date | null, endOfDay: boolean = false): string | undefined {
+    if (!value) {
+      return undefined;
+    }
+
+    const parsed = value instanceof Date ? new Date(value.getTime()) : new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return undefined;
+    }
+
+    if (endOfDay) {
+      parsed.setHours(23, 59, 59, 999);
+    }
+    return parsed.toISOString();
   }
 
   exportAuditLogs(): void {
-    // TODO: Implement export functionality
     this.snackBar.open('Export functionality coming soon!', 'Close', { duration: 3000 });
   }
 }

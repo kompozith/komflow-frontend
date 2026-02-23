@@ -160,9 +160,42 @@
       </mat-card-content>
 
       <mat-card-content *ngIf="isLoading">
-        <div class="d-flex justify-content-center align-items-center p-4">
-          <mat-spinner diameter="40"></mat-spinner>
-          <span class="ml-2">Loading contact details...</span>
+        <div class="skeleton-stack">
+          <div class="d-flex align-items-center gap-16">
+            <span class="skeleton-avatar"></span>
+            <div class="w-100 skeleton-stack">
+              <span class="skeleton-line skeleton-line--lg" style="width: 45%;"></span>
+              <span class="skeleton-line" style="width: 65%;"></span>
+            </div>
+          </div>
+
+          <div class="skeleton-detail-grid two-cols">
+            <div class="skeleton-card skeleton-stack">
+              <span class="skeleton-line" style="width: 40%;"></span>
+              <span class="skeleton-line skeleton-line--md"></span>
+            </div>
+            <div class="skeleton-card skeleton-stack">
+              <span class="skeleton-line" style="width: 40%;"></span>
+              <span class="skeleton-line skeleton-line--md"></span>
+            </div>
+            <div class="skeleton-card skeleton-stack">
+              <span class="skeleton-line" style="width: 40%;"></span>
+              <span class="skeleton-line skeleton-line--md"></span>
+            </div>
+            <div class="skeleton-card skeleton-stack">
+              <span class="skeleton-line" style="width: 40%;"></span>
+              <span class="skeleton-line skeleton-line--md"></span>
+            </div>
+          </div>
+
+          <div class="skeleton-card skeleton-stack">
+            <span class="skeleton-line" style="width: 25%;"></span>
+            <div class="d-flex flex-wrap gap-8">
+              <span class="skeleton-chip" style="width: 96px;"></span>
+              <span class="skeleton-chip" style="width: 88px;"></span>
+              <span class="skeleton-chip" style="width: 104px;"></span>
+            </div>
+          </div>
         </div>
       </mat-card-content>
     </mat-card>

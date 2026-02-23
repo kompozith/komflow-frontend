@@ -73,16 +73,16 @@ export class AppLoginComponent implements OnInit {
       password: formValue.password || ''
     };
 
-    const returnUrl: string = this.route.snapshot.queryParams['returnUrl'] || '/';
+    const returnUrl: string = this.route.snapshot.queryParams['returnUrl'] || '/contacts';
 
     this.authService.login(loginData, formValue.rememberMe || false).subscribe({
       next: (response) => {
         this.router.navigateByUrl(returnUrl).then(navigated => {
           if (!navigated) {
-            this.router.navigate(['/']);
+            this.router.navigate(['/contacts']);
           }
         }).catch(() => {
-          this.router.navigate(['/']);
+          this.router.navigate(['/contacts']);
         });
       },
       error: (error) => {

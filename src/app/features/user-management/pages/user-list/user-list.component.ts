@@ -31,6 +31,7 @@ import { ChangeStatusDialogComponent } from './change-status-dialog/change-statu
 import { ChangeRoleDialogComponent } from './change-role-dialog/change-role-dialog.component';
 import { BadgeComponent, BadgeVariant } from '../../../../shared/components/badge/badge.component';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
 
 export interface UserDialog {
   id: string;
@@ -55,6 +56,7 @@ export interface UserDialog {
     MatMenuModule,
     MatIconModule,
     BadgeComponent,
+    SkeletonTableComponent,
   ],
 })
 export class UserListComponent implements OnInit, AfterViewInit {

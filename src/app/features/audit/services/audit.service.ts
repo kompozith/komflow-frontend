@@ -37,6 +37,7 @@ export class AuditService {
     if (filters.sort && filters.sort.length > 0) {
       filters.sort.forEach(sort => params = params.append('sort', sort));
     }
+    if (filters.search) params = params.set('search', filters.search);
     if (filters.userId) params = params.set('userId', filters.userId);
     if (filters.username) params = params.set('username', filters.username);
     if (filters.action) params = params.set('action', filters.action);
@@ -44,7 +45,6 @@ export class AuditService {
     if (filters.resourceId) params = params.set('resourceId', filters.resourceId);
     if (filters.dateFrom) params = params.set('dateFrom', filters.dateFrom);
     if (filters.dateTo) params = params.set('dateTo', filters.dateTo);
-    if (filters.success !== undefined) params = params.set('success', filters.success.toString());
     if (filters.ipAddress) params = params.set('ipAddress', filters.ipAddress);
 
     const headers = this.getAuthHeaders();
@@ -69,7 +69,7 @@ export class AuditService {
   }
 
   // Utility methods
-  getActionColor(action: AuditAction): BadgeVariant {
+  getActionColor(action: AuditAction | string): BadgeVariant {
     switch (action) {
       case AuditAction.CREATE: return 'success';
       case AuditAction.UPDATE: return 'info';
@@ -88,7 +88,7 @@ export class AuditService {
     }
   }
 
-  getActionIcon(action: AuditAction): string {
+  getActionIcon(action: AuditAction | string): string {
     switch (action) {
       case AuditAction.CREATE: return 'add';
       case AuditAction.UPDATE: return 'edit';
@@ -108,6 +108,13 @@ export class AuditService {
       case AuditAction.SETTINGS_CHANGE: return 'settings';
       default: return 'info';
     }
+  }
+
+  formatActionLabel(action: AuditAction | string): string {
+    return String(action || '')
+      .replace(/_/g, ' ')
+      .toLowerCase()
+      .replace(/\b\w/g, (match) => match.toUpperCase());
   }
 
   formatAuditValue(value: any): string {

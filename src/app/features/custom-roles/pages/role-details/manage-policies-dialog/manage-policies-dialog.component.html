@@ -1,69 +1,75 @@
-<div class="manage-policies-dialog">
-  <h2 mat-dialog-title>Manage Policies</h2>
-
-  <mat-dialog-content>
-    <p class="mb-3 text-muted">Select the policies you want to assign to this role.</p>
-
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center p-4">
-      <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
-      <span class="ms-2">Loading policies...</span>
+<div class="manage-permissions-dialog">
+  <div class="d-flex align-items-start justify-content-between m-b-20">
+    <div>
+      <h4 class="m-b-4">Manage Permissions</h4>
+      <p class="text-muted m-b-0 f-s-13">Select the permissions to assign to this role.</p>
     </div>
+    <button mat-icon-button (click)="onCancel()" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  @if (!isLoading) {
+  <div class="filters-toolbar m-b-16">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search permission</mat-label>
+      <input matInput [formControl]="searchControl" />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
 
-    <!-- Policies Selection -->
-    <div *ngIf="!isLoading">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Select Policies</mat-label>
-        <mat-select
-          [formControl]="policySelectControl"
-          multiple
-          [compareWith]="comparePolicies">
-          <mat-option *ngFor="let policy of allPolicies" [value]="policy.id">
-            <div class="d-flex align-items-center">
-              <span class="policy-name">{{ policy.name }}</span>
-              <app-badge
-                [variant]="policy.type === 'ALLOW' ? 'success' : 'error'"
-                class="ms-2 policy-type-chip">
-                {{ policy.type }}
-              </app-badge>
-              <span class="ms-2 text-muted policy-details">
-                {{ policy.resource }}:{{ policy.action }}
-              </span>
-            </div>
-            <div class="policy-description text-muted small mt-1">
-              {{ policy.description || 'No description' }}
-            </div>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <!-- Selected Policies Summary -->
-      <div *ngIf="policySelectControl.value && policySelectControl.value.length > 0" class="mt-3">
-        <h6>Selected Policies ({{ policySelectControl.value.length }})</h6>
-        <div class="selected-policies">
-          <mat-chip-listbox>
-            <mat-chip
-              *ngFor="let policyId of policySelectControl.value"
-              [removable]="true"
-              (removed)="removePolicy(policyId)">
-              {{ getPolicyDisplayName(getPolicyById(policyId)) }}
-              <mat-icon matChipRemove>cancel</mat-icon>
-            </mat-chip>
-          </mat-chip-listbox>
-        </div>
+  <mat-chip-listbox class="category-list" [multiple]="false" [value]="selectedCategory" (change)="onCategoryChange($event.value)">
+    @for (category of categories; track category) {
+      <mat-chip-option [value]="category">
+        {{ category === 'all' ? 'All categories' : (category | titlecase) }}
+      </mat-chip-option>
+    }
+  </mat-chip-listbox>
+  }
+  <div class="permission-list-content">
+    @if (isLoading) {
+      <div class="d-flex justify-content-center align-items-center p-4">
+        <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
       </div>
-    </div>
-  </mat-dialog-content>
+    }
 
-  <mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()" [disabled]="isSubmitting">Cancel</button>
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="onSubmit()"
-      [disabled]="isSubmitting || !policySelectControl.value || policySelectControl.value.length === 0">
-      <mat-spinner *ngIf="isSubmitting" diameter="20"></mat-spinner>
-      <span *ngIf="!isSubmitting">Assign Policies</span>
+    @if (!isLoading) {
+      <mat-card class="permissions-panel m-t-16">
+        <mat-card-content>
+          <mat-selection-list [multiple]="true" class="permissions-list">
+            @for (policy of filteredPolicies; track policy.id) {
+              <mat-list-option
+                #option
+                [selected]="isSelected(policy.id)"
+                (selectionChange)="onPolicySelectionChange(policy.id, option.selected)"
+              >
+                <div matListItemTitle class="permission-title">{{ policy.name }}</div>
+                <div matListItemLine class="permission-meta">
+                  <code>{{ policy.id }}</code>
+                  <span class="resource-tag">{{ policy.resource | titlecase }}</span>
+                </div>
+                <div matListItemLine class="permission-description">
+                  {{ policy.description || 'No description' }}
+                </div>
+              </mat-list-option>
+            }
+          </mat-selection-list>
+        </mat-card-content>
+      </mat-card>
+
+      @if (filteredPolicies.length === 0) {
+        <div class="text-center p-3 text-muted">No permission found with current filters.</div>
+      }
+    }
+  </div>
+
+  <mat-dialog-actions align="end" class="m-t-8">
+    <button mat-stroked-button type="button" (click)="onCancel()" [disabled]="isSubmitting">Cancel</button>
+    <button mat-flat-button color="primary" type="button" (click)="onSubmit()" [disabled]="isSubmitting">
+      @if (isSubmitting) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        Save Permissions
+      }
     </button>
   </mat-dialog-actions>
 </div>

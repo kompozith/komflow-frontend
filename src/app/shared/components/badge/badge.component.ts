@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-export type BadgeVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'purple' | 'outline' | 'info';
+export type BadgeVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'purple' | 'outline' | 'info' | 'dark';
 
 @Component({
   selector: 'app-badge',

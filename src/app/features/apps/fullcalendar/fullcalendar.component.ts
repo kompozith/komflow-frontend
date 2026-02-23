@@ -3,20 +3,17 @@ import {
   ChangeDetectionStrategy,
   Inject,
   signal,
-  DOCUMENT,
 } from '@angular/core';
 import { CommonModule, NgSwitch } from '@angular/common';
 import {
   MatDialog,
   MatDialogRef,
-  MatDialogConfig,
   MAT_DIALOG_DATA,
   MatDialogModule,
 } from '@angular/material/dialog';
 import {
   FormsModule,
   ReactiveFormsModule,
-  UntypedFormGroup,
 } from '@angular/forms';
 import { CalendarFormDialogComponent } from './calendar-form-dialog/calendar-form-dialog.component';
 import {
@@ -69,31 +66,107 @@ const colors: any = {
 @Component({
     selector: 'app-calendar-dialog',
     templateUrl: './dialog.component.html',
+    styleUrls: ['./fullcalendar.component.scss'],
     imports: [
-        MaterialModule,
-        FormsModule,
-        ReactiveFormsModule,
-        CommonModule,
-        MatNativeDateModule,
-        MatDialogModule,
-        MatDatepickerModule,  TablerIconsModule
+      MaterialModule,
+      CommonModule,
+      MatDialogModule,
+      TablerIconsModule,
     ],
-    providers: [provideNativeDateAdapter()],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CalendarDialogComponent {
-  options!: UntypedFormGroup;
-
   constructor(
     public dialogRef: MatDialogRef<CalendarDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
+
+  get event(): CalendarEvent | null {
+    return this.data?.event ?? null;
+  }
+
+  get hasDescription(): boolean {
+    const description = this.event?.meta?.description;
+    return !!description && `${description}`.trim().length > 0;
+  }
+
+  get hasLocation(): boolean {
+    const location = this.event?.meta?.location;
+    return !!location && `${location}`.trim().length > 0;
+  }
+
+  get timezoneLabel(): string {
+    return this.event?.meta?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+
+  formatEventDate(value?: Date): string {
+    if (!value) return '-';
+    return value.toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+  }
+
+  formatEventTime(value?: Date): string {
+    if (!value) return '--:--';
+    return value.toLocaleTimeString('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  onEdit(): void {
+    this.dialogRef.close('edit');
+  }
+
+  onDelete(): void {
+    this.dialogRef.close('delete');
+  }
+}
+
+@Component({
+    selector: 'app-calendar-delete-dialog',
+    template: `
+      <div mat-dialog-content>
+        <div class="d-flex align-items-center justify-content-between m-b-16">
+          <h4 class="f-s-16 f-w-600 m-b-0">Delete Event</h4>
+          <button mat-icon-button mat-dialog-close class="d-flex justify-content-center" type="button">
+            <i-tabler name="x" class="icon-20 d-flex"></i-tabler>
+          </button>
+        </div>
+
+        <div class="rounded border p-16 bg-light-error m-b-16">
+          <h5 class="f-w-600 m-b-8">{{ data?.event?.title || 'Untitled event' }}</h5>
+          <p class="m-b-0 text-muted f-s-13">
+            This action is permanent. The event will be removed from the calendar.
+          </p>
+        </div>
+
+        <div class="d-flex justify-content-end gap-8">
+          <button mat-stroked-button mat-dialog-close type="button">Cancel</button>
+          <button mat-flat-button color="warn" [mat-dialog-close]="true" type="button">Delete</button>
+        </div>
+      </div>
+    `,
+    imports: [
+      MaterialModule,
+      CommonModule,
+      MatDialogModule,
+      TablerIconsModule,
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class CalendarDeleteDialogComponent {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
 }
 
 @Component({
     selector: 'app-fullcalendar',
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './fullcalendar.component.html',
+    styleUrls: ['./fullcalendar.component.scss'],
     imports: [
         MaterialModule,
         FormsModule,
@@ -116,31 +189,15 @@ export class AppFullcalendarComponent {
   activeDayIsOpen = signal<boolean>(true);
   isLoading = signal<boolean>(false);
 
-  config: MatDialogConfig = {
-    disableClose: false,
-    width: '',
-    height: '',
-    position: {
-      top: '',
-      bottom: '',
-      left: '',
-      right: '',
-    },
-    data: {
-      action: '',
-      event: [],
-    },
-  };
-
   actions: CalendarEventAction[] = [
     {
-      label: '<span class="text-white link m-l-5">Edit</span>',
+      label: '<span class="text-white link m-l-5">Details</span>',
       onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.openEventForm('edit', event);
+        this.handleEvent('details', event);
       },
     },
     {
-      label: '<span class="text-danger m-l-5">Delete</span>',
+      label: '<span class="text-error m-l-5">Delete</span>',
       onClick: ({ event }: { event: CalendarEvent }): void => {
         this.deleteEvent(event);
       },
@@ -152,7 +209,6 @@ export class AppFullcalendarComponent {
 
   constructor(
     public dialog: MatDialog,
-    @Inject(DOCUMENT) doc: any,
     private snackBar: MatSnackBar,
     private eventService: EventService
   ) {
@@ -206,15 +262,29 @@ export class AppFullcalendarComponent {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.config.data = { event, action };
-    this.dialogRef.set(this.dialog.open(CalendarDialogComponent, this.config));
+    this.dialogRef.set(
+      this.dialog.open(CalendarDialogComponent, {
+        width: '560px',
+        maxWidth: '96vw',
+        autoFocus: false,
+        data: { event, action },
+      })
+    );
 
     this.dialogRef()
       .afterClosed()
-      .subscribe((result: string) => {
-        this.lastCloseResult.set(result);
+      .subscribe((result: 'edit' | 'delete' | undefined) => {
+        this.lastCloseResult.set(result || '');
         this.dialogRef.set(null);
-        this.refresh.next(result);
+
+        if (result === 'edit') {
+          this.openEventForm('edit', event);
+          return;
+        }
+
+        if (result === 'delete') {
+          this.openDeleteDialog(event);
+        }
       });
   }
 
@@ -272,16 +342,31 @@ export class AppFullcalendarComponent {
   }
 
   deleteEvent(eventToDelete: CalendarEvent): void {
+    this.openDeleteDialog(eventToDelete);
+  }
+
+  private openDeleteDialog(eventToDelete: CalendarEvent): void {
     const eventId = this.extractEventId(eventToDelete);
     if (!eventId) {
       return;
     }
 
-    const confirmed = window.confirm('Delete this event?');
-    if (!confirmed) {
-      return;
-    }
+    const confirmRef = this.dialog.open(CalendarDeleteDialogComponent, {
+      width: '440px',
+      maxWidth: '95vw',
+      autoFocus: false,
+      data: { event: eventToDelete },
+    });
 
+    confirmRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) {
+        return;
+      }
+      this.deleteEventById(eventId);
+    });
+  }
+
+  private deleteEventById(eventId: number): void {
     this.eventService.deleteEvent(eventId).subscribe({
       next: () => {
         this.snackBar.open('Event deleted', 'Close', { duration: 2500 });

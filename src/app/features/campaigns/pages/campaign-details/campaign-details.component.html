@@ -385,7 +385,7 @@
             <div class="col-sm-4">
               <div class="metric-card">
                 <div class="metric-label">Failed</div>
-                <div class="metric-value text-danger">{{ progress.failed }}</div>
+                <div class="metric-value text-error">{{ progress.failed }}</div>
               </div>
             </div>
             <div class="col-sm-4">
@@ -417,8 +417,40 @@
 
   <!-- Loading -->
   <div *ngIf="isLoading">
-    <div class="loading-container">
-      <mat-spinner diameter="40"></mat-spinner>
+    <div class="skeleton-stack">
+      <div class="d-flex justify-content-end gap-8">
+        <span class="skeleton-line" style="width: 120px;"></span>
+        <span class="skeleton-line" style="width: 140px;"></span>
+      </div>
+
+      <div class="skeleton-detail-grid three-cols">
+        <div class="skeleton-card skeleton-stack" *ngFor="let _ of [1,2,3]">
+          <span class="skeleton-line" style="width: 55%;"></span>
+          <span class="skeleton-line skeleton-line--md"></span>
+        </div>
+      </div>
+
+      <div class="skeleton-card skeleton-stack">
+        <span class="skeleton-line skeleton-line--lg" style="width: 32%;"></span>
+        <span class="skeleton-line" style="width: 52%;"></span>
+        <div class="skeleton-detail-grid three-cols">
+          <span class="skeleton-line"></span>
+          <span class="skeleton-line"></span>
+          <span class="skeleton-line"></span>
+        </div>
+        <span class="skeleton-block" style="height: 140px;"></span>
+      </div>
+
+      <div class="skeleton-detail-grid two-cols">
+        <div class="skeleton-card skeleton-stack">
+          <span class="skeleton-line" style="width: 38%;"></span>
+          <span class="skeleton-block" style="height: 100px;"></span>
+        </div>
+        <div class="skeleton-card skeleton-stack">
+          <span class="skeleton-line" style="width: 38%;"></span>
+          <span class="skeleton-block" style="height: 100px;"></span>
+        </div>
+      </div>
     </div>
   </div>
 

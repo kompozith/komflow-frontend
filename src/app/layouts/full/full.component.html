@@ -172,7 +172,7 @@
                 <h4 class="f-s-18 f-w-600 m-b-16">Quick Links</h4>
                 @for(quicklink of quicklinks; track quicklink.title) {
                 <div class="text-hover-primary">
-                  <a [routerLink]="['quicklink.link']"
+                  <a [routerLink]="[quicklink.link]"
                     class="hover-text text-decoration-none f-s-14 f-w-600 d-block p-y-8">{{ quicklink.title }}</a>
                 </div>
                 }
@@ -181,16 +181,16 @@
           </mat-accordion>
 
           <div class="p-x-16">
-            <a [routerLink]="['/apps/calendar']"
+            <a [routerLink]="['/contacts']"
               class="d-flex align-items-center text-decoration-none f-s-14 p-y-16 gap-8">
-              <span class="f-s-15 f-w-500 m-l-8">Calendar</span>
+              <span class="f-s-15 f-w-500 m-l-8">Contacts</span>
             </a>
-            <a [routerLink]="['/apps/chat']" class="d-flex align-items-center text-decoration-none f-s-14 p-y-16">
-              <span class="f-s-15 f-w-500 m-l-8">Chat</span>
+            <a [routerLink]="['/messages']" class="d-flex align-items-center text-decoration-none f-s-14 p-y-16">
+              <span class="f-s-15 f-w-500 m-l-8">Messages</span>
             </a>
-            <a [routerLink]="['/apps/email/inbox']"
+            <a [routerLink]="['/campaigns']"
               class="d-flex align-items-center text-decoration-none f-s-14 p-y-16 gap-8">
-              <span class="f-s-15 f-w-500 m-l-8">Email</span>
+              <span class="f-s-15 f-w-500 m-l-8">Campaigns</span>
             </a>
           </div>
         </div>

@@ -10,6 +10,7 @@ import { Message, MessageAttachment, UpdateMessageRequest, MessageChannel } from
 import { MessageEditorComponent } from '../../components/message-editor/message-editor.component';
 import { finalize } from 'rxjs/operators';
 import { AppEvent, EventService } from '../../../core/services/event.service';
+import { MediaPreviewService } from 'src/app/shared/services/media-preview.service';
 
 @Component({
   selector: 'app-message-edit',
@@ -44,7 +45,8 @@ export class MessageEditComponent implements OnInit {
     private eventService: EventService,
     private router: Router,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private mediaPreviewService: MediaPreviewService
   ) {
     this.messageForm = this.fb.group({
       title: ['', [Validators.minLength(2), Validators.maxLength(100)]],
@@ -233,7 +235,7 @@ export class MessageEditComponent implements OnInit {
 
   openAttachment(attachment: MessageAttachment): void {
     if (!attachment?.url) return;
-    window.open(attachment.url, '_blank', 'noopener');
+    this.mediaPreviewService.openInNewTab(attachment.url);
   }
 
   isImageAttachment(attachment: MessageAttachment): boolean {

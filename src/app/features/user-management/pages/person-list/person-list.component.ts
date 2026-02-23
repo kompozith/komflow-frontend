@@ -13,6 +13,7 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { PersonService } from '../../../personnel/services/person.service';
 import { Person, PersonPage } from '../../../personnel/models/person';
 import { PersonEditDialogComponent } from './person-edit-dialog/person-edit-dialog.component';
+import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
 
 @Component({
   selector: 'app-person-list',
@@ -26,6 +27,7 @@ import { PersonEditDialogComponent } from './person-edit-dialog/person-edit-dial
     CommonModule,
     MatMenuModule,
     MatIconModule,
+    SkeletonTableComponent,
   ],
 })
 export class PersonListComponent implements OnInit {

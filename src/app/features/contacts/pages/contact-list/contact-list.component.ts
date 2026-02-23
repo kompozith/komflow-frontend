@@ -20,6 +20,7 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import {MatTableDataSource} from "@angular/material/table";
 import { TagService } from '../../../tags/services/tag.service';
 import { Tag } from '../../../tags/models/tag';
+import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
 
 @Component({
   selector: 'app-contact-list',
@@ -34,6 +35,7 @@ import { Tag } from '../../../tags/models/tag';
     MatMenuModule,
     MatIconModule,
     BadgeComponent,
+    SkeletonTableComponent,
   ],
 })
 export class ContactListComponent implements OnInit {

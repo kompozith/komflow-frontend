@@ -1,6 +1,26 @@
+export type RoleType = 'SYSTEM' | 'CUSTOM';
+
+export interface PermissionEntry {
+  code: string;
+  name: string;
+  description: string;
+  resource: string;
+}
+
+export interface PermissionPage {
+  content: PermissionEntry[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+}
+
 export interface Role {
   id: string;
   name: string;
+  type: RoleType;
   displayName: string;
   description: string;
   systemRole?: string;
@@ -12,10 +32,13 @@ export interface Role {
   createdByName: string;
   createdAt: string;
   updatedAt: string;
+  permissions?: PermissionEntry[];
 }
 
 export interface RoleDetail extends Role {
   policies: Policy[];
+  permissions: PermissionEntry[];
+  source: 'BACKEND_ROLE_API';
 }
 
 export interface Policy {
@@ -45,12 +68,15 @@ export interface RolePage {
 
 export interface CreateRoleRequest {
   name: string;
-  displayName: string;
+  type?: RoleType;
+  displayName?: string;
   description: string;
   policyIds?: string[];
 }
 
 export interface UpdateRoleRequest {
+  name?: string;
+  type?: RoleType;
   displayName?: string;
   description?: string;
   isActive?: boolean;

@@ -80,6 +80,7 @@
 <mat-card class="cardWithShadow">
   <mat-card-content>
     <div class="table-responsive">
+      <ng-container *ngIf="!isLoading; else contactListSkeleton">
       <table mat-table [dataSource]="dataSource" class="w-100">
         <ng-container matColumnDef="rowNumber">
            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">#</th>
@@ -187,16 +188,21 @@
         </div>
       </div>
 
-      <mat-paginator
-        #paginator
-        [length]="totalElements"
-        [pageSizeOptions]="[5, 10, 20, 50]"
-        [pageSize]="pageSize"
-        [pageIndex]="currentPage"
-        (page)="onPageChange($event)"
-        [showFirstLastButtons]="true"
-        [hidePageSize]="false">
-      </mat-paginator>
+        <mat-paginator
+          #paginator
+          [length]="totalElements"
+          [pageSizeOptions]="[5, 10, 20, 50]"
+          [pageSize]="pageSize"
+          [pageIndex]="currentPage"
+          (page)="onPageChange($event)"
+          [showFirstLastButtons]="true"
+          [hidePageSize]="false">
+        </mat-paginator>
+      </ng-container>
+
+      <ng-template #contactListSkeleton>
+        <app-skeleton-table [columns]="7" [rows]="6" [chipColumns]="[4]"></app-skeleton-table>
+      </ng-template>
     </div>
   </mat-card-content>
 </mat-card>

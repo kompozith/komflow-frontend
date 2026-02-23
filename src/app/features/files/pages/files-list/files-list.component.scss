@@ -1,0 +1,144 @@
+:host {
+  display: block;
+}
+
+.filters-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-checkbox-wrap {
+  min-height: 56px;
+}
+
+.file-preview-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f6fa;
+  overflow: hidden;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #6a7280;
+  }
+}
+
+.file-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.file-grid-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.file-grid-icon-wrap {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f7f8fc, #eceff8);
+
+  mat-icon {
+    font-size: 56px;
+    width: 56px;
+    height: 56px;
+    color: #7682a0;
+  }
+}
+
+.file-name {
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.file-url {
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-grid-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
+  word-break: break-word;
+  min-height: 2.8em;
+}
+
+.productcard {
+  transition: transform 0.12s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.img-wrapper {
+  position: relative;
+
+  .icon-container {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    gap: 8px;
+  }
+
+  .cart-btn-overlay {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+  }
+}
+
+.selection-box {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+@media (max-width: 767px) {
+  .filters-card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .segmented-toggle {
+    align-self: flex-end;
+  }
+
+  .file-name,
+  .file-url {
+    max-width: 220px;
+  }
+}

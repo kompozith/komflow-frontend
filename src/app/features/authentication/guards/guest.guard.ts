@@ -38,8 +38,8 @@ export class GuestGuard implements CanActivate, CanActivateChild {
       return true;
     }
 
-    // User is already authenticated, redirect to home page
-    console.log('GuestGuard: User already authenticated, redirecting to home');
-    return this.router.createUrlTree(['/']);
+    // User is already authenticated, redirect to contacts
+    console.log('GuestGuard: User already authenticated, redirecting to contacts');
+    return this.router.createUrlTree(['/contacts']);
   }
 }

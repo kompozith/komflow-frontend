@@ -138,7 +138,7 @@ export class AppFullcalendarComponent {
       },
     },
     {
-      label: '<span class="text-danger m-l-5">Delete</span>',
+      label: '<span class="text-error m-l-5">Delete</span>',
       onClick: ({ event }: { event: CalendarEvent }): void => {
         this.events.set(
           this.events().filter((iEvent: CalendarEvent<any>) => iEvent !== event)

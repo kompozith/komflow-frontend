@@ -1,51 +1,59 @@
 import {
   Component,
-  OnInit,
   OnDestroy,
+  OnInit,
   AfterViewInit,
   ViewChild,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
-import { CommonModule } from '@angular/common';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
-import { FileService } from '../../services/file.service';
-import { FileItem, FilePage, FileFilters, FileCategory } from '../../models/file';
-import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
+
+import { FileService } from '../../services/file.service';
+import {
+  FileFilters,
+  FileItem,
+  FileListResponse,
+  FileMediaType,
+  OrphanCleanupResult,
+} from '../../models/file';
+import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
+import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
+import { MediaPreviewService } from 'src/app/shared/services/media-preview.service';
 
 @Component({
   selector: 'app-files-list',
   templateUrl: './files-list.component.html',
-  styleUrls: [],
+  styleUrls: ['./files-list.component.scss'],
   imports: [
-    MaterialModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    MaterialModule,
     TablerIconsModule,
-    CommonModule,
     MatMenuModule,
     MatIconModule,
     BadgeComponent,
+    SkeletonTableComponent,
   ],
 })
 export class FilesListComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort | undefined;
 
   displayedColumns: string[] = [
-    'rowNumber',
+    'select',
     'preview',
     'name',
-    'category',
-    'size',
-    'uploadedBy',
-    'uploadedAt',
+    'mediaType',
+    'createdAt',
     'actions',
   ];
 
@@ -53,65 +61,82 @@ export class FilesListComponent implements OnInit, OnDestroy, AfterViewInit {
   totalElements = 0;
   totalPages = 0;
   currentPage = 0;
-  pageSize = 10;
+  pageSize = 8;
   isLoading = false;
+  groupedByMediaType: Partial<Record<FileMediaType, number>> = {};
 
-  // Filters
   searchText = '';
-  selectedCategory: FileCategory | '' = '';
-  sortBy = 'uploadedAt';
+  selectedMediaType: FileMediaType | '' = '';
+  orphanOnly = false;
+  sortBy = 'createdAt';
   sortDirection: 'asc' | 'desc' = 'desc';
+  viewMode: 'table' | 'grid' = 'grid';
 
-  // Search debounce
+  selectedFileIds = new Set<number>();
+
   private searchSubject = new Subject<string>();
   private searchSubscription?: Subscription;
 
-  // Enums for template
-  FileCategory = FileCategory;
+  FileMediaType = FileMediaType;
+  gridSkeletonItems = Array.from({ length: 8 }, (_, i) => i);
 
   constructor(
     private router: Router,
     private fileService: FileService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private mediaPreviewService: MediaPreviewService
   ) {}
 
   ngOnInit(): void {
     this.loadFiles();
 
-    // Setup search debounce
-    this.searchSubscription = this.searchSubject.pipe(
-      debounceTime(500),
-      distinctUntilChanged()
-    ).subscribe(searchText => {
-      this.searchText = searchText;
-      this.loadFiles();
-    });
+    this.searchSubscription = this.searchSubject
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((searchText) => {
+        this.searchText = searchText;
+        this.loadFiles(0);
+      });
   }
 
   ngAfterViewInit(): void {
     if (this.sort) {
       this.sort.sortChange.subscribe(() => {
-        this.sortBy = this.sort?.active || 'uploadedAt';
+        this.sortBy = this.sort?.active || 'createdAt';
         this.sortDirection = this.sort?.direction || 'desc';
-        this.loadFiles();
+        this.loadFiles(this.currentPage);
       });
     }
   }
 
+  get selectedCount(): number {
+    return this.selectedFileIds.size;
+  }
+
+  get allCurrentPageSelected(): boolean {
+    return this.dataSource.length > 0 && this.dataSource.every((file) => this.selectedFileIds.has(file.id));
+  }
+
+  get someCurrentPageSelected(): boolean {
+    if (this.dataSource.length === 0) {
+      return false;
+    }
+    const selectedOnPage = this.dataSource.filter((file) => this.selectedFileIds.has(file.id)).length;
+    return selectedOnPage > 0 && selectedOnPage < this.dataSource.length;
+  }
+
   getStartIndex(): number {
-    return (this.currentPage * this.pageSize) + 1;
+    return this.currentPage * this.pageSize + 1;
   }
 
   getEndIndex(): number {
-    const endIndex = (this.currentPage + 1) * this.pageSize;
-    return Math.min(endIndex, this.totalElements);
+    return Math.min((this.currentPage + 1) * this.pageSize, this.totalElements);
   }
 
-  loadFiles(pageIndex: number = 0): void {
-    // Prevent multiple simultaneous requests
+  loadFiles(pageIndex: number = this.currentPage): void {
     if (this.isLoading) {
       return;
     }
+
     this.isLoading = true;
 
     const filters: FileFilters = {
@@ -119,60 +144,132 @@ export class FilesListComponent implements OnInit, OnDestroy, AfterViewInit {
       size: this.pageSize,
       sort: [`${this.sortBy},${this.sortDirection}`],
       search: this.searchText || undefined,
-      category: this.selectedCategory || undefined,
+      mediaType: this.selectedMediaType || undefined,
+      orphanOnly: this.orphanOnly,
     };
 
     this.fileService.getFiles(filters).subscribe({
-       next: (response: FilePage) => {
-          this.dataSource = response.content;
-          this.totalElements = response.totalElements;
-          this.totalPages = response.totalPages;
-          this.currentPage = response.number;
-          this.pageSize = response.size;
-          this.isLoading = false;
-
-          // No paginator updates needed for custom pagination
-        },
+      next: (response: FileListResponse) => {
+        this.dataSource = response.files.content;
+        this.totalElements = response.files.totalElements;
+        this.totalPages = response.files.totalPages;
+        this.currentPage = response.files.number;
+        this.pageSize = response.files.size;
+        this.groupedByMediaType = response.groupedByMediaType || {};
+        this.isLoading = false;
+      },
       error: (error) => {
         console.error('Error loading files:', error);
-        this.snackBar.open('Error loading files', 'Close', { duration: 3000 });
         this.isLoading = false;
-      }
+        this.snackBar.open('Error loading files', 'Close', { duration: 3000 });
+      },
     });
   }
-
 
   onPageChange(event: PageEvent): void {
     const pageIndex = event.pageIndex;
     const newPageSize = event.pageSize;
 
-    // Only reload if something actually changed
-    if (pageIndex !== this.currentPage || newPageSize !== this.pageSize) {
+    if (newPageSize !== this.pageSize) {
       this.pageSize = newPageSize;
+      this.loadFiles(0);
+      return;
+    }
+
+    if (pageIndex !== this.currentPage) {
       this.loadFiles(pageIndex);
     }
-  }
-
-  onPageSizeChange(newPageSize: number): void {
-    this.pageSize = newPageSize;
-    this.loadFiles(0); // Reset to first page when page size changes
   }
 
   onSearchChange(searchText: string): void {
     this.searchSubject.next(searchText);
   }
 
-  onCategoryFilterChange(category: FileCategory | ''): void {
-    this.selectedCategory = category;
-    this.loadFiles();
+  onMediaTypeFilterChange(mediaType: FileMediaType | ''): void {
+    this.selectedMediaType = mediaType;
+    this.loadFiles(0);
   }
 
-  onSortChange(sortBy: string): void {
-    // This method is now handled by MatSort, but kept for backward compatibility
+  onOrphanOnlyChange(orphanOnly: boolean): void {
+    this.orphanOnly = orphanOnly;
+    this.loadFiles(0);
+  }
+
+  onViewModeChange(viewMode: 'table' | 'grid'): void {
+    this.viewMode = viewMode;
   }
 
   uploadFiles(): void {
     this.router.navigate(['files/upload']);
+  }
+
+  toggleSelectAllCurrentPage(checked: boolean): void {
+    if (checked) {
+      this.dataSource.forEach((file) => this.selectedFileIds.add(file.id));
+    } else {
+      this.dataSource.forEach((file) => this.selectedFileIds.delete(file.id));
+    }
+  }
+
+  toggleFileSelection(fileId: number, checked: boolean): void {
+    if (checked) {
+      this.selectedFileIds.add(fileId);
+    } else {
+      this.selectedFileIds.delete(fileId);
+    }
+  }
+
+  isSelected(fileId: number): boolean {
+    return this.selectedFileIds.has(fileId);
+  }
+
+  clearSelection(): void {
+    this.selectedFileIds.clear();
+  }
+
+  bulkDeleteSelected(): void {
+    const fileIds = Array.from(this.selectedFileIds);
+    if (fileIds.length === 0) {
+      this.snackBar.open('No files selected', 'Close', { duration: 2500 });
+      return;
+    }
+
+    this.fileService.bulkDeleteFiles(fileIds, true).subscribe({
+      next: (response) => {
+        this.handleDeleteResult(response.data, true);
+        this.selectedFileIds.clear();
+        this.loadFiles(this.currentPage);
+      },
+      error: (error) => {
+        console.error('Error deleting selected files:', error);
+        this.snackBar.open('Bulk delete failed', 'Close', { duration: 3000 });
+      },
+    });
+  }
+
+  deleteOrphans(): void {
+    this.fileService.deleteOrphanFiles(this.searchText || undefined, this.selectedMediaType || undefined).subscribe({
+      next: (response) => {
+        this.handleDeleteResult(response.data, false);
+        this.selectedFileIds.clear();
+        this.loadFiles(0);
+      },
+      error: (error) => {
+        console.error('Error deleting orphan files:', error);
+        this.snackBar.open('Error deleting orphan files', 'Close', { duration: 3000 });
+      },
+    });
+  }
+
+  private handleDeleteResult(result: OrphanCleanupResult, isBulk: boolean): void {
+    const skipped = result.skippedReferencedFileIds?.length ?? 0;
+    const failed = result.failedFileIds?.length ?? 0;
+
+    const summary = isBulk
+      ? `Bulk delete: DB ${result.deletedInDatabase}, storage ${result.deletedInStorage}, skipped ${skipped}, failed ${failed}`
+      : `Orphan cleanup: DB ${result.deletedInDatabase}, storage ${result.deletedInStorage}, failed ${failed}`;
+
+    this.snackBar.open(summary, 'Close', { duration: 5000 });
   }
 
   downloadFile(file: FileItem): void {
@@ -181,59 +278,88 @@ export class FilesListComponent implements OnInit, OnDestroy, AfterViewInit {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = file.originalName;
+        a.download = file.name;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
-
-        // Update download count
-        file.downloadCount++;
       },
       error: (error) => {
         console.error('Error downloading file:', error);
         this.snackBar.open('Error downloading file', 'Close', { duration: 3000 });
-      }
+      },
     });
   }
 
-  deleteFile(file: FileItem): void {
-    // Delete functionality not available - backend doesn't support file deletion
-    this.snackBar.open('File deletion not supported', 'Close', { duration: 3000 });
-    return;
-    // const dialogRef = this.dialog.open(DeleteFileDialogComponent, {
-    //   width: '500px',
-    //   data: { file }
-    // });
+  canPreview(file: FileItem): boolean {
+    return (
+      file.mediaType === FileMediaType.DOCUMENT ||
+      file.mediaType === FileMediaType.IMAGE ||
+      file.mediaType === FileMediaType.VIDEO
+    );
+  }
 
-    // dialogRef.afterClosed().subscribe(result => {
-    //   if (result?.event === 'Delete') {
-    //     this.loadFiles(this.currentPage);
-    //   }
-    // });
+  previewFile(file: FileItem): void {
+    if (!this.canPreview(file)) {
+      return;
+    }
+
+    if (!this.mediaPreviewService.openInNewTab(file.url)) {
+      this.snackBar.open('Unable to open preview in a new tab', 'Close', {
+        duration: 3000,
+      });
+    }
+  }
+
+  deleteSingleFile(file: FileItem): void {
+    this.fileService.bulkDeleteFiles([file.id], true).subscribe({
+      next: (response) => {
+        this.handleDeleteResult(response.data, true);
+        this.selectedFileIds.delete(file.id);
+        this.loadFiles(this.currentPage);
+      },
+      error: (error) => {
+        console.error('Error deleting file:', error);
+        this.snackBar.open('Delete failed', 'Close', { duration: 3000 });
+      },
+    });
+  }
+
+  isImage(file: FileItem): boolean {
+    return file.mediaType === FileMediaType.IMAGE;
+  }
+
+  isVideo(file: FileItem): boolean {
+    return file.mediaType === FileMediaType.VIDEO;
+  }
+
+  getPreviewImageUrl(file: FileItem): string {
+    return `${file.url}?thumbnail=true`;
   }
 
   getFileIcon(file: FileItem): string {
-    return this.fileService.getFileIcon(file.mimeType);
+    return this.fileService.getFileIcon(file.mediaType);
   }
 
-  formatFileSize(size: number): string {
-    return this.fileService.formatFileSize(size);
-  }
-
-  isImageFile(file: FileItem): boolean {
-    return this.fileService.isImageFile(file.mimeType);
-  }
-
-  getCategoryColor(category: FileCategory): 'primary' | 'success' | 'warning' | 'error' | 'outline' | 'info' {
-    switch (category) {
-      case FileCategory.IMAGE: return 'success';
-      case FileCategory.VIDEO: return 'info';
-      case FileCategory.AUDIO: return 'warning';
-      case FileCategory.DOCUMENT: return 'primary';
-      case FileCategory.ARCHIVE: return 'outline';
-      default: return 'outline';
+  getMediaTypeColor(mediaType: FileMediaType): 'primary' | 'success' | 'warning' | 'error' | 'outline' | 'info' {
+    switch (mediaType) {
+      case FileMediaType.IMAGE:
+        return 'success';
+      case FileMediaType.VIDEO:
+        return 'info';
+      case FileMediaType.AUDIO:
+        return 'warning';
+      case FileMediaType.DOCUMENT:
+        return 'primary';
+      case FileMediaType.ARCHIVE:
+        return 'outline';
+      default:
+        return 'outline';
     }
+  }
+
+  getMediaTypeCount(mediaType: FileMediaType): number {
+    return this.groupedByMediaType[mediaType] ?? 0;
   }
 
   ngOnDestroy(): void {

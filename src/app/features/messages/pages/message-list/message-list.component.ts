@@ -27,6 +27,7 @@ import { BadgeComponent, BadgeVariant } from '../../../../shared/components/badg
 import { DeleteMessageDialogComponent } from './delete-message-dialog/delete-message-dialog.component';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { excerptFromHtml } from '../../utils/message-rich-text.util';
+import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
 
 @Component({
   selector: 'app-message-list',
@@ -41,6 +42,7 @@ import { excerptFromHtml } from '../../utils/message-rich-text.util';
     MatMenuModule,
     MatIconModule,
     BadgeComponent,
+    SkeletonTableComponent,
   ],
 })
 export class MessageListComponent implements OnInit, AfterViewInit {

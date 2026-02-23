@@ -8,12 +8,12 @@ export const AuditRoutes: Routes = [
     path: '',
     children: [
       {
-        path: 'lit',
+        path: '',
         component: AuditListComponent,
         canActivate: [PermissionGuard],
         data: {
           title: 'Audit Log',
-          permissions: ['AUDIT_VIEW'],
+          permissions: ['AUDIT_VIEW', 'AUDIT_LIST', 'PERSONNEL_VIEW'],
           urls: [
             { title: 'Audit', url: 'audit'},
             { title: 'All Logs' },

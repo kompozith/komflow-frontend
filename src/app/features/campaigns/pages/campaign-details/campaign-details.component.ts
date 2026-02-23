@@ -10,6 +10,7 @@ import { BadgeComponent, BadgeVariant } from 'src/app/shared/components/badge/ba
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { SubmitCampaignDialogComponent } from 'src/app/features/campaigns/pages/campaign-details/submit-campaign-dialog.component';
 import { ScheduleCampaignDialogComponent, ScheduleCampaignDialogData } from 'src/app/features/campaigns/pages/campaign-details/schedule-campaign-dialog.component';
+import { MediaPreviewService } from 'src/app/shared/services/media-preview.service';
 
 @Component({
   selector: 'app-campaign-details',
@@ -48,7 +49,8 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
     private router: Router,
     private campaignService: CampaignService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private mediaPreviewService: MediaPreviewService
   ) {}
 
   ngOnInit(): void {
@@ -347,7 +349,7 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
 
   openAttachment(attachment: CampaignMessageAttachment): void {
     if (!attachment?.url) return;
-    window.open(attachment.url, '_blank', 'noopener');
+    this.mediaPreviewService.openInNewTab(attachment.url);
   }
 
   isImageAttachment(attachment: CampaignMessageAttachment): boolean {

@@ -12,7 +12,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: '/dashboards/dashboard1',
+        redirectTo: '/contacts',
         pathMatch: 'full',
       },
       {
@@ -29,7 +29,7 @@ export const routes: Routes = [
           import('./features/custom-roles/roles.routes').then(
             (m) => m.RolesRoutes
           ),
-        data: { roles: ['ADMIN', 'SUPER_ADMIN'], permissions: ['role:view'] }
+        data: { roles: ['ADMIN', 'SUPER_ADMIN'], permissions: ['PERSONNEL_VIEW'] }
       },
       // {
       //   path: 'products',
