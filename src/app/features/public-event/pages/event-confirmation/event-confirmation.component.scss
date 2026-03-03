@@ -1,0 +1,47 @@
+.confirm-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(8, 145, 178, 0.18), transparent 35%),
+    radial-gradient(circle at 80% 80%, rgba(13, 87, 151, 0.18), transparent 36%),
+    #f2f7fb;
+}
+
+.confirm-card {
+  width: min(720px, 96%);
+  border-radius: 22px;
+  box-shadow: 0 24px 58px rgba(10, 32, 68, 0.16);
+  text-align: center;
+  padding: 24px;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #e8f4ff;
+  color: #0d5b9a;
+  font-weight: 700;
+}
+
+.badge.created {
+  background: #e7fbf2;
+  color: #0e8e60;
+}
+
+h1 {
+  margin: 16px 0 10px;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+}
+
+.next {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+

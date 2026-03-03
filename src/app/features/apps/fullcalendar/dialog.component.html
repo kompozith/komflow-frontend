@@ -15,12 +15,8 @@
       <span class="f-w-600">{{ formatEventDate(event?.start) }}</span>
       <span class="text-muted">&bull;</span>
       <span>{{ formatEventTime(event?.start) }}</span>
-      @if (!event?.allDay) {
-        <span class="text-muted">to</span>
-        <span>{{ formatEventTime(event?.end) }}</span>
-      } @else {
-        <span class="event-pill">All day</span>
-      }
+      <span class="text-muted">to</span>
+      <span>{{ formatEventTime(event?.end) }}</span>
     </div>
     <div class="d-flex align-items-center gap-8 text-muted f-s-13">
       <i-tabler name="world" class="icon-16 d-flex"></i-tabler>

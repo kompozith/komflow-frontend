@@ -1,0 +1,15 @@
+<div class="confirm-page">
+  <mat-card class="confirm-card">
+    <div class="badge" [class.created]="status === 'CREATED'">
+      {{ status === 'CREATED' ? 'Nouvelle inscription' : 'Profil mis a jour' }}
+    </div>
+    <h1>Merci pour ton inscription</h1>
+    <p *ngIf="name">A tres vite <strong>{{ name }}</strong>.</p>
+    <p *ngIf="email">Un recapitulatif pourra etre envoye a <strong>{{ email }}</strong>.</p>
+
+    <div class="next">
+      <button mat-stroked-button (click)="backToEvent()">Retour a la page evenement</button>
+      <a mat-flat-button color="primary" [routerLink]="['/event', slug]">Modifier mes infos</a>
+    </div>
+  </mat-card>
+</div>

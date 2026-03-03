@@ -32,7 +32,6 @@ export interface MessageEventSummary {
   startAt?: string;
   endAt?: string | null;
   timezone?: string | null;
-  allDay: boolean;
 }
 
 export interface Message {

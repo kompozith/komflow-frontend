@@ -1,0 +1,12 @@
+<div *ngIf="loading" class="py-5 d-flex justify-content-center">
+  <mat-spinner diameter="40"></mat-spinner>
+</div>
+
+<app-event-form
+  *ngIf="!loading && event"
+  [initialEvent]="event"
+  [submitting]="saving"
+  submitLabel="Mettre a jour l evenement"
+  (formSubmitted)="update($event)"
+  (cancelled)="cancel()"
+></app-event-form>

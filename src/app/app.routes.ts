@@ -72,6 +72,14 @@ export const routes: Routes = [
         data: { permissions: ['MESSAGE_LIST'] }
       },
       {
+        path: 'events',
+        loadChildren: () =>
+          import('./features/events/events.routes').then(
+            (m) => m.EventsRoutes
+          ),
+        data: { permissions: ['MESSAGE_LIST'] }
+      },
+      {
         path: 'campaigns',
         loadChildren: () =>
           import('./features/campaigns/campaigns.routes').then(
@@ -172,6 +180,13 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/front-pages/front-pages.routes').then(
             (m) => m.FrontPagesRoutes
+          ),
+      },
+      {
+        path: 'event',
+        loadChildren: () =>
+          import('./features/public-event/public-event.routes').then(
+            (m) => m.PublicEventRoutes
           ),
       },
     ],

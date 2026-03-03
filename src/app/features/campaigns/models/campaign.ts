@@ -225,7 +225,6 @@ export interface CampaignDetails {
       startAt?: string;
       endAt?: string | null;
       timezone?: string | null;
-      allDay: boolean;
     } | null;
     createdAt: string;
     updatedAt: string;

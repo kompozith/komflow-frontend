@@ -83,7 +83,6 @@ export class CalendarFormDialogComponent {
       endDate: new UntypedFormControl(this.toDateInputValue(end), [Validators.required]),
       endTime: new UntypedFormControl(this.toTimeInputValue(end), [Validators.required]),
       timezone: new UntypedFormControl(event?.meta?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone),
-      allDay: new UntypedFormControl(event?.allDay ?? false),
       color: this.formBuilder.group({
         primary: new UntypedFormControl(event?.color?.primary ?? '#5d87ff'),
         secondary: new UntypedFormControl(event?.color?.secondary ?? '#ecf2ff'),

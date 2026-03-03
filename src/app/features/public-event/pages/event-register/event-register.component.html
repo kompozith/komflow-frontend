@@ -1,0 +1,206 @@
+<div class="register-page" *ngIf="!isLoading && !hasError; else stateTpl">
+  <div class="grain"></div>
+  <div class="aurora one"></div>
+  <div class="aurora two"></div>
+
+  <div class="stepper-wrap">
+    <div class="stepper">
+      <div class="step" [class.active]="currentStep >= 1" [class.done]="currentStep > 1">
+        <span>
+          <mat-icon>{{ currentStep > 1 ? 'check' : 'event' }}</mat-icon>
+        </span>
+        <small>Details</small>
+      </div>
+      <div class="connector">
+        <div class="connector-progress" [style.width.%]="currentStep === 1 ? 0 : currentStep === 2 ? 50 : 100"></div>
+      </div>
+      <div class="step" [class.active]="currentStep >= 2" [class.done]="currentStep > 2">
+        <span>
+          <mat-icon>{{ currentStep > 2 ? 'check' : 'edit_note' }}</mat-icon>
+        </span>
+        <small>Inscription</small>
+      </div>
+      <div class="connector">
+        <div class="connector-progress" [style.width.%]="currentStep === 3 ? 100 : 0"></div>
+      </div>
+      <div class="step" [class.active]="currentStep >= 3">
+        <span>
+          <mat-icon>task_alt</mat-icon>
+        </span>
+        <small>Confirmation</small>
+      </div>
+    </div>
+  </div>
+
+  <mat-card class="register-card" *ngIf="event as e">
+    <section class="step-section" *ngIf="currentStep === 1">
+      <div class="register-layout details-layout">
+        <aside class="intro-panel">
+          <p class="kicker">Webinaire Komflow</p>
+          <h1>{{ e.title }}</h1>
+          <p>{{ e.subtitle || e.description || 'Evenement exclusif reserve a notre communaute.' }}</p>
+          <ul class="intro-list" *ngIf="e.highlights?.length; else fallbackHighlights">
+            <li *ngFor="let highlight of e.highlights | slice:0:4">{{ highlight }}</li>
+          </ul>
+          <ng-template #fallbackHighlights>
+            <ul class="intro-list">
+              <li>Acces direct a la session live</li>
+              <li>Interaction et questions en temps reel</li>
+              <li>Ressources partagees apres l'evenement</li>
+            </ul>
+          </ng-template>
+        </aside>
+
+        <div class="event-panel">
+          <h2>Informations pratiques</h2>
+          <div class="event-meta">
+            <div class="meta-item">
+              <small>Date</small>
+              <strong>{{ e.startsAt | date: 'EEEE dd MMMM yyyy, HH:mm' }}</strong>
+            </div>
+            <div class="meta-item" *ngIf="e.endsAt">
+              <small>Fin</small>
+              <strong>{{ e.endsAt | date: 'EEEE dd MMMM yyyy, HH:mm' }}</strong>
+            </div>
+            <div class="meta-item" *ngIf="e.location">
+              <small>Lieu</small>
+              <strong>{{ e.location }}</strong>
+            </div>
+            <div class="meta-item" *ngIf="e.address">
+              <small>Adresse</small>
+              <strong>{{ e.address }}</strong>
+            </div>
+          </div>
+          <button mat-flat-button color="primary" class="btn-submit" type="button" (click)="goToStep(2)">
+            Continuer vers l'inscription
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="step-section" *ngIf="currentStep === 2">
+      <div class="register-layout form-layout">
+        <aside class="intro-panel">
+          <p class="kicker">Inscription</p>
+          <h1>Finalisez votre place</h1>
+          <p>Renseignez vos informations. Si vous etes deja connu, votre profil sera mis a jour.</p>
+        </aside>
+
+        <form class="form-panel" [formGroup]="form" (ngSubmit)="submit()">
+          <div class="grid">
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Civilite</mat-label>
+              <mat-select formControlName="civility">
+                <mat-option value="Monsieur">Monsieur</mat-option>
+                <mat-option value="Madame">Madame</mat-option>
+                <mat-option value="Mademoiselle">Mademoiselle</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Prenom</mat-label>
+              <input matInput formControlName="firstName" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Nom</mat-label>
+              <input matInput formControlName="lastName" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" />
+              <mat-error *ngIf="form.controls.email.invalid && form.controls.email.touched">Email requis</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Telephone</mat-label>
+              <input matInput formControlName="phoneNumber" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Profession</mat-label>
+              <input matInput formControlName="profession" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Tranche d'age</mat-label>
+              <mat-select formControlName="ageRange">
+                <mat-option value="moins de 18ans">moins de 18ans</mat-option>
+                <mat-option value="18-24ans">18-24ans</mat-option>
+                <mat-option value="25-34ans">25-34ans</mat-option>
+                <mat-option value="35-50ans">35-50ans</mat-option>
+                <mat-option value="50ans et plus">50ans et plus</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field">
+              <mat-label>Langue</mat-label>
+              <mat-select formControlName="language">
+                <mat-option value="fr">Francais</mat-option>
+                <mat-option value="en">English</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field" [class.full]="!hasMultipleTimezones()">
+              <mat-label>Fuseau horaire (pays)</mat-label>
+              <mat-select formControlName="country" (selectionChange)="onCountryChange($event.value)">
+                <mat-option *ngFor="let country of countries" [value]="country.code">
+                  {{ country.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field" *ngIf="hasMultipleTimezones()">
+              <mat-label>Ville</mat-label>
+              <mat-select formControlName="city" (selectionChange)="onCityChange($event.value)" [disabled]="!form.get('country')?.value">
+                <mat-option *ngFor="let city of cities" [value]="city.name">
+                  {{ city.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full field">
+              <mat-label>Lien du site web</mat-label>
+              <input matInput formControlName="websiteUrl" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full field">
+              <mat-label>Objectifs</mat-label>
+              <textarea matInput rows="4" formControlName="objectives"></textarea>
+            </mat-form-field>
+          </div>
+
+          <div class="actions">
+            <button mat-stroked-button type="button" class="btn-secondary" (click)="goToStep(1)">Retour</button>
+            <button mat-flat-button color="primary" [disabled]="loading" type="submit" class="btn-submit">
+              {{ loading ? 'Enregistrement...' : "Confirmer l'inscription" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="step-section confirmation-step" *ngIf="currentStep === 3">
+      <div class="status-badge" [class.created]="registrationStatus === 'CREATED'">
+        {{ registrationStatus === 'CREATED' ? 'Nouvelle inscription' : 'Profil mis a jour' }}
+      </div>
+      <h2>Inscription confirmee</h2>
+      <p *ngIf="registeredName">A tres vite <strong>{{ registeredName }}</strong>.</p>
+      <p *ngIf="registeredEmail">
+        Un recapitulatif est envoye a <strong>{{ registeredEmail }}</strong>.
+      </p>
+      <div class="confirm-actions">
+        <button mat-stroked-button class="btn-secondary" type="button" (click)="goToEvent()">Retour a l'evenement</button>
+        <button mat-flat-button color="primary" class="btn-submit" type="button" (click)="resetFormStep()">Modifier mes infos</button>
+      </div>
+    </section>
+  </mat-card>
+</div>
+
+<ng-template #stateTpl>
+  <div class="loading-wrap">
+    <mat-spinner diameter="44" *ngIf="isLoading"></mat-spinner>
+    <p *ngIf="!isLoading && hasError">Evenement introuvable ou indisponible.</p>
+  </div>
+</ng-template>

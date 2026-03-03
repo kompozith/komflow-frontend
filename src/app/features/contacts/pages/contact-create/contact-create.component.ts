@@ -51,6 +51,11 @@ export class ContactCreateComponent {
     this.contactForm = this.fb.group({
       personId: [null],
       enabled: [true],
+      civility: [''],
+      profession: [''],
+      ageRange: [''],
+      objectives: [''],
+      websiteUrl: [''],
       tagIds: [[]],
       newPerson: this.fb.group({
         email: ['', [Validators.required, Validators.email]],
@@ -78,6 +83,11 @@ export class ContactCreateComponent {
 
       const contactData: CreateContactRequest = {
         enabled: !!formValue.enabled,
+        civility: formValue.civility || null,
+        profession: formValue.profession || null,
+        ageRange: formValue.ageRange || null,
+        objectives: formValue.objectives || null,
+        websiteUrl: formValue.websiteUrl || null,
         tagIds: formValue.tagIds || [],
       };
 
@@ -236,4 +246,5 @@ export class ContactCreateComponent {
     }
     return this.contactForm.get('newPerson')?.valid ?? false;
   }
+
 }

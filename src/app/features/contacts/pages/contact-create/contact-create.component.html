@@ -130,6 +130,42 @@
 
           <div class="row mt-4">
             <div class="col-12">
+              <h5 class="m-b-8">Additional Information (Optional)</h5>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Civility</mat-label>
+                <input matInput formControlName="civility" placeholder="Ex: Monsieur" />
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Profession</mat-label>
+                <input matInput formControlName="profession" placeholder="Ex: Web Designer" />
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Age Range</mat-label>
+                <input matInput formControlName="ageRange" placeholder="Ex: 25 à 34 ans" />
+              </mat-form-field>
+            </div>
+            <div class="col-md-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Objectives</mat-label>
+                <textarea matInput rows="3" formControlName="objectives" placeholder="Objectives or needs"></textarea>
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Website URL</mat-label>
+                <input matInput formControlName="websiteUrl" placeholder="www.example.com" />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12">
               <h5 class="m-b-8">Tags</h5>
               <mat-form-field appearance="outline" class="w-100">
                 <mat-select formControlName="tagIds" multiple>

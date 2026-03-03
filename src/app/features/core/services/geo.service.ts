@@ -35,4 +35,11 @@ export class GeoService {
   getCitiesByCountry(countryCode: string): Observable<GeoCity[]> {
     return this.http.get<GeoCity[]>(`${this.apiUrl}/countries/${countryCode}/cities`, { headers: this.getAuthHeaders() });
   }
+
+  getCountryByTimezone(timezone: string): Observable<GeoCountry | null> {
+    return this.http.get<GeoCountry | null>(`${this.apiUrl}/country-by-timezone`, {
+      params: { timezone },
+      headers: this.getAuthHeaders()
+    });
+  }
 }

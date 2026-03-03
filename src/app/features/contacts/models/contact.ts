@@ -19,6 +19,11 @@ export interface Contact {
   id: number;
   enabled: boolean;
   lastMessageReceivedAt: string | null;
+  civility: string | null;
+  profession: string | null;
+  ageRange: string | null;
+  objectives: string | null;
+  websiteUrl: string | null;
   person: PersonSummary;
   tagCount: number;
   createdAt: string;
@@ -30,6 +35,11 @@ export interface ContactDetails {
   id: number;
   enabled: boolean;
   lastMessageReceivedAt: string | null;
+  civility: string | null;
+  profession: string | null;
+  ageRange: string | null;
+  objectives: string | null;
+  websiteUrl: string | null;
   person: PersonSummary;
   tags: Tag[];
   createdAt: string;
@@ -74,6 +84,11 @@ export interface ContactFilters {
 export interface CreateContactRequest {
   enabled: boolean;
   lastMessageReceivedAt?: string | null;
+  civility?: string | null;
+  profession?: string | null;
+  ageRange?: string | null;
+  objectives?: string | null;
+  websiteUrl?: string | null;
   personId?: number;
   person?: {
     email: string;
@@ -94,7 +109,12 @@ export interface CreateContactRequest {
 export interface UpdateContactRequest {
   enabled: boolean;
   lastMessageReceivedAt?: string | null;
-  personId: number;
+  civility?: string | null;
+  profession?: string | null;
+  ageRange?: string | null;
+  objectives?: string | null;
+  websiteUrl?: string | null;
+  personId?: number;
   tagIds?: number[];
 }
 

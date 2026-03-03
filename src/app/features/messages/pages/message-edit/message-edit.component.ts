@@ -267,8 +267,7 @@ export class MessageEditComponent implements OnInit {
             endTime: currentEvent.endTime,
             startAt: currentEvent.startAt,
             endAt: currentEvent.endAt,
-            timezone: currentEvent.timezone,
-            allDay: currentEvent.allDay
+            timezone: currentEvent.timezone
           });
         }
         this.availableEvents = merged.sort((a, b) => this.getEventSortValue(a) - this.getEventSortValue(b));

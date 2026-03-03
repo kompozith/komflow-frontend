@@ -42,8 +42,15 @@ export const navItems: NavItem[] = [
       permissions: ['CAMPAIGN_LIST']
    },
    {
-      displayName: 'Events',
+      displayName: 'Event Management',
       iconName: 'calendar-event',
+      route: 'events',
+      roles: ['ADMIN', 'SUPER_ADMIN'],
+      permissions: ['MESSAGE_LIST']
+   },
+   {
+      displayName: 'Calendar',
+      iconName: 'calendar-month',
       route: 'apps/calendar',
       roles: ['ADMIN', 'SUPER_ADMIN'],
       permissions: ['MESSAGE_LIST']

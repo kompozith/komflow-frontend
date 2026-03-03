@@ -1,0 +1,39 @@
+<div class="d-flex align-items-center justify-content-between mb-3 px-3 pt-3">
+  <h5 class="mb-0">Confirmer la suppression</h5>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="px-3">
+  <div class="alert alert-warning mb-3">
+    <div class="d-flex align-items-center">
+      <mat-icon class="text-warning me-2">warning</mat-icon>
+      <strong>Attention</strong>
+    </div>
+    <p class="mb-0 mt-2">
+      Vous allez supprimer l evenement <strong>{{ event.title }}</strong>.
+      Cette action est irreversible.
+    </p>
+  </div>
+
+  <p class="mb-3">
+    Pour confirmer, tapez le titre exact:
+    <strong>{{ event.title }}</strong>
+  </p>
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Titre de confirmation</mat-label>
+    <input matInput [(ngModel)]="confirmationText" placeholder="Saisissez le titre de l evenement" />
+    <mat-hint *ngIf="!isConfirmationValid && confirmationText.length > 0" class="text-error">
+      Le titre ne correspond pas.
+    </mat-hint>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="px-3 pb-3">
+  <button mat-button (click)="closeDialog()">Annuler</button>
+  <button mat-flat-button color="warn" [disabled]="!isConfirmationValid" (click)="doAction()">
+    Supprimer
+  </button>
+</mat-dialog-actions>

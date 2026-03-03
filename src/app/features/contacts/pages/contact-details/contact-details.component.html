@@ -92,6 +92,42 @@
             </div>
 
             <div class="row">
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Civility</mat-label>
+                  <input matInput [value]="contact.civility || 'Not provided'" readonly>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Profession</mat-label>
+                  <input matInput [value]="contact.profession || 'Not provided'" readonly>
+                </mat-form-field>
+              </div>
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Age Range</mat-label>
+                  <input matInput [value]="contact.ageRange || 'Not provided'" readonly>
+                </mat-form-field>
+              </div>
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Website URL</mat-label>
+                  <input matInput [value]="contact.websiteUrl || 'Not provided'" readonly>
+                </mat-form-field>
+              </div>
+              <div class="col-md-8">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Objectives</mat-label>
+                  <textarea matInput [value]="contact.objectives || 'Not provided'" rows="3" readonly></textarea>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
               <div class="col-md-3">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Language</mat-label>

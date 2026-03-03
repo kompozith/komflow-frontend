@@ -447,9 +447,8 @@ export class AppFullcalendarComponent {
       start,
       end: end ?? undefined,
       title: event.title,
-      color: event.allDay ? colors.blue : colors.yellow,
+      color: colors.yellow,
       actions: this.actions,
-      allDay: !!event.allDay,
       draggable: true,
       resizable: {
         beforeStart: true,
@@ -472,18 +471,18 @@ export class AppFullcalendarComponent {
   private toCreateEventPayload(formEvent: any): CreateEventRequest {
     const startDateTime = this.extractDateTimeParts(formEvent.start, formEvent.startDate, formEvent.startTime)
       ?? this.extractDateTimeParts(new Date(), null, null)!;
-    const endDateTime = this.extractDateTimeParts(formEvent.end, formEvent.endDate, formEvent.endTime);
+    const endDateTime = this.extractDateTimeParts(formEvent.end, formEvent.endDate, formEvent.endTime) ?? startDateTime;
 
     return {
       title: formEvent.title,
       description: formEvent.description || '',
+      mode: 'ONSITE',
       location: formEvent.location || '',
       startDate: startDateTime.date,
       startTime: startDateTime.time,
-      endDate: endDateTime ? endDateTime.date : null,
-      endTime: endDateTime ? endDateTime.time : null,
+      endDate: endDateTime.date,
+      endTime: endDateTime.time,
       timezone: formEvent.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-      allDay: !!formEvent.allDay,
     };
   }
 

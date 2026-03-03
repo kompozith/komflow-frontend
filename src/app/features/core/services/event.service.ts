@@ -3,11 +3,21 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
+export type EventMode = 'ONSITE' | 'ONLINE';
+
 export interface AppEvent {
   id: number;
   title: string;
+  slug?: string;
+  subtitle?: string | null;
   description?: string | null;
+  mode?: EventMode | null;
   location?: string | null;
+  address?: string | null;
+  meetingUrl?: string | null;
+  highlights?: string[] | null;
+  agenda?: EventAgendaItem[] | null;
+  eventDate?: string | null;
   startDate: string;
   startTime: string;
   endDate?: string | null;
@@ -15,23 +25,34 @@ export interface AppEvent {
   startAt?: string;
   endAt?: string | null;
   timezone?: string | null;
-  allDay: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
 
+export interface EventAgendaItem {
+  time?: string;
+  title?: string;
+  speaker?: string;
+  description?: string;
+}
+
 export interface CreateEventRequest {
   title: string;
+  subtitle?: string;
   description?: string;
+  mode?: EventMode;
   location?: string;
+  address?: string;
+  meetingUrl?: string;
+  highlights?: string[];
+  agenda?: EventAgendaItem[];
   startDate: string;
+  endDate: string;
   startTime: string;
-  endDate?: string | null;
-  endTime?: string | null;
+  endTime: string;
   startAt?: string;
   endAt?: string | null;
   timezone?: string;
-  allDay?: boolean;
 }
 
 @Injectable({
@@ -65,6 +86,10 @@ export class EventService {
 
   createEvent(payload: CreateEventRequest): Observable<AppEvent> {
     return this.http.post<AppEvent>(this.apiUrl, payload, { headers: this.getAuthHeaders() });
+  }
+
+  getEventById(id: number): Observable<AppEvent> {
+    return this.http.get<AppEvent>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() });
   }
 
   updateEvent(id: number, payload: CreateEventRequest): Observable<AppEvent> {

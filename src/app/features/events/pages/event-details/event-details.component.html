@@ -1,0 +1,188 @@
+<div *ngIf="loading" class="py-5 d-flex justify-content-center">
+  <mat-spinner diameter="40"></mat-spinner>
+</div>
+
+<div *ngIf="!loading && event as e">
+  <div class="row mb-3">
+    <div class="col-12">
+      <mat-card class="cardWithShadow">
+        <mat-card-content class="p-4">
+          <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
+            <div>
+              <div class="d-flex align-items-center gap-8 mb-2">
+                <h3 class="m-0 f-w-600">{{ e.title }}</h3>
+                <span class="mode-pill" [class.online]="e.mode === 'ONLINE'">{{ getModeLabel(e.mode) }}</span>
+              </div>
+              <p class="m-0 text-muted" *ngIf="e.subtitle">{{ e.subtitle }}</p>
+            </div>
+            <div class="d-flex gap-8 flex-wrap">
+              <button mat-stroked-button [routerLink]="['/events']">
+                <mat-icon class="me-1">arrow_back</mat-icon>
+                Retour liste
+              </button>
+              <button mat-flat-button color="primary" (click)="editEvent()">
+                <mat-icon class="me-1">edit</mat-icon>
+                Editer
+              </button>
+              <button mat-stroked-button color="warn" (click)="deleteEvent()">
+                <mat-icon class="me-1">delete</mat-icon>
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-sm-6 col-lg-3">
+      <mat-card class="cardWithShadow cursor-pointer bg-light-primary shadow-none">
+        <mat-card-content class="d-flex align-items-center gap-16">
+          <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-primary text-white">
+            <mat-icon class="d-flex">calendar_month</mat-icon>
+          </div>
+          <div>
+            <h5 class="f-w-400 lh-sm f-s-14">Date debut</h5>
+            <h5 class="f-w-500 lh-sm f-s-14">{{ e.startDate | date: 'dd/MM/yyyy' }}</h5>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <mat-card class="cardWithShadow cursor-pointer bg-light-success shadow-none">
+        <mat-card-content class="d-flex align-items-center gap-16">
+          <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-success text-white">
+            <mat-icon class="d-flex">event</mat-icon>
+          </div>
+          <div>
+            <h5 class="f-w-400 lh-sm f-s-14">Date fin</h5>
+            <h5 class="f-w-500 lh-sm f-s-14">{{ (e.endDate || e.startDate) | date: 'dd/MM/yyyy' }}</h5>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <mat-card class="cardWithShadow cursor-pointer bg-light-warning shadow-none">
+        <mat-card-content class="d-flex align-items-center gap-16">
+          <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-warning text-white">
+            <mat-icon class="d-flex">schedule</mat-icon>
+          </div>
+          <div>
+            <h5 class="f-w-400 lh-sm f-s-14">Horaire</h5>
+            <h5 class="f-w-500 lh-sm f-s-14">{{ e.startTime || '--:--' }} - {{ e.endTime || '--:--' }}</h5>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <mat-card class="cardWithShadow cursor-pointer bg-light shadow-none">
+        <mat-card-content class="d-flex align-items-center gap-16">
+          <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-info text-white">
+            <mat-icon class="d-flex">language</mat-icon>
+          </div>
+          <div>
+            <h5 class="f-w-400 lh-sm f-s-14">Timezone</h5>
+            <h5 class="f-w-500 lh-sm f-s-14">{{ e.timezone || '-' }}</h5>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-lg-8">
+      <mat-card class="cardWithShadow h-100">
+        <mat-card-header>
+          <mat-card-title>Informations evenement</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="text-muted mb-4" *ngIf="e.description; else noDescription">{{ e.description }}</p>
+          <ng-template #noDescription>
+            <p class="text-muted mb-4">Aucune description.</p>
+          </ng-template>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="info-line">
+                <span class="label">Type</span>
+                <span class="value">{{ getModeLabel(e.mode) }}</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="info-line">
+                <span class="label">Adresse</span>
+                <span class="value">{{ e.address || '-' }}</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="info-line">
+                <span class="label">Lieu</span>
+                <span class="value">{{ e.mode === 'ONLINE' ? 'En ligne' : (e.location || '-') }}</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="info-line">
+                <span class="label">Lien de connexion</span>
+                <span class="value">
+                  <a *ngIf="e.mode === 'ONLINE' && e.meetingUrl; else noMeetingUrl" [href]="e.meetingUrl" target="_blank" rel="noopener">
+                    Ouvrir le lien
+                  </a>
+                  <ng-template #noMeetingUrl>-</ng-template>
+                </span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="info-line">
+                <span class="label">Cree le</span>
+                <span class="value">{{ e.createdAt ? (e.createdAt | date: 'dd/MM/yyyy HH:mm') : '-' }}</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="info-line">
+                <span class="label">Mis a jour le</span>
+                <span class="value">{{ (e.updatedAt || e.createdAt) ? ((e.updatedAt || e.createdAt) | date: 'dd/MM/yyyy HH:mm') : '-' }}</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="col-lg-4">
+      <mat-card class="cardWithShadow h-100">
+        <mat-card-header>
+          <mat-card-title>Points forts</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-chip-set *ngIf="e.highlights?.length; else noHighlights">
+            <mat-chip *ngFor="let point of e.highlights">{{ point }}</mat-chip>
+          </mat-chip-set>
+          <ng-template #noHighlights>
+            <p class="text-muted mb-0">Aucun point fort renseigne.</p>
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="e.agenda?.length">
+    <div class="col-12">
+      <mat-card class="cardWithShadow">
+        <mat-card-header>
+          <mat-card-title>Agenda</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="agenda-item" *ngFor="let item of e.agenda">
+            <div class="agenda-head">
+              <span class="agenda-time">{{ item.time || '--:--' }}</span>
+              <span class="agenda-title">{{ item.title || 'Sans titre' }}</span>
+              <span class="agenda-speaker" *ngIf="item.speaker">{{ item.speaker }}</span>
+            </div>
+            <p class="agenda-desc mb-0" *ngIf="item.description">{{ item.description }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
