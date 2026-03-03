@@ -71,6 +71,10 @@
               <strong>{{ e.address }}</strong>
             </div>
           </div>
+          <div class="event-description" *ngIf="e.description">
+            <small>Description</small>
+            <p>{{ e.description }}</p>
+          </div>
           <button mat-flat-button color="primary" class="btn-submit" type="button" (click)="goToStep(2)">
             Continuer vers l'inscription
           </button>
@@ -183,17 +187,13 @@
 
     <section class="step-section confirmation-step" *ngIf="currentStep === 3">
       <div class="status-badge" [class.created]="registrationStatus === 'CREATED'">
-        {{ registrationStatus === 'CREATED' ? 'Nouvelle inscription' : 'Profil mis a jour' }}
+        Confirmation
       </div>
       <h2>Inscription confirmee</h2>
       <p *ngIf="registeredName">A tres vite <strong>{{ registeredName }}</strong>.</p>
       <p *ngIf="registeredEmail">
         Un recapitulatif est envoye a <strong>{{ registeredEmail }}</strong>.
       </p>
-      <div class="confirm-actions">
-        <button mat-stroked-button class="btn-secondary" type="button" (click)="goToEvent()">Retour a l'evenement</button>
-        <button mat-flat-button color="primary" class="btn-submit" type="button" (click)="resetFormStep()">Modifier mes infos</button>
-      </div>
     </section>
   </mat-card>
 </div>

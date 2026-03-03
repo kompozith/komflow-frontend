@@ -238,6 +238,25 @@
   font-weight: 600;
 }
 
+.event-description {
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 84%, transparent);
+  background: color-mix(in srgb, var(--mat-sys-surface-container) 84%, transparent);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.event-description small {
+  display: block;
+  margin-bottom: 6px;
+  color: color-mix(in srgb, var(--mat-sys-on-background) 68%, transparent);
+}
+
+.event-description p {
+  margin: 0;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--mat-sys-on-background) 86%, transparent);
+}
+
 .form-panel {
   display: flex;
   flex-direction: column;
