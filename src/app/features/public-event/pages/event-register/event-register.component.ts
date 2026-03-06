@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, ElementRef, OnInit } from '@angular/core';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material.module';
-import { GeoCity, GeoCountry, GeoService } from '../../../core/services/geo.service';
-import { PublicEventDetails } from '../../models/public-event';
+import { CountryISO, NgxIntlTelInputModule, SearchCountryField } from 'ngx-intl-tel-input';
+import { GeoService } from '../../../core/services/geo.service';
+import { PublicEventDetails, PublicEventSchedule } from '../../models/public-event';
 import { PublicEventService } from '../../services/public-event.service';
 
 @Component({
   selector: 'app-event-register',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, MaterialModule],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, MaterialModule, NgxIntlTelInputModule],
   templateUrl: './event-register.component.html',
   styleUrls: ['./event-register.component.scss'],
 })
@@ -25,27 +26,39 @@ export class EventRegisterComponent implements OnInit {
   registrationStatus: string | null = null;
   registeredName = '';
   registeredEmail = '';
-  countries: GeoCountry[] = [];
-  cities: GeoCity[] = [];
+  clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  clientLocale = navigator.language || 'fr-FR';
+  scheduleDisplay: {
+    timezoneLabel: string;
+    isRangeSameDay: boolean;
+    singleDateTime?: string;
+    sameDayDate?: string;
+    sameDayTimeRange?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  } = {
+    timezoneLabel: '',
+    isRangeSameDay: false,
+  };
+  registrationMetadata = {
+    language: 'fr',
+    country: '',
+    city: '',
+    timezone: '',
+  };
+  CountryISO = CountryISO;
+  SearchCountryField = SearchCountryField;
 
   form = this.fb.group({
-    civility: [''],
-    firstName: [''],
-    lastName: [''],
+    firstName: ['', [Validators.required]],
+    lastName: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
-    phoneNumber: [''],
-    profession: [''],
-    ageRange: [''],
-    language: ['fr'],
-    country: [''],
-    city: [''],
-    timezone: [''],
-    websiteUrl: [''],
-    objectives: [''],
+    phoneNumber: [null as any, [Validators.required]],
   });
 
   constructor(
     private fb: FormBuilder,
+    private hostRef: ElementRef<HTMLElement>,
     private route: ActivatedRoute,
     private router: Router,
     private snackBar: MatSnackBar,
@@ -64,6 +77,7 @@ export class EventRegisterComponent implements OnInit {
     this.publicEventService.getEventDetails(this.slug).subscribe({
       next: (details) => {
         this.event = details;
+        this.scheduleDisplay = this.mapScheduleForDisplay(details.schedule) || this.buildScheduleDisplay(details);
         this.isLoading = false;
       },
       error: () => {
@@ -72,7 +86,30 @@ export class EventRegisterComponent implements OnInit {
       },
     });
 
-    this.loadCountries();
+    this.detectRegistrationMetadata();
+  }
+
+  adjustPhoneCountryDropdown(): void {
+    setTimeout(() => {
+      const flagContainer = this.hostRef.nativeElement.querySelector('.phone-field .iti__flag-container') as HTMLElement | null;
+      if (!flagContainer) {
+        return;
+      }
+
+      const dropdownMenu = flagContainer.querySelector('.dropdown-menu.iti__dropdown-content.show') as HTMLElement | null;
+      if (!dropdownMenu) {
+        return;
+      }
+
+      const triggerRect = flagContainer.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      const spaceAbove = triggerRect.top;
+      const spaceBelow = viewportHeight - triggerRect.bottom;
+      const estimatedMenuHeight = Math.min(dropdownMenu.scrollHeight || 0, 320);
+      const shouldOpenUp = spaceBelow < estimatedMenuHeight && spaceAbove > spaceBelow;
+
+      flagContainer.classList.toggle('dropup', shouldOpenUp);
+    });
   }
 
   goToStep(step: number): void {
@@ -99,41 +136,6 @@ export class EventRegisterComponent implements OnInit {
     this.currentStep = 2;
   }
 
-  onCountryChange(countryCode: string): void {
-    this.form.get('city')?.setValue('');
-    this.form.get('timezone')?.setValue('');
-
-    if (!countryCode) {
-      this.cities = [];
-      return;
-    }
-
-    this.geoService.getCitiesByCountry(countryCode).subscribe({
-      next: (cities) => {
-        this.cities = cities || [];
-        if (this.cities.length > 0) {
-          const firstCity = this.cities[0];
-          this.form.get('city')?.setValue(firstCity.name);
-          this.form.get('timezone')?.setValue(firstCity.timezone);
-        }
-      },
-      error: (error) => {
-        console.error('Error loading cities:', error);
-        this.cities = [];
-        this.snackBar.open('Unable to load cities for this country', 'Close', { duration: 3000 });
-      },
-    });
-  }
-
-  onCityChange(cityName: string): void {
-    const city = this.cities.find(item => item.name === cityName);
-    this.form.get('timezone')?.setValue(city?.timezone || '');
-  }
-
-  hasMultipleTimezones(): boolean {
-    return !!this.form.get('country')?.value && this.cities.length > 1;
-  }
-
   submit(): void {
     if (!this.slug || this.form.invalid || this.loading) {
       this.form.markAllAsTouched();
@@ -149,16 +151,11 @@ export class EventRegisterComponent implements OnInit {
       email: raw.email || '',
       firstName: raw.firstName || undefined,
       lastName: raw.lastName || undefined,
-      phoneNumber: raw.phoneNumber || undefined,
-      profession: raw.profession || undefined,
-      ageRange: raw.ageRange || undefined,
-      language: raw.language || undefined,
-      country: raw.country || undefined,
-      city: raw.city || undefined,
-      timezone: raw.timezone || undefined,
-      civility: raw.civility || undefined,
-      websiteUrl: raw.websiteUrl || undefined,
-      objectives: raw.objectives || undefined,
+      phoneNumber: this.formatPhoneNumber(raw.phoneNumber) || undefined,
+      language: this.registrationMetadata.language || undefined,
+      country: this.registrationMetadata.country || undefined,
+      city: this.registrationMetadata.city || undefined,
+      timezone: this.registrationMetadata.timezone || undefined,
     };
 
     this.publicEventService.register(this.slug, payload).subscribe({
@@ -176,14 +173,205 @@ export class EventRegisterComponent implements OnInit {
     });
   }
 
-  private loadCountries(): void {
-    this.geoService.getCountries().subscribe({
-      next: (countries) => {
-        this.countries = countries || [];
+  private detectRegistrationMetadata(): void {
+    const timezone = this.detectBrowserTimezone();
+    const language = this.detectBrowserLanguage();
+    this.registrationMetadata = {
+      ...this.registrationMetadata,
+      timezone,
+      language,
+    };
+
+    if (!timezone) {
+      return;
+    }
+
+    this.geoService.getCountryByTimezone(timezone).subscribe({
+      next: (country) => {
+        const countryCode = country?.code || '';
+        this.registrationMetadata = {
+          ...this.registrationMetadata,
+          country: countryCode,
+        };
+
+        if (!countryCode) {
+          return;
+        }
+
+        this.geoService.getCitiesByCountry(countryCode).subscribe({
+          next: (cities) => {
+            const matchedCity = (cities || []).find(city => city.timezone === timezone);
+            this.registrationMetadata = {
+              ...this.registrationMetadata,
+              city: matchedCity?.name || '',
+            };
+          },
+          error: (error) => {
+            console.error('Error loading cities from metadata:', error);
+          },
+        });
       },
       error: (error) => {
-        console.error('Error loading countries:', error);
+        console.error('Error loading country from timezone metadata:', error);
       },
     });
+  }
+
+  private detectBrowserTimezone(): string {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  }
+
+  private detectBrowserLanguage(): string {
+    const language = navigator.language || 'fr';
+    return language.toLowerCase().startsWith('fr') ? 'fr' : 'en';
+  }
+
+  private buildScheduleDisplay(event: PublicEventDetails): {
+    timezoneLabel: string;
+    isRangeSameDay: boolean;
+    singleDateTime?: string;
+    sameDayDate?: string;
+    sameDayTimeRange?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  } {
+    const timezoneLabel = `Heure locale (${this.clientTimezone})`;
+    const startsAt = event.startsAt ? new Date(event.startsAt) : null;
+    const endsAt = event.endsAt ? new Date(event.endsAt) : null;
+
+    if (!startsAt || Number.isNaN(startsAt.getTime())) {
+      return { timezoneLabel, isRangeSameDay: false };
+    }
+
+    if (!endsAt || Number.isNaN(endsAt.getTime())) {
+      return {
+        timezoneLabel,
+        isRangeSameDay: false,
+        singleDateTime: this.formatDateTime(startsAt),
+      };
+    }
+
+    const isRangeSameDay = this.isSameLocalDay(startsAt, endsAt);
+    if (isRangeSameDay) {
+      return {
+        timezoneLabel,
+        isRangeSameDay: true,
+        sameDayDate: this.formatDate(startsAt),
+        sameDayTimeRange: `${this.formatTime(startsAt)} - ${this.formatTime(endsAt)} (${this.formatDuration(startsAt, endsAt)})`,
+      };
+    }
+
+    return {
+      timezoneLabel,
+      isRangeSameDay: false,
+      startDateTime: this.formatDateTime(startsAt),
+      endDateTime: this.formatDateTime(endsAt),
+    };
+  }
+
+  private mapScheduleForDisplay(schedule?: PublicEventSchedule | null): {
+    timezoneLabel: string;
+    isRangeSameDay: boolean;
+    singleDateTime?: string;
+    sameDayDate?: string;
+    sameDayTimeRange?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+  } | null {
+    if (!schedule) {
+      return null;
+    }
+    return {
+      timezoneLabel: schedule.timezoneLabel || `Heure locale (${this.clientTimezone})`,
+      isRangeSameDay: !!schedule.rangeSameDay,
+      singleDateTime: schedule.singleDateTime || undefined,
+      sameDayDate: schedule.sameDayDate || undefined,
+      sameDayTimeRange: schedule.sameDayTimeRange || undefined,
+      startDateTime: schedule.startDateTime || undefined,
+      endDateTime: schedule.endDateTime || undefined,
+    };
+  }
+
+  private formatDate(value: Date): string {
+    return new Intl.DateTimeFormat(this.clientLocale, {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      timeZone: this.clientTimezone,
+    }).format(value);
+  }
+
+  private formatTime(value: Date): string {
+    return new Intl.DateTimeFormat(this.clientLocale, {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: this.clientTimezone,
+    }).format(value);
+  }
+
+  private formatDateTime(value: Date): string {
+    return new Intl.DateTimeFormat(this.clientLocale, {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: this.clientTimezone,
+    }).format(value);
+  }
+
+  private formatDuration(startsAt: Date, endsAt: Date): string {
+    const diffInMinutes = Math.max(0, Math.round((endsAt.getTime() - startsAt.getTime()) / 60000));
+    const hours = Math.floor(diffInMinutes / 60);
+    const minutes = diffInMinutes % 60;
+
+    if (hours > 0 && minutes > 0) {
+      return `${hours}h${minutes.toString().padStart(2, '0')}`;
+    }
+    if (hours > 0) {
+      return `${hours}h`;
+    }
+    return `${minutes}min`;
+  }
+
+  private isSameLocalDay(first: Date, second: Date): boolean {
+    const firstDay = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: this.clientTimezone,
+    }).format(first);
+    const secondDay = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: this.clientTimezone,
+    }).format(second);
+
+    return firstDay === secondDay;
+  }
+
+  private formatPhoneNumber(phoneObject: any): string {
+    if (!phoneObject) {
+      return '';
+    }
+    if (typeof phoneObject === 'string') {
+      return phoneObject.trim();
+    }
+
+    if (phoneObject.e164Number) {
+      return String(phoneObject.e164Number).trim();
+    }
+    if (phoneObject.internationalNumber) {
+      return String(phoneObject.internationalNumber).replace(/\s/g, '').trim();
+    }
+    if (phoneObject.number && phoneObject.dialCode) {
+      return `+${String(phoneObject.dialCode).replace('+', '')}${String(phoneObject.number).replace(/\s/g, '')}`;
+    }
+    return '';
   }
 }

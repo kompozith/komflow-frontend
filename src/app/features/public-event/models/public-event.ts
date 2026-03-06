@@ -5,6 +5,16 @@ export interface PublicEventAgendaItem {
   description: string;
 }
 
+export interface PublicEventSchedule {
+  timezoneLabel: string;
+  rangeSameDay: boolean;
+  singleDateTime?: string | null;
+  sameDayDate?: string | null;
+  sameDayTimeRange?: string | null;
+  startDateTime?: string | null;
+  endDateTime?: string | null;
+}
+
 export interface PublicEventDetails {
   slug: string;
   title: string;
@@ -18,6 +28,7 @@ export interface PublicEventDetails {
   meetingUrl?: string | null;
   highlights: string[];
   agenda: PublicEventAgendaItem[];
+  schedule?: PublicEventSchedule | null;
 }
 
 export interface PublicEventRegistrationRequest {

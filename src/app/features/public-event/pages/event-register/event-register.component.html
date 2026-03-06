@@ -9,7 +9,7 @@
         <span>
           <mat-icon>{{ currentStep > 1 ? 'check' : 'event' }}</mat-icon>
         </span>
-        <small>Details</small>
+        <small>Apercu</small>
       </div>
       <div class="connector">
         <div class="connector-progress" [style.width.%]="currentStep === 1 ? 0 : currentStep === 2 ? 50 : 100"></div>
@@ -36,47 +36,53 @@
     <section class="step-section" *ngIf="currentStep === 1">
       <div class="register-layout details-layout">
         <aside class="intro-panel">
-          <p class="kicker">Webinaire Komflow</p>
+          <p class="kicker">Session premium</p>
           <h1>{{ e.title }}</h1>
-          <p>{{ e.subtitle || e.description || 'Evenement exclusif reserve a notre communaute.' }}</p>
+          <p>{{ e.subtitle || e.description || 'Une session pensee pour vous donner des actions concretes, applicables des cette semaine.' }}</p>
           <ul class="intro-list" *ngIf="e.highlights?.length; else fallbackHighlights">
             <li *ngFor="let highlight of e.highlights | slice:0:4">{{ highlight }}</li>
           </ul>
           <ng-template #fallbackHighlights>
             <ul class="intro-list">
-              <li>Acces direct a la session live</li>
-              <li>Interaction et questions en temps reel</li>
-              <li>Ressources partagees apres l'evenement</li>
+              <li>Methodes claires et directement actionnables</li>
+              <li>Session live avec questions reelles de participants</li>
+              <li>Checklist et ressources envoyees apres la session</li>
             </ul>
           </ng-template>
         </aside>
 
-        <div class="event-panel">
-          <h2>Informations pratiques</h2>
+        <div class="event-panel mt-5">
+          <h2>Votre session en un coup d'oeil</h2>
           <div class="event-meta">
             <div class="meta-item">
-              <small>Date</small>
-              <strong>{{ e.startsAt | date: 'EEEE dd MMMM yyyy, HH:mm' }}</strong>
+              <small>{{ scheduleDisplay.timezoneLabel }}</small>
+              <strong *ngIf="scheduleDisplay.isRangeSameDay && scheduleDisplay.sameDayDate">{{ scheduleDisplay.sameDayDate }}</strong>
+              <strong *ngIf="scheduleDisplay.isRangeSameDay && scheduleDisplay.sameDayTimeRange">{{ scheduleDisplay.sameDayTimeRange }}</strong>
+              <strong *ngIf="!scheduleDisplay.isRangeSameDay && scheduleDisplay.singleDateTime">{{ scheduleDisplay.singleDateTime }}</strong>
             </div>
-            <div class="meta-item" *ngIf="e.endsAt">
-              <small>Fin</small>
-              <strong>{{ e.endsAt | date: 'EEEE dd MMMM yyyy, HH:mm' }}</strong>
+            <div class="meta-item" *ngIf="!scheduleDisplay.isRangeSameDay && scheduleDisplay.startDateTime">
+              <small>Debut de la session</small>
+              <strong>{{ scheduleDisplay.startDateTime }}</strong>
+            </div>
+            <div class="meta-item" *ngIf="!scheduleDisplay.isRangeSameDay && scheduleDisplay.endDateTime">
+              <small>Fin de la session</small>
+              <strong>{{ scheduleDisplay.endDateTime }}</strong>
             </div>
             <div class="meta-item" *ngIf="e.location">
-              <small>Lieu</small>
+              <small>Lieu de rendez-vous</small>
               <strong>{{ e.location }}</strong>
             </div>
             <div class="meta-item" *ngIf="e.address">
-              <small>Adresse</small>
+              <small>Point d'acces</small>
               <strong>{{ e.address }}</strong>
             </div>
           </div>
           <div class="event-description" *ngIf="e.description">
-            <small>Description</small>
+            <small>Ce que vous allez obtenir</small>
             <p>{{ e.description }}</p>
           </div>
           <button mat-flat-button color="primary" class="btn-submit" type="button" (click)="goToStep(2)">
-            Continuer vers l'inscription
+            Je reserve ma place
           </button>
         </div>
       </div>
@@ -85,30 +91,23 @@
     <section class="step-section" *ngIf="currentStep === 2">
       <div class="register-layout form-layout">
         <aside class="intro-panel">
-          <p class="kicker">Inscription</p>
-          <h1>Finalisez votre place</h1>
-          <p>Renseignez vos informations. Si vous etes deja connu, votre profil sera mis a jour.</p>
+          <p class="kicker">Inscription rapide</p>
+          <h1>Confirmez votre participation</h1>
+          <p>En moins d'une minute, votre place est reservee. Nous mettons a jour vos informations automatiquement.</p>
         </aside>
 
         <form class="form-panel" [formGroup]="form" (ngSubmit)="submit()">
           <div class="grid">
             <mat-form-field appearance="outline" class="field">
-              <mat-label>Civilite</mat-label>
-              <mat-select formControlName="civility">
-                <mat-option value="Monsieur">Monsieur</mat-option>
-                <mat-option value="Madame">Madame</mat-option>
-                <mat-option value="Mademoiselle">Mademoiselle</mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="field">
-              <mat-label>Prenom</mat-label>
+              <mat-label>Votre prenom</mat-label>
               <input matInput formControlName="firstName" />
+              <mat-error *ngIf="form.controls.firstName.invalid && form.controls.firstName.touched">Prenom requis</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="field">
-              <mat-label>Nom</mat-label>
+              <mat-label>Votre nom</mat-label>
               <input matInput formControlName="lastName" />
+              <mat-error *ngIf="form.controls.lastName.invalid && form.controls.lastName.touched">Nom requis</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="field">
@@ -117,68 +116,36 @@
               <mat-error *ngIf="form.controls.email.invalid && form.controls.email.touched">Email requis</mat-error>
             </mat-form-field>
 
-            <mat-form-field appearance="outline" class="field">
-              <mat-label>Telephone</mat-label>
-              <input matInput formControlName="phoneNumber" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="field">
-              <mat-label>Profession</mat-label>
-              <input matInput formControlName="profession" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="field">
-              <mat-label>Tranche d'age</mat-label>
-              <mat-select formControlName="ageRange">
-                <mat-option value="moins de 18ans">moins de 18ans</mat-option>
-                <mat-option value="18-24ans">18-24ans</mat-option>
-                <mat-option value="25-34ans">25-34ans</mat-option>
-                <mat-option value="35-50ans">35-50ans</mat-option>
-                <mat-option value="50ans et plus">50ans et plus</mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="field">
-              <mat-label>Langue</mat-label>
-              <mat-select formControlName="language">
-                <mat-option value="fr">Francais</mat-option>
-                <mat-option value="en">English</mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="field" [class.full]="!hasMultipleTimezones()">
-              <mat-label>Fuseau horaire (pays)</mat-label>
-              <mat-select formControlName="country" (selectionChange)="onCountryChange($event.value)">
-                <mat-option *ngFor="let country of countries" [value]="country.code">
-                  {{ country.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="field" *ngIf="hasMultipleTimezones()">
-              <mat-label>Ville</mat-label>
-              <mat-select formControlName="city" (selectionChange)="onCityChange($event.value)" [disabled]="!form.get('country')?.value">
-                <mat-option *ngFor="let city of cities" [value]="city.name">
-                  {{ city.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full field">
-              <mat-label>Lien du site web</mat-label>
-              <input matInput formControlName="websiteUrl" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full field">
-              <mat-label>Objectifs</mat-label>
-              <textarea matInput rows="4" formControlName="objectives"></textarea>
-            </mat-form-field>
+            <div class="field phone-field" [class.invalid]="form.controls.phoneNumber.invalid && form.controls.phoneNumber.touched" (click)="adjustPhoneCountryDropdown()">
+              <label class="phone-label">Telephone (WhatsApp ou appel)</label>
+              <ngx-intl-tel-input
+                [enableAutoCountrySelect]="true"
+                [enablePlaceholder]="true"
+                [cssClass]="'event-phone-input'"
+                [searchCountryFlag]="true"
+                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                [selectFirstCountry]="false"
+                [selectedCountryISO]="CountryISO.Cameroon"
+                [separateDialCode]="true"
+                [phoneValidation]="true"
+                [maxLength]="15"
+                [inputId]="'event-register-phone'"
+                name="phone"
+                formControlName="phoneNumber">
+              </ngx-intl-tel-input>
+              <small class="phone-error" *ngIf="form.controls.phoneNumber.invalid && form.controls.phoneNumber.touched">
+                <ng-container *ngIf="form.controls.phoneNumber.errors?.['required']; else invalidPhoneTpl">
+                  Telephone requis
+                </ng-container>
+                <ng-template #invalidPhoneTpl>Numero invalide</ng-template>
+              </small>
+            </div>
           </div>
 
           <div class="actions">
-            <button mat-stroked-button type="button" class="btn-secondary" (click)="goToStep(1)">Retour</button>
+            <button mat-stroked-button type="button" class="btn-secondary" (click)="goToStep(1)">Revoir les details</button>
             <button mat-flat-button color="primary" [disabled]="loading" type="submit" class="btn-submit">
-              {{ loading ? 'Enregistrement...' : "Confirmer l'inscription" }}
+              {{ loading ? 'Validation en cours...' : "Valider mon inscription" }}
             </button>
           </div>
         </form>
@@ -189,18 +156,55 @@
       <div class="status-badge" [class.created]="registrationStatus === 'CREATED'">
         Confirmation
       </div>
-      <h2>Inscription confirmee</h2>
-      <p *ngIf="registeredName">A tres vite <strong>{{ registeredName }}</strong>.</p>
+      <h2>Votre place est confirmee</h2>
+      <p *ngIf="registeredName">Merci <strong>{{ registeredName }}</strong>, on se retrouve tres bientot.</p>
       <p *ngIf="registeredEmail">
-        Un recapitulatif est envoye a <strong>{{ registeredEmail }}</strong>.
+        Tous les details pratiques viennent d'etre envoyes a <strong>{{ registeredEmail }}</strong>.
       </p>
     </section>
   </mat-card>
 </div>
 
 <ng-template #stateTpl>
-  <div class="loading-wrap">
-    <mat-spinner diameter="44" *ngIf="isLoading"></mat-spinner>
-    <p *ngIf="!isLoading && hasError">Evenement introuvable ou indisponible.</p>
+  <div class="loading-wrap" *ngIf="isLoading; else errorStateTpl" aria-hidden="true">
+    <div class="skeleton-stepper">
+      <span class="skeleton shimmer"></span>
+      <span class="skeleton shimmer"></span>
+      <span class="skeleton shimmer"></span>
+    </div>
+
+    <div class="skeleton-card">
+      <div class="skeleton-layout">
+        <aside class="skeleton-intro">
+          <span class="skeleton shimmer skeleton-kicker"></span>
+          <span class="skeleton shimmer skeleton-title"></span>
+          <span class="skeleton shimmer skeleton-line"></span>
+          <span class="skeleton shimmer skeleton-line short"></span>
+          <span class="skeleton shimmer skeleton-bullet"></span>
+          <span class="skeleton shimmer skeleton-bullet"></span>
+          <span class="skeleton shimmer skeleton-bullet"></span>
+        </aside>
+
+        <section class="skeleton-content">
+          <span class="skeleton shimmer skeleton-section-title"></span>
+          <div class="skeleton-meta-grid">
+            <span class="skeleton shimmer skeleton-meta"></span>
+            <span class="skeleton shimmer skeleton-meta"></span>
+          </div>
+          <span class="skeleton shimmer skeleton-description"></span>
+          <span class="skeleton shimmer skeleton-cta"></span>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #errorStateTpl>
+    <div class="loading-wrap error-state">
+      <p>Evenement introuvable ou indisponible.</p>
+    </div>
+  </ng-template>
+  
+  <div class="sr-only">
+    Chargement des donnees de l'evenement...
   </div>
 </ng-template>

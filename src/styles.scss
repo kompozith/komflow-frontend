@@ -173,3 +173,58 @@ html.dark-theme .form-control:focus {
 .logo-icon {
   height: 25px !important;
 }
+
+/* Global ngx-intl-tel-input alignment with Material text fields */
+html {
+  --app-intl-phone-height: var(--mat-form-field-container-height, 37px);
+  --app-intl-phone-radius: 4px 4px 0 0;
+}
+
+ngx-intl-tel-input .iti {
+  width: 100%;
+}
+
+ngx-intl-tel-input .iti__flag-container,
+ngx-intl-tel-input .iti__selected-flag {
+  height: var(--app-intl-phone-height);
+}
+
+ngx-intl-tel-input input.iti__tel-input {
+  width: 100%;
+  height: var(--app-intl-phone-height);
+  min-height: var(--app-intl-phone-height);
+  border-radius: 8px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: color-mix(in srgb, var(--mat-sys-surface-container-low) 84%, transparent);
+  color: var(--mat-sys-on-background);
+  padding: 0 14px 0 92px;
+  line-height: normal;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+ngx-intl-tel-input input.iti__tel-input:focus {
+  border-color: var(--mat-sys-primary);
+}
+
+ngx-intl-tel-input #country-search-box {
+  min-height: 42px;
+  padding: 10px 12px;
+}
+
+ngx-intl-tel-input .dropdown-menu.iti__dropdown-content {
+  z-index: 2200;
+  border-radius: var(--app-intl-phone-radius);
+}
+
+@media (max-width: 760px) {
+  html {
+    --app-intl-phone-height: 56px;
+  }
+
+  ngx-intl-tel-input input.iti__tel-input {
+    font-size: 16px;
+    background: #ffffff;
+  }
+}
