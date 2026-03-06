@@ -1,9 +1,10 @@
 .register-page {
-  min-height: 100vh;
+  box-sizing: border-box;
+  min-height: 100dvh;
   position: relative;
   padding: clamp(20px, 4vw, 40px) 16px;
-  overflow-x: hidden;
-  overflow-y: visible;
+  overflow-x: clip;
+  overflow-y: clip;
   color: var(--mat-sys-on-background);
   background:
     radial-gradient(
@@ -148,6 +149,7 @@
 .register-layout {
   display: grid;
   gap: clamp(18px, 3vw, 36px);
+  align-items: start;
 }
 
 .details-layout {
@@ -166,6 +168,7 @@
   padding: clamp(12px, 2vw, 20px);
   border-radius: 20px;
   border: 1px solid color-mix(in srgb, var(--mat-sys-outline) 62%, transparent);
+  align-self: start;
 }
 
 .intro-panel {
@@ -203,6 +206,11 @@
   margin: 0;
   color: color-mix(in srgb, var(--mat-sys-on-background) 78%, transparent);
   line-height: 1.5;
+}
+
+.intro-panel .app-rich-text,
+.event-description .app-rich-text {
+  color: color-mix(in srgb, var(--mat-sys-on-background) 84%, transparent);
 }
 
 .intro-list {
@@ -575,6 +583,14 @@
   .form-layout,
   .skeleton-layout {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 981px) {
+  .details-layout .intro-panel,
+  .form-layout .intro-panel {
+    position: sticky;
+    top: 24px;
   }
 }
 

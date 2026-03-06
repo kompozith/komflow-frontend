@@ -16,11 +16,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material.module';
 import { GeoCity, GeoCountry, GeoService } from 'src/app/features/core/services/geo.service';
 import { AppEvent, CreateEventRequest, EventAgendaItem, EventMode } from 'src/app/features/core/services/event.service';
+import { MessageEditorComponent } from 'src/app/features/messages/components/message-editor/message-editor.component';
 
 @Component({
   selector: 'app-event-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MaterialModule],
+  imports: [CommonModule, ReactiveFormsModule, MaterialModule, MessageEditorComponent],
   templateUrl: './event-form.component.html',
   styleUrls: ['./event-form.component.scss'],
 })

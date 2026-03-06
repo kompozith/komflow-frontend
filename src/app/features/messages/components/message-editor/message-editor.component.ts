@@ -38,6 +38,8 @@ export class MessageEditorComponent implements OnInit, AfterViewInit, OnChanges 
   @Input() label = 'Message Content';
   @Input() rows = 6;
   @Input() selectedEvent: AppEvent | null = null;
+  @Input() showVariablesPanel = true;
+  @Input() showPreview = true;
 
   @Output() contentChange = new EventEmitter<string>();
 

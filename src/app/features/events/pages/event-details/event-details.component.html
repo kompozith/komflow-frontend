@@ -97,7 +97,7 @@
           <mat-card-title>Informations evenement</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <p class="text-muted mb-4" *ngIf="e.description; else noDescription">{{ e.description }}</p>
+          <div class="text-muted mb-4 app-rich-text" *ngIf="e.description; else noDescription" [innerHTML]="e.description"></div>
           <ng-template #noDescription>
             <p class="text-muted mb-4">Aucune description.</p>
           </ng-template>
@@ -179,7 +179,7 @@
               <span class="agenda-title">{{ item.title || 'Sans titre' }}</span>
               <span class="agenda-speaker" *ngIf="item.speaker">{{ item.speaker }}</span>
             </div>
-            <p class="agenda-desc mb-0" *ngIf="item.description">{{ item.description }}</p>
+            <div class="agenda-desc mb-0 app-rich-text" *ngIf="item.description" [innerHTML]="item.description"></div>
           </div>
         </mat-card-content>
       </mat-card>

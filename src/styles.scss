@@ -228,3 +228,36 @@ ngx-intl-tel-input .dropdown-menu.iti__dropdown-content {
     background: #ffffff;
   }
 }
+
+/* Shared rich-text rendering (event/message descriptions) */
+.app-rich-text {
+  line-height: 1.55;
+
+  p {
+    margin: 0 0 0.8rem;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  ul,
+  ol {
+    margin: 0 0 0.8rem;
+    padding-left: 1.2rem;
+  }
+
+  li + li {
+    margin-top: 0.2rem;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  blockquote {
+    margin: 0 0 0.8rem;
+    padding-left: 0.8rem;
+    border-left: 3px solid color-mix(in srgb, var(--mat-sys-primary) 35%, transparent);
+  }
+}

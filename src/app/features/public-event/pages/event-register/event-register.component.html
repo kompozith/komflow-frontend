@@ -38,7 +38,13 @@
         <aside class="intro-panel">
           <p class="kicker">Session premium</p>
           <h1>{{ e.title }}</h1>
-          <p>{{ e.subtitle || e.description || 'Une session pensee pour vous donner des actions concretes, applicables des cette semaine.' }}</p>
+          <p *ngIf="e.subtitle; else eventIntroDescription">{{ e.subtitle }}</p>
+          <ng-template #eventIntroDescription>
+            <div class="app-rich-text" *ngIf="e.description; else defaultEventIntro" [innerHTML]="e.description"></div>
+          </ng-template>
+          <ng-template #defaultEventIntro>
+            <p>Une session pensee pour vous donner des actions concretes, applicables des cette semaine.</p>
+          </ng-template>
           <ul class="intro-list" *ngIf="e.highlights?.length; else fallbackHighlights">
             <li *ngFor="let highlight of e.highlights | slice:0:4">{{ highlight }}</li>
           </ul>
@@ -51,7 +57,7 @@
           </ng-template>
         </aside>
 
-        <div class="event-panel mt-5">
+        <div class="event-panel mt-3 mt-md-0">
           <h2>Votre session en un coup d'oeil</h2>
           <div class="event-meta">
             <div class="meta-item">
@@ -79,7 +85,7 @@
           </div>
           <div class="event-description" *ngIf="e.description">
             <small>Ce que vous allez obtenir</small>
-            <p>{{ e.description }}</p>
+            <div class="app-rich-text" [innerHTML]="e.description"></div>
           </div>
           <button mat-flat-button color="primary" class="btn-submit" type="button" (click)="goToStep(2)">
             Je reserve ma place
