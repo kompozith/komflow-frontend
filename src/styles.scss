@@ -218,17 +218,6 @@ ngx-intl-tel-input .dropdown-menu.iti__dropdown-content {
   border-radius: var(--app-intl-phone-radius);
 }
 
-@media (max-width: 760px) {
-  html {
-    --app-intl-phone-height: 56px;
-  }
-
-  ngx-intl-tel-input input.iti__tel-input {
-    font-size: 16px;
-    background: #ffffff;
-  }
-}
-
 /* Shared rich-text rendering (event/message descriptions) */
 .app-rich-text {
   line-height: 1.55;

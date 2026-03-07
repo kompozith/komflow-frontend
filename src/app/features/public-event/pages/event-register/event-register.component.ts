@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -66,6 +66,16 @@ export class EventRegisterComponent implements OnInit {
     private publicEventService: PublicEventService
   ) {}
 
+  @HostListener('window:resize')
+  onViewportResize(): void {
+    this.positionPhoneCountryDropdownIfOpen();
+  }
+
+  @HostListener('window:scroll')
+  onViewportScroll(): void {
+    this.positionPhoneCountryDropdownIfOpen();
+  }
+
   ngOnInit(): void {
     this.slug = this.route.snapshot.params['slug'] || '';
     if (!this.slug) {
@@ -89,29 +99,6 @@ export class EventRegisterComponent implements OnInit {
     this.detectRegistrationMetadata();
   }
 
-  adjustPhoneCountryDropdown(): void {
-    setTimeout(() => {
-      const flagContainer = this.hostRef.nativeElement.querySelector('.phone-field .iti__flag-container') as HTMLElement | null;
-      if (!flagContainer) {
-        return;
-      }
-
-      const dropdownMenu = flagContainer.querySelector('.dropdown-menu.iti__dropdown-content.show') as HTMLElement | null;
-      if (!dropdownMenu) {
-        return;
-      }
-
-      const triggerRect = flagContainer.getBoundingClientRect();
-      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      const spaceAbove = triggerRect.top;
-      const spaceBelow = viewportHeight - triggerRect.bottom;
-      const estimatedMenuHeight = Math.min(dropdownMenu.scrollHeight || 0, 320);
-      const shouldOpenUp = spaceBelow < estimatedMenuHeight && spaceAbove > spaceBelow;
-
-      flagContainer.classList.toggle('dropup', shouldOpenUp);
-    });
-  }
-
   goToStep(step: number): void {
     if (step < 1 || step > 3) {
       return;
@@ -123,6 +110,11 @@ export class EventRegisterComponent implements OnInit {
     if (step === 1 || (step === 3 && this.currentStep === 3)) {
       this.currentStep = step;
     }
+  }
+
+  onPhoneFieldInteraction(): void {
+    setTimeout(() => this.positionPhoneCountryDropdownIfOpen(), 0);
+    setTimeout(() => this.positionPhoneCountryDropdownIfOpen(), 120);
   }
 
   goToEvent(): void {
@@ -215,6 +207,38 @@ export class EventRegisterComponent implements OnInit {
         console.error('Error loading country from timezone metadata:', error);
       },
     });
+  }
+
+  private positionPhoneCountryDropdownIfOpen(): void {
+    const host = this.hostRef.nativeElement;
+    const phoneField = host.querySelector('.phone-field') as HTMLElement | null;
+    if (!phoneField) {
+      return;
+    }
+
+    const dropdown = phoneField.querySelector('.iti__dropdown-content') as HTMLElement | null;
+    const trigger = phoneField.querySelector('.iti') as HTMLElement | null;
+
+    if (!dropdown || !trigger) {
+      phoneField.classList.remove('dropdown-up');
+      return;
+    }
+
+    const style = window.getComputedStyle(dropdown);
+    const isOpen = style.display !== 'none' && style.visibility !== 'hidden';
+    if (!isOpen) {
+      phoneField.classList.remove('dropdown-up');
+      return;
+    }
+
+    const triggerRect = trigger.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const spaceAbove = Math.max(0, triggerRect.top);
+    const spaceBelow = Math.max(0, viewportHeight - triggerRect.bottom);
+    const menuHeight = Math.min(dropdown.scrollHeight || 0, 320);
+    const shouldOpenUp = spaceBelow < menuHeight + 12 && spaceAbove > spaceBelow;
+
+    phoneField.classList.toggle('dropdown-up', shouldOpenUp);
   }
 
   private detectBrowserTimezone(): string {

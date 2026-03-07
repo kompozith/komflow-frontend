@@ -122,14 +122,14 @@
               <mat-error *ngIf="form.controls.email.invalid && form.controls.email.touched">Email requis</mat-error>
             </mat-form-field>
 
-            <div class="field phone-field" [class.invalid]="form.controls.phoneNumber.invalid && form.controls.phoneNumber.touched" (click)="adjustPhoneCountryDropdown()">
+            <div class="field phone-field" [class.invalid]="form.controls.phoneNumber.invalid && form.controls.phoneNumber.touched" (click)="onPhoneFieldInteraction()">
               <label class="phone-label">Telephone (WhatsApp ou appel)</label>
               <ngx-intl-tel-input
                 [enableAutoCountrySelect]="true"
                 [enablePlaceholder]="true"
                 [cssClass]="'event-phone-input'"
                 [searchCountryFlag]="true"
-                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name, SearchCountryField.DialCode]"
                 [selectFirstCountry]="false"
                 [selectedCountryISO]="CountryISO.Cameroon"
                 [separateDialCode]="true"

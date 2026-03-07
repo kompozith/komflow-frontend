@@ -4,7 +4,7 @@
   position: relative;
   padding: clamp(20px, 4vw, 40px) 16px;
   overflow-x: clip;
-  overflow-y: clip;
+  overflow-y: hidden;
   color: var(--mat-sys-on-background);
   background:
     radial-gradient(
@@ -320,6 +320,8 @@
 }
 
 .phone-field {
+  --phone-control-height: var(--mat-form-field-container-height, 56px);
+  --phone-control-radius: 12px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -336,6 +338,95 @@
 .phone-error {
   color: var(--mat-sys-error);
   font-size: 0.74rem;
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input,
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti {
+  display: block;
+  width: 100%;
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti {
+  height: var(--phone-control-height);
+  background: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transition: border-color 0.2s ease;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti__flag-container {
+  padding: 0;
+  border-right: 1px solid var(--mat-sys-outline-variant);
+  background: #ffffff;
+  height: 100%;
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti__selected-flag {
+  height: var(--phone-control-height);
+  min-width: 92px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input input.iti__tel-input {
+  width: 100%;
+  height: var(--phone-control-height);
+  min-height: var(--phone-control-height);
+  background: #ffffff;
+  box-shadow: none;
+  padding-right: 14px;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+  line-height: 1.5;
+  font-size: 1rem;
+  color: var(--mat-sys-on-background);
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input input.iti__tel-input::placeholder {
+  color: color-mix(in srgb, var(--mat-sys-on-background) 52%, transparent);
+}
+
+:host ::ng-deep .phone-field .dropdown-menu.iti__dropdown-content {
+  z-index: 3000;
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+}
+
+:host ::ng-deep .phone-field .iti--inline-dropdown .iti__dropdown-content {
+  margin-top: 6px;
+  min-width: 100%;
+}
+
+:host ::ng-deep .phone-field .iti__dropdown-content {
+  top: calc(100% + 6px) !important;
+  bottom: auto !important;
+}
+
+:host ::ng-deep .phone-field.dropdown-up .iti__dropdown-content,
+:host ::ng-deep .phone-field.dropdown-up .iti__dropdown-content.iti__dropdown-content--dropup {
+  top: auto !important;
+  bottom: calc(100% + 6px) !important;
+}
+
+:host ::ng-deep .phone-field .iti__country-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+:host ::ng-deep .phone-field .iti__search-input,
+:host ::ng-deep .phone-field #country-search-box {
+  width: 100%;
+  min-height: 40px;
+  outline: none;
+  box-shadow: none;
 }
 
 .full {
@@ -434,7 +525,7 @@
   color: var(--mat-sys-error);
 }
 
-:host ::ng-deep .phone-field.invalid ngx-intl-tel-input input {
+:host ::ng-deep .phone-field.invalid ngx-intl-tel-input .iti {
   border-color: var(--mat-sys-error);
 }
 
@@ -596,7 +687,6 @@
 
 @media (max-width: 760px) {
   .register-page {
-    padding: 16px 12px;
     background: #f5f5f7;
   }
 
@@ -747,9 +837,15 @@
     background: #ffffff;
   }
 
-  :host ::ng-deep .field .mat-mdc-form-field-infix {
-    min-height: 56px;
-    padding-top: 16px;
+  :host ::ng-deep .field .mat-mdc-form-field-infix, 
+  :host ::ng-deep .phone-field ngx-intl-tel-input .iti,
+  :host ::ng-deep .phone-field ngx-intl-tel-input .iti__selected-flag,
+  :host ::ng-deep .phone-field ngx-intl-tel-input input.iti__tel-input {
+    min-height: 50px;
+  }
+
+  :host ::ng-deep .field .mat-mdc-form-field-infix{
+    padding-top: 12px;
     padding-bottom: 12px;
   }
 
@@ -758,5 +854,4 @@
     font-size: 16px !important;
     line-height: 1.35;
   }
-
 }
