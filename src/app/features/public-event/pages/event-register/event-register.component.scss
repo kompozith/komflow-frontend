@@ -832,10 +832,22 @@
     letter-spacing: -0.01em;
   }
 
-  :host ::ng-deep .field .mat-mdc-text-field-wrapper {
-    border-radius: 14px;
+  :host ::ng-deep .field .mat-mdc-text-field-wrapper,
+  ngx-intl-tel-input {
+    border-radius: 14px !important;
     background: #ffffff;
   }
+
+  :host ::ng-deep .iti,
+  :host ::ng-deep .phone-field ngx-intl-tel-input .iti__flag-container {
+    background-color: transparent !important;
+  }
+
+  .mat-mdc-form-field-hint-wrapper, .mat-mdc-form-field-error-wrapper {
+    padding: 0 !important;
+  }
+
+  .phone-field
 
   :host ::ng-deep .field .mat-mdc-form-field-infix, 
   :host ::ng-deep .phone-field ngx-intl-tel-input .iti,
