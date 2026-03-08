@@ -699,7 +699,7 @@ export const stats = [
   {
     label: 'Founded',
     value: '2019',
-    description: 'When we founded DelivX',
+    description: 'When we founded Komflow',
   },
   {
     label: 'Growth',
@@ -709,12 +709,12 @@ export const stats = [
   {
     label: 'Customers',
     value: '300k+',
-    description: 'Customers on DelivX',
+    description: 'Customers on Komflow',
   },
   {
     label: 'Dashboards',
     value: '25k+',
-    description: 'Dashboards built using DelivX',
+    description: 'Dashboards built using Komflow',
   },
 ];
 

@@ -132,7 +132,7 @@
           </app-message-editor>
         </div>
 
-        <div class="col-12">
+        <div class="col-12 mb-3">
           <div class="highlights-head">
             <label class="f-w-600">Points forts</label>
             <span class="hint">Ajoutez les points saillants de l evenement</span>
@@ -153,16 +153,6 @@
                 (matChipInputTokenEnd)="addHighlight($event)"
               />
             </mat-chip-grid>
-            <button
-              mat-icon-button
-              color="primary"
-              type="button"
-              class="add-highlight-icon"
-              [attr.aria-label]="'Ajouter un point fort'"
-              (click)="addHighlightFromIcon(highlightInput)"
-            >
-              <mat-icon>add_circle</mat-icon>
-            </button>
           </div>
           <p class="empty-highlights" *ngIf="!highlights.length">
             Aucun point fort ajoute pour le moment.
@@ -197,6 +187,36 @@
                   <mat-icon>delete</mat-icon>
                 </button>
               }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="banner-upload">
+            <div class="banner-upload-head">
+              <label class="f-w-600">Banniere de l'evenement</label>
+              <span class="hint">Image courte affichee en haut de la carte d'inscription (recommandation: 1200x360)</span>
+            </div>
+
+            <div class="banner-upload-actions">
+              <input #bannerInput type="file" accept="image/*" hidden (change)="onBannerFileSelected($event)" />
+              <button mat-stroked-button type="button" (click)="bannerInput.click()" [disabled]="bannerUploadInProgress">
+                {{ bannerUploadInProgress ? 'Upload en cours...' : 'Choisir une image' }}
+              </button>
+              <button
+                mat-button
+                color="warn"
+                type="button"
+                *ngIf="form.get('bannerImageUrl')?.value"
+                (click)="clearBannerImage()"
+                [disabled]="bannerUploadInProgress"
+              >
+                Retirer
+              </button>
+            </div>
+
+            <div class="banner-preview" *ngIf="form.get('bannerImageUrl')?.value as bannerUrl">
+              <img [src]="bannerUrl" alt="Banniere evenement" loading="lazy" />
             </div>
           </div>
         </div>

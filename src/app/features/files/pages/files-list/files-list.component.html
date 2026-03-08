@@ -77,7 +77,7 @@
 
 <mat-card class="cardWithShadow">
   <mat-card-content>
-    <div *ngIf="isLoading && viewMode === 'table'">
+    <div *ngIf="isLoading && viewMode === 'table'" class="table-responsive">
       <app-skeleton-table [columns]="7" [rows]="6" [chipColumns]="[4]"></app-skeleton-table>
     </div>
 
@@ -165,12 +165,18 @@
     <div *ngIf="viewMode === 'grid'">
       <div *ngIf="isLoading" class="row">
         <div class="col-sm-6 col-lg-3 p-x-12" *ngFor="let _ of gridSkeletonItems">
-          <div class="skeleton-card skeleton-stack p-16">
-            <span class="skeleton-block" style="height: 180px; border-radius: 12px;"></span>
-            <span class="skeleton-line skeleton-line--md" style="width: 70%;"></span>
-            <span class="skeleton-line" style="width: 92%;"></span>
-            <span class="skeleton-line skeleton-line--sm" style="width: 42%;"></span>
-          </div>
+          <mat-card class="cardWithShadow productcard overflow-hidden b-1 file-grid-skeleton-card">
+            <div class="img-wrapper">
+              <span class="skeleton-block file-grid-skeleton-image"></span>
+            </div>
+            <mat-card-content class="p-b-24 p-t-12">
+              <div class="skeleton-stack">
+                <span class="skeleton-line skeleton-line--md" style="width: 70%;"></span>
+                <span class="skeleton-line" style="width: 92%;"></span>
+                <span class="skeleton-line skeleton-line--sm" style="width: 42%;"></span>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
       </div>
 

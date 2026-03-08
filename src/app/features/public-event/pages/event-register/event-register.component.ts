@@ -46,6 +46,7 @@ export class EventRegisterComponent implements OnInit {
     city: '',
     timezone: '',
   };
+  selectedPhoneCountryISO: CountryISO = CountryISO.Cameroon;
   CountryISO = CountryISO;
   SearchCountryField = SearchCountryField;
 
@@ -77,6 +78,7 @@ export class EventRegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.selectedPhoneCountryISO = this.resolveCountryISO(this.detectBrowserCountryCode());
     this.slug = this.route.snapshot.params['slug'] || '';
     if (!this.slug) {
       this.isLoading = false;
@@ -185,6 +187,7 @@ export class EventRegisterComponent implements OnInit {
           ...this.registrationMetadata,
           country: countryCode,
         };
+        this.selectedPhoneCountryISO = this.resolveCountryISO(countryCode);
 
         if (!countryCode) {
           return;
@@ -204,9 +207,22 @@ export class EventRegisterComponent implements OnInit {
         });
       },
       error: (error) => {
+        this.selectedPhoneCountryISO = this.resolveCountryISO('');
         console.error('Error loading country from timezone metadata:', error);
       },
     });
+  }
+
+  private resolveCountryISO(countryCode: string): CountryISO {
+    const normalizedCode = (countryCode || '').trim().toLowerCase();
+    if (!normalizedCode) {
+      return CountryISO.Cameroon;
+    }
+
+    const countryIsoValues = Object.values(CountryISO) as string[];
+    return countryIsoValues.includes(normalizedCode)
+      ? (normalizedCode as CountryISO)
+      : CountryISO.Cameroon;
   }
 
   private positionPhoneCountryDropdownIfOpen(): void {
@@ -248,6 +264,12 @@ export class EventRegisterComponent implements OnInit {
   private detectBrowserLanguage(): string {
     const language = navigator.language || 'fr';
     return language.toLowerCase().startsWith('fr') ? 'fr' : 'en';
+  }
+
+  private detectBrowserCountryCode(): string {
+    const locale = navigator.language || '';
+    const localeParts = locale.split('-');
+    return localeParts.length > 1 ? localeParts[1] : '';
   }
 
   private buildScheduleDisplay(event: PublicEventDetails): {

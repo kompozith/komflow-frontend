@@ -127,6 +127,17 @@
   padding: 2px;
 }
 
+.file-grid-skeleton-card {
+  .skeleton-stack {
+    gap: 10px;
+  }
+}
+
+.file-grid-skeleton-image {
+  height: 180px;
+  border-radius: 0;
+}
+
 @media (max-width: 767px) {
   .filters-card-header {
     flex-direction: column;

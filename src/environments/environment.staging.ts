@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://staging.api.delivx.itcloudconsultings.com/api/v1'
+    apiUrl: 'https://staging.api.komflow.itcloudconsultings.com/api/v1'
 };

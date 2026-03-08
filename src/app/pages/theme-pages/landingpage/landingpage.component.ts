@@ -131,37 +131,37 @@ export class AppLandingpageComponent {
       id: 1,
       imgSrc: '/assets/images/landingpage/demos/demo-main.jpg',
       name: 'Main',
-      url: 'https://delivx-angular-main.netlify.app/dashboards/dashboard1',
+      url: 'https://komflow-angular-main.netlify.app/dashboards/dashboard1',
     },
     {
       id: 2,
       imgSrc: '/assets/images/landingpage/demos/demo-dark.jpg',
       name: 'Dark',
-      url: 'https://delivx-angular-dark.netlify.app/dashboards/dashboard2',
+      url: 'https://komflow-angular-dark.netlify.app/dashboards/dashboard2',
     },
     {
       id: 3,
       imgSrc: '/assets/images/landingpage/demos/demo-firebase.jpg',
       name: 'Authguard',
-      url: 'https://delivx-angular-authguard.netlify.app/authentication/login',
+      url: 'https://komflow-angular-authguard.netlify.app/authentication/login',
     },
     {
       id: 4,
       imgSrc: '/assets/images/landingpage/demos/demo-rtl.jpg',
       name: 'RTL',
-      url: 'https://delivx-angular-rtl.netlify.app/dashboards/dashboard1',
+      url: 'https://komflow-angular-rtl.netlify.app/dashboards/dashboard1',
     },
     {
       id: 5,
       imgSrc: '/assets/images/landingpage/demos/demo-minisidebar.jpg',
       name: 'Minisidebar',
-      url: 'https://delivx-angular-minisidebar.netlify.app/dashboards/dashboard1',
+      url: 'https://komflow-angular-minisidebar.netlify.app/dashboards/dashboard1',
     },
     {
       id: 6,
       imgSrc: '/assets/images/landingpage/demos/demo-horizontal.jpg',
       name: 'Horizontal',
-      url: 'https://delivx-angular-horizontal.netlify.app/dashboards/dashboard2',
+      url: 'https://komflow-angular-horizontal.netlify.app/dashboards/dashboard2',
     },
   ];
 
@@ -170,73 +170,73 @@ export class AppLandingpageComponent {
       id: 1,
       imgSrc: '/assets/images/landingpage/apps/app-calendar.jpg',
       name: 'Calendar',
-      url: 'https://delivx-angular-main.netlify.app/apps/calendar',
+      url: 'https://komflow-angular-main.netlify.app/apps/calendar',
     },
     {
       id: 2,
       imgSrc: '/assets/images/landingpage/apps/app-chat.jpg',
       name: 'Chat',
-      url: 'https://delivx-angular-main.netlify.app/apps/chat',
+      url: 'https://komflow-angular-main.netlify.app/apps/chat',
     },
     {
       id: 3,
       imgSrc: '/assets/images/landingpage/apps/app-contact.jpg',
       name: 'Contact',
-      url: 'https://delivx-angular-main.netlify.app/apps/contacts',
+      url: 'https://komflow-angular-main.netlify.app/apps/contacts',
     },
     {
       id: 4,
       imgSrc: '/assets/images/landingpage/apps/app-email.jpg',
       name: 'Email',
-      url: 'https://delivx-angular-main.netlify.app/apps/email/inbox',
+      url: 'https://komflow-angular-main.netlify.app/apps/email/inbox',
     },
     {
       id: 5,
       imgSrc: '/assets/images/landingpage/apps/app-contact-list.jpg',
       name: 'Contact List',
-      url: 'https://delivx-angular-main.netlify.app/apps/contact-list',
+      url: 'https://komflow-angular-main.netlify.app/apps/contact-list',
     },
     {
       id: 6,
       imgSrc: '/assets/images/landingpage/apps/app-employee.jpg',
       name: 'Employee',
-      url: 'https://delivx-angular-main.netlify.app/apps/employee',
+      url: 'https://komflow-angular-main.netlify.app/apps/employee',
     },
     {
       id: 7,
       imgSrc: '/assets/images/landingpage/apps/app-note.jpg',
       name: 'Notes',
-      url: 'https://delivx-angular-main.netlify.app/apps/notes',
+      url: 'https://komflow-angular-main.netlify.app/apps/notes',
     },
     {
       id: 8,
       imgSrc: '/assets/images/landingpage/apps/app-ticket.jpg',
       name: 'Tickets',
-      url: 'https://delivx-angular-main.netlify.app/apps/tickets',
+      url: 'https://komflow-angular-main.netlify.app/apps/tickets',
     },
     {
       id: 9,
       imgSrc: '/assets/images/landingpage/apps/app-invoice.jpg',
       name: 'Invoice',
-      url: 'https://delivx-angular-main.netlify.app/apps/invoice',
+      url: 'https://komflow-angular-main.netlify.app/apps/invoice',
     },
     {
       id: 10,
       imgSrc: '/assets/images/landingpage/apps/app-todo.jpg',
       name: 'Todo',
-      url: 'https://delivx-angular-main.netlify.app/apps/todo',
+      url: 'https://komflow-angular-main.netlify.app/apps/todo',
     },
     {
       id: 11,
       imgSrc: '/assets/images/landingpage/apps/app-taskboard.jpg',
       name: 'Kanban',
-      url: 'https://delivx-angular-main.netlify.app/apps/kanban',
+      url: 'https://komflow-angular-main.netlify.app/apps/kanban',
     },
     {
       id: 12,
       imgSrc: '/assets/images/landingpage/apps/app-blog.jpg',
       name: 'Blog List',
-      url: 'https://delivx-angular-main.netlify.app/apps/blog/post',
+      url: 'https://komflow-angular-main.netlify.app/apps/blog/post',
     },
   ];
 
@@ -273,7 +273,7 @@ export class AppLandingpageComponent {
       icon: 'wand',
       title: '6 Theme Colors',
       subtext:
-        'We have included 6 pre-defined Theme Colors with DelivX Admin.',
+        'We have included 6 pre-defined Theme Colors with Komflow Admin.',
     },
     {
       id: 2,
@@ -300,7 +300,7 @@ export class AppLandingpageComponent {
       icon: 'adjustments',
       title: '50+ UI Components',
       subtext:
-        'Almost 50+ UI Components being given with DelivX Admin Pack.',
+        'Almost 50+ UI Components being given with Komflow Admin Pack.',
     },
     {
       id: 5,
@@ -313,7 +313,7 @@ export class AppLandingpageComponent {
       icon: 'diamond',
       title: '3400+ Font Icons',
       subtext:
-        'Lots of Icon Fonts are included here in the package of DelivX Admin.',
+        'Lots of Icon Fonts are included here in the package of Komflow Admin.',
     },
     {
       id: 7,

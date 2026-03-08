@@ -26,6 +26,7 @@ export interface PublicEventDetails {
   location?: string | null;
   address?: string | null;
   meetingUrl?: string | null;
+  bannerImageUrl?: string | null;
   highlights: string[];
   agenda: PublicEventAgendaItem[];
   schedule?: PublicEventSchedule | null;

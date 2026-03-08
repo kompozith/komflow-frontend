@@ -6,6 +6,7 @@ import {
   ApiResponse,
   BulkDeleteFilesRequest,
   FileFilters,
+  FileItem,
   FileListResponse,
   FileMediaType,
   FilePage,
@@ -42,6 +43,13 @@ export class FileService {
 
     const headers = this.getAuthHeaders();
     return this.http.get<FileListResponse>(this.apiUrl, { params, headers });
+  }
+
+  private getMultipartAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+    return new HttpHeaders({
+      ...(token && { 'Authorization': `Bearer ${token}` })
+    });
   }
 
   getOrphanFiles(filters: FileFilters = {}): Observable<FilePage> {
@@ -89,5 +97,13 @@ export class FileService {
       case FileMediaType.ARCHIVE: return 'archive';
       default: return 'insert_drive_file';
     }
+  }
+
+  uploadFile(file: globalThis.File): Observable<FileItem> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<FileItem>(`${this.apiUrl}/upload`, formData, {
+      headers: this.getMultipartAuthHeaders()
+    });
   }
 }

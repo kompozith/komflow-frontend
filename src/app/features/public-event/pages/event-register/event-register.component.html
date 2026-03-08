@@ -36,6 +36,9 @@
     <section class="step-section" *ngIf="currentStep === 1">
       <div class="register-layout details-layout">
         <aside class="intro-panel">
+          <div class="event-banner" *ngIf="e.bannerImageUrl">
+            <img [src]="e.bannerImageUrl" [alt]="e.title" loading="lazy" />
+          </div>
           <p class="kicker">Session premium</p>
           <h1>{{ e.title }}</h1>
           <p *ngIf="e.subtitle; else eventIntroDescription">{{ e.subtitle }}</p>
@@ -60,7 +63,7 @@
         <div class="event-panel mt-3 mt-md-0">
           <h2>Votre session en un coup d'oeil</h2>
           <div class="event-meta">
-            <div class="meta-item">
+            <div class="meta-item" *ngIf="scheduleDisplay.isRangeSameDay || (!scheduleDisplay.startDateTime && !scheduleDisplay.endDateTime)">
               <small>{{ scheduleDisplay.timezoneLabel }}</small>
               <strong *ngIf="scheduleDisplay.isRangeSameDay && scheduleDisplay.sameDayDate">{{ scheduleDisplay.sameDayDate }}</strong>
               <strong *ngIf="scheduleDisplay.isRangeSameDay && scheduleDisplay.sameDayTimeRange">{{ scheduleDisplay.sameDayTimeRange }}</strong>
@@ -73,6 +76,9 @@
             <div class="meta-item" *ngIf="!scheduleDisplay.isRangeSameDay && scheduleDisplay.endDateTime">
               <small>Fin de la session</small>
               <strong>{{ scheduleDisplay.endDateTime }}</strong>
+            </div>
+            <div class="meta-item timezone-row" *ngIf="!scheduleDisplay.isRangeSameDay && scheduleDisplay.startDateTime && scheduleDisplay.endDateTime">
+              <small>{{ scheduleDisplay.timezoneLabel }}</small>
             </div>
             <div class="meta-item" *ngIf="e.location">
               <small>Lieu de rendez-vous</small>
@@ -97,6 +103,9 @@
     <section class="step-section" *ngIf="currentStep === 2">
       <div class="register-layout form-layout">
         <aside class="intro-panel">
+          <div class="event-banner" *ngIf="e.bannerImageUrl">
+            <img [src]="e.bannerImageUrl" [alt]="e.title" loading="lazy" />
+          </div>
           <p class="kicker">Inscription rapide</p>
           <h1>Confirmez votre participation</h1>
           <p>En moins d'une minute, votre place est reservee. Nous mettons a jour vos informations automatiquement.</p>
@@ -131,7 +140,7 @@
                 [searchCountryFlag]="true"
                 [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name, SearchCountryField.DialCode]"
                 [selectFirstCountry]="false"
-                [selectedCountryISO]="CountryISO.Cameroon"
+                [selectedCountryISO]="selectedPhoneCountryISO"
                 [separateDialCode]="true"
                 [phoneValidation]="true"
                 [maxLength]="15"
@@ -182,6 +191,7 @@
     <div class="skeleton-card">
       <div class="skeleton-layout">
         <aside class="skeleton-intro">
+          <span class="skeleton shimmer skeleton-banner"></span>
           <span class="skeleton shimmer skeleton-kicker"></span>
           <span class="skeleton shimmer skeleton-title"></span>
           <span class="skeleton shimmer skeleton-line"></span>
@@ -196,7 +206,9 @@
           <div class="skeleton-meta-grid">
             <span class="skeleton shimmer skeleton-meta"></span>
             <span class="skeleton shimmer skeleton-meta"></span>
+            <span class="skeleton shimmer skeleton-meta skeleton-meta--full"></span>
           </div>
+          <span class="skeleton shimmer skeleton-line skeleton-line--wide"></span>
           <span class="skeleton shimmer skeleton-description"></span>
           <span class="skeleton shimmer skeleton-cta"></span>
         </section>

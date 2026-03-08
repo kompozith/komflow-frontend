@@ -250,3 +250,12 @@ ngx-intl-tel-input .dropdown-menu.iti__dropdown-content {
     border-left: 3px solid color-mix(in srgb, var(--mat-sys-primary) 35%, transparent);
   }
 }
+
+.brand-logo {
+  max-height: 27px;
+  width: auto;
+}
+
+.mat-mdc-form-field-hint-wrapper, .mat-mdc-form-field-error-wrapper {
+    padding: 0 !important;
+}

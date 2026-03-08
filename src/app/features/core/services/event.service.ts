@@ -15,6 +15,7 @@ export interface AppEvent {
   location?: string | null;
   address?: string | null;
   meetingUrl?: string | null;
+  bannerImageUrl?: string | null;
   highlights?: string[] | null;
   agenda?: EventAgendaItem[] | null;
   eventDate?: string | null;
@@ -44,6 +45,7 @@ export interface CreateEventRequest {
   location?: string;
   address?: string;
   meetingUrl?: string;
+  bannerImageUrl?: string;
   highlights?: string[];
   agenda?: EventAgendaItem[];
   startDate: string;

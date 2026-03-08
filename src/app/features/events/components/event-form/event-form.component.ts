@@ -16,6 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material.module';
 import { GeoCity, GeoCountry, GeoService } from 'src/app/features/core/services/geo.service';
 import { AppEvent, CreateEventRequest, EventAgendaItem, EventMode } from 'src/app/features/core/services/event.service';
+import { FileService } from 'src/app/features/files/services/file.service';
 import { MessageEditorComponent } from 'src/app/features/messages/components/message-editor/message-editor.component';
 
 @Component({
@@ -40,7 +41,9 @@ export class EventFormComponent implements OnChanges, OnInit {
   highlights: string[] = [];
   countries: GeoCountry[] = [];
   cities: GeoCity[] = [];
+  bannerUploadInProgress = false;
   readonly todayDate = new Date();
+  readonly maxBannerSizeBytes = 5 * 1024 * 1024;
   private readonly defaultTimezone = this.resolveDefaultTimezone();
 
   form = this.fb.group(
@@ -52,6 +55,7 @@ export class EventFormComponent implements OnChanges, OnInit {
       location: [''],
       address: [''],
       meetingUrl: [''],
+      bannerImageUrl: [''],
       country: [''],
       city: [''],
       startDate: [null as Date | null, [Validators.required]],
@@ -68,7 +72,8 @@ export class EventFormComponent implements OnChanges, OnInit {
   constructor(
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
-    private geoService: GeoService
+    private geoService: GeoService,
+    private fileService: FileService
   ) {}
 
   ngOnInit(): void {
@@ -150,6 +155,51 @@ export class EventFormComponent implements OnChanges, OnInit {
     return !!this.form.get('country')?.value && this.cities.length > 1;
   }
 
+  onBannerFileSelected(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    const file = target?.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      this.snackBar.open('Selectionnez uniquement une image (PNG, JPG, WEBP, ...).', 'Fermer', { duration: 3500 });
+      if (target) {
+        target.value = '';
+      }
+      return;
+    }
+
+    if (file.size > this.maxBannerSizeBytes) {
+      this.snackBar.open('Image trop lourde. Taille maximale: 5MB.', 'Fermer', { duration: 3500 });
+      if (target) {
+        target.value = '';
+      }
+      return;
+    }
+
+    this.bannerUploadInProgress = true;
+    this.fileService.uploadFile(file).subscribe({
+      next: (uploadedFile) => {
+        this.bannerUploadInProgress = false;
+        this.form.get('bannerImageUrl')?.setValue(uploadedFile?.url || '');
+      },
+      error: (error) => {
+        this.bannerUploadInProgress = false;
+        console.error('Error uploading event banner image:', error);
+        this.snackBar.open("Impossible d'uploader l'image de bannière.", 'Fermer', { duration: 3500 });
+      },
+    });
+
+    if (target) {
+      target.value = '';
+    }
+  }
+
+  clearBannerImage(): void {
+    this.form.get('bannerImageUrl')?.setValue('');
+  }
+
   submit(): void {
     if (this.form.invalid || this.submitting) {
       this.form.markAllAsTouched();
@@ -176,6 +226,7 @@ export class EventFormComponent implements OnChanges, OnInit {
       location: this.trimOrUndefined(this.form.value.location),
       address: this.trimOrUndefined(this.form.value.address),
       meetingUrl: this.trimOrUndefined(this.form.value.meetingUrl),
+      bannerImageUrl: this.trimOrUndefined(this.form.value.bannerImageUrl),
       highlights: this.highlights,
       agenda: this.agendaForm.value
         .map((item) => ({
@@ -218,6 +269,7 @@ export class EventFormComponent implements OnChanges, OnInit {
       location: event?.location || '',
       address: event?.address || '',
       meetingUrl: event?.meetingUrl || '',
+      bannerImageUrl: event?.bannerImageUrl || '',
       country: '',
       city: '',
       startDate: this.parseDateInput(event?.startDate || event?.eventDate || ''),

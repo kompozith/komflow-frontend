@@ -7,16 +7,16 @@ import { CoreService } from 'src/app/services/core.service';
   template: `
     <a href="/" class="logodark">
       <img
-        src="./assets/images/logos/komflow-dark-logo.svg"
-        class="align-middle m-2"
+        src="./assets/images/logos/dark-logo.svg"
+        class="brand-logo align-middle m-2"
         alt="Komflow Logo"
       />
     </a>
 
     <a href="/" class="logolight">
       <img
-        src="./assets/images/logos/komflow-light-logo.svg"
-        class="align-middle m-2"
+        src="./assets/images/logos/light-logo.svg"
+        class="brand-logo align-middle m-2"
         alt="Komflow Logo"
       />
     </a>

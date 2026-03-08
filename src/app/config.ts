@@ -19,7 +19,7 @@ export const defaults: AppSettings = {
   boxed: false,
   horizontal: false,
   cardBorder: false,
-  activeTheme: 'delivx_theme',
+  activeTheme: 'komflow_theme',
   language: 'en',
   navPos: 'side',
 };
