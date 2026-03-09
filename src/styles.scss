@@ -164,7 +164,7 @@ html.dark-theme .form-control {
   color: rgba(255, 255, 255, 0.9) !important;
 }
 
-html.dark-theme .form-control:focus {
+html.dark-theme .form-control {
   background-color: #141a21 !important;
   border-color: #465670 !important;
   color: rgba(255, 255, 255, 0.9) !important;
@@ -178,6 +178,11 @@ html.dark-theme .form-control:focus {
 html {
   --app-intl-phone-height: var(--mat-form-field-container-height, 37px);
   --app-intl-phone-radius: 4px 4px 0 0;
+  --app-intl-phone-bg: color-mix(in srgb, var(--mat-sys-surface-container-low) 88%, transparent);
+  --app-intl-phone-text: var(--mat-sys-on-background);
+  --app-intl-phone-border: var(--mat-sys-outline-variant);
+  --app-intl-phone-dropdown-bg: color-mix(in srgb, var(--mat-sys-surface-container) 92%, transparent);
+  --app-intl-phone-hover-bg: color-mix(in srgb, var(--mat-sys-primary) 10%, var(--mat-sys-surface-container));
 }
 
 ngx-intl-tel-input .iti {
@@ -194,18 +199,12 @@ ngx-intl-tel-input input.iti__tel-input {
   height: var(--app-intl-phone-height);
   min-height: var(--app-intl-phone-height);
   border-radius: 8px;
-  border: 1px solid var(--mat-sys-outline-variant);
-  background: color-mix(in srgb, var(--mat-sys-surface-container-low) 84%, transparent);
-  color: var(--mat-sys-on-background);
+  background: var(--app-intl-phone-bg);
+  color: var(--app-intl-phone-text);
   padding: 0 14px 0 92px;
   line-height: normal;
   outline: none;
   box-sizing: border-box;
-  transition: border-color 0.2s ease;
-}
-
-ngx-intl-tel-input input.iti__tel-input:focus {
-  border-color: var(--mat-sys-primary);
 }
 
 ngx-intl-tel-input #country-search-box {
@@ -216,6 +215,41 @@ ngx-intl-tel-input #country-search-box {
 ngx-intl-tel-input .dropdown-menu.iti__dropdown-content {
   z-index: 2200;
   border-radius: var(--app-intl-phone-radius);
+  border: 1px solid var(--app-intl-phone-border);
+  background: var(--app-intl-phone-dropdown-bg);
+  color: var(--app-intl-phone-text);
+}
+
+ngx-intl-tel-input .iti__flag-container,
+ngx-intl-tel-input .iti__selected-flag {
+  background: var(--app-intl-phone-bg);
+  color: var(--app-intl-phone-text);
+}
+
+ngx-intl-tel-input .iti__country-list {
+  background: var(--app-intl-phone-dropdown-bg);
+  color: var(--app-intl-phone-text);
+}
+
+ngx-intl-tel-input .iti__country {
+  color: var(--app-intl-phone-text);
+}
+
+ngx-intl-tel-input .iti__country:hover,
+ngx-intl-tel-input .iti__country.iti__highlight {
+  background: var(--app-intl-phone-hover-bg);
+}
+
+ngx-intl-tel-input .iti__country-name,
+ngx-intl-tel-input .iti__dial-code,
+ngx-intl-tel-input .iti__selected-dial-code {
+  color: var(--app-intl-phone-text);
+}
+
+ngx-intl-tel-input #country-search-box,
+ngx-intl-tel-input .iti__search-input {
+  background: var(--app-intl-phone-bg);
+  color: var(--app-intl-phone-text);
 }
 
 /* Shared rich-text rendering (event/message descriptions) */

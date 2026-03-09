@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -16,7 +16,7 @@ import { PublicEventService } from '../../services/public-event.service';
   templateUrl: './event-register.component.html',
   styleUrls: ['./event-register.component.scss'],
 })
-export class EventRegisterComponent implements OnInit {
+export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy {
   slug = '';
   event: PublicEventDetails | null = null;
   isLoading = true;
@@ -47,6 +47,9 @@ export class EventRegisterComponent implements OnInit {
     timezone: '',
   };
   selectedPhoneCountryISO: CountryISO = CountryISO.Cameroon;
+  private hasUserSelectedPhoneCountry = false;
+  private dropdownRepositionRaf: number | null = null;
+  private readonly onCapturedScroll = () => this.schedulePhoneDropdownReposition();
   CountryISO = CountryISO;
   SearchCountryField = SearchCountryField;
 
@@ -69,12 +72,12 @@ export class EventRegisterComponent implements OnInit {
 
   @HostListener('window:resize')
   onViewportResize(): void {
-    this.positionPhoneCountryDropdownIfOpen();
+    this.schedulePhoneDropdownReposition();
   }
 
   @HostListener('window:scroll')
   onViewportScroll(): void {
-    this.positionPhoneCountryDropdownIfOpen();
+    this.schedulePhoneDropdownReposition();
   }
 
   ngOnInit(): void {
@@ -101,6 +104,18 @@ export class EventRegisterComponent implements OnInit {
     this.detectRegistrationMetadata();
   }
 
+  ngAfterViewInit(): void {
+    document.addEventListener('scroll', this.onCapturedScroll, true);
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('scroll', this.onCapturedScroll, true);
+    if (this.dropdownRepositionRaf !== null) {
+      cancelAnimationFrame(this.dropdownRepositionRaf);
+      this.dropdownRepositionRaf = null;
+    }
+  }
+
   goToStep(step: number): void {
     if (step < 1 || step > 3) {
       return;
@@ -115,8 +130,41 @@ export class EventRegisterComponent implements OnInit {
   }
 
   onPhoneFieldInteraction(): void {
-    setTimeout(() => this.positionPhoneCountryDropdownIfOpen(), 0);
-    setTimeout(() => this.positionPhoneCountryDropdownIfOpen(), 120);
+    setTimeout(() => this.schedulePhoneDropdownReposition(), 0);
+  }
+
+  onPhoneFieldPointerDown(event: PointerEvent): void {
+    const target = event.target as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+
+    const isCountryTrigger = !!target.closest('.iti__selected-flag, .iti__flag-container');
+    if (!isCountryTrigger) {
+      return;
+    }
+
+    this.positionPhoneCountryDropdownPredictively();
+  }
+
+  onPhoneCountryChange(country: { iso2?: string } | null): void {
+    const iso2 = (country?.iso2 || '').trim();
+    if (!iso2) {
+      return;
+    }
+
+    this.hasUserSelectedPhoneCountry = true;
+    this.selectedPhoneCountryISO = this.resolveCountryISO(iso2);
+  }
+
+  onPhoneValueChange(phoneValue: { countryCode?: string } | null): void {
+    const countryCode = (phoneValue?.countryCode || '').trim();
+    if (!countryCode) {
+      return;
+    }
+
+    this.hasUserSelectedPhoneCountry = true;
+    this.selectedPhoneCountryISO = this.resolveCountryISO(countryCode);
   }
 
   goToEvent(): void {
@@ -187,7 +235,9 @@ export class EventRegisterComponent implements OnInit {
           ...this.registrationMetadata,
           country: countryCode,
         };
-        this.selectedPhoneCountryISO = this.resolveCountryISO(countryCode);
+        if (!this.hasUserSelectedPhoneCountry) {
+          this.selectedPhoneCountryISO = this.resolveCountryISO(countryCode);
+        }
 
         if (!countryCode) {
           return;
@@ -253,6 +303,34 @@ export class EventRegisterComponent implements OnInit {
     const spaceBelow = Math.max(0, viewportHeight - triggerRect.bottom);
     const menuHeight = Math.min(dropdown.scrollHeight || 0, 320);
     const shouldOpenUp = spaceBelow < menuHeight + 12 && spaceAbove > spaceBelow;
+
+    phoneField.classList.toggle('dropdown-up', shouldOpenUp);
+  }
+
+  private schedulePhoneDropdownReposition(): void {
+    if (this.dropdownRepositionRaf !== null) {
+      cancelAnimationFrame(this.dropdownRepositionRaf);
+    }
+    this.dropdownRepositionRaf = requestAnimationFrame(() => {
+      this.dropdownRepositionRaf = null;
+      this.positionPhoneCountryDropdownIfOpen();
+    });
+  }
+
+  private positionPhoneCountryDropdownPredictively(): void {
+    const host = this.hostRef.nativeElement;
+    const phoneField = host.querySelector('.phone-field') as HTMLElement | null;
+    const trigger = phoneField?.querySelector('.iti') as HTMLElement | null;
+    if (!phoneField || !trigger) {
+      return;
+    }
+
+    const triggerRect = trigger.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const spaceAbove = Math.max(0, triggerRect.top);
+    const spaceBelow = Math.max(0, viewportHeight - triggerRect.bottom);
+    const estimatedMenuHeight = 320;
+    const shouldOpenUp = spaceBelow < estimatedMenuHeight + 12 && spaceAbove > spaceBelow;
 
     phoneField.classList.toggle('dropdown-up', shouldOpenUp);
   }

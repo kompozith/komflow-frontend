@@ -238,6 +238,30 @@
   margin-top: 6px;
 }
 
+.intro-highlights {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.highlight-chip {
+  display: inline-block;
+  max-width: 100%;
+  min-width: 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline) 52%, transparent);
+  background: color-mix(in srgb, var(--mat-sys-surface-container) 84%, transparent);
+  color: color-mix(in srgb, var(--mat-sys-on-background) 88%, transparent);
+  font-size: 0.82rem;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .event-meta {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -307,7 +331,8 @@
   margin: 0 0 14px;
 }
 
-.details-layout .intro-panel .intro-list {
+.details-layout .intro-panel .intro-list,
+.details-layout .intro-panel .intro-highlights {
   margin-top: 0;
 }
 
@@ -340,10 +365,19 @@
 
 .phone-field {
   --phone-control-height: var(--mat-form-field-container-height, 56px);
-  --phone-control-radius: 12px;
+  --phone-control-radius: 8px;
+  --phone-border-color: var(--mat-sys-outline);
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.phone-field:hover {
+  --phone-border-color: color-mix(in srgb, var(--mat-sys-primary) 62%, var(--mat-sys-outline));
+}
+
+.phone-field:focus-within {
+  --phone-border-color: var(--mat-sys-primary);
 }
 
 .phone-label {
@@ -367,18 +401,23 @@
 
 :host ::ng-deep .phone-field ngx-intl-tel-input .iti {
   height: var(--phone-control-height);
-  background: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
-  transition: border-color 0.2s ease;
-  overflow: visible;
+  background: var(--mat-sys-surface-container-low);
+  box-shadow: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   box-sizing: border-box;
+  border: 1px solid var(--phone-border-color) !important;
+  border-radius: var(--phone-control-radius);
+  overflow: visible;
 }
 
 :host ::ng-deep .phone-field ngx-intl-tel-input .iti__flag-container {
   padding: 0;
-  border-right: 1px solid var(--mat-sys-outline-variant);
-  background: #ffffff;
+  border-right: none;
+  background: var(--mat-sys-surface-container-low);
   height: 100%;
+  border-top-left-radius: calc(var(--phone-control-radius) - 1px);
+  border-bottom-left-radius: calc(var(--phone-control-radius) - 1px);
+  overflow: visible;
 }
 
 :host ::ng-deep .phone-field ngx-intl-tel-input .iti__selected-flag {
@@ -388,14 +427,35 @@
   display: flex;
   align-items: center;
   box-sizing: border-box;
+  cursor: pointer;
+  pointer-events: auto;
+  border-top: 1px solid var(--phone-border-color);
+  border-left: 1px solid var(--phone-border-color);
+  border-bottom: 1px solid var(--phone-border-color);
+  border-right: none;
+  margin-top: -1px;
+  margin-left: -1px;
+  margin-bottom: -1px;
+  border-top-left-radius: calc(var(--phone-control-radius) - 1px);
+  border-bottom-left-radius: calc(var(--phone-control-radius) - 1px);
+}
+
+/* Remove internal flag borders so only the outer .iti border controls all sides uniformly */
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti__flag-container,
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti__selected-flag {
+  box-shadow: none !important;
 }
 
 :host ::ng-deep .phone-field ngx-intl-tel-input input.iti__tel-input {
   width: 100%;
   height: var(--phone-control-height);
   min-height: var(--phone-control-height);
-  background: #ffffff;
-  box-shadow: none;
+  background: transparent;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+  border-left: 0 !important;
+  border-radius: 0;
   padding-right: 14px;
   padding-top: 0;
   padding-bottom: 0;
@@ -415,9 +475,14 @@
   max-height: 320px;
   overflow-y: auto;
   overflow-x: hidden;
-  background: #ffffff;
+  background: var(--mat-sys-surface-container);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+  border: 1px solid var(--mat-sys-outline);
 }
+
+// :host ::ng-deep .phone-field ngx-intl-tel-input .iti__selected-flag {
+//   border: none !important;
+// }
 
 :host ::ng-deep .phone-field .iti--inline-dropdown .iti__dropdown-content {
   margin-top: 6px;
@@ -544,8 +609,8 @@
   color: var(--mat-sys-error);
 }
 
-:host ::ng-deep .phone-field.invalid ngx-intl-tel-input .iti {
-  border-color: var(--mat-sys-error);
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti:focus-within {
+  border-color: var(--phone-border-color) !important;
 }
 
 .loading-wrap {
@@ -870,7 +935,7 @@
   :host ::ng-deep .field .mat-mdc-text-field-wrapper,
   ngx-intl-tel-input {
     border-radius: 14px !important;
-    background: #ffffff;
+    background: color-mix(in srgb, var(--mat-sys-surface-container-low) 88%, transparent);
   }
 
   :host ::ng-deep .iti,

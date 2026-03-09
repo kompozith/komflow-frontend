@@ -48,15 +48,15 @@
           <ng-template #defaultEventIntro>
             <p>Une session pensee pour vous donner des actions concretes, applicables des cette semaine.</p>
           </ng-template>
-          <ul class="intro-list" *ngIf="e.highlights?.length; else fallbackHighlights">
-            <li *ngFor="let highlight of e.highlights | slice:0:4">{{ highlight }}</li>
-          </ul>
+          <div class="intro-highlights" *ngIf="e.highlights?.length; else fallbackHighlights">
+            <span class="highlight-chip" *ngFor="let highlight of e.highlights | slice:0:6" [title]="highlight">{{ highlight }}</span>
+          </div>
           <ng-template #fallbackHighlights>
-            <ul class="intro-list">
-              <li>Methodes claires et directement actionnables</li>
-              <li>Session live avec questions reelles de participants</li>
-              <li>Checklist et ressources envoyees apres la session</li>
-            </ul>
+            <div class="intro-highlights">
+              <span class="highlight-chip" title="Methodes claires et directement actionnables">Methodes claires et directement actionnables</span>
+              <span class="highlight-chip" title="Session live avec questions reelles de participants">Session live avec questions reelles de participants</span>
+              <span class="highlight-chip" title="Checklist et ressources envoyees apres la session">Checklist et ressources envoyees apres la session</span>
+            </div>
           </ng-template>
         </aside>
 
@@ -131,7 +131,7 @@
               <mat-error *ngIf="form.controls.email.invalid && form.controls.email.touched">Email requis</mat-error>
             </mat-form-field>
 
-            <div class="field phone-field" [class.invalid]="form.controls.phoneNumber.invalid && form.controls.phoneNumber.touched" (click)="onPhoneFieldInteraction()">
+            <div class="field phone-field" (pointerdown)="onPhoneFieldPointerDown($event)" (click)="onPhoneFieldInteraction()">
               <label class="phone-label">Telephone (WhatsApp ou appel)</label>
               <ngx-intl-tel-input
                 [enableAutoCountrySelect]="true"
@@ -146,6 +146,8 @@
                 [maxLength]="15"
                 [inputId]="'event-register-phone'"
                 name="phone"
+                (countryChange)="onPhoneCountryChange($event)"
+                (ngModelChange)="onPhoneValueChange($event)"
                 formControlName="phoneNumber">
               </ngx-intl-tel-input>
               <small class="phone-error" *ngIf="form.controls.phoneNumber.invalid && form.controls.phoneNumber.touched">
