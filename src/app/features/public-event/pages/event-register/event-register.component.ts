@@ -49,7 +49,17 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
   selectedPhoneCountryISO: CountryISO = CountryISO.Cameroon;
   private hasUserSelectedPhoneCountry = false;
   private dropdownRepositionRaf: number | null = null;
-  private readonly onCapturedScroll = () => this.schedulePhoneDropdownReposition();
+  private introStickyRaf: number | null = null;
+  private introStickyResizeObserver: ResizeObserver | null = null;
+  private readonly introStickyTopOffset = 24;
+  private readonly onCapturedScroll = () => {
+    this.schedulePhoneDropdownReposition();
+    this.scheduleIntroStickyReposition();
+  };
+  private readonly onWindowLoad = () => {
+    this.refreshIntroStickyObserver();
+    this.scheduleIntroStickyReposition();
+  };
   CountryISO = CountryISO;
   SearchCountryField = SearchCountryField;
 
@@ -73,11 +83,14 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
   @HostListener('window:resize')
   onViewportResize(): void {
     this.schedulePhoneDropdownReposition();
+    this.refreshIntroStickyObserver();
+    this.scheduleIntroStickyReposition();
   }
 
   @HostListener('window:scroll')
   onViewportScroll(): void {
     this.schedulePhoneDropdownReposition();
+    this.scheduleIntroStickyReposition();
   }
 
   ngOnInit(): void {
@@ -94,10 +107,15 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
         this.event = details;
         this.scheduleDisplay = this.mapScheduleForDisplay(details.schedule) || this.buildScheduleDisplay(details);
         this.isLoading = false;
+        setTimeout(() => {
+          this.refreshIntroStickyObserver();
+          this.scheduleIntroStickyReposition();
+        }, 0);
       },
       error: () => {
         this.isLoading = false;
         this.hasError = true;
+        this.resetIntroStickyStyles();
       },
     });
 
@@ -106,13 +124,25 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngAfterViewInit(): void {
     document.addEventListener('scroll', this.onCapturedScroll, true);
+    window.addEventListener('load', this.onWindowLoad, { once: true });
+    this.refreshIntroStickyObserver();
+    this.scheduleIntroStickyReposition();
   }
 
   ngOnDestroy(): void {
     document.removeEventListener('scroll', this.onCapturedScroll, true);
+    window.removeEventListener('load', this.onWindowLoad);
+    if (this.introStickyResizeObserver) {
+      this.introStickyResizeObserver.disconnect();
+      this.introStickyResizeObserver = null;
+    }
     if (this.dropdownRepositionRaf !== null) {
       cancelAnimationFrame(this.dropdownRepositionRaf);
       this.dropdownRepositionRaf = null;
+    }
+    if (this.introStickyRaf !== null) {
+      cancelAnimationFrame(this.introStickyRaf);
+      this.introStickyRaf = null;
     }
   }
 
@@ -122,10 +152,18 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     if (step === 2 && this.currentStep === 1) {
       this.currentStep = 2;
+      setTimeout(() => {
+        this.refreshIntroStickyObserver();
+        this.scheduleIntroStickyReposition();
+      }, 0);
       return;
     }
     if (step === 1 || (step === 3 && this.currentStep === 3)) {
       this.currentStep = step;
+      setTimeout(() => {
+        this.refreshIntroStickyObserver();
+        this.scheduleIntroStickyReposition();
+      }, 0);
     }
   }
 
@@ -176,6 +214,10 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
 
   resetFormStep(): void {
     this.currentStep = 2;
+    setTimeout(() => {
+      this.refreshIntroStickyObserver();
+      this.scheduleIntroStickyReposition();
+    }, 0);
   }
 
   submit(): void {
@@ -207,6 +249,10 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
         this.registeredEmail = raw.email || '';
         this.registeredName = `${raw.firstName || ''} ${raw.lastName || ''}`.trim();
         this.currentStep = 3;
+        setTimeout(() => {
+          this.refreshIntroStickyObserver();
+          this.scheduleIntroStickyReposition();
+        }, 0);
       },
       error: () => {
         this.loading = false;
@@ -314,6 +360,83 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
     this.dropdownRepositionRaf = requestAnimationFrame(() => {
       this.dropdownRepositionRaf = null;
       this.positionPhoneCountryDropdownIfOpen();
+    });
+  }
+
+  private refreshIntroStickyObserver(): void {
+    if (this.introStickyResizeObserver) {
+      this.introStickyResizeObserver.disconnect();
+      this.introStickyResizeObserver = null;
+    }
+
+    if (window.innerWidth < 981) {
+      this.resetIntroStickyStyles();
+      return;
+    }
+
+    const host = this.hostRef.nativeElement;
+    const activeLayout = host.querySelector('.step-section .register-layout') as HTMLElement | null;
+    const introPanel = activeLayout?.querySelector('.intro-panel') as HTMLElement | null;
+    const rightColumn = activeLayout?.querySelector('.event-panel, .form-panel') as HTMLElement | null;
+    const card = host.querySelector('.register-card') as HTMLElement | null;
+
+    if (!activeLayout || !introPanel || !rightColumn || !card) {
+      this.resetIntroStickyStyles();
+      return;
+    }
+
+    if (typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    this.introStickyResizeObserver = new ResizeObserver(() => this.scheduleIntroStickyReposition());
+    this.introStickyResizeObserver.observe(activeLayout);
+    this.introStickyResizeObserver.observe(introPanel);
+    this.introStickyResizeObserver.observe(rightColumn);
+    this.introStickyResizeObserver.observe(card);
+  }
+
+  private scheduleIntroStickyReposition(): void {
+    if (this.introStickyRaf !== null) {
+      cancelAnimationFrame(this.introStickyRaf);
+    }
+
+    this.introStickyRaf = requestAnimationFrame(() => {
+      this.introStickyRaf = null;
+      this.updateIntroStickyPosition();
+    });
+  }
+
+  private updateIntroStickyPosition(): void {
+    const host = this.hostRef.nativeElement;
+    const activeLayout = host.querySelector('.step-section .register-layout') as HTMLElement | null;
+    const introPanel = activeLayout?.querySelector('.intro-panel') as HTMLElement | null;
+    const rightColumn = activeLayout?.querySelector('.event-panel, .form-panel') as HTMLElement | null;
+
+    if (!activeLayout || !introPanel || !rightColumn || window.innerWidth < 981) {
+      this.resetIntroStickyStyles();
+      return;
+    }
+
+    const layoutRect = activeLayout.getBoundingClientRect();
+    const scrollTop = window.scrollY || window.pageYOffset || 0;
+    const layoutTop = layoutRect.top + scrollTop;
+    const layoutHeight = Math.max(activeLayout.offsetHeight, rightColumn.offsetHeight, introPanel.offsetHeight);
+    const introHeight = introPanel.offsetHeight;
+    const maxOffset = Math.max(0, layoutHeight - introHeight);
+    const desiredOffset = scrollTop + this.introStickyTopOffset - layoutTop;
+    const clampedOffset = Math.min(Math.max(desiredOffset, 0), maxOffset);
+
+    introPanel.style.transform = `translateY(${Math.round(clampedOffset)}px)`;
+    introPanel.style.willChange = 'transform';
+  }
+
+  private resetIntroStickyStyles(): void {
+    const host = this.hostRef.nativeElement;
+    const introPanels = host.querySelectorAll('.register-layout .intro-panel') as NodeListOf<HTMLElement>;
+    introPanels.forEach((panel) => {
+      panel.style.transform = '';
+      panel.style.willChange = '';
     });
   }
 

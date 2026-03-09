@@ -780,8 +780,10 @@
 @media (min-width: 981px) {
   .details-layout .intro-panel,
   .form-layout .intro-panel {
-    position: sticky;
-    top: 24px;
+    position: relative;
+    top: auto;
+    align-self: start;
+    height: max-content;
   }
 }
 
