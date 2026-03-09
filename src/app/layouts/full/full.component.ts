@@ -26,6 +26,7 @@ import { AuthUser } from 'src/app/features/user-management/models/user';
 import { UserProfileService } from 'src/app/services/user-profile.service';
 import { AccessControlService } from 'src/app/services/access-control.service';
 import { NavItem } from './vertical/sidebar/nav-item/nav-item';
+import { environment } from 'src/environments/environment';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -69,6 +70,7 @@ interface quicklinks {
 export class FullComponent implements OnInit {
     private allNavItems = navItems;
     navItems: NavItem[] = [];
+    readonly assetVersion = environment.appVersion || '1.0.0';
 
     currentUser: AuthUser | null = null;
 

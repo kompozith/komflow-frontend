@@ -612,7 +612,7 @@
         @if(options.theme === 'light') {
         <a href="/">
           <img
-            src="./assets/images/logos/dark-logo.svg"
+            [src]="'./assets/images/logos/dark-logo.svg?v=' + assetVersion"
             class="align-middle m-2"
             alt="logo"
           />
@@ -620,7 +620,7 @@
         } @if(options.theme === 'dark') {
         <a href="/">
           <img
-            src="./assets/images/logos/light-logo.svg"
+            [src]="'./assets/images/logos/light-logo.svg?v=' + assetVersion"
             class="align-middle m-2"
             alt="logo"
           />

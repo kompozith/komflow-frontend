@@ -5,6 +5,7 @@ import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { RouterLink } from '@angular/router';
 import { BrandingComponent } from '../../../layouts/full/vertical/sidebar/branding.component';
+import { environment } from 'src/environments/environment';
 
 interface apps {
   id: number;
@@ -54,6 +55,7 @@ export class AppLandingpageComponent {
   @Output() toggleCollapsed = new EventEmitter<void>();
 
   options = this.settings.getOptions();
+  readonly assetVersion = environment.appVersion || '1.0.0';
 
   constructor(
     private settings: CoreService,
