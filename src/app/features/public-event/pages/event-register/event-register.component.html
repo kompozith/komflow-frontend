@@ -9,7 +9,7 @@
         <span>
           <mat-icon>{{ currentStep > 1 ? 'check' : 'event' }}</mat-icon>
         </span>
-        <small>Apercu</small>
+        <small>Présentation</small>
       </div>
       <div class="connector">
         <div class="connector-progress" [style.width.%]="currentStep === 1 ? 0 : currentStep === 2 ? 50 : 100"></div>
@@ -39,29 +39,29 @@
           <div class="event-banner" *ngIf="e.bannerImageUrl">
             <img [src]="e.bannerImageUrl" [alt]="e.title" loading="lazy" />
           </div>
-          <p class="kicker">Session premium</p>
+          <p class="kicker">Invitation prioritaire</p>
           <h1>{{ e.title }}</h1>
           <p *ngIf="e.subtitle; else eventIntroDescription">{{ e.subtitle }}</p>
           <ng-template #eventIntroDescription>
             <div class="app-rich-text" *ngIf="e.description; else defaultEventIntro" [innerHTML]="e.description"></div>
           </ng-template>
           <ng-template #defaultEventIntro>
-            <p>Une session pensee pour vous donner des actions concretes, applicables des cette semaine.</p>
+            <p>Une session utile et concrète pour repartir avec un plan d'action clair et applicable dès aujourd'hui.</p>
           </ng-template>
           <div class="intro-highlights" *ngIf="e.highlights?.length; else fallbackHighlights">
             <span class="highlight-chip" *ngFor="let highlight of e.highlights | slice:0:6" [title]="highlight">{{ highlight }}</span>
           </div>
           <ng-template #fallbackHighlights>
             <div class="intro-highlights">
-              <span class="highlight-chip" title="Methodes claires et directement actionnables">Methodes claires et directement actionnables</span>
-              <span class="highlight-chip" title="Session live avec questions reelles de participants">Session live avec questions reelles de participants</span>
-              <span class="highlight-chip" title="Checklist et ressources envoyees apres la session">Checklist et ressources envoyees apres la session</span>
+              <span class="highlight-chip" title="Méthodes simples, concrètes et directement activables">Méthodes simples, concrètes et directement activables</span>
+              <span class="highlight-chip" title="Session en direct avec réponses à vos questions">Session en direct avec réponses à vos questions</span>
+              <span class="highlight-chip" title="Ressources pratiques pour poursuivre après la session">Ressources pratiques pour poursuivre après la session</span>
             </div>
           </ng-template>
         </aside>
 
         <div class="event-panel mt-3 mt-md-0">
-          <h2>Votre session en un coup d'oeil</h2>
+          <h2>Les informations essentielles avant votre inscription</h2>
           <div class="event-meta">
             <div class="meta-item" *ngIf="scheduleDisplay.isRangeSameDay || (!scheduleDisplay.startDateTime && !scheduleDisplay.endDateTime)">
               <small>{{ scheduleDisplay.timezoneLabel }}</small>
@@ -70,7 +70,7 @@
               <strong *ngIf="!scheduleDisplay.isRangeSameDay && scheduleDisplay.singleDateTime">{{ scheduleDisplay.singleDateTime }}</strong>
             </div>
             <div class="meta-item" *ngIf="!scheduleDisplay.isRangeSameDay && scheduleDisplay.startDateTime">
-              <small>Debut de la session</small>
+              <small>Début de la session</small>
               <strong>{{ scheduleDisplay.startDateTime }}</strong>
             </div>
             <div class="meta-item" *ngIf="!scheduleDisplay.isRangeSameDay && scheduleDisplay.endDateTime">
@@ -81,20 +81,20 @@
               <small>{{ scheduleDisplay.timezoneLabel }}</small>
             </div>
             <div class="meta-item" *ngIf="e.location">
-              <small>Lieu de rendez-vous</small>
+              <small>Lieu</small>
               <strong>{{ e.location }}</strong>
             </div>
             <div class="meta-item" *ngIf="e.address">
-              <small>Point d'acces</small>
+              <small>Adresse</small>
               <strong>{{ e.address }}</strong>
             </div>
           </div>
           <div class="event-description" *ngIf="e.description">
-            <small>Ce que vous allez obtenir</small>
+            <small>Ce que vous allez retenir concrètement</small>
             <div class="app-rich-text" [innerHTML]="e.description"></div>
           </div>
           <button mat-flat-button color="primary" class="btn-submit" type="button" (click)="goToStep(2)">
-            Je reserve ma place
+            Je m'inscris
           </button>
         </div>
       </div>
@@ -107,32 +107,32 @@
             <img [src]="e.bannerImageUrl" [alt]="e.title" loading="lazy" />
           </div>
           <p class="kicker">Inscription rapide</p>
-          <h1>Confirmez votre participation</h1>
-          <p>En moins d'une minute, votre place est reservee. Nous mettons a jour vos informations automatiquement.</p>
+          <h1>Finalisez votre inscription en moins d'une minute</h1>
+          <p>Renseignez vos coordonnées pour recevoir votre confirmation et les informations utiles de participation.</p>
         </aside>
 
         <form class="form-panel" [formGroup]="form" (ngSubmit)="submit()">
           <div class="grid">
             <mat-form-field appearance="outline" class="field">
-              <mat-label>Votre prenom</mat-label>
+              <mat-label>Prénom</mat-label>
               <input matInput formControlName="firstName" />
-              <mat-error *ngIf="form.controls.firstName.invalid && form.controls.firstName.touched">Prenom requis</mat-error>
+              <mat-error *ngIf="form.controls.firstName.invalid && form.controls.firstName.touched">Veuillez renseigner votre prénom</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="field">
-              <mat-label>Votre nom</mat-label>
+              <mat-label>Nom</mat-label>
               <input matInput formControlName="lastName" />
-              <mat-error *ngIf="form.controls.lastName.invalid && form.controls.lastName.touched">Nom requis</mat-error>
+              <mat-error *ngIf="form.controls.lastName.invalid && form.controls.lastName.touched">Veuillez renseigner votre nom</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="field">
-              <mat-label>Email</mat-label>
+              <mat-label>Adresse e-mail</mat-label>
               <input matInput formControlName="email" />
-              <mat-error *ngIf="form.controls.email.invalid && form.controls.email.touched">Email requis</mat-error>
+              <mat-error *ngIf="form.controls.email.invalid && form.controls.email.touched">Veuillez saisir une adresse e-mail valide</mat-error>
             </mat-form-field>
 
             <div class="field phone-field" (pointerdown)="onPhoneFieldPointerDown($event)" (click)="onPhoneFieldInteraction()">
-              <label class="phone-label">Telephone (WhatsApp ou appel)</label>
+              <label class="phone-label">Numéro de téléphone (WhatsApp ou appel)</label>
               <ngx-intl-tel-input
                 [enableAutoCountrySelect]="true"
                 [enablePlaceholder]="true"
@@ -152,17 +152,17 @@
               </ngx-intl-tel-input>
               <small class="phone-error" *ngIf="form.controls.phoneNumber.invalid && form.controls.phoneNumber.touched">
                 <ng-container *ngIf="form.controls.phoneNumber.errors?.['required']; else invalidPhoneTpl">
-                  Telephone requis
+                  Veuillez renseigner votre numéro de téléphone
                 </ng-container>
-                <ng-template #invalidPhoneTpl>Numero invalide</ng-template>
+                <ng-template #invalidPhoneTpl>Le numéro saisi n'est pas valide</ng-template>
               </small>
             </div>
           </div>
 
           <div class="actions">
-            <button mat-stroked-button type="button" class="btn-secondary" (click)="goToStep(1)">Revoir les details</button>
+            <button mat-stroked-button type="button" class="btn-secondary" (click)="goToStep(1)">Retour à la présentation</button>
             <button mat-flat-button color="primary" [disabled]="loading" type="submit" class="btn-submit">
-              {{ loading ? 'Validation en cours...' : "Valider mon inscription" }}
+              {{ loading ? 'Validation en cours...' : "Confirmer mon inscription" }}
             </button>
           </div>
         </form>
@@ -173,10 +173,10 @@
       <div class="status-badge" [class.created]="registrationStatus === 'CREATED'">
         Confirmation
       </div>
-      <h2>Votre place est confirmee</h2>
-      <p *ngIf="registeredName">Merci <strong>{{ registeredName }}</strong>, on se retrouve tres bientot.</p>
+      <h2>Inscription confirmée</h2>
+      <p *ngIf="registeredName">Merci <strong>{{ registeredName }}</strong>, votre place est maintenant réservée.</p>
       <p *ngIf="registeredEmail">
-        Tous les details pratiques viennent d'etre envoyes a <strong>{{ registeredEmail }}</strong>.
+        Un e-mail de confirmation et les informations pratiques ont été envoyés à <strong>{{ registeredEmail }}</strong>.
       </p>
     </section>
   </mat-card>
@@ -220,11 +220,11 @@
 
   <ng-template #errorStateTpl>
     <div class="loading-wrap error-state">
-      <p>Evenement introuvable ou indisponible.</p>
+      <p>Cet événement est introuvable, indisponible ou n'accepte plus d'inscriptions.</p>
     </div>
   </ng-template>
   
   <div class="sr-only">
-    Chargement des donnees de l'evenement...
+    Chargement de la page d'inscription…
   </div>
 </ng-template>

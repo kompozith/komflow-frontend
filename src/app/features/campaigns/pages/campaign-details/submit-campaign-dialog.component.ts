@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -12,6 +13,7 @@ import { MaterialModule } from 'src/app/material.module';
 @Component({
   selector: 'app-submit-campaign-dialog',
   imports: [
+    CommonModule,
     MatDialogActions,
     MatDialogClose,
     MatDialogTitle,
@@ -22,7 +24,11 @@ import { MaterialModule } from 'src/app/material.module';
 })
 export class SubmitCampaignDialogComponent {
   readonly dialogRef = inject(MatDialogRef<SubmitCampaignDialogComponent>);
-  readonly data = inject(MAT_DIALOG_DATA) as { campaignName: string };
+  readonly data = inject(MAT_DIALOG_DATA) as {
+    campaignName: string;
+    hasLinkedEventAudience?: boolean;
+    eventTitle?: string | null;
+  };
 
   confirm(): void {
     this.dialogRef.close(true);

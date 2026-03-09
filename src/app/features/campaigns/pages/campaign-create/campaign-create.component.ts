@@ -107,6 +107,7 @@ export class CampaignCreateComponent implements OnInit {
     return selectedMessage?.channel || null;
   }
 
+
   onSubmit(): void {
     if (this.campaignForm.invalid) {
       return;

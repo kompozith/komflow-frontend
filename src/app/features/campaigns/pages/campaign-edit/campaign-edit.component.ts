@@ -126,6 +126,7 @@ export class CampaignEditComponent implements OnInit {
     return selectedMessage?.channel || null;
   }
 
+
   onSubmit(): void {
     if (this.campaignForm.invalid || this.isSubmitting) {
       return;
@@ -178,4 +179,3 @@ export class CampaignEditComponent implements OnInit {
     });
   }
 }
-

@@ -2,6 +2,10 @@
 <mat-dialog-content>
   <p>Are you sure you want to submit the campaign "{{ data?.campaignName }}"?</p>
   <p class="text-muted mb-0">This will start sending messages to recipients.</p>
+  <p *ngIf="data?.hasLinkedEventAudience" class="text-muted mt-2 mb-0">
+    Linked event audience will also be notified
+    <span *ngIf="data?.eventTitle">for "{{ data?.eventTitle }}"</span>.
+  </p>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-stroked-button mat-dialog-close>Cancel</button>

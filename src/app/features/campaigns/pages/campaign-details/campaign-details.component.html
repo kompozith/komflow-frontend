@@ -210,6 +210,10 @@
 
             <!-- Message Content -->
             <div class="col-12 mt-80">
+              <div *ngIf="hasLinkedEventAudience()" class="alert alert-info mb-3">
+                Audience evenement auto-incluse: tous les contacts du tag d'inscription de
+                <strong>{{ campaign.message.event?.title }}</strong> seront notifies lors de la soumission.
+              </div>
               <h6 class="f-s-16 f-w-600 mb-3">Message Content</h6>
               <div class="message-content p-20 bg-light rounded" [innerHTML]="getHighlightedContent()"></div>
             </div>
@@ -251,6 +255,7 @@
             <mat-chip-listbox>
               <mat-chip *ngFor="let tag of campaign.tags" class="tag-chip" [style.background-color]="tag.colorCode">
                 {{ tag.name }}
+                <span *ngIf="isEventRegistrationTag(tag.name)"> (event audience)</span>
               </mat-chip>
             </mat-chip-listbox>
           </div>

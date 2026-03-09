@@ -19,6 +19,7 @@ import { MediaPreviewService } from 'src/app/shared/services/media-preview.servi
   styleUrl: './campaign-details.component.scss'
 })
 export class CampaignDetailsComponent implements OnInit, OnDestroy {
+  private static readonly EVENT_REGISTRATION_TAG_PREFIX = 'EVENT-REG-';
   campaign: CampaignDetails | null = null;
   isLoading = true;
   isSubmitting = false;
@@ -85,7 +86,11 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
     if (!this.campaign || this.campaign.status !== CampaignStatus.DRAFT || this.isSubmitting) return;
 
     const dialogRef = this.dialog.open(SubmitCampaignDialogComponent, {
-      data: { campaignName: this.campaign.name }
+      data: {
+        campaignName: this.campaign.name,
+        hasLinkedEventAudience: this.hasLinkedEventAudience(),
+        eventTitle: this.campaign.message.event?.title || null
+      }
     });
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
@@ -345,6 +350,28 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
 
   getMessageAttachments(): CampaignMessageAttachment[] {
     return this.campaign?.message?.attachments ?? [];
+  }
+
+  hasLinkedEventAudience(): boolean {
+    if (!this.campaign?.message?.event?.id) {
+      return false;
+    }
+    return this.getEventRegistrationTagName() !== null;
+  }
+
+  isEventRegistrationTag(tagName?: string | null): boolean {
+    if (!tagName) {
+      return false;
+    }
+    return tagName === this.getEventRegistrationTagName();
+  }
+
+  private getEventRegistrationTagName(): string | null {
+    const eventId = this.campaign?.message?.event?.id;
+    if (!eventId) {
+      return null;
+    }
+    return `${CampaignDetailsComponent.EVENT_REGISTRATION_TAG_PREFIX}${eventId}`;
   }
 
   openAttachment(attachment: CampaignMessageAttachment): void {
