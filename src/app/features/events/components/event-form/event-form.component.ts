@@ -15,14 +15,30 @@ import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material.module';
 import { GeoCity, GeoCountry, GeoService } from 'src/app/features/core/services/geo.service';
-import { AppEvent, CreateEventRequest, EventAgendaItem, EventMode } from 'src/app/features/core/services/event.service';
+import {
+  AppEvent,
+  CreateEventRequest,
+  EventAgendaItem,
+  EventMode,
+  EventRegistrationWorkflowStep,
+  EventRegistrationWorkflowStepInput,
+  EventWorkflowConditionType,
+  EventWorkflowRecipientType,
+  EventWorkflowStepType,
+} from 'src/app/features/core/services/event.service';
 import { FileService } from 'src/app/features/files/services/file.service';
 import { MessageEditorComponent } from 'src/app/features/messages/components/message-editor/message-editor.component';
+import { Message } from 'src/app/features/messages/models/message';
+import { MessageService } from 'src/app/features/messages/services/message.service';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatDialog } from '@angular/material/dialog';
+import { EventWorkflowTestDialogComponent } from '../event-workflow-test-dialog/event-workflow-test-dialog.component';
 
 @Component({
   selector: 'app-event-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MaterialModule, MessageEditorComponent],
+  imports: [CommonModule, ReactiveFormsModule, MaterialModule, MessageEditorComponent, DragDropModule],
   templateUrl: './event-form.component.html',
   styleUrls: ['./event-form.component.scss'],
 })
@@ -30,6 +46,7 @@ export class EventFormComponent implements OnChanges, OnInit {
   @Input() initialEvent: AppEvent | null = null;
   @Input() submitLabel = 'Enregistrer';
   @Input() submitting = false;
+  @Input() workflowOnly = false;
   @Output() formSubmitted = new EventEmitter<CreateEventRequest>();
   @Output() cancelled = new EventEmitter<void>();
 
@@ -38,10 +55,25 @@ export class EventFormComponent implements OnChanges, OnInit {
     { value: 'ONSITE', label: 'Sur site' },
     { value: 'ONLINE', label: 'En ligne' },
   ];
+  readonly workflowRecipientTypes: Array<{ value: EventWorkflowRecipientType; label: string }> = [
+    { value: 'REGISTRANT', label: 'Participant' },
+    { value: 'ADMIN', label: 'Admin' },
+  ];
+  readonly workflowStepTypes: Array<{ value: EventWorkflowStepType; label: string }> = [
+    { value: 'SEND_MESSAGE', label: 'Envoyer un message' },
+    { value: 'DELAY', label: 'Attendre' },
+    { value: 'CONDITION', label: 'Condition' },
+  ];
+  readonly workflowConditionTypes: Array<{ value: EventWorkflowConditionType; label: string }> = [
+    { value: 'CONTACT_HAS_EMAIL', label: 'Le contact a un email' },
+    { value: 'CONTACT_HAS_PHONE', label: 'Le contact a un telephone' },
+  ];
   highlights: string[] = [];
   countries: GeoCountry[] = [];
   cities: GeoCity[] = [];
   bannerUploadInProgress = false;
+  workflowMessages: Message[] = [];
+  workflowLoading = false;
   readonly todayDate = new Date();
   readonly maxBannerSizeBytes = 5 * 1024 * 1024;
   private readonly defaultTimezone = this.resolveDefaultTimezone();
@@ -68,31 +100,48 @@ export class EventFormComponent implements OnChanges, OnInit {
   );
 
   agendaForm = this.fb.array<FormGroup>([]);
+  workflowStepsForm = this.fb.array<FormGroup>([]);
 
   constructor(
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private geoService: GeoService,
-    private fileService: FileService
+    private fileService: FileService,
+    private messageService: MessageService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.hydrateForm(this.initialEvent);
     this.loadCountries();
+    this.loadWorkflowMessages();
     this.form.get('mode')?.valueChanges.subscribe((mode) => {
       this.updateModeValidators((mode as EventMode) || 'ONSITE');
     });
     this.updateModeValidators((this.form.get('mode')?.value as EventMode) || 'ONSITE');
+    if (this.workflowOnly) {
+      this.form.clearValidators();
+      this.form.updateValueAndValidity({ emitEvent: false });
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['initialEvent']) {
       this.hydrateForm(this.initialEvent);
+      this.filterWorkflowMessagesForEvent();
+    }
+    if (changes['workflowOnly'] && this.workflowOnly) {
+      this.form.clearValidators();
+      this.form.updateValueAndValidity({ emitEvent: false });
     }
   }
 
   get agendaControls(): FormGroup[] {
     return this.agendaForm.controls as FormGroup[];
+  }
+
+  get workflowControls(): FormGroup[] {
+    return this.workflowStepsForm.controls as FormGroup[];
   }
 
   addHighlight(event: MatChipInputEvent): void {
@@ -138,6 +187,46 @@ export class EventFormComponent implements OnChanges, OnInit {
 
   removeAgendaItem(index: number): void {
     this.agendaForm.removeAt(index);
+  }
+
+  addWorkflowStep(step?: EventRegistrationWorkflowStep): void {
+    this.workflowStepsForm.push(
+      this.fb.group({
+        stepType: [step?.stepType || 'SEND_MESSAGE'],
+        messageId: [step?.messageId ?? null],
+        recipientType: [step?.recipientType || 'REGISTRANT'],
+        enabled: [step?.enabled !== false],
+        recipientEmails: [step?.recipientEmails || ''],
+        delayMinutes: [step?.delayMinutes ?? 60],
+        conditionType: [step?.conditionType || 'CONTACT_HAS_EMAIL'],
+        conditionValue: [step?.conditionValue || ''],
+      })
+    );
+  }
+
+  removeWorkflowStep(index: number): void {
+    this.workflowStepsForm.removeAt(index);
+  }
+
+  reorderWorkflowSteps(event: CdkDragDrop<FormGroup[]>): void {
+    if (event.previousIndex === event.currentIndex) {
+      return;
+    }
+    const control = this.workflowStepsForm.at(event.previousIndex);
+    this.workflowStepsForm.removeAt(event.previousIndex);
+    this.workflowStepsForm.insert(event.currentIndex, control);
+  }
+
+  openWorkflowTest(stepIndex: number): void {
+    const step = this.workflowStepsForm.at(stepIndex)?.value;
+    if (!step?.messageId) {
+      this.snackBar.open('Selectionnez un message avant le test.', 'Fermer', { duration: 2500 });
+      return;
+    }
+    this.dialog.open(EventWorkflowTestDialogComponent, {
+      width: '680px',
+      data: { messageId: Number(step.messageId) },
+    });
   }
 
   onCountryChange(countryCode: string): void {
@@ -241,6 +330,7 @@ export class EventFormComponent implements OnChanges, OnInit {
       startTime,
       endTime,
       timezone: this.form.value.timezone || 'GMT',
+      registrationWorkflowSteps: this.buildWorkflowPayload(),
     };
 
     this.formSubmitted.emit(payload);
@@ -253,12 +343,21 @@ export class EventFormComponent implements OnChanges, OnInit {
   private hydrateForm(event: AppEvent | null): void {
     this.highlights = event?.highlights?.filter(Boolean) || [];
     this.agendaForm.clear();
+    this.workflowStepsForm.clear();
 
     const agendaItems = event?.agenda && event.agenda.length ? event.agenda : [];
     if (agendaItems.length) {
       agendaItems.forEach((item) => this.addAgendaItem(item));
     } else {
       this.addAgendaItem();
+    }
+
+    const workflowSteps = event?.registrationWorkflowSteps || [];
+    if (workflowSteps.length) {
+      workflowSteps.forEach((step) => this.addWorkflowStep(step));
+    } else {
+      this.addWorkflowStep({ recipientType: 'REGISTRANT', enabled: true });
+      this.addWorkflowStep({ recipientType: 'ADMIN', enabled: true });
     }
 
     this.form.reset({
@@ -339,6 +438,27 @@ export class EventFormComponent implements OnChanges, OnInit {
     return trimmed.length ? trimmed : undefined;
   }
 
+  private buildWorkflowPayload(): EventRegistrationWorkflowStepInput[] {
+    return this.workflowStepsForm.value
+      .map((step: any, index: number) => ({
+        messageId: step.messageId ? Number(step.messageId) : undefined,
+        stepType: (step.stepType as EventWorkflowStepType) || 'SEND_MESSAGE',
+        recipientType: step.recipientType as EventWorkflowRecipientType,
+        delayMinutes: step.delayMinutes ? Number(step.delayMinutes) : undefined,
+        conditionType: step.conditionType as EventWorkflowConditionType,
+        conditionValue: this.trimOrUndefined(step.conditionValue),
+        enabled: step.enabled !== false,
+        position: index + 1,
+        recipientEmails: this.trimOrUndefined(step.recipientEmails),
+      }))
+      .filter((step: EventRegistrationWorkflowStepInput) => {
+        if (step.stepType === 'SEND_MESSAGE') {
+          return !!step.messageId;
+        }
+        return true;
+      });
+  }
+
   private loadCountries(): void {
     this.geoService.getCountries().subscribe({
       next: (countries) => {
@@ -349,6 +469,31 @@ export class EventFormComponent implements OnChanges, OnInit {
         console.error('Error loading countries:', error);
       },
     });
+  }
+
+  private loadWorkflowMessages(): void {
+    this.workflowLoading = true;
+    this.messageService.getMessages({ page: 0, size: 200, sort: ['createdAt,desc'] }).subscribe({
+      next: (page) => {
+        const messages = page?.content || [];
+        this.workflowMessages = messages;
+        this.filterWorkflowMessagesForEvent();
+        this.workflowLoading = false;
+      },
+      error: () => {
+        this.workflowLoading = false;
+        this.workflowMessages = [];
+        this.snackBar.open('Impossible de charger les messages pour le workflow', 'Fermer', { duration: 3000 });
+      },
+    });
+  }
+
+  private filterWorkflowMessagesForEvent(): void {
+    const eventId = this.initialEvent?.id;
+    if (!this.workflowMessages.length || !eventId) {
+      return;
+    }
+    this.workflowMessages = this.workflowMessages.filter((message) => !message.event?.id || message.event.id === eventId);
   }
 
   private loadCities(countryCode: string, preferredTimezone?: string): void {

@@ -20,6 +20,10 @@
                 <mat-icon class="me-1">arrow_back</mat-icon>
                 Retour liste
               </button>
+              <button mat-stroked-button color="primary" [routerLink]="['/events/workflow', e.id]">
+                <mat-icon class="me-1">account_tree</mat-icon>
+                Workflow
+              </button>
               <button mat-flat-button color="primary" (click)="editEvent()">
                 <mat-icon class="me-1">edit</mat-icon>
                 Editer

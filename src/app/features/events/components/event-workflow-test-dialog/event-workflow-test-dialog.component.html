@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>Test du message</h2>
+
+<mat-dialog-content class="dialog-content">
+  <div *ngIf="loading" class="loading">Chargement du message...</div>
+
+  <ng-container *ngIf="!loading">
+    <div class="message-preview" *ngIf="message">
+      <p class="message-title">{{ message.title }}</p>
+      <div class="message-body" [innerHTML]="messageContent"></div>
+    </div>
+
+    <form [formGroup]="form" class="test-form">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Contact ID</mat-label>
+        <input matInput formControlName="contactId" />
+        <mat-error *ngIf="form.get('contactId')?.hasError('required')">Le contact est requis</mat-error>
+      </mat-form-field>
+    </form>
+  </ng-container>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="close()">Fermer</button>
+  <button mat-flat-button color="primary" type="button" (click)="sendTest()" [disabled]="sending || loading">
+    {{ sending ? 'Envoi...' : 'Envoyer le test' }}
+  </button>
+</mat-dialog-actions>

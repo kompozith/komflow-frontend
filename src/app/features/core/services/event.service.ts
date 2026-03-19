@@ -28,6 +28,7 @@ export interface AppEvent {
   timezone?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  registrationWorkflowSteps?: EventRegistrationWorkflowStep[];
 }
 
 export interface EventAgendaItem {
@@ -55,6 +56,38 @@ export interface CreateEventRequest {
   startAt?: string;
   endAt?: string | null;
   timezone?: string;
+  registrationWorkflowSteps?: EventRegistrationWorkflowStepInput[];
+}
+
+export type EventWorkflowRecipientType = 'REGISTRANT' | 'ADMIN';
+export type EventWorkflowStepType = 'SEND_MESSAGE' | 'DELAY' | 'CONDITION';
+export type EventWorkflowConditionType = 'CONTACT_HAS_EMAIL' | 'CONTACT_HAS_PHONE';
+
+export interface EventRegistrationWorkflowStep {
+  id?: number;
+  messageId?: number | null;
+  messageTitle?: string | null;
+  messageChannel?: string | null;
+  stepType?: EventWorkflowStepType;
+  recipientType?: EventWorkflowRecipientType;
+  delayMinutes?: number | null;
+  conditionType?: EventWorkflowConditionType | null;
+  conditionValue?: string | null;
+  position?: number | null;
+  enabled?: boolean;
+  recipientEmails?: string | null;
+}
+
+export interface EventRegistrationWorkflowStepInput {
+  messageId?: number | null;
+  stepType?: EventWorkflowStepType;
+  recipientType?: EventWorkflowRecipientType;
+  delayMinutes?: number | null;
+  conditionType?: EventWorkflowConditionType | null;
+  conditionValue?: string | null;
+  position?: number | null;
+  enabled?: boolean;
+  recipientEmails?: string | null;
 }
 
 @Injectable({

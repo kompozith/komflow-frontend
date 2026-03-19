@@ -4,6 +4,7 @@ import { EventListComponent } from './pages/event-list/event-list.component';
 import { EventCreateComponent } from './pages/event-create/event-create.component';
 import { EventEditComponent } from './pages/event-edit/event-edit.component';
 import { EventDetailsComponent } from './pages/event-details/event-details.component';
+import { EventWorkflowComponent } from './pages/event-workflow/event-workflow.component';
 
 export const EventsRoutes: Routes = [
   {
@@ -58,6 +59,19 @@ export const EventsRoutes: Routes = [
           urls: [
             { title: 'Events', url: 'events' },
             { title: 'Event Details' },
+          ],
+        },
+      },
+      {
+        path: 'workflow/:id',
+        component: EventWorkflowComponent,
+        canActivate: [PermissionGuard],
+        data: {
+          title: 'Event Workflow',
+          permissions: ['MESSAGE_UPDATE'],
+          urls: [
+            { title: 'Events', url: 'events' },
+            { title: 'Workflow' },
           ],
         },
       },

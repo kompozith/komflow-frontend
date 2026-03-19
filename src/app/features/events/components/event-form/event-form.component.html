@@ -6,6 +6,7 @@
   <mat-card-content>
     <form [formGroup]="form" (ngSubmit)="submit()" class="event-form">
       <div class="row">
+        <ng-container *ngIf="!workflowOnly">
         <div class="col-md-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Titre</mat-label>
@@ -125,7 +126,7 @@
           <app-message-editor
             [contentControl]="form.get('description')!"
             [showVariablesPanel]="false"
-            [showPreview]="true"
+            [showPreview]="false"
             label="Description"
             placeholder="Decrivez votre evenement avec du texte formate (paragraphes, listes, liens...)"
             [rows]="8">
@@ -218,6 +219,95 @@
             <div class="banner-preview" *ngIf="form.get('bannerImageUrl')?.value as bannerUrl">
               <img [src]="bannerUrl" alt="Banniere evenement" loading="lazy" />
             </div>
+          </div>
+        </div>
+        </ng-container>
+
+        <div class="col-12">
+          <div class="workflow-section">
+            <div class="workflow-head">
+              <div class="workflow-title">
+                <span class="title">Workflow d'inscription</span>
+                <span class="subtitle">Definissez les messages envoyes au participant et a l'admin</span>
+              </div>
+              <button mat-stroked-button type="button" (click)="addWorkflowStep()">Ajouter une etape</button>
+            </div>
+
+            <div class="workflow-list" *ngIf="workflowControls.length; else workflowEmpty" cdkDropList (cdkDropListDropped)="reorderWorkflowSteps($event)">
+              <div class="workflow-item" *ngFor="let group of workflowControls; let i = index" [formGroup]="group" cdkDrag>
+                <div class="drag-handle" cdkDragHandle>
+                  <mat-icon>drag_indicator</mat-icon>
+                </div>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Type d'etape</mat-label>
+                  <mat-select formControlName="stepType">
+                    <mat-option *ngFor="let type of workflowStepTypes" [value]="type.value">
+                      {{ type.label }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <ng-container *ngIf="group.get('stepType')?.value === 'SEND_MESSAGE'">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Destinataire</mat-label>
+                    <mat-select formControlName="recipientType">
+                      <mat-option *ngFor="let type of workflowRecipientTypes" [value]="type.value">
+                        {{ type.label }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Message</mat-label>
+                    <mat-select formControlName="messageId" [disabled]="workflowLoading">
+                      <mat-option *ngIf="workflowLoading" [disabled]="true">Chargement...</mat-option>
+                      <mat-option *ngFor="let message of workflowMessages" [value]="message.id">
+                        {{ message.title }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" *ngIf="group.get('recipientType')?.value === 'ADMIN'">
+                    <mat-label>Emails admin (optionnel)</mat-label>
+                    <input matInput formControlName="recipientEmails" placeholder="admin@exemple.com, support@exemple.com" />
+                  </mat-form-field>
+                </ng-container>
+
+                <mat-form-field appearance="outline" *ngIf="group.get('stepType')?.value === 'DELAY'">
+                  <mat-label>Delai (minutes)</mat-label>
+                  <input matInput type="number" min="1" formControlName="delayMinutes" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="group.get('stepType')?.value === 'CONDITION'">
+                  <mat-label>Condition</mat-label>
+                  <mat-select formControlName="conditionType">
+                    <mat-option *ngFor="let condition of workflowConditionTypes" [value]="condition.value">
+                      {{ condition.label }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <div class="workflow-actions">
+                  <mat-slide-toggle formControlName="enabled">Actif</mat-slide-toggle>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    (click)="openWorkflowTest(i)"
+                    [disabled]="group.get('stepType')?.value !== 'SEND_MESSAGE'"
+                  >
+                    <mat-icon>mark_email_read</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" type="button" (click)="removeWorkflowStep(i)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <ng-template #workflowEmpty>
+              <p class="workflow-empty">Aucune etape definie. Ajoutez au moins un message a envoyer.</p>
+            </ng-template>
           </div>
         </div>
       </div>
