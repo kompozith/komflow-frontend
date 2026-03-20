@@ -14,12 +14,24 @@
                 <span class="mode-pill" [class.online]="e.mode === 'ONLINE'">{{ getModeLabel(e.mode) }}</span>
               </div>
               <p class="m-0 text-muted" *ngIf="e.subtitle">{{ e.subtitle }}</p>
+              <div class="public-link-panel mt-3" *ngIf="getPublicEventUrl() as publicUrl; else noPublicLink">
+                <div class="public-link-label">Lien public</div>
+                <div class="public-link-row">
+                  <a class="public-link-value" [href]="publicUrl" target="_blank" rel="noopener">{{ publicUrl }}</a>
+                  <button mat-stroked-button type="button" (click)="copyPublicLink()">
+                    <mat-icon class="me-1">content_copy</mat-icon>
+                    Copier
+                  </button>
+                </div>
+              </div>
+              <ng-template #noPublicLink>
+                <div class="public-link-panel mt-3 is-disabled">
+                  <div class="public-link-label">Lien public</div>
+                  <div class="public-link-missing">Slug manquant: lien indisponible</div>
+                </div>
+              </ng-template>
             </div>
             <div class="d-flex gap-8 flex-wrap">
-              <button mat-stroked-button [routerLink]="['/events']">
-                <mat-icon class="me-1">arrow_back</mat-icon>
-                Retour liste
-              </button>
               <button mat-stroked-button color="primary" [routerLink]="['/events/workflow', e.id]">
                 <mat-icon class="me-1">account_tree</mat-icon>
                 Workflow
@@ -95,17 +107,28 @@
   </div>
 
   <div class="row mb-3">
-    <div class="col-lg-8">
+    <div class="col-12">
       <mat-card class="cardWithShadow h-100">
         <mat-card-header>
-          <mat-card-title>Informations evenement</mat-card-title>
+          <mat-card-title>Description</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <div class="text-muted mb-4 app-rich-text" *ngIf="e.description; else noDescription" [innerHTML]="e.description"></div>
           <ng-template #noDescription>
             <p class="text-muted mb-4">Aucune description.</p>
           </ng-template>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
 
+  <div class="row mb-3">
+    <div class="col-lg-8">
+      <mat-card class="cardWithShadow h-100">
+        <mat-card-header>
+          <mat-card-title>Informations evenement</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
           <div class="row g-3">
             <div class="col-md-6">
               <div class="info-line">
@@ -164,6 +187,49 @@
           </mat-chip-set>
           <ng-template #noHighlights>
             <p class="text-muted mb-0">Aucun point fort renseigne.</p>
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-12">
+      <mat-card class="cardWithShadow">
+        <mat-card-header>
+          <mat-card-title>Workflow d'inscription</mat-card-title>
+          <mat-card-subtitle>Automatisations lancees apres l'inscription d'un participant</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="hasWorkflow(); else noWorkflow" class="workflow-board">
+            <div class="workflow-lane">
+              <div class="workflow-node" *ngFor="let step of getWorkflowSteps(); let i = index">
+                <div class="workflow-rail" *ngIf="i < getWorkflowSteps().length - 1"></div>
+                <div class="workflow-node-head">
+                  <div class="workflow-node-index">{{ step.position || (i + 1) }}</div>
+                  <div class="workflow-node-icon {{ getWorkflowBadgeClass(step) }}">
+                    <mat-icon>{{ getWorkflowStepIcon(step) }}</mat-icon>
+                  </div>
+                </div>
+                <div class="workflow-step-card">
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge {{ getWorkflowBadgeClass(step) }}">{{ step.stepType }}</span>
+                    <span class="text-muted f-s-12">{{ step.enabled === false ? 'Inactif' : 'Actif' }}</span>
+                  </div>
+                  <div class="workflow-step-title">{{ getWorkflowStepLabel(step) }}</div>
+                  <div class="workflow-step-meta">{{ getWorkflowStepMeta(step) || '-' }}</div>
+                  <div class="workflow-step-extra" *ngIf="step.recipientEmails">
+                    Emails admin: {{ step.recipientEmails }}
+                  </div>
+                  <div class="workflow-step-extra" *ngIf="step.delayMinutes && step.stepType === 'DELAY'">
+                    Suite planifiee apres {{ step.delayMinutes }} minute(s)
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ng-template #noWorkflow>
+            <p class="text-muted mb-0">Aucune etape de workflow configuree.</p>
           </ng-template>
         </mat-card-content>
       </mat-card>

@@ -67,8 +67,175 @@
   color: var(--mat-sys-primary);
 }
 
+.public-link-panel {
+  padding: 12px 14px;
+  border: 1px solid #dbe4f0;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.public-link-panel.is-disabled {
+  background: #f8fafc;
+  opacity: 0.85;
+}
+
+.public-link-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.public-link-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.public-link-value {
+  color: #0f172a;
+  font-weight: 500;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.public-link-value:hover {
+  text-decoration: underline;
+}
+
+.public-link-missing {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.workflow-step-card {
+  position: relative;
+  min-width: 280px;
+  max-width: 320px;
+  min-height: 188px;
+  padding: 18px;
+  border: 1px solid #dbe4f0;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+}
+
+.workflow-step-title {
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.workflow-board {
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.workflow-lane {
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+  min-width: max-content;
+  padding: 8px 4px 12px;
+}
+
+.workflow-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.workflow-rail {
+  position: absolute;
+  top: 26px;
+  left: calc(100% - 8px);
+  width: 44px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #cbd5e1 0%, #94a3b8 100%);
+}
+
+.workflow-rail::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-top: 3px solid #94a3b8;
+  border-right: 3px solid #94a3b8;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.workflow-node-head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.workflow-node-index {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #0f172a;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+}
+
+.workflow-node-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.workflow-node-icon .mat-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+
+.workflow-step-meta,
+.workflow-step-extra {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.workflow-step-extra {
+  margin-top: 8px;
+}
+
 @media (max-width: 991px) {
   .value {
     text-align: left;
+  }
+
+  .public-link-row {
+    align-items: stretch;
+  }
+
+  .workflow-lane {
+    gap: 18px;
+  }
+
+  .workflow-step-card {
+    min-width: 250px;
   }
 }

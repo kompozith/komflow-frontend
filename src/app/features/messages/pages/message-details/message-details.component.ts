@@ -44,7 +44,6 @@ export class MessageDetailsComponent implements OnInit {
 
   // Enums for template
   MessageChannel = MessageChannel;
-
   constructor(
     private sanitizer: DomSanitizer,
     private messageService: MessageService,

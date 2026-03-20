@@ -7,21 +7,21 @@
     <form [formGroup]="form" (ngSubmit)="submit()" class="event-form">
       <div class="row">
         <ng-container *ngIf="!workflowOnly">
-        <div class="col-md-6">
+        <div class="col-md-6 my-3">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Titre</mat-label>
             <input matInput formControlName="title" />
             <mat-error *ngIf="form.get('title')?.hasError('required')">Le titre est requis</mat-error>
           </mat-form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 my-3">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Sous-titre</mat-label>
             <input matInput formControlName="subtitle" />
           </mat-form-field>
         </div>
 
-        <div class="col-md-3 mb-3">
+        <div class="col-md-3 my-3">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Date de debut</mat-label>
             <input matInput [matDatepicker]="startDatePicker" [min]="todayDate" formControlName="startDate" />
@@ -33,7 +33,7 @@
             </mat-error>
           </mat-form-field>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-md-3 my-3">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Date de fin</mat-label>
             <input matInput [matDatepicker]="endDatePicker" [min]="form.get('startDate')?.value" formControlName="endDate" />
@@ -45,14 +45,14 @@
             </mat-error>
           </mat-form-field>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-md-3 my-3">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Heure de debut</mat-label>
             <input matInput type="time" formControlName="startTime" />
             <mat-error *ngIf="form.get('startTime')?.hasError('required')">L'heure de debut est requise</mat-error>
           </mat-form-field>
         </div>
-        <div class="col-md-3 mb-3">
+        <div class="col-md-3 my-3">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Heure de fin</mat-label>
             <input matInput type="time" formControlName="endTime" />
@@ -60,7 +60,7 @@
           </mat-form-field>
         </div>
 
-        <div [ngClass]="isOnlineMode() ? 'col-md-3' : 'col-md-4'">
+        <div class="my-3" [ngClass]="isOnlineMode() ? 'col-md-3' : 'col-md-4'">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Type d'evenement</mat-label>
             <mat-select formControlName="mode">
@@ -71,7 +71,7 @@
           </mat-form-field>
         </div>
 
-        <div [ngClass]="isOnlineMode() ? 'col-md-3' : 'col-md-4'">
+        <div class="my-3" [ngClass]="isOnlineMode() ? 'col-md-3' : 'col-md-4'">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Fuseau horaire (pays)</mat-label>
             <mat-select formControlName="country" (selectionChange)="onCountryChange($event.value)">
@@ -82,7 +82,7 @@
           </mat-form-field>
         </div>
 
-        <div class="col-md-4" *ngIf="hasMultipleTimezones()">
+        <div class="col-md-4 my-3" *ngIf="hasMultipleTimezones()">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Ville</mat-label>
             <mat-select formControlName="city" (selectionChange)="onCityChange($event.value)" [disabled]="!form.get('country')?.value">
@@ -93,27 +93,27 @@
           </mat-form-field>
         </div>
 
-        <div [ngClass]="isOnlineMode() ? 'col-md-3' : 'col-md-4'">
+        <div class="my-3" [ngClass]="isOnlineMode() ? 'col-md-3' : 'col-md-4'">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Timezone</mat-label>
             <input matInput formControlName="timezone" />
           </mat-form-field>
         </div>
 
-        <div class="col-md-6" *ngIf="isOnsiteMode()">
+        <div class="col-md-6 my-3" *ngIf="isOnsiteMode()">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Lieu</mat-label>
             <input matInput formControlName="location" />
             <mat-error *ngIf="form.get('location')?.hasError('required')">Le lieu est requis pour un evenement sur site</mat-error>
           </mat-form-field>
         </div>
-        <div class="col-md-6" *ngIf="isOnsiteMode()">
+        <div class="col-md-6 my-3" *ngIf="isOnsiteMode()">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Adresse</mat-label>
             <input matInput formControlName="address" />
           </mat-form-field>
         </div>
-        <div [ngClass]="'col-md-3'" *ngIf="isOnlineMode()">
+        <div [ngClass]="'col-md-3 my-3'" *ngIf="isOnlineMode()">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Lien de connexion</mat-label>
             <input matInput formControlName="meetingUrl" placeholder="https://..." />
@@ -122,7 +122,7 @@
           </mat-form-field>
         </div>
 
-        <div class="col-12">
+        <div class="col-12 my-3">
           <app-message-editor
             [contentControl]="form.get('description')!"
             [showVariablesPanel]="false"
@@ -133,7 +133,7 @@
           </app-message-editor>
         </div>
 
-        <div class="col-12 mb-3">
+        <div class="col-12 my-3">
           <div class="highlights-head">
             <label class="f-w-600">Points forts</label>
             <span class="hint">Ajoutez les points saillants de l evenement</span>
@@ -166,7 +166,7 @@
             <button mat-stroked-button type="button" (click)="addAgendaItem()">Ajouter une ligne</button>
           </div>
           <div class="agenda-list">
-            <div class="agenda-item" *ngFor="let group of agendaControls; let i = index" [formGroup]="group">
+            <div class="agenda-item mb-3" *ngFor="let group of agendaControls; let i = index" [formGroup]="group">
               <mat-form-field appearance="outline">
                 <mat-label>Heure</mat-label>
                 <input matInput type="time" formControlName="time" />
@@ -192,7 +192,7 @@
           </div>
         </div>
 
-        <div class="col-12">
+        <div class="col-12 mt-3">
           <div class="banner-upload">
             <div class="banner-upload-head">
               <label class="f-w-600">Banniere de l'evenement</label>
