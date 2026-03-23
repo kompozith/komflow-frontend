@@ -1,11 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
   MatDialogRef,
-  MatDialogTitle,
 } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -16,14 +12,11 @@ import { CreateTagRequest } from '../../models/tag';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ContactService } from 'src/app/features/contacts/services/contact.service';
 import { Contact, ContactPage } from 'src/app/features/contacts/models/contact';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-tag-create',
   imports: [
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogTitle,
-    MatDialogContent,
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
@@ -37,6 +30,12 @@ export class TagCreateComponent {
   tagForm: FormGroup;
   isLoading = false;
   contacts: Contact[] = [];
+  contactsLoading = false;
+  contactsHasMore = true;
+  private readonly contactsPageSize = 50;
+  private contactsPage = 0;
+  private readonly contactSearchSubject = new Subject<string>();
+  contactSearch = '';
 
 
   constructor(
@@ -54,7 +53,14 @@ export class TagCreateComponent {
       contactIds: [[]]
     });
 
-    this.loadContacts();
+    this.contactSearchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((value) => {
+        this.contactSearch = value;
+        this.loadContacts(true);
+      });
+
+    this.loadContacts(true);
   }
 
   onSubmit(): void {
@@ -64,7 +70,7 @@ export class TagCreateComponent {
 
       const tagData: CreateTagRequest = {
         name: formValue.name,
-        colorCode: formValue.color,
+        colorCode: this.normalizeColor(formValue.color),
         description: formValue.description || undefined,
         contactIds: formValue.contactIds || []
       };
@@ -89,15 +95,70 @@ export class TagCreateComponent {
     this.dialogRef.close({ event: 'Cancel' });
   }
 
-  private loadContacts(): void {
-    this.contactService.getContacts().subscribe({
+  onContactSearchChange(value: string): void {
+    this.contactSearchSubject.next((value || '').trim());
+  }
+
+  loadMoreContacts(): void {
+    if (!this.contactsLoading && this.contactsHasMore) {
+      this.loadContacts(false);
+    }
+  }
+
+  get previewColor(): string {
+    return this.normalizeColor(this.tagForm.get('color')?.value);
+  }
+
+  private loadContacts(reset: boolean): void {
+    if (this.contactsLoading) {
+      return;
+    }
+
+    if (reset) {
+      this.contactsPage = 0;
+      this.contactsHasMore = true;
+      this.contacts = [];
+    }
+
+    if (!this.contactsHasMore) {
+      return;
+    }
+
+    this.contactsLoading = true;
+    this.contactService.getContacts({ page: this.contactsPage, size: this.contactsPageSize, search: this.contactSearch || undefined }).subscribe({
       next: (response: ContactPage) => {
-        this.contacts = response.content || [];
+        const incoming = response.content || [];
+        this.contacts = reset
+          ? incoming
+          : [...this.contacts, ...incoming.filter((contact) => !this.contacts.some((existing) => existing.id === contact.id))];
+        this.contactsHasMore = !response.last;
+        this.contactsPage += 1;
+        this.contactsLoading = false;
       },
       error: () => {
-        this.contacts = [];
+        this.contactsLoading = false;
+        if (reset) {
+          this.contacts = [];
+        }
       }
     });
+  }
+
+  private normalizeColor(value: string | null | undefined): string {
+    const fallback = '#007bff';
+    if (!value) {
+      return fallback;
+    }
+
+    const normalized = value.trim().replace(/^#/, '');
+    if (/^[0-9a-fA-F]{6}$/.test(normalized)) {
+      return `#${normalized}`;
+    }
+    if (/^[0-9a-fA-F]{8}$/.test(normalized)) {
+      const rgb = normalized.toLowerCase().startsWith('ff') ? normalized.substring(2) : normalized.substring(0, 6);
+      return `#${rgb}`;
+    }
+    return fallback;
   }
 
   private markFormGroupTouched(): void {

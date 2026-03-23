@@ -25,4 +25,22 @@ export class PhoneNumberService {
       headers: this.getAuthHeaders()
     });
   }
+
+  getPhoneNumbers(personId: number): Observable<PhoneNumber[]> {
+    return this.http.get<PhoneNumber[]>(`${this.apiUrl}/${personId}/phone-numbers`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  updatePhoneNumber(phoneNumberId: number, payload: CreatePhoneNumberRequest): Observable<PhoneNumber> {
+    return this.http.put<PhoneNumber>(`${this.apiUrl}/phone-numbers/${phoneNumberId}`, payload, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  deletePhoneNumber(phoneNumberId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/phone-numbers/${phoneNumberId}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
 }

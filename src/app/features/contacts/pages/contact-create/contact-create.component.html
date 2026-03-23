@@ -93,29 +93,54 @@
             </div>
 
             <div class="col-12 mt-2">
-              <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Phone Numbers</mat-label>
-              <div formArrayName="phoneNumbers" class="row">
+              <label class="f-s-14 f-w-600 d-block m-b-8">Numéros de téléphone</label>
+              <div formArrayName="phoneNumbers" class="row g-3">
                 <div
-                  class="col-12 col-lg-6 mb-2"
+                  class="col-12 col-lg-6"
                   *ngFor="let phoneGroup of phoneNumbers.controls; let i = index"
                   [formGroupName]="i">
                   <div class="d-flex align-items-start gap-2">
-                    <mat-form-field appearance="outline" class="w-100">
-                      <mat-label>Number {{ i + 1 }}</mat-label>
-                      <input matInput formControlName="number" placeholder="Enter phone number" />
-                    </mat-form-field>
+                    <div class="w-100">
+                      <div class="phone-field">
+                        <label class="phone-label">Numéro de téléphone</label>
+                        <ngx-intl-tel-input
+                          [preferredCountries]="['cm','fr','us']"
+                          [enableAutoCountrySelect]="true"
+                          [enablePlaceholder]="true"
+                          [cssClass]="'contact-phone-input'"
+                          [searchCountryFlag]="true"
+                          [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name, SearchCountryField.DialCode]"
+                          [selectFirstCountry]="false"
+                          [selectedCountryISO]="CountryISO.Cameroon"
+                          [maxLength]="15"
+                          [separateDialCode]="true"
+                          [phoneValidation]="true"
+                          [inputId]="'contact-phone-' + i"
+                          name="phone"
+                          formControlName="number"
+                        ></ngx-intl-tel-input>
+                        <small class="phone-error"
+                               *ngIf="phoneNumbers.controls[i].get('number')?.invalid && phoneNumbers.controls[i].get('number')?.touched">
+                          {{ phoneNumbers.controls[i].get('number')?.errors?.['required']
+                              ? 'Veuillez renseigner le numéro de téléphone'
+                              : 'Le numéro saisi n\'est pas valide' }}
+                        </small>
+                      </div>
+                    </div>
                     <button
                       mat-icon-button
                       type="button"
                       (click)="removePhoneNumber(i)"
                       [disabled]="phoneNumbers.length === 1"
-                      aria-label="Remove phone number">
+                      aria-label="Supprimer le numéro">
                       <i-tabler name="trash" class="text-error d-flex"></i-tabler>
                     </button>
                   </div>
                 </div>
               </div>
-              <button mat-stroked-button type="button" (click)="addPhoneNumber()">Add phone number</button>
+              <button mat-stroked-button type="button" class="mt-2" (click)="addPhoneNumber()">
+                Ajouter un numéro
+              </button>
             </div>
           </div>
 

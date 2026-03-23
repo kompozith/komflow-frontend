@@ -1,1 +1,143 @@
 /* Contact Create Dialog Styles */
+
+// ─── Phone field — harmonisé avec le formulaire d'inscription événement ──────
+
+.phone-field {
+  --phone-control-height: var(--mat-form-field-container-height, 56px);
+  --phone-control-radius: 8px;
+  --phone-border-color: var(--mat-sys-outline);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.phone-field:hover {
+  --phone-border-color: color-mix(in srgb, var(--mat-sys-primary) 62%, var(--mat-sys-outline));
+}
+
+.phone-field:focus-within {
+  --phone-border-color: var(--mat-sys-primary);
+}
+
+.phone-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: color-mix(in srgb, var(--mat-sys-on-background) 66%, transparent);
+  padding-left: 2px;
+}
+
+.phone-error {
+  color: var(--mat-sys-error);
+  font-size: 0.74rem;
+  padding-left: 2px;
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input,
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti {
+  display: block;
+  width: 100%;
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti {
+  height: var(--phone-control-height);
+  background: var(--mat-sys-surface-container-low);
+  box-shadow: none !important;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+  border: 1px solid var(--phone-border-color) !important;
+  border-radius: var(--phone-control-radius);
+  overflow: visible;
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti__flag-container {
+  padding: 0;
+  border-right: none;
+  background: var(--mat-sys-surface-container-low);
+  height: 100%;
+  border-top-left-radius: calc(var(--phone-control-radius) - 1px);
+  border-bottom-left-radius: calc(var(--phone-control-radius) - 1px);
+  overflow: visible;
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti__selected-flag {
+  height: var(--phone-control-height);
+  min-width: 92px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  pointer-events: auto;
+  border-top: 1px solid var(--phone-border-color);
+  border-left: 1px solid var(--phone-border-color);
+  border-bottom: 1px solid var(--phone-border-color);
+  border-right: none;
+  margin-top: -1px;
+  margin-left: -1px;
+  margin-bottom: -1px;
+  border-top-left-radius: calc(var(--phone-control-radius) - 1px);
+  border-bottom-left-radius: calc(var(--phone-control-radius) - 1px);
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti__flag-container,
+:host ::ng-deep .phone-field ngx-intl-tel-input .iti__selected-flag {
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input input.iti__tel-input {
+  width: 100%;
+  height: var(--phone-control-height);
+  min-height: var(--phone-control-height);
+  background: transparent;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+  border-left: 0 !important;
+  border-radius: 0;
+  padding-right: 14px;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+  line-height: 1.5;
+  font-size: 1rem;
+  color: var(--mat-sys-on-background);
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .phone-field ngx-intl-tel-input input.iti__tel-input::placeholder {
+  color: color-mix(in srgb, var(--mat-sys-on-background) 52%, transparent);
+}
+
+:host ::ng-deep .phone-field .dropdown-menu.iti__dropdown-content {
+  z-index: 3000;
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--mat-sys-surface-container);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--mat-sys-on-background) 16%, transparent);
+  border: 1px solid var(--mat-sys-outline);
+}
+
+:host ::ng-deep .phone-field .iti--inline-dropdown .iti__dropdown-content {
+  margin-top: 6px;
+  min-width: 100%;
+}
+
+:host ::ng-deep .phone-field .iti__dropdown-content {
+  top: calc(100% + 6px) !important;
+  bottom: auto !important;
+}
+
+:host ::ng-deep .phone-field .iti__country-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+:host ::ng-deep .phone-field .iti__search-input,
+:host ::ng-deep .phone-field #country-search-box {
+  width: 100%;
+  min-height: 40px;
+  outline: none;
+  box-shadow: none;
+}

@@ -230,7 +230,19 @@ export class TagListComponent implements OnInit, AfterViewInit {
   }
 
   getColorPreview(colorCode?: string): string {
-    return colorCode || '#007bff';
+    if (!colorCode) {
+      return '#007bff';
+    }
+
+    const normalized = colorCode.trim().replace(/^#/, '');
+    if (/^[0-9a-fA-F]{6}$/.test(normalized)) {
+      return `#${normalized}`;
+    }
+    if (/^[0-9a-fA-F]{8}$/.test(normalized)) {
+      const rgb = normalized.toLowerCase().startsWith('ff') ? normalized.substring(2) : normalized.substring(0, 6);
+      return `#${rgb}`;
+    }
+    return '#007bff';
   }
 
   toggleTagStatus(tag: Tag): void {

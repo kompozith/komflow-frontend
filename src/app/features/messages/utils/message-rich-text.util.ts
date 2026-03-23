@@ -1,12 +1,41 @@
 const VARIABLE_REGEX = /\{\{[^{}]+\}\}/g;
 
+const VARIABLE_ALIASES: Record<string, string> = {
+  // Contact legacy camelCase -> contact_* snake_case
+  '{{firstname}}': '{{contact_first_name}}',
+  '{{lastname}}': '{{contact_last_name}}',
+  '{{email}}': '{{contact_email}}',
+  '{{language}}': '{{contact_language}}',
+  '{{country}}': '{{contact_country}}',
+  '{{city}}': '{{contact_city}}',
+  '{{username}}': '{{contact_username}}',
+  '{{phonenumber}}': '{{contact_phone_number}}',
+  '{{whatsappnumber}}': '{{contact_whatsapp_number}}',
+
+  // Event legacy camelCase -> event_* snake_case
+  '{{eventlocaltime}}': '{{event_local_time}}',
+  '{{eventendlocaltime}}': '{{event_end_local_time}}',
+  '{{eventtitle}}': '{{event_title}}',
+  '{{eventstartdate}}': '{{event_start_date}}',
+  '{{eventstarttime}}': '{{event_start_time}}',
+  '{{eventenddate}}': '{{event_end_date}}',
+  '{{eventendtime}}': '{{event_end_time}}',
+  '{{eventlocation}}': '{{event_location}}',
+  '{{eventtimezone}}': '{{event_timezone}}',
+  '{{eventsubtitle}}': '{{event_subtitle}}',
+  '{{eventaddress}}': '{{event_address}}',
+  '{{eventmeetingurl}}': '{{event_meeting_url}}',
+  '{{eventpublicurl}}': '{{event_public_url}}',
+};
+
 export function normalizeVariableKey(key: string): string {
   const trimmed = (key || '').trim();
   if (!trimmed) return '';
-  if (trimmed.startsWith('{{') && trimmed.endsWith('}}')) {
-    return trimmed;
-  }
-  return `{{${trimmed}}}`;
+  const wrapped = trimmed.startsWith('{{') && trimmed.endsWith('}}')
+    ? trimmed
+    : `{{${trimmed}}}`;
+  const compact = wrapped.replace(/\s+/g, '');
+  return VARIABLE_ALIASES[compact.toLowerCase()] ?? compact;
 }
 
 export function stripHtmlToText(content: string): string {

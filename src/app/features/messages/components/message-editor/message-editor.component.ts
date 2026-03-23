@@ -56,18 +56,31 @@ export class MessageEditorComponent implements OnInit, AfterViewInit, OnChanges 
   private triggerChar: string | null = null;
   autocompleteQuery = '';
   previewContent: string = '';
+  private readonly excludedSuggestionKeys = new Set<string>([
+    '{{subscriber_id}}',
+    '{{subscriber_enabled}}',
+  ]);
   private readonly mockUserValues: Record<string, string> = {
-    '{{firstName}}': 'Alice',
-    '{{lastName}}': 'Johnson',
-    '{{email}}': 'alice.johnson@example.com',
-    '{{language}}': 'fr',
-    '{{country}}': 'France',
-    '{{city}}': 'Paris',
-    '{{contactId}}': '1024',
-    '{{contactEnabled}}': 'true',
-    '{{username}}': 'alice.j',
-    '{{phoneNumber}}': '+33 6 12 34 56 78',
-    '{{whatsappNumber}}': '+33 6 12 34 56 78',
+    '{{contact_first_name}}': 'Alice',
+    '{{contact_last_name}}': 'Johnson',
+    '{{contact_email}}': 'alice.johnson@example.com',
+    '{{contact_language}}': 'fr',
+    '{{contact_country}}': 'France',
+    '{{contact_city}}': 'Paris',
+    '{{contact_username}}': 'alice.j',
+    '{{contact_phone_number}}': '+33 6 12 34 56 78',
+    '{{contact_whatsapp_number}}': '+33 6 12 34 56 78',
+    '{{subscriber_first_name}}': 'Mariam',
+    '{{subscriber_last_name}}': 'Diallo',
+    '{{subscriber_email}}': 'mariam.diallo@example.com',
+    '{{subscriber_language}}': 'fr',
+    '{{subscriber_country}}': 'Senegal',
+    '{{subscriber_city}}': 'Dakar',
+    '{{subscriber_id}}': '2001',
+    '{{subscriber_enabled}}': 'true',
+    '{{subscriber_username}}': 'mariam.d',
+    '{{subscriber_phone_number}}': '+221 77 123 45 67',
+    '{{subscriber_whatsapp_number}}': '+221 77 123 45 67',
   };
 
   constructor(private messageService: MessageService) {}
@@ -113,7 +126,13 @@ export class MessageEditorComponent implements OnInit, AfterViewInit, OnChanges 
   }
 
   private getAvailableVariables(): Variable[] {
-    return this.variables.filter(variable => this.selectedEvent || !this.isEventVariable(variable));
+    return this.variables.filter(variable => {
+      const normalizedKey = this.normalizeVariableKey(variable.key);
+      if (this.excludedSuggestionKeys.has(normalizedKey)) {
+        return false;
+      }
+      return this.selectedEvent || !this.isEventVariable(variable);
+    });
   }
 
   private normalizeVariableKey(key: string): string {
@@ -130,40 +149,44 @@ export class MessageEditorComponent implements OnInit, AfterViewInit, OnChanges 
       if (!this.selectedEvent) {
         return '[Event requis]';
       }
-      const lowered = key.toLowerCase();
       switch (key) {
-        case '{{eventTitle}}':
+        case '{{event_title}}':
           return this.selectedEvent.title || '';
-        case '{{eventStartDate}}':
+        case '{{event_start_date}}':
           return this.selectedEvent.startDate || '';
-        case '{{eventStartTime}}':
+        case '{{event_start_time}}':
           return this.normalizeTime(this.selectedEvent.startTime);
-        case '{{eventEndDate}}':
+        case '{{event_end_date}}':
           return this.selectedEvent.endDate || '';
-        case '{{eventEndTime}}':
+        case '{{event_end_time}}':
           return this.normalizeTime(this.selectedEvent.endTime);
-        case '{{eventLocation}}':
+        case '{{event_location}}':
           return this.selectedEvent.location || '';
-        case '{{eventTimezone}}':
+        case '{{event_timezone}}':
           return this.selectedEvent.timezone || '';
-        case '{{eventLocalTime}}':
+        case '{{event_subtitle}}':
+          return this.selectedEvent.subtitle || '';
+        case '{{event_address}}':
+          return this.selectedEvent.address || '';
+        case '{{event_meeting_url}}':
+          return this.selectedEvent.meetingUrl || '';
+        case '{{event_public_url}}':
+          return this.selectedEvent.slug ? `/event/${this.selectedEvent.slug}` : '';
+        case '{{event_local_time}}':
           return this.formatEventDateTime(this.selectedEvent.startDate, this.selectedEvent.startTime, this.selectedEvent.startAt);
-        case '{{eventEndLocalTime}}':
+        case '{{event_end_local_time}}':
           return this.formatEventDateTime(this.selectedEvent.endDate, this.selectedEvent.endTime, this.selectedEvent.endAt);
         default:
-          if (lowered === '{{eventtitle}}') return this.selectedEvent.title || '';
-          if (lowered === '{{eventstartdate}}') return this.selectedEvent.startDate || '';
-          if (lowered === '{{eventstarttime}}') return this.normalizeTime(this.selectedEvent.startTime);
-          if (lowered === '{{eventenddate}}') return this.selectedEvent.endDate || '';
-          if (lowered === '{{eventendtime}}') return this.normalizeTime(this.selectedEvent.endTime);
-          if (lowered === '{{eventlocation}}') return this.selectedEvent.location || '';
-          if (lowered === '{{eventtimezone}}') return this.selectedEvent.timezone || '';
-          if (lowered === '{{eventlocaltime}}') return this.formatEventDateTime(this.selectedEvent.startDate, this.selectedEvent.startTime, this.selectedEvent.startAt);
-          if (lowered === '{{eventendlocaltime}}') return this.formatEventDateTime(this.selectedEvent.endDate, this.selectedEvent.endTime, this.selectedEvent.endAt);
           return '[Variable event]';
       }
     }
-    return this.mockUserValues[key] ?? `[${key}]`;
+
+    if (this.mockUserValues[key] !== undefined) {
+      return this.mockUserValues[key];
+    }
+
+    const variableName = key.replace(/^\{\{/, '').replace(/\}\}$/, '');
+    return `[Variable mock inexistante: ${variableName}]`;
   }
 
   private formatEventDateTime(date?: string | null, time?: string | null, fallback?: string | null): string {

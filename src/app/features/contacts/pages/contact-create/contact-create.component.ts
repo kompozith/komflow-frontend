@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { PersonService } from '../../../personnel/services/person.service';
 import { Person } from '../../../personnel/models/person';
 import { GeoCity, GeoCountry, GeoService } from '../../../core/services/geo.service';
+import { CountryISO, NgxIntlTelInputModule, SearchCountryField } from 'ngx-intl-tel-input';
 
 @Component({
   selector: 'app-contact-create',
@@ -21,6 +22,7 @@ import { GeoCity, GeoCountry, GeoService } from '../../../core/services/geo.serv
     ReactiveFormsModule,
     TablerIconsModule,
     CommonModule,
+    NgxIntlTelInputModule,
   ],
   templateUrl: './contact-create.component.html',
   styleUrl: './contact-create.component.scss',
@@ -38,6 +40,8 @@ export class ContactCreateComponent {
   ];
   countries: GeoCountry[] = [];
   cities: GeoCity[] = [];
+  CountryISO = CountryISO;
+  SearchCountryField = SearchCountryField;
 
   constructor(
     private fb: FormBuilder,
@@ -105,11 +109,8 @@ export class ContactCreateComponent {
           timezone: personForm.timezone || undefined,
         };
         contactData.phoneNumbers = (personForm.phoneNumbers || [])
-          .filter((p: any) => p.number)
-          .map((p: any) => ({
-            number: p.number,
-            isWhatsapp: false,
-          }));
+          .map((p: any) => ({ number: this.formatPhoneNumber(p.number) }))
+          .filter((p: any) => !!p.number);
       }
 
       this.contactService.createContact(contactData).subscribe({
@@ -230,7 +231,7 @@ export class ContactCreateComponent {
 
   addPhoneNumber(): void {
     this.phoneNumbers.push(this.fb.group({
-      number: ['', Validators.required],
+      number: [null, Validators.required],
     }));
   }
 
@@ -245,6 +246,26 @@ export class ContactCreateComponent {
       return !!this.contactForm.get('personId')?.value;
     }
     return this.contactForm.get('newPerson')?.valid ?? false;
+  }
+
+  private formatPhoneNumber(phoneObject: any): string {
+    if (!phoneObject) {
+      return '';
+    }
+
+    if (typeof phoneObject === 'string') {
+      return phoneObject.trim();
+    }
+
+    if (typeof phoneObject.e164Number === 'string' && phoneObject.e164Number.trim()) {
+      return phoneObject.e164Number.trim();
+    }
+
+    if (typeof phoneObject.internationalNumber === 'string' && phoneObject.internationalNumber.trim()) {
+      return phoneObject.internationalNumber.replace(/\s+/g, '').trim();
+    }
+
+    return '';
   }
 
 }

@@ -95,6 +95,71 @@
             </div>
           </div>
 
+          <!-- Phone numbers -->
+          <div class="row mt-2">
+            <div class="col-12">
+              <label class="f-s-14 f-w-600 d-block m-b-8">Numéros de téléphone</label>
+
+              <!-- Numéros existants -->
+              <div class="existing-phone-list mb-2" *ngIf="existingPhones.length">
+                <div class="existing-phone-item d-flex align-items-center gap-2 mb-2"
+                     *ngFor="let phone of existingPhones">
+                  <span class="existing-phone-number">{{ phone.number }}</span>
+
+                  <button mat-icon-button type="button" color="warn"
+                          (click)="markPhoneForDelete(phone)"
+                          aria-label="Supprimer ce numéro">
+                    <i-tabler name="trash" class="text-error d-flex"></i-tabler>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Nouveaux numéros à ajouter -->
+              <div class="new-phone-entries">
+                <div class="d-flex align-items-start gap-2 mb-3"
+                     *ngFor="let entry of pendingPhones; let i = index">
+                  <div class="w-100">
+                    <div class="phone-field">
+                      <label class="phone-label">Nouveau numéro</label>
+                      <ngx-intl-tel-input
+                        [preferredCountries]="['cm','fr','us']"
+                        [enableAutoCountrySelect]="true"
+                        [enablePlaceholder]="true"
+                        [cssClass]="'contact-phone-input'"
+                        [searchCountryFlag]="true"
+                        [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name, SearchCountryField.DialCode]"
+                        [selectFirstCountry]="false"
+                        [selectedCountryISO]="selectedPhoneCountryISO"
+                        [maxLength]="15"
+                        [separateDialCode]="true"
+                        [phoneValidation]="true"
+                        [inputId]="'edit-phone-' + i"
+                        name="phone"
+                        [formControl]="entry.formControl"
+                      ></ngx-intl-tel-input>
+                      <small class="phone-error"
+                             *ngIf="entry.formControl.invalid && entry.formControl.touched">
+                        {{ entry.formControl.errors?.['required']
+                            ? 'Veuillez renseigner le numéro de téléphone'
+                            : 'Le numéro saisi n\'est pas valide' }}
+                      </small>
+                    </div>
+
+                  </div>
+                  <button mat-icon-button type="button" color="warn"
+                          (click)="removeNewPhoneField(i)"
+                          aria-label="Retirer ce numéro">
+                    <i-tabler name="trash" class="text-error d-flex"></i-tabler>
+                  </button>
+                </div>
+              </div>
+
+              <button mat-stroked-button type="button" class="mt-1" (click)="addNewPhoneField()">
+                Ajouter un numéro
+              </button>
+            </div>
+          </div>
+
           <div class="row mt-3">
             <div class="col-12">
               <h5 class="m-b-8">Additional Information (Optional)</h5>

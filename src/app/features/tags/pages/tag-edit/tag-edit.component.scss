@@ -4,6 +4,12 @@
   .color-input-wrap {
     display: flex;
     flex-direction: column;
+    gap: 6px;
+  }
+
+  .color-input-wrap--full {
+    margin-top: 2px;
+    margin-bottom: 12px;
   }
 
   .color-input {
@@ -13,6 +19,32 @@
     padding: 6px;
     cursor: pointer;
     background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  }
+
+  .color-input--line {
+    width: 100%;
+    height: 14px;
+    border-radius: 999px;
+    padding: 0;
+    border: 1px solid rgba(15, 23, 42, 0.22);
+    background: transparent;
+    overflow: hidden;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .color-input--line::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  .color-input--line::-webkit-color-swatch {
+    border: none;
+    border-radius: 999px;
+  }
+
+  .color-input--line::-moz-color-swatch {
+    border: none;
+    border-radius: 999px;
   }
 
   .tag-preview {

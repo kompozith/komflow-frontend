@@ -128,7 +128,6 @@ export class EventFormComponent implements OnChanges, OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['initialEvent']) {
       this.hydrateForm(this.initialEvent);
-      this.filterWorkflowMessagesForEvent();
     }
     if (changes['workflowOnly'] && this.workflowOnly) {
       this.form.clearValidators();
@@ -477,7 +476,6 @@ export class EventFormComponent implements OnChanges, OnInit {
       next: (page) => {
         const messages = page?.content || [];
         this.workflowMessages = messages;
-        this.filterWorkflowMessagesForEvent();
         this.workflowLoading = false;
       },
       error: () => {
@@ -486,14 +484,6 @@ export class EventFormComponent implements OnChanges, OnInit {
         this.snackBar.open('Impossible de charger les messages pour le workflow', 'Fermer', { duration: 3000 });
       },
     });
-  }
-
-  private filterWorkflowMessagesForEvent(): void {
-    const eventId = this.initialEvent?.id;
-    if (!this.workflowMessages.length || !eventId) {
-      return;
-    }
-    this.workflowMessages = this.workflowMessages.filter((message) => !message.event?.id || message.event.id === eventId);
   }
 
   private loadCities(countryCode: string, preferredTimezone?: string): void {
