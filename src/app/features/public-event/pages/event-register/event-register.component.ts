@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Meta, Title } from '@angular/platform-browser';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material.module';
 import { CountryISO, NgxIntlTelInputModule, SearchCountryField } from 'ngx-intl-tel-input';
@@ -77,7 +78,9 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
     private router: Router,
     private snackBar: MatSnackBar,
     private geoService: GeoService,
-    private publicEventService: PublicEventService
+    private publicEventService: PublicEventService,
+    private titleService: Title,
+    private metaService: Meta
   ) {}
 
   @HostListener('window:resize')
@@ -107,6 +110,7 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
         this.event = details;
         this.scheduleDisplay = this.mapScheduleForDisplay(details.schedule) || this.buildScheduleDisplay(details);
         this.isLoading = false;
+        this.applyEventSeoTags(details);
         setTimeout(() => {
           this.refreshIntroStickyObserver();
           this.scheduleIntroStickyReposition();
@@ -144,6 +148,52 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
       cancelAnimationFrame(this.introStickyRaf);
       this.introStickyRaf = null;
     }
+    this.removeEventSeoTags();
+  }
+
+  private applyEventSeoTags(event: PublicEventDetails): void {
+    const pageUrl = window.location.href;
+    const description = (event.subtitle || event.description || '').replace(/<[^>]*>/g, '').trim().slice(0, 200);
+
+    this.titleService.setTitle(`${event.title} - Komflow`);
+
+    const ogTags: { property: string; content: string }[] = [
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: pageUrl },
+      { property: 'og:title', content: event.title },
+      { property: 'og:site_name', content: 'Komflow' },
+    ];
+
+    if (description) {
+      ogTags.push({ property: 'og:description', content: description });
+      this.metaService.updateTag({ name: 'description', content: description });
+    }
+
+    if (event.bannerImageUrl) {
+      ogTags.push({ property: 'og:image', content: event.bannerImageUrl });
+      ogTags.push({ property: 'og:image:width', content: '1200' });
+      ogTags.push({ property: 'og:image:height', content: '630' });
+      this.metaService.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+      this.metaService.updateTag({ name: 'twitter:image', content: event.bannerImageUrl });
+    } else {
+      this.metaService.updateTag({ name: 'twitter:card', content: 'summary' });
+    }
+
+    ogTags.forEach((tag) => this.metaService.updateTag({ property: tag.property, content: tag.content }));
+    this.metaService.updateTag({ name: 'twitter:title', content: event.title });
+    if (description) {
+      this.metaService.updateTag({ name: 'twitter:description', content: description });
+    }
+  }
+
+  private removeEventSeoTags(): void {
+    this.titleService.setTitle('Komflow - Communication Platform');
+    ['og:type', 'og:url', 'og:title', 'og:description', 'og:image', 'og:image:width', 'og:image:height', 'og:site_name'].forEach((p) =>
+      this.metaService.removeTag(`property='${p}'`)
+    );
+    ['description', 'twitter:card', 'twitter:title', 'twitter:description', 'twitter:image'].forEach((n) =>
+      this.metaService.removeTag(`name='${n}'`)
+    );
   }
 
   goToStep(step: number): void {

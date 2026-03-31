@@ -1,3 +1,7 @@
+[[edge_functions]]
+  function = "event-seo"
+  path = "/event/*"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
