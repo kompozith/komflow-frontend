@@ -566,6 +566,11 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
     };
   }
 
+  private capitalizeFirst(value: string | null | undefined): string | undefined {
+    if (!value) return undefined;
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  }
+
   private mapScheduleForDisplay(schedule?: PublicEventSchedule | null): {
     timezoneLabel: string;
     isRangeSameDay: boolean;
@@ -581,22 +586,23 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
     return {
       timezoneLabel: schedule.timezoneLabel || `Heure locale (${this.clientTimezone})`,
       isRangeSameDay: !!schedule.rangeSameDay,
-      singleDateTime: schedule.singleDateTime || undefined,
-      sameDayDate: schedule.sameDayDate || undefined,
+      singleDateTime: this.capitalizeFirst(schedule.singleDateTime),
+      sameDayDate: this.capitalizeFirst(schedule.sameDayDate),
       sameDayTimeRange: schedule.sameDayTimeRange || undefined,
-      startDateTime: schedule.startDateTime || undefined,
-      endDateTime: schedule.endDateTime || undefined,
+      startDateTime: this.capitalizeFirst(schedule.startDateTime),
+      endDateTime: this.capitalizeFirst(schedule.endDateTime),
     };
   }
 
   private formatDate(value: Date): string {
-    return new Intl.DateTimeFormat(this.clientLocale, {
+    const formatted = new Intl.DateTimeFormat(this.clientLocale, {
       weekday: 'long',
       day: '2-digit',
       month: 'long',
       year: 'numeric',
       timeZone: this.clientTimezone,
     }).format(value);
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }
 
   private formatTime(value: Date): string {
@@ -609,7 +615,7 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   private formatDateTime(value: Date): string {
-    return new Intl.DateTimeFormat(this.clientLocale, {
+    const formatted = new Intl.DateTimeFormat(this.clientLocale, {
       weekday: 'long',
       day: '2-digit',
       month: 'long',
@@ -619,6 +625,7 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
       hour12: false,
       timeZone: this.clientTimezone,
     }).format(value);
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }
 
   private formatDuration(startsAt: Date, endsAt: Date): string {
