@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { CommonModule } from '@angular/common';
 import { MessageService } from '../../services/message.service';
 import { Message, MessageAttachment, UpdateMessageRequest, MessageChannel } from '../../models/message';
 import { MessageEditorComponent } from '../../components/message-editor/message-editor.component';
+import { SendTestDialogComponent } from '../../components/send-test-dialog/send-test-dialog.component';
 import { finalize } from 'rxjs/operators';
 import { AppEvent, EventService } from '../../../core/services/event.service';
 import { MediaPreviewService } from 'src/app/shared/services/media-preview.service';
@@ -46,6 +48,7 @@ export class MessageEditComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
     private mediaPreviewService: MediaPreviewService
   ) {
     this.messageForm = this.fb.group({
@@ -195,6 +198,14 @@ export class MessageEditComponent implements OnInit {
 
   onCancel(): void {
     this.router.navigate(['/messages']);
+  }
+
+  openSendTestDialog(): void {
+    const channel = this.messageForm.get('channel')?.value as MessageChannel;
+    this.dialog.open(SendTestDialogComponent, {
+      width: '440px',
+      data: { messageId: this.messageId, channel },
+    });
   }
 
   onAttachmentSelected(event: Event): void {

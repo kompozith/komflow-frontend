@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { CommonModule } from '@angular/common';
@@ -10,6 +11,7 @@ import { Message, MessageAttachment, MessageChannel, Variable } from '../../mode
 import { BadgeComponent, BadgeVariant } from '../../../../shared/components/badge/badge.component';
 import { normalizeVariableKey, renderTemplatePreviewHtml } from '../../utils/message-rich-text.util';
 import { MediaPreviewService } from 'src/app/shared/services/media-preview.service';
+import { SendTestDialogComponent } from '../../components/send-test-dialog/send-test-dialog.component';
 
 @Component({
   selector: 'app-message-details',
@@ -50,6 +52,7 @@ export class MessageDetailsComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
     private mediaPreviewService: MediaPreviewService
   ) {}
 
@@ -95,6 +98,14 @@ export class MessageDetailsComponent implements OnInit {
 
   onBack(): void {
     this.router.navigate(['/messages']);
+  }
+
+  openSendTestDialog(): void {
+    if (!this.message) return;
+    this.dialog.open(SendTestDialogComponent, {
+      width: '440px',
+      data: { messageId: this.messageId, channel: this.message.channel },
+    });
   }
 
   getChannelIcon(channel: MessageChannel): string {

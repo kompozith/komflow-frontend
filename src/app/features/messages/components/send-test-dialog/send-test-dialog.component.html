@@ -1,0 +1,49 @@
+<div class="d-flex align-items-center justify-content-between mb-3 px-3 pt-3">
+  <div class="d-flex align-items-center gap-8">
+    <mat-icon class="text-primary">science</mat-icon>
+    <h5 class="mb-0">Envoyer un test</h5>
+  </div>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="px-3 pb-2">
+  <p class="text-muted f-s-14 mb-3">
+    Entrez
+    <strong>{{ isEmailChannel ? 'une adresse e-mail' : 'un numéro de téléphone' }}</strong>
+    pour recevoir un aperçu de ce message via le canal
+    <strong>{{ channelLabel }}</strong>.
+  </p>
+
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>{{ inputLabel }}</mat-label>
+      <i-tabler [name]="channelIcon" matPrefix class="me-1"></i-tabler>
+      <input
+        matInput
+        formControlName="recipient"
+        [placeholder]="inputPlaceholder"
+        [type]="isEmailChannel ? 'email' : 'tel'"
+        autocomplete="off">
+      <mat-error *ngIf="form.get('recipient')?.errors?.['required']">
+        Ce champ est requis
+      </mat-error>
+      <mat-error *ngIf="form.get('recipient')?.errors?.['email']">
+        Adresse e-mail invalide
+      </mat-error>
+      <mat-error *ngIf="form.get('recipient')?.errors?.['pattern']">
+        Numéro de téléphone invalide
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="px-3 pb-3 gap-8">
+  <button mat-stroked-button mat-dialog-close [disabled]="isSending">Annuler</button>
+  <button mat-flat-button color="primary" (click)="onSend()" [disabled]="isSending">
+    <mat-spinner diameter="18" *ngIf="isSending" class="me-1"></mat-spinner>
+    <mat-icon *ngIf="!isSending" class="me-1">send</mat-icon>
+    {{ isSending ? 'Envoi...' : 'Envoyer le test' }}
+  </button>
+</mat-dialog-actions>

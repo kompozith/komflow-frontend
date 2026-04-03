@@ -123,6 +123,10 @@
                 <button mat-stroked-button type="button" (click)="onCancel()">
                   Cancel
                 </button>
+                <button mat-stroked-button type="button" (click)="openSendTestDialog()" [disabled]="!message">
+                  <mat-icon class="me-1">science</mat-icon>
+                  Send Test
+                </button>
                 <button
                   mat-flat-button
                   color="primary"

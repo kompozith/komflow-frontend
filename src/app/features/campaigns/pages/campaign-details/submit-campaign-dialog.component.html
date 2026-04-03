@@ -1,13 +1,17 @@
-<h2 mat-dialog-title>Submit Campaign</h2>
+<h2 mat-dialog-title>{{ data.isResubmit ? 'Retry Failed Sends' : 'Submit Campaign' }}</h2>
 <mat-dialog-content>
-  <p>Are you sure you want to submit the campaign "{{ data?.campaignName }}"?</p>
-  <p class="text-muted mb-0">This will start sending messages to recipients.</p>
-  <p *ngIf="data?.hasLinkedEventAudience" class="text-muted mt-2 mb-0">
+  <p *ngIf="!data.isResubmit">Are you sure you want to submit the campaign "{{ data.campaignName }}"?</p>
+  <p *ngIf="data.isResubmit">Retry failed sends for campaign "{{ data.campaignName }}"?</p>
+  <p class="text-muted mb-0" *ngIf="!data.isResubmit">This will start sending messages to recipients.</p>
+  <p class="text-muted mb-0" *ngIf="data.isResubmit">Only contacts whose previous send attempt <strong>failed</strong> will be retried. Contacts already reached successfully will be skipped.</p>
+  <p *ngIf="!data.isResubmit && data.hasLinkedEventAudience" class="text-muted mt-2 mb-0">
     Linked event audience will also be notified
-    <span *ngIf="data?.eventTitle">for "{{ data?.eventTitle }}"</span>.
+    <span *ngIf="data.eventTitle">for "{{ data.eventTitle }}"</span>.
   </p>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-stroked-button mat-dialog-close>Cancel</button>
-  <button mat-flat-button color="primary" (click)="confirm()">Submit</button>
+  <button mat-flat-button [color]="data.isResubmit ? 'warn' : 'primary'" (click)="confirm()">
+    {{ data.isResubmit ? 'Retry Failed' : 'Submit' }}
+  </button>
 </mat-dialog-actions>

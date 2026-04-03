@@ -1,19 +1,112 @@
-.metric-card {
-  padding: 12px 16px;
-  background: #f7f8fb;
+// ── Delivery metrics strip ──────────────────────────────────────────────────
+
+.delivery-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.delivery-metric {
+  padding: 14px 16px;
   border-radius: 10px;
+  border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, .12));
+  background: var(--mat-sys-surface-container, transparent);
 }
 
-.metric-label {
-  font-size: 12px;
-  color: #6c757d;
-  margin-bottom: 4px;
+.delivery-metric__label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--mat-sys-on-surface-variant, #6c757d);
+  margin-bottom: 6px;
 }
 
-.metric-value {
-  font-size: 18px;
-  font-weight: 600;
+.delivery-metric__value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--mat-sys-on-background, inherit);
+  line-height: 1.2;
+
+  &--success { color: #22c55e; }
+  &--error   { color: #ef4444; }
 }
+
+.delivery-metric__denom {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: .55;
+}
+
+// ── Results filters row ─────────────────────────────────────────────────────
+
+.results-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+
+  @media (max-width: 480px) { flex-wrap: wrap; }
+}
+
+.results-search-field {
+  flex: 0 0 320px;
+  width: 320px;
+  margin-left: auto;
+  margin-bottom: 0 !important;
+
+  .mat-mdc-form-field-subscript-wrapper { display: none !important; }
+  .mat-mdc-text-field-wrapper { margin-bottom: 0 !important; }
+}
+
+.results-status-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, .12));
+  background: var(--mat-sys-surface-container, transparent);
+  flex-shrink: 0;
+}
+
+.results-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant, #6c757d);
+  transition: background .15s, color .15s, box-shadow .15s;
+  white-space: nowrap;
+  font-family: inherit;
+
+  i-tabler { display: flex; }
+
+  &:hover { background: var(--mat-sys-surface-bright, rgba(0, 0, 0, .05)); }
+
+  &.active {
+    background: var(--mat-sys-surface, #fff);
+    color: var(--mat-sys-primary, #5d87ff);
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .15);
+  }
+
+  &.success.active { color: #22c55e; }
+  &.failed.active  { color: #ef4444; }
+}
+
+// ── Live stream indicator ───────────────────────────────────────────────────
 
 .live-indicator {
   width: 10px;
@@ -28,12 +121,14 @@
   box-shadow: 0 0 0 4px rgba(32, 201, 151, 0.15);
 }
 
+// ── Log list ───────────────────────────────────────────────────────────────
+
 .log-list {
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--mat-sys-outline-variant, #e9ecef);
   border-radius: 10px;
   max-height: 280px;
   overflow-y: auto;
-  background: #ffffff;
+  background: var(--mat-sys-surface, #ffffff);
 }
 
 .log-item {
@@ -41,39 +136,20 @@
   grid-template-columns: 70px 90px 1fr;
   gap: 12px;
   padding: 10px 14px;
-  border-bottom: 1px solid #f1f3f5;
+  border-bottom: 1px solid var(--mat-sys-outline-variant, #f1f3f5);
   font-size: 12px;
+
+  &:last-child { border-bottom: none; }
 }
 
-.log-item:last-child {
-  border-bottom: none;
-}
-
-.log-time {
-  color: #6c757d;
-}
+.log-time { color: var(--mat-sys-on-surface-variant, #6c757d); }
 
 .log-type {
   text-transform: uppercase;
   font-weight: 600;
-}
-
-.log-type.started {
-  color: #0d6efd;
-}
-
-.log-type.success {
-  color: #198754;
-}
-
-.log-type.failed {
-  color: #dc3545;
-}
-
-.log-type.completed {
-  color: #20c997;
-}
-
-.log-type.error {
-  color: #6c757d;
+  &.started   { color: #0d6efd; }
+  &.success   { color: #198754; }
+  &.failed    { color: #dc3545; }
+  &.completed { color: #20c997; }
+  &.error     { color: #6c757d; }
 }

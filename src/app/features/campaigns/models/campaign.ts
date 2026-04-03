@@ -244,3 +244,40 @@ export interface CampaignDetails {
   submissionReport?: CampaignSubmissionReport;
   deliveryReport?: CampaignSubmissionReport;
 }
+
+export interface CampaignContactResultDto {
+  id: number;
+  contactId: number;
+  contactEmail: string;
+  contactFirstName: string;
+  contactLastName: string;
+  /** EMAIL, SMS or WHATSAPP */
+  channel: string;
+  /** SUCCESS or FAILED */
+  status: string;
+  /** Timestamp of the send attempt */
+  sentAt: string;
+  /** Null when status = SUCCESS */
+  errorMessage: string | null;
+}
+
+export interface CampaignResultsSummaryDto {
+  successCount: number;
+  failedCount: number;
+  /** successCount + failedCount — contacts actually attempted */
+  totalCount: number;
+  /** Total unique contacts the campaign intended to reach */
+  totalTargetCount: number;
+}
+
+export interface CampaignContactResultPage {
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  content: CampaignContactResultDto[];
+  number: number;
+  numberOfElements: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+}

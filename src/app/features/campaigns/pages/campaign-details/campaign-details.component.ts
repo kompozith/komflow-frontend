@@ -2,10 +2,20 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { CampaignService } from '../../services/campaign.service';
-import { CampaignDetails, CampaignEvent, CampaignMessageAttachment, CampaignStatus, CampaignSubmissionReport } from '../../models/campaign';
+import {
+  CampaignContactResultPage,
+  CampaignDetails,
+  CampaignEvent,
+  CampaignMessageAttachment,
+  CampaignResultsSummaryDto,
+  CampaignStatus,
+  CampaignSubmissionReport
+} from '../../models/campaign';
 import { MaterialModule } from 'src/app/material.module';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { BadgeComponent, BadgeVariant } from 'src/app/shared/components/badge/badge.component';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { SubmitCampaignDialogComponent } from 'src/app/features/campaigns/pages/campaign-details/submit-campaign-dialog.component';
@@ -14,7 +24,7 @@ import { MediaPreviewService } from 'src/app/shared/services/media-preview.servi
 
 @Component({
   selector: 'app-campaign-details',
-  imports: [MaterialModule, CommonModule, BadgeComponent, TablerIconsModule, SubmitCampaignDialogComponent, ScheduleCampaignDialogComponent],
+  imports: [MaterialModule, CommonModule, FormsModule, BadgeComponent, TablerIconsModule, SubmitCampaignDialogComponent, ScheduleCampaignDialogComponent],
   templateUrl: './campaign-details.component.html',
   styleUrl: './campaign-details.component.scss'
 })
@@ -23,6 +33,7 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
   campaign: CampaignDetails | null = null;
   isLoading = true;
   isSubmitting = false;
+  isResubmitting = false;
   campaignId: number = 0;
 
   CampaignStatus = CampaignStatus;
@@ -31,6 +42,16 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
   liveLogs: { timestamp: string; type: string; message: string }[] = [];
   reportAvailable = false;
   private eventSource: EventSource | null = null;
+
+  // Results from /results and /results/summary endpoints
+  resultsSummary: CampaignResultsSummaryDto | null = null;
+  resultsPage: CampaignContactResultPage | null = null;
+  resultsCurrentPage = 0;
+  resultsPageSize = 10;
+  resultsStatusFilter = '';
+  resultsSearchText = '';
+  isLoadingResults = false;
+  readonly resultsColumns = ['name', 'channel', 'status', 'sentAt', 'error'];
   private readonly mockUserValues: Record<string, string> = {
     '{{firstName}}': 'Alice',
     '{{lastName}}': 'Johnson',
@@ -72,6 +93,14 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         if (campaign.status === CampaignStatus.RUNNING) {
           this.startEventStream();
+        }
+        if (
+          campaign.status === CampaignStatus.SUCCESS ||
+          campaign.status === CampaignStatus.PARTIAL_SUCCESS ||
+          campaign.status === CampaignStatus.FAILED
+        ) {
+          this.loadResultsSummary();
+          this.loadResults(0);
         }
       },
       error: (error) => {
@@ -116,6 +145,13 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
 
   canSubmit(): boolean {
     return this.campaign?.status === CampaignStatus.DRAFT;
+  }
+
+  canResubmit(): boolean {
+    return (
+      this.campaign?.status === CampaignStatus.FAILED ||
+      this.campaign?.status === CampaignStatus.PARTIAL_SUCCESS
+    );
   }
 
   canSchedule(): boolean {
@@ -210,11 +246,19 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
   }
 
   get isInSubmission(): boolean {
-    return this.isSubmitting || this.campaign?.status === CampaignStatus.RUNNING;
+    return this.isSubmitting || this.isResubmitting || this.campaign?.status === CampaignStatus.RUNNING;
   }
 
   get hasDeliveryReport(): boolean {
     return this.reportAvailable || this.progress.total > 0 || this.liveLogs.length > 0;
+  }
+
+  get hasResults(): boolean {
+    return (
+      this.campaign?.status === CampaignStatus.SUCCESS ||
+      this.campaign?.status === CampaignStatus.PARTIAL_SUCCESS ||
+      this.campaign?.status === CampaignStatus.FAILED
+    );
   }
 
   getStatusColor(status: CampaignStatus): BadgeVariant {
@@ -457,6 +501,8 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
         this.campaign.status = event.status;
       }
       this.stopEventStream();
+      this.loadResultsSummary();
+      this.loadResults(0);
     }
   }
 
@@ -502,5 +548,80 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
 
   private appendLog(type: string, message: string, timestamp: string): void {
     this.liveLogs = [{ timestamp, type, message }, ...this.liveLogs].slice(0, 200);
+  }
+
+  resubmitCampaign(): void {
+    if (!this.campaign || !this.canResubmit() || this.isResubmitting) return;
+
+    const dialogRef = this.dialog.open(SubmitCampaignDialogComponent, {
+      data: {
+        campaignName: this.campaign.name,
+        isResubmit: true
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
+      this.isResubmitting = true;
+      this.resetDeliveryReport();
+      this.campaignService.resubmitCampaign(this.campaignId).subscribe({
+        next: (response) => {
+          this.snackBar.open(response.message || 'Campaign resubmission started', 'Close', { duration: 3000 });
+          this.loadCampaignDetails();
+          this.startEventStream();
+          this.isResubmitting = false;
+        },
+        error: (error) => {
+          console.error('Error resubmitting campaign:', error);
+          const errorMessage = error.error?.message || error.error?.error || 'Error resubmitting campaign';
+          this.snackBar.open(errorMessage, 'Close', { duration: 5000 });
+          this.isResubmitting = false;
+        }
+      });
+    });
+  }
+
+  loadResultsSummary(): void {
+    this.campaignService.getCampaignResultsSummary(this.campaignId).subscribe({
+      next: (summary) => {
+        this.resultsSummary = summary;
+      },
+      error: (error) => {
+        console.error('Error loading campaign results summary:', error);
+      }
+    });
+  }
+
+  loadResults(page = 0): void {
+    this.isLoadingResults = true;
+    const status = this.resultsStatusFilter || undefined;
+    const search = this.resultsSearchText || undefined;
+    this.campaignService.getCampaignResults(this.campaignId, status, search, page, this.resultsPageSize).subscribe({
+      next: (resultsPage) => {
+        this.resultsPage = resultsPage;
+        this.resultsCurrentPage = resultsPage.number;
+        this.isLoadingResults = false;
+      },
+      error: (error) => {
+        console.error('Error loading campaign results:', error);
+        this.isLoadingResults = false;
+      }
+    });
+  }
+
+  onResultsPageChange(event: PageEvent): void {
+    this.resultsPageSize = event.pageSize;
+    this.loadResults(event.pageIndex);
+  }
+
+  onResultsStatusFilterChange(status: string): void {
+    this.resultsStatusFilter = status;
+    this.loadResults(0);
+  }
+
+  onResultsSearchChange(text: string): void {
+    this.resultsSearchText = text;
+    this.loadResults(0);
   }
 }

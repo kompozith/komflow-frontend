@@ -94,8 +94,8 @@ export class ContactListComponent implements OnInit {
   }
 
 
-  getContactInitials(firstName: string, lastName: string): string {
-    return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+  getContactInitials(firstName: string | null | undefined, lastName: string | null | undefined): string {
+    return ((firstName?.charAt(0) ?? '') + (lastName?.charAt(0) ?? '')).toUpperCase();
   }
 
   getContactBadgeClass(contactId: string): string {

@@ -109,6 +109,15 @@ export class MessageService {
     return this.http.post<MessageSendResult>(`${this.apiUrl}/${messageId}/test`, body, { headers: this.getAuthHeaders() });
   }
 
+  // Send a direct test to an email address or phone number
+  testMessageDirect(messageId: string, recipient: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/${messageId}/test-direct`,
+      { recipient },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   uploadAttachment(file: globalThis.File): Observable<MessageAttachment> {
     const formData = new FormData();
     formData.append('file', file);

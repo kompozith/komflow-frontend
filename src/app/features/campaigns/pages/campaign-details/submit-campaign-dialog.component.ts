@@ -28,6 +28,7 @@ export class SubmitCampaignDialogComponent {
     campaignName: string;
     hasLinkedEventAudience?: boolean;
     eventTitle?: string | null;
+    isResubmit?: boolean;
   };
 
   confirm(): void {

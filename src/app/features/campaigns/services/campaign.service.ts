@@ -13,7 +13,9 @@ import {
   CampaignStats,
   CampaignRecipient,
   CampaignDetails,
-  ScheduleCampaignRequest
+  ScheduleCampaignRequest,
+  CampaignContactResultPage,
+  CampaignResultsSummaryDto
 } from '../models/campaign';
 
 @Injectable({
@@ -68,6 +70,10 @@ export class CampaignService {
     return this.http.put<{ message: string; data: {} }>(`${this.apiUrl}/${id}/submit`, {}, { headers: this.getAuthHeaders() });
   }
 
+  resubmitCampaign(id: number): Observable<{ message: string; data: null }> {
+    return this.http.put<{ message: string; data: null }>(`${this.apiUrl}/${id}/resubmit`, {}, { headers: this.getAuthHeaders() });
+  }
+
   createCampaign(campaign: CreateCampaignRequest): Observable<Campaign> {
     return this.http.post<Campaign>(this.apiUrl, campaign, { headers: this.getAuthHeaders() });
   }
@@ -113,5 +119,18 @@ export class CampaignService {
     const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
     const tokenParam = token ? `?token=${encodeURIComponent(token)}` : '';
     return new EventSource(`${this.apiUrl}/${campaignId}/events${tokenParam}`);
+  }
+
+  getCampaignResultsSummary(id: number): Observable<CampaignResultsSummaryDto> {
+    return this.http.get<CampaignResultsSummaryDto>(`${this.apiUrl}/${id}/results/summary`, { headers: this.getAuthHeaders() });
+  }
+
+  getCampaignResults(id: number, status?: string, search?: string, page = 0, size = 10): Observable<CampaignContactResultPage> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (status) params = params.set('status', status);
+    if (search && search.trim()) params = params.set('search', search.trim());
+    return this.http.get<CampaignContactResultPage>(`${this.apiUrl}/${id}/results`, { params, headers: this.getAuthHeaders() });
   }
 }
