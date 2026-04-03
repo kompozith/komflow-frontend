@@ -308,20 +308,18 @@ export class MessageEditorComponent implements OnInit, AfterViewInit, OnChanges 
       const offset = range.startOffset;
 
       if (node.nodeType === Node.TEXT_NODE && offset === 0) {
-        // Check if we're at the start of a text node and the previous sibling is a variable span
-        const prevSibling = node.previousSibling;
-        if (prevSibling && prevSibling.nodeType === Node.ELEMENT_NODE &&
-            (prevSibling as Element).classList.contains('editor-variable-chip')) {
+        // Walk backwards (including through inline format wrappers) to find a chip
+        const chip = this.findChipBefore(node);
+        if (chip) {
           event.preventDefault();
-          (prevSibling as Element).remove();
+          this.removeChipCleanly(chip);
           this.updateFormControl();
           return;
         }
       } else if (node.nodeType === Node.ELEMENT_NODE &&
                   (node as Element).classList.contains('editor-variable-chip')) {
-        // If we're inside a variable span, delete the whole span
         event.preventDefault();
-        (node as Element).remove();
+        this.removeChipCleanly(node as Element);
         this.updateFormControl();
         return;
       }
@@ -510,6 +508,9 @@ export class MessageEditorComponent implements OnInit, AfterViewInit, OnChanges 
   applyFormatting(command: 'bold' | 'italic' | 'underline' | 'insertUnorderedList' | 'insertOrderedList'): void {
     this.focusEditor();
     document.execCommand(command, false);
+    // Browsers split inline formatting tags around contenteditable=false chips.
+    // e.g. <b>Hello </b>[chip]<b> World</b>  →  <b>Hello [chip] World</b>
+    this.mergeAdjacentFormats();
     this.updateFormControl();
   }
 
@@ -525,6 +526,115 @@ export class MessageEditorComponent implements OnInit, AfterViewInit, OnChanges 
     this.focusEditor();
     document.execCommand('removeFormat', false);
     this.updateFormControl();
+  }
+
+  /**
+   * After execCommand, browsers split inline formatting tags around
+   * contenteditable=false chips. This method merges them back.
+   *
+   * Before: <b>Hello </b>[chip]<b> World</b>
+   * After:  <b>Hello [chip] World</b>
+   */
+  private mergeAdjacentFormats(): void {
+    if (!this.contentEditor) return;
+    const editor = this.contentEditor.nativeElement;
+    const INLINE_TAGS = ['B', 'STRONG', 'I', 'EM', 'U', 'S'];
+
+    let changed = true;
+    while (changed) {
+      changed = false;
+      editor.querySelectorAll(INLINE_TAGS.join(',')).forEach(el => {
+        if (!el.isConnected) return;
+        const next = el.nextSibling as Node | null;
+        if (!next) return;
+
+        // Case 1: adjacent identical tag → absorb its children
+        if (
+          next.nodeType === Node.ELEMENT_NODE &&
+          (next as Element).tagName === el.tagName
+        ) {
+          while (next.firstChild) el.appendChild(next.firstChild);
+          next.parentNode?.removeChild(next);
+          changed = true;
+          return;
+        }
+
+        // Case 2: chip sitting between two identical tags → pull chip inside, merge trailing tag
+        if (
+          next.nodeType === Node.ELEMENT_NODE &&
+          (next as Element).classList?.contains('editor-variable-chip') &&
+          next.nextSibling?.nodeType === Node.ELEMENT_NODE &&
+          (next.nextSibling as Element).tagName === el.tagName
+        ) {
+          const trailingTag = next.nextSibling as Element;
+          el.appendChild(next);                        // move chip inside el
+          while (trailingTag.firstChild) el.appendChild(trailingTag.firstChild);
+          trailingTag.parentNode?.removeChild(trailingTag);
+          changed = true;
+        }
+      });
+    }
+  }
+
+  /**
+   * Find the nearest chip immediately before `node`, searching through
+   * inline formatting wrappers and up the parent chain when needed.
+   */
+  private findChipBefore(node: Node): Element | null {
+    let prev = node.previousSibling;
+
+    // Direct chip sibling
+    if (
+      prev?.nodeType === Node.ELEMENT_NODE &&
+      (prev as Element).classList.contains('editor-variable-chip')
+    ) {
+      return prev as Element;
+    }
+
+    // Inline format tag whose last visible child is a chip
+    if (prev?.nodeType === Node.ELEMENT_NODE) {
+      const lastChild = (prev as Element).lastChild;
+      if (
+        lastChild?.nodeType === Node.ELEMENT_NODE &&
+        (lastChild as Element).classList.contains('editor-variable-chip')
+      ) {
+        return lastChild as Element;
+      }
+      // Handle empty trailing text node after chip inside format tag
+      if (
+        lastChild?.nodeType === Node.TEXT_NODE &&
+        !(lastChild as Text).data.trim()
+      ) {
+        const beforeText = lastChild.previousSibling;
+        if (
+          beforeText?.nodeType === Node.ELEMENT_NODE &&
+          (beforeText as Element).classList.contains('editor-variable-chip')
+        ) {
+          return beforeText as Element;
+        }
+      }
+    }
+
+    // Walk up if node is the first child of a non-root element
+    if (!prev && node.parentNode && node.parentNode !== this.contentEditor?.nativeElement) {
+      return this.findChipBefore(node.parentNode);
+    }
+
+    return null;
+  }
+
+  /**
+   * Remove a chip and clean up any empty inline format wrapper left behind.
+   */
+  private removeChipCleanly(chip: Element): void {
+    const parent = chip.parentElement;
+    chip.remove();
+    if (parent && parent !== this.contentEditor?.nativeElement) {
+      const isEmpty =
+        !parent.textContent?.trim() &&
+        !parent.querySelector('.editor-variable-chip');
+      if (isEmpty) parent.remove();
+    }
   }
 
   private focusEditor(): void {
