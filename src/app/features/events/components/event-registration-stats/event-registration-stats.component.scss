@@ -1,0 +1,205 @@
+// ── SSE indicator ────────────────────────────────────────────────────────────
+.sse-indicator {
+  display: inline-flex;
+  align-items: center;
+
+  .sse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ffa726; // orange = reconnexion par défaut
+    transition: background-color 0.4s ease;
+  }
+
+  &.connected .sse-dot {
+    background-color: #13deb9; // vert = actif
+    animation: pulse-dot 2s infinite;
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.55; transform: scale(1.25); }
+}
+
+// ── KPI cards ─────────────────────────────────────────────────────────────────
+.kpi-card {
+  transition: box-shadow 0.25s ease;
+
+  .kpi-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    font-size: 22px;
+
+    mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .kpi-label {
+    line-height: 1.2;
+  }
+
+  .kpi-value {
+    font-size: 22px;
+    line-height: 1.1;
+  }
+
+  // Animation flash au moment d'une mise à jour SSE
+  &.flash {
+    animation: flash-update 0.9s ease-out;
+  }
+}
+
+@keyframes flash-update {
+  0%   { box-shadow: 0 0 0 0 rgba(93, 135, 255, 0.45); }
+  50%  { box-shadow: 0 0 0 8px rgba(93, 135, 255, 0.12); }
+  100% { box-shadow: 0 0 0 0 rgba(93, 135, 255, 0); }
+}
+
+// ── Period toggle ─────────────────────────────────────────────────────────────
+.period-toggle {
+  ::ng-deep .mat-button-toggle {
+    font-size: 12px;
+    height: 30px;
+    line-height: 30px;
+  }
+
+  ::ng-deep .mat-button-toggle-label-content {
+    padding: 0 12px;
+    line-height: 30px;
+  }
+}
+
+// ── Breakdown select ──────────────────────────────────────────────────────────
+.breakdown-select {
+  font-size: 12px;
+  width: 130px;
+
+  ::ng-deep .mat-mdc-select-trigger {
+    font-size: 12px;
+  }
+}
+
+// ── Empty chart placeholder ───────────────────────────────────────────────────
+.empty-chart {
+  height: 120px;
+}
+
+// ── Skeleton loader ───────────────────────────────────────────────────────────
+.skeleton-card {
+  .skeleton-line {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+
+    &.tall   { height: 22px; }
+    &.w-30   { width: 30%; }
+    &.w-40   { width: 40%; }
+    &.w-60   { width: 60%; }
+
+    & + .skeleton-line { margin-top: 8px; }
+  }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ── Alert inline ─────────────────────────────────────────────────────────────
+.alert-inline {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(255, 193, 7, 0.08);
+  border: 1px solid rgba(255, 193, 7, 0.25);
+}
+
+// ── Stats header ──────────────────────────────────────────────────────────────
+.stats-header {
+  .stats-title {
+    font-size: 15px;
+    color: var(--mat-sys-on-surface, #2a3547);
+  }
+}
+
+// ── Filtre puissant ───────────────────────────────────────────────────────────
+.filter-bar {
+  background: rgba(93, 135, 255, 0.04);
+  border: 1px solid rgba(93, 135, 255, 0.12);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.filter-presets {
+  .filter-btn {
+    height: 30px;
+    min-width: 44px;
+    padding: 0 10px;
+    font-size: 12px;
+    line-height: 30px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    color: #5a6a85;
+    transition: all 0.18s ease;
+
+    &:hover {
+      background: rgba(93, 135, 255, 0.08);
+      color: #5D87FF;
+    }
+
+    &.active {
+      background: #5D87FF;
+      color: #fff;
+      border-color: #5D87FF;
+
+      mat-icon { color: #fff; }
+    }
+
+    mat-icon {
+      vertical-align: middle;
+      line-height: 14px;
+      width: 14px;
+      height: 14px;
+      font-size: 14px;
+    }
+  }
+}
+
+.range-pickers {
+  .date-field {
+    width: 130px;
+
+    ::ng-deep .mat-mdc-text-field-wrapper {
+      padding: 0 8px;
+    }
+    ::ng-deep .mat-mdc-form-field-infix {
+      padding-top: 6px;
+      padding-bottom: 6px;
+      min-height: 36px;
+    }
+    ::ng-deep input.mat-mdc-input-element {
+      font-size: 12px;
+    }
+    ::ng-deep .mat-mdc-form-field-label {
+      font-size: 12px;
+    }
+  }
+}
+
+.filter-active-label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+

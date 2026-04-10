@@ -24,7 +24,7 @@ import { DeleteEventDialogComponent } from '../../components/delete-event-dialog
 export class EventDetailsComponent implements OnInit {
   event: AppEvent | null = null;
   loading = true;
-  private eventId = 0;
+  eventId = 0;
 
   constructor(
     private route: ActivatedRoute,

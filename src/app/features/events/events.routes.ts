@@ -5,6 +5,7 @@ import { EventCreateComponent } from './pages/event-create/event-create.componen
 import { EventEditComponent } from './pages/event-edit/event-edit.component';
 import { EventDetailsComponent } from './pages/event-details/event-details.component';
 import { EventWorkflowComponent } from './pages/event-workflow/event-workflow.component';
+import { EventStatsComponent } from './pages/event-stats/event-stats.component';
 
 export const EventsRoutes: Routes = [
   {
@@ -72,6 +73,20 @@ export const EventsRoutes: Routes = [
           urls: [
             { title: 'Events', url: 'events' },
             { title: 'Workflow' },
+          ],
+        },
+      },
+      {
+        path: 'details/:id/stats',
+        component: EventStatsComponent,
+        canActivate: [PermissionGuard],
+        data: {
+          title: 'Statistiques des inscriptions',
+          permissions: ['MESSAGE_SHOW'],
+          urls: [
+            { title: 'Events', url: 'events' },
+            { title: 'Détails', url: 'events/details/:id' },
+            { title: 'Statistiques' },
           ],
         },
       },

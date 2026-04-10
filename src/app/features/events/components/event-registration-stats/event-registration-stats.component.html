@@ -1,0 +1,214 @@
+﻿<div class="stats-block mb-3">
+
+  <!-- Skeleton -->
+  @if (loading()) {
+    <div class="row mb-3">
+      @for (i of [1,2,3]; track i) {
+        <div class="col-sm-6 col-lg-4 mb-3">
+          <mat-card class="cardWithShadow skeleton-card">
+            <mat-card-content class="p-4">
+              <div class="skeleton-line w-40 mb-2"></div>
+              <div class="skeleton-line w-60 tall mb-2"></div>
+              <div class="skeleton-line w-30"></div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error() && !loading()) {
+    <div class="alert-inline mb-3">
+      <mat-icon class="text-warning f-s-16">warning_amber</mat-icon>
+      <span class="text-muted f-s-13 ms-1">Statistiques indisponibles.</span>
+    </div>
+  }
+
+  <!-- Main -->
+  @if (!loading() && !error() && stats()) {
+
+    <!-- Header + filtre -->
+    <div class="stats-header mb-3">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="stats-title f-w-600 f-s-15">Inscriptions</span>
+        <span class="sse-indicator" [class.connected]="sseConnected()"
+          [matTooltip]="sseConnected() ? 'Flux en direct actif' : 'Reconnexion...'">
+          <span class="sse-dot"></span>
+        </span>
+      </div>
+
+      <!-- Barre de filtre -->
+      <div class="filter-bar d-flex align-items-center flex-wrap gap-2">
+        <div class="filter-presets d-flex gap-1 flex-wrap">
+          @for (p of filterPresets; track p.mode) {
+            <button mat-button class="filter-btn" [class.active]="filterMode() === p.mode" (click)="setFilter(p.mode)">
+              @if (p.mode === 'range') { <mat-icon class="f-s-14 me-1">date_range</mat-icon> }
+              {{ p.label }}
+            </button>
+          }
+        </div>
+
+        @if (filterMode() === 'range') {
+          <div class="range-pickers d-flex align-items-center gap-2">
+            <mat-form-field appearance="outline" class="date-field hide-hint">
+              <mat-label>Du</mat-label>
+              <input matInput [matDatepicker]="pickerFrom" [formControl]="rangeFromCtrl">
+              <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+              <mat-datepicker #pickerFrom></mat-datepicker>
+            </mat-form-field>
+            <span class="text-muted f-s-13"></span>
+            <mat-form-field appearance="outline" class="date-field hide-hint">
+              <mat-label>Au</mat-label>
+              <input matInput [matDatepicker]="pickerTo" [formControl]="rangeToCtrl" [min]="rangeFromCtrl.value">
+              <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+              <mat-datepicker #pickerTo></mat-datepicker>
+            </mat-form-field>
+          </div>
+        }
+
+        <span class="filter-active-label f-s-12 text-muted">
+          <mat-icon class="f-s-14 align-middle">filter_alt</mat-icon>
+          {{ filterLabel() }}
+        </span>
+      </div>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="row mb-3">
+
+      <!-- KPI 1 : Total -->
+      <div class="col-sm-6 col-lg-4 mb-3 mb-lg-0">
+        <mat-card class="cardWithShadow kpi-card h-100" [class.flash]="flashActive()">
+          <mat-card-content class="d-flex align-items-center gap-16 p-3">
+            <div class="kpi-icon icon-48 rounded d-flex align-items-center justify-content-center bg-light-primary">
+              <mat-icon class="text-primary">group</mat-icon>
+            </div>
+            <div class="flex-grow-1">
+              <p class="kpi-label text-muted f-s-13 mb-1">Total inscrits</p>
+              <h4 class="kpi-value f-w-600 m-0">{{ stats()!.totalRegistrations }}</h4>
+              <span class="text-muted f-s-12">toutes periodes</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- KPI 2 : Actifs -->
+      <div class="col-sm-6 col-lg-4 mb-3 mb-lg-0">
+        <mat-card class="cardWithShadow kpi-card h-100" [class.flash]="flashActive()">
+          <mat-card-content class="d-flex align-items-center gap-16 p-3">
+            <div class="kpi-icon icon-48 rounded d-flex align-items-center justify-content-center bg-light-success">
+              <mat-icon class="text-success">how_to_reg</mat-icon>
+            </div>
+            <div class="flex-grow-1">
+              <p class="kpi-label text-muted f-s-13 mb-1">Inscrits actifs</p>
+              <h4 class="kpi-value f-w-600 m-0">{{ stats()!.activeRegistrations }}</h4>
+              <span class="text-muted f-s-12">
+                {{ stats()!.totalRegistrations > 0
+                  ? ((stats()!.activeRegistrations / stats()!.totalRegistrations) * 100 | number:'1.0-0') + '% du total'
+                  : '---' }}
+              </span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- KPI 3 : Periode -->
+      <div class="col-sm-12 col-lg-4 mb-3 mb-lg-0">
+        <mat-card class="cardWithShadow kpi-card h-100" [class.flash]="flashActive()">
+          <mat-card-content class="d-flex align-items-center gap-16 p-3">
+            <div class="kpi-icon icon-48 rounded d-flex align-items-center justify-content-center bg-light-warning">
+              <mat-icon class="text-warning">trending_up</mat-icon>
+            </div>
+            <div class="flex-grow-1">
+              <p class="kpi-label text-muted f-s-13 mb-1">Inscriptions  {{ filterLabel() }}</p>
+              <h4 class="kpi-value f-w-600 m-0">{{ currentCount() }}</h4>
+              @if (showGrowth()) {
+                <div class="d-flex align-items-center gap-1 mt-1">
+                  <mat-icon class="f-s-14 {{ growthClass(growthRate()) }}">{{ growthIcon(growthRate()) }}</mat-icon>
+                  <span class="f-s-12 {{ growthClass(growthRate()) }} f-w-600">{{ formatGrowth(growthRate()) }}</span>
+                  <span class="text-muted f-s-12">vs {{ previousCount() }} ({{ prevFilterLabel() }})</span>
+                </div>
+              } @else {
+                <span class="text-muted f-s-12">pas de comparaison disponible</span>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+    </div><!-- /row KPI -->
+
+    <!-- Tendance + Repartition -->
+    <div class="row">
+
+      <!-- Sparkline -->
+      <div class="col-lg-8 mb-3 mb-lg-0">
+        <mat-card class="cardWithShadow h-100">
+          <mat-card-header class="pb-0">
+            <mat-card-title class="f-s-14 f-w-600">{{ trendTitle() }}</mat-card-title>
+            <mat-card-subtitle class="f-s-12">{{ filterLabel() }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            @if (sparklineHasData()) {
+              <apx-chart
+                [series]="sparklineChart.series"
+                [chart]="sparklineChart.chart"
+                [plotOptions]="sparklineChart.plotOptions"
+                [dataLabels]="sparklineChart.dataLabels"
+                [stroke]="sparklineChart.stroke"
+                [fill]="sparklineChart.fill"
+                [colors]="sparklineChart.colors"
+                [xaxis]="sparklineChart.xaxis"
+                [yaxis]="sparklineChart.yaxis"
+                [tooltip]="sparklineChart.tooltip"
+                [legend]="sparklineChart.legend"
+                [grid]="sparklineChart.grid">
+              </apx-chart>
+            } @else {
+              <div class="empty-chart d-flex align-items-center justify-content-center">
+                <span class="text-muted f-s-13">Pas de donnees pour cette periode.</span>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Donut repartition -->
+      <div class="col-lg-4">
+        <mat-card class="cardWithShadow h-100">
+          <mat-card-header class="pb-0">
+            <mat-card-title class="f-s-14 f-w-600">Repartition</mat-card-title>
+            <div class="ms-auto">
+              <mat-select [value]="selectedBreakdown()" (selectionChange)="onBreakdownChange($event.value)" class="breakdown-select f-s-12">
+                @for (opt of breakdownOptions; track opt.key) {
+                  <mat-option [value]="opt.key">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            @if (breakdownHasData()) {
+              <apx-chart
+                [series]="donutChart.series"
+                [chart]="donutChart.chart"
+                [labels]="donutChart.labels"
+                [dataLabels]="donutChart.dataLabels"
+                [legend]="donutChart.legend"
+                [stroke]="donutChart.stroke"
+                [tooltip]="donutChart.tooltip"
+                [plotOptions]="donutChart.plotOptions"
+                [colors]="donutChart.colors">
+              </apx-chart>
+            } @else {
+              <div class="empty-chart d-flex align-items-center justify-content-center">
+                <span class="text-muted f-s-13">Aucune donnee disponible.</span>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+    </div><!-- /row charts -->
+  }
+</div>

@@ -90,6 +90,40 @@ export interface EventRegistrationWorkflowStepInput {
   recipientEmails?: string | null;
 }
 
+// ── Statistiques d'inscription ───────────────────────────────────────────────
+
+export interface DailyRegistrationCount {
+  date: string;  // "yyyy-MM-dd"
+  count: number;
+}
+
+export interface EventRegistrationStats {
+  totalRegistrations: number;
+  activeRegistrations: number;
+  // Fenêtre 7 jours
+  newLast7Days: number;
+  previous7Days: number;
+  growthRateWeek: number;
+  // Fenêtre 30 jours
+  newLast30Days: number;
+  previous30Days: number;
+  growthRateMonth: number;
+  // Dernière inscription
+  lastRegistrationAt?: string;
+  // Tendance journalière (60 jours)
+  dailyTrend: DailyRegistrationCount[];
+  // Répartitions
+  countByCivility: Record<string, number>;
+  countByAgeRange: Record<string, number>;
+  countByCountry: Record<string, number>;
+  countByLanguage: Record<string, number>;
+  countByProfession: Record<string, number>;
+  // Champs pour le filtre dynamique
+  newInPeriod: number;
+  previousPeriodCount: number;
+  growthRatePeriod: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -104,6 +138,10 @@ export class EventService {
       'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),
     });
+  }
+
+  private getToken(): string | null {
+    return localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
   }
 
   listEvents(rangeStart?: string, rangeEnd?: string): Observable<AppEvent[]> {
@@ -133,5 +171,45 @@ export class EventService {
 
   deleteEvent(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() });
+  }
+
+  /** Charge initiale des statistiques d'inscription (REST) */
+  getEventRegistrationStats(id: number, from?: string, to?: string): Observable<EventRegistrationStats> {
+    let params = new HttpParams();
+    if (from) params = params.set('from', from);
+    if (to)   params = params.set('to', to);
+    return this.http.get<EventRegistrationStats>(
+      `${this.apiUrl}/${id}/registration-stats`,
+      { params, headers: this.getAuthHeaders() }
+    );
+  }
+
+  /**
+   * Flux SSE des statistiques d'inscription.
+   * Se déclenche uniquement lorsqu'une inscription survient côté backend.
+   * Le teardown ferme proprement le EventSource à la destruction du composant.
+   */
+  streamEventRegistrationStats(id: number): Observable<EventRegistrationStats> {
+    return new Observable<EventRegistrationStats>(observer => {
+      const token = this.getToken();
+      const url = `${this.apiUrl}/${id}/registration-stats/stream${token ? '?token=' + encodeURIComponent(token) : ''}`;
+      const source = new EventSource(url);
+
+      source.onmessage = (event: MessageEvent) => {
+        try {
+          observer.next(JSON.parse(event.data) as EventRegistrationStats);
+        } catch {
+          // payload malformé, on ignore silencieusement
+        }
+      };
+
+      source.onerror = () => {
+        // EventSource gère la reconnexion automatiquement.
+        // On ne complete pas l'Observable pour maintenir le flux actif.
+        observer.error('sse_error');
+      };
+
+      return () => source.close();
+    });
   }
 }

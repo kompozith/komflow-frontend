@@ -68,6 +68,10 @@ export class EventListComponent implements OnInit {
     this.router.navigate(['/events/details', event.id]);
   }
 
+  viewStats(event: AppEvent): void {
+    this.router.navigate(['/events/details', event.id, 'stats']);
+  }
+
   edit(event: AppEvent): void {
     this.router.navigate(['/events/edit', event.id]);
   }
