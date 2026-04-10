@@ -42,7 +42,8 @@ export interface Message {
   variables: MessageVariable[];
   attachments: MessageAttachment[];
   attachmentCount: number;
-  event?: MessageEventSummary | null;
+  event?: MessageEventSummary | null;  // premier événement (compat)
+  events?: MessageEventSummary[];
   createdAt: string;
   updatedAt: string;
   createdBy: string;
@@ -83,7 +84,7 @@ export interface CreateMessageRequest {
   content: string;
   channel: MessageChannel;
   attachments: MessageAttachment[];
-  eventId?: number | null;
+  eventIds?: number[];
   variables: Omit<MessageVariable, 'id'>[];
 }
 
@@ -92,7 +93,7 @@ export interface UpdateMessageRequest {
   content?: string;
   channel?: MessageChannel;
   attachments?: MessageAttachment[];
-  eventId?: number | null;
+  eventIds?: number[];
   variables?: MessageVariable[];
 }
 

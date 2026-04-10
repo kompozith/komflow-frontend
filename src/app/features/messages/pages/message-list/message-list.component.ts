@@ -25,6 +25,7 @@ import { MessageService } from '../../services/message.service';
 import { Message, MessagePage, MessageFilters, MessageChannel } from '../../models/message';
 import { BadgeComponent, BadgeVariant } from '../../../../shared/components/badge/badge.component';
 import { DeleteMessageDialogComponent } from './delete-message-dialog/delete-message-dialog.component';
+import { DuplicateMessageDialogComponent } from './duplicate-message-dialog/duplicate-message-dialog.component';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { excerptFromHtml } from '../../utils/message-rich-text.util';
 import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
@@ -222,6 +223,19 @@ export class MessageListComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.event === 'Delete') {
+        this.loadMessages();
+      }
+    });
+  }
+
+  duplicateMessage(message: Message): void {
+    const dialogRef = this.dialog.open(DuplicateMessageDialogComponent, {
+      width: '480px',
+      data: { message },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.duplicated) {
         this.loadMessages();
       }
     });

@@ -132,8 +132,8 @@
 
 // ── Filtre puissant ───────────────────────────────────────────────────────────
 .filter-bar {
-  background: rgba(93, 135, 255, 0.04);
-  border: 1px solid rgba(93, 135, 255, 0.12);
+  background: color-mix(in srgb, var(--mat-sys-primary) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
   border-radius: 10px;
   padding: 8px 12px;
 }
@@ -147,20 +147,20 @@
     line-height: 30px;
     border-radius: 6px;
     border: 1px solid transparent;
-    color: #5a6a85;
+    color: var(--mat-sys-on-surface-variant);
     transition: all 0.18s ease;
 
     &:hover {
-      background: rgba(93, 135, 255, 0.08);
-      color: #5D87FF;
+      background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+      color: var(--mat-sys-primary);
     }
 
     &.active {
-      background: #5D87FF;
-      color: #fff;
-      border-color: #5D87FF;
+      background: var(--mat-sys-primary);
+      color: var(--mat-sys-on-primary);
+      border-color: var(--mat-sys-primary);
 
-      mat-icon { color: #fff; }
+      mat-icon { color: var(--mat-sys-on-primary); }
     }
 
     mat-icon {

@@ -60,7 +60,7 @@ export class MessageCreateComponent implements OnInit {
     // Subscribe to channel changes to update title validators
     this.messageForm.get('channel')?.valueChanges.subscribe(channel => {
       this.updateTitleValidators();
-      if (channel !== MessageChannel.EMAIL) {
+      if (channel === MessageChannel.SMS) {
         this.attachments = [];
       }
     });
@@ -104,7 +104,7 @@ export class MessageCreateComponent implements OnInit {
         content: formValue.content,
         channel: formValue.channel,
         attachments: this.attachments,
-        eventId: formValue.eventId ? Number(formValue.eventId) : null,
+        eventIds: formValue.eventId ? [Number(formValue.eventId)] : [],
         variables: [] // No custom variables, using API variables instead
       };
 
@@ -172,6 +172,18 @@ export class MessageCreateComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const files = input.files;
     if (!files || files.length === 0) {
+      return;
+    }
+
+    const channel = this.messageForm.get('channel')?.value as MessageChannel;
+    const maxBytes = channel === MessageChannel.WHATSAPP ? 30 * 1024 * 1024 : null;
+    const oversized = Array.from(files).filter(f => maxBytes !== null && f.size > maxBytes);
+    if (oversized.length > 0) {
+      this.snackBar.open(
+        `WhatsApp attachments must be ≤ 30 MB. Rejected: ${oversized.map(f => f.name).join(', ')}`,
+        'Close', { duration: 5000 }
+      );
+      input.value = '';
       return;
     }
 

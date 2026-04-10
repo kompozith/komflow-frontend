@@ -253,8 +253,17 @@ export class MessageEditorComponent implements OnInit, AfterViewInit, OnChanges 
       return;
     }
     const editor = this.contentEditor.nativeElement;
+
+    // WHATSAPP / SMS channels store content as plain text with \n line breaks.
+    // The HTML parser treats \n as collapsible whitespace, so line breaks would
+    // silently disappear. Detect plain-text content and convert \n → <br> first.
+    const isHtml = /<[a-zA-Z][^>]*>/i.test(content || '');
+    const htmlContent = isHtml
+      ? (content || '')
+      : (content || '').replace(/\n/g, '<br>');
+
     const parser = new DOMParser();
-    const doc = parser.parseFromString(content || '', 'text/html');
+    const doc = parser.parseFromString(htmlContent, 'text/html');
     editor.innerHTML = '';
 
     const transformed = this.replaceTokensWithChips(doc.body);
@@ -343,7 +352,14 @@ export class MessageEditorComponent implements OnInit, AfterViewInit, OnChanges 
   private handlePaste(event: ClipboardEvent): void {
     event.preventDefault();
     const text = event.clipboardData?.getData('text/plain') || '';
-    document.execCommand('insertText', false, text);
+    // Convert newlines to <br> so pasted line breaks are preserved
+    // in the contenteditable div regardless of browser.
+    const html = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\n/g, '<br>');
+    document.execCommand('insertHTML', false, html);
   }
 
   private positionAutocomplete(): void {

@@ -139,6 +139,13 @@
                   <span>Edit</span>
                 </div>
               </button>
+              <button mat-menu-item (click)="duplicateMessage(element)">
+                <div class="d-flex align-items-center">
+                  <tabler-icon name="copy" class="m-x-6"></tabler-icon>
+                  <span>Dupliquer</span>
+                </div>
+              </button>
+              <mat-divider></mat-divider>
               <button mat-menu-item>
                 <div class="d-flex align-items-center text-error" (click)="deleteMessage(element)">
                   <tabler-icon name="trash" class="m-x-6"></tabler-icon>

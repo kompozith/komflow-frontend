@@ -1,6 +1,7 @@
 ﻿import {
   Component,
   DestroyRef,
+  effect,
   inject,
   Input,
   OnInit,
@@ -18,6 +19,7 @@ import {
   EventRegistrationStats,
   EventService,
 } from 'src/app/features/core/services/event.service';
+import { ChartThemeService } from 'src/app/shared/services/chart-theme.service';
 
 export type FilterMode = 'all' | 'today' | '7d' | '30d' | '1y' | 'range';
 type BreakdownKey = 'countByLanguage' | 'countByCountry' | 'countByCivility' | 'countByAgeRange' | 'countByProfession';
@@ -37,8 +39,9 @@ export interface BreakdownOption { key: BreakdownKey; label: string; }
 export class EventRegistrationStatsComponent implements OnInit {
   @Input() eventId!: number;
 
-  private readonly eventService = inject(EventService);
-  private readonly destroyRef   = inject(DestroyRef);
+  private readonly eventService  = inject(EventService);
+  private readonly destroyRef    = inject(DestroyRef);
+  private readonly chartTheme    = inject(ChartThemeService);
 
   stats       = signal<EventRegistrationStats | null>(null);
   loading     = signal(true);
@@ -75,6 +78,18 @@ export class EventRegistrationStatsComponent implements OnInit {
   // Chart configs  pattern Partial<any>|any standard projet ng-apexcharts
   sparklineChart: Partial<any> | any = {};
   donutChart:     Partial<any> | any = {};
+
+  constructor() {
+    // Relit les couleurs du thème et reconstruit les graphiques quand la palette change
+    effect(() => {
+      this.chartTheme.palette(); // abonnement réactif
+      const s = this.stats();
+      if (s) {
+        // requestAnimationFrame assure que le DOM a appliqué les nouvelles CSS vars
+        requestAnimationFrame(() => this.rebuildCharts(s));
+      }
+    });
+  }
 
   // --- Computed ---
 
@@ -206,27 +221,35 @@ export class EventRegistrationStatsComponent implements OnInit {
   }
 
   private rebuildSparkline(stats: EventRegistrationStats): void {
-    const trend  = stats.dailyTrend ?? [];
-    const labels = trend.map((d: any) => d.date);
+    const trend      = stats.dailyTrend ?? [];
+    const labels     = trend.map((d: any) => d.date);
     const showLabels = trend.length <= 31;
+    const p          = this.chartTheme.palette();
+
     this.sparklineChart = {
       series:      [{ name: 'Inscriptions', data: trend.map((d: any) => d.count) }],
-      chart:       { type: 'bar', height: 180, toolbar: { show: false } },
+      chart:       { type: 'bar', height: 180, toolbar: { show: false },
+                     foreColor: p.onSurface, background: 'transparent' },
       plotOptions: { bar: { columnWidth: '65%', borderRadius: 3 } },
       dataLabels:  { enabled: false },
       stroke:      { show: false },
       fill:        { opacity: 1 },
-      colors:      ['#5D87FF'],
+      colors:      [p.primary],
       xaxis: {
         categories: labels,
-        labels:     { show: showLabels, rotate: -45, style: { fontSize: '10px' } },
+        labels:     { show: showLabels, rotate: -45,
+                      style: { fontSize: '10px', colors: p.onSurface } },
         axisBorder: { show: false },
         axisTicks:  { show: false },
       },
-      yaxis:   { show: true, labels: { style: { fontSize: '10px' } } },
-      tooltip: { enabled: true },
+      yaxis:   { show: true, labels: { style: { fontSize: '10px', colors: p.onSurface } } },
+      tooltip: {
+        enabled: true,
+        theme: this.isDarkTheme() ? 'dark' : 'light',
+        style: { fontSize: '12px' },
+      },
       legend:  { show: false },
-      grid:    { show: true, strokeDashArray: 4, borderColor: '#f0f0f0' },
+      grid:    { show: true, strokeDashArray: 4, borderColor: p.outline },
     };
   }
 
@@ -234,20 +257,43 @@ export class EventRegistrationStatsComponent implements OnInit {
     const raw    = stats[this.selectedBreakdown()] ?? {};
     const labels = Object.keys(raw);
     const series = Object.values(raw).map((v: any) => Number(v));
+    const p      = this.chartTheme.palette();
+
     this.donutChart = {
       series,
-      chart:      { type: 'donut', height: 200, toolbar: { show: false } },
+      chart:      { type: 'donut', height: 200, toolbar: { show: false },
+                    foreColor: p.onSurface, background: 'transparent' },
       labels,
       dataLabels: { enabled: false },
-      legend:     { show: true, position: 'right', fontSize: '12px' },
-      stroke:     { width: 2, colors: ['#fff'] },
-      tooltip:    { enabled: true },
+      legend:     {
+        show: true,
+        position: 'right',
+        fontSize: '12px',
+        labels: { colors: p.onSurface },
+      },
+      stroke:     { width: 2, colors: [p.surface || 'transparent'] },
+      tooltip:    {
+        enabled: true,
+        theme: this.isDarkTheme() ? 'dark' : 'light',
+      },
       plotOptions: { pie: { donut: { size: '65%', labels: {
         show: true,
-        total: { show: true, label: 'Total', fontSize: '13px', fontWeight: 600 },
+        total: {
+          show: true,
+          label: 'Total',
+          fontSize: '13px',
+          fontWeight: 600,
+          color: p.onSurface,
+        },
+        value: { color: p.onSurface },
+        name:  { color: p.onSurface },
       }}}},
-      colors: ['#5D87FF', '#49BEFF', '#13DEB9', '#FA896B', '#FFAE1F', '#cccccc'],
+      colors: this.chartTheme.seriesColors(),
     };
+  }
+
+  private isDarkTheme(): boolean {
+    return document.documentElement.classList.contains('dark-theme');
   }
 
   private triggerFlash(): void {

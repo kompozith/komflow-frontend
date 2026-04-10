@@ -118,6 +118,14 @@ export class MessageService {
     );
   }
 
+  duplicateMessage(id: string, title: string): Observable<Message> {
+    return this.http.post<Message>(
+      `${this.apiUrl}/${id}/duplicate`,
+      { title },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   uploadAttachment(file: globalThis.File): Observable<MessageAttachment> {
     const formData = new FormData();
     formData.append('file', file);

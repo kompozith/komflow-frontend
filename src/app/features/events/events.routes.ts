@@ -77,7 +77,7 @@ export const EventsRoutes: Routes = [
         },
       },
       {
-        path: 'details/:id/stats',
+        path: ':id/stats',
         component: EventStatsComponent,
         canActivate: [PermissionGuard],
         data: {

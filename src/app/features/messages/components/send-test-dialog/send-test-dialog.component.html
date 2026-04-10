@@ -1,6 +1,6 @@
-<div class="d-flex align-items-center justify-content-between mb-3 px-3 pt-3">
+<div class="d-flex align-items-center justify-content-between px-3 pt-3 pb-2">
   <div class="d-flex align-items-center gap-8">
-    <mat-icon class="text-primary">science</mat-icon>
+    <mat-icon class="text-primary" style="font-size:20px;width:20px;height:20px">science</mat-icon>
     <h5 class="mb-0">Envoyer un test</h5>
   </div>
   <button mat-icon-button mat-dialog-close>
@@ -8,7 +8,7 @@
   </button>
 </div>
 
-<mat-dialog-content class="px-3 pb-2">
+<mat-dialog-content class="px-3 pb-3">
   <p class="text-muted f-s-14 mb-3">
     Entrez
     <strong>{{ isEmailChannel ? 'une adresse e-mail' : 'un numéro de téléphone' }}</strong>
@@ -16,15 +16,17 @@
     <strong>{{ channelLabel }}</strong>.
   </p>
 
-  <form [formGroup]="form">
-    <mat-form-field appearance="outline" class="w-100">
-      <mat-label>{{ inputLabel }}</mat-label>
-      <i-tabler [name]="channelIcon" matPrefix class="me-1"></i-tabler>
+  <form [formGroup]="form" class="form-body">
+
+    <!-- ── Canal EMAIL ──────────────────────────────────────────────────────── -->
+    <mat-form-field appearance="outline" class="w-100" *ngIf="isEmailChannel">
+      <mat-label>Adresse e-mail</mat-label>
+      <mat-icon matPrefix>mail</mat-icon>
       <input
         matInput
         formControlName="recipient"
-        [placeholder]="inputPlaceholder"
-        [type]="isEmailChannel ? 'email' : 'tel'"
+        type="email"
+        placeholder="ex: test@example.com"
         autocomplete="off">
       <mat-error *ngIf="form.get('recipient')?.errors?.['required']">
         Ce champ est requis
@@ -32,10 +34,34 @@
       <mat-error *ngIf="form.get('recipient')?.errors?.['email']">
         Adresse e-mail invalide
       </mat-error>
-      <mat-error *ngIf="form.get('recipient')?.errors?.['pattern']">
-        Numéro de téléphone invalide
-      </mat-error>
     </mat-form-field>
+
+    <!-- ── Canal SMS / WhatsApp — sélecteur de pays + numéro E.164 ─────────── -->
+    <div class="phone-field" *ngIf="isPhoneChannel">
+      <label class="phone-label">Numéro de téléphone</label>
+      <ngx-intl-tel-input
+        [preferredCountries]="['cm', 'fr', 'us']"
+        [enableAutoCountrySelect]="true"
+        [enablePlaceholder]="true"
+        [cssClass]="'test-phone-input'"
+        [searchCountryFlag]="true"
+        [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name, SearchCountryField.DialCode]"
+        [selectFirstCountry]="false"
+        [selectedCountryISO]="CountryISO.Cameroon"
+        [maxLength]="15"
+        [separateDialCode]="true"
+        [phoneValidation]="true"
+        formControlName="recipient">
+      </ngx-intl-tel-input>
+      <small
+        class="phone-error"
+        *ngIf="form.get('recipient')?.invalid && form.get('recipient')?.touched">
+        {{ form.get('recipient')?.errors?.['required']
+            ? 'Ce champ est requis'
+            : 'Numéro de téléphone invalide' }}
+      </small>
+    </div>
+
   </form>
 </mat-dialog-content>
 
