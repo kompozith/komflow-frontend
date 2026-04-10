@@ -56,8 +56,14 @@ export class ChartThemeService {
 
   private readPalette(): ChartPalette {
     const el = this.document.documentElement;
-    const read = (varName: string): string =>
+    const readRaw = (varName: string): string =>
       getComputedStyle(el).getPropertyValue(varName).trim();
+
+    // ApexCharts only accepts HEX or rgb(r, g, b) with commas.
+    // Material 3 CSS vars can be in OKLCH, space-separated rgb(...), etc.
+    // Resolve each color through the browser to get a safe HEX value.
+    const read = (varName: string): string =>
+      this.resolveToHex(readRaw(varName));
 
     return {
       primary:          read('--mat-sys-primary'),
@@ -75,6 +81,33 @@ export class ChartThemeService {
       success:          '#13DEB9',
       warning:          '#FFAE1F',
     };
+  }
+
+  /**
+   * Résout n'importe quel format CSS (oklch, hsl, rgb sans virgules…)
+   * en une valeur HEX #rrggbb utilisable par ApexCharts.
+   * Technique : on applique la valeur comme `color` sur un élément caché,
+   * le navigateur résout et retourne toujours `rgb(r, g, b)` via getComputedStyle.
+   */
+  private resolveToHex(cssColor: string): string {
+    if (!cssColor) return '';
+    // Fast path: already a hex value
+    if (/^#[0-9a-fA-F]{3,8}$/.test(cssColor)) return cssColor;
+
+    const probe = this.document.createElement('div');
+    probe.style.cssText = `display:none;color:${cssColor}`;
+    this.document.body?.appendChild(probe);
+    const resolved = getComputedStyle(probe).color; // always "rgb(r, g, b)" or "rgba(r, g, b, a)"
+    this.document.body?.removeChild(probe);
+
+    // Convert "rgb(r, g, b)" → "#rrggbb"
+    const m = resolved.match(/\d+/g);
+    if (m && m.length >= 3) {
+      return '#' + m.slice(0, 3)
+        .map(n => parseInt(n, 10).toString(16).padStart(2, '0'))
+        .join('');
+    }
+    return cssColor; // fallback: return as-is
   }
 
   /**
