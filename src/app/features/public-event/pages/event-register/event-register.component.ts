@@ -22,6 +22,7 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
   event: PublicEventDetails | null = null;
   isLoading = true;
   hasError = false;
+  isExpired = false;
   loading = false;
   currentStep = 1;
   registrationStatus: string | null = null;
@@ -108,6 +109,7 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
     this.publicEventService.getEventDetails(this.slug).subscribe({
       next: (details) => {
         this.event = details;
+        this.isExpired = this.computeIsExpired(details);
         this.scheduleDisplay = this.mapScheduleForDisplay(details.schedule) || this.buildScheduleDisplay(details);
         this.isLoading = false;
         this.applyEventSeoTags(details);
@@ -677,5 +679,11 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
       return `+${String(phoneObject.dialCode).replace('+', '')}${String(phoneObject.number).replace(/\s/g, '')}`;
     }
     return '';
+  }
+
+  private computeIsExpired(event: PublicEventDetails): boolean {
+    const refDate = event.endsAt || event.startsAt;
+    if (!refDate) return false;
+    return new Date(refDate) < new Date();
   }
 }

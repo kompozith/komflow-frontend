@@ -1,4 +1,4 @@
-<div class="register-page" *ngIf="!isLoading && !hasError; else stateTpl">
+<div class="register-page" *ngIf="!isLoading && !hasError && !isExpired; else stateTpl">
   <div class="grain"></div>
   <div class="aurora one"></div>
   <div class="aurora two"></div>
@@ -219,11 +219,82 @@
   </div>
 
   <ng-template #errorStateTpl>
-    <div class="error-wrap">
-      <div class="error-aurora ea-one"></div>
-      <div class="error-aurora ea-two"></div>
+    <ng-container *ngIf="isExpired; else notFoundStateTpl">
+      <div class="error-wrap">
+        <div class="error-aurora ea-one"></div>
+        <div class="error-aurora ea-two"></div>
 
-      <div class="error-content">
+        <div class="error-content">
+          <div class="error-illustration" aria-hidden="true">
+            <svg viewBox="0 0 320 290" fill="none" xmlns="http://www.w3.org/2000/svg" class="error-svg">
+              <ellipse cx="160" cy="155" rx="120" ry="88" fill="var(--mat-sys-primary)" opacity="0.07"/>
+              <ellipse cx="160" cy="253" rx="74" ry="9" fill="var(--mat-sys-on-background)" opacity="0.09"/>
+              <path d="M268 40 L271 32 L274 40 L282 43 L274 46 L271 54 L268 46 L260 43 Z"
+                fill="var(--mat-sys-primary)" opacity="0.55" class="ef-sparkle"/>
+              <path d="M32 218 L33.8 212 L35.6 218 L41.6 219.8 L35.6 221.6 L33.8 227.6 L32 221.6 L26 219.8 Z"
+                fill="var(--mat-sys-secondary)" opacity="0.5" class="ef-sparkle s2"/>
+              <circle cx="36"  cy="80"  r="3.5" fill="var(--mat-sys-primary)"   opacity="0.30" class="ef-float"/>
+              <circle cx="284" cy="98"  r="3"   fill="var(--mat-sys-secondary)" opacity="0.32" class="ef-float d1"/>
+              <circle cx="46"  cy="194" r="2.5" fill="var(--mat-sys-tertiary)"  opacity="0.38" class="ef-float d2"/>
+              <circle cx="288" cy="194" r="4"   fill="var(--mat-sys-primary)"   opacity="0.20" class="ef-float d3"/>
+              <path d="M 92 62 Q 160 16 228 62" stroke="var(--mat-sys-primary)"
+                stroke-width="1.5" stroke-dasharray="4 7" fill="none" opacity="0.22"/>
+              <rect x="60" y="60" width="200" height="172" rx="18"
+                fill="var(--mat-sys-surface-container-high)"
+                stroke="var(--mat-sys-outline-variant)" stroke-width="1.5"/>
+              <rect x="60" y="60" width="200" height="50" rx="18" fill="var(--mat-sys-primary-container)"/>
+              <rect x="60" y="90" width="200" height="20" fill="var(--mat-sys-primary-container)"/>
+              <rect x="105" y="45" width="12" height="28" rx="6"
+                fill="var(--mat-sys-surface-container-high)" stroke="var(--mat-sys-outline)" stroke-width="1.5"/>
+              <rect x="203" y="45" width="12" height="28" rx="6"
+                fill="var(--mat-sys-surface-container-high)" stroke="var(--mat-sys-outline)" stroke-width="1.5"/>
+              <rect x="118" y="74" width="84" height="14" rx="7"
+                fill="var(--mat-sys-on-primary-container)" opacity="0.20"/>
+              <line x1="68" y1="110" x2="252" y2="110"
+                stroke="var(--mat-sys-outline-variant)" stroke-width="1" opacity="0.5"/>
+              <circle cx="90"  cy="124" r="2.5" fill="var(--mat-sys-outline)" opacity="0.35"/>
+              <circle cx="118" cy="124" r="2.5" fill="var(--mat-sys-outline)" opacity="0.35"/>
+              <circle cx="146" cy="124" r="2.5" fill="var(--mat-sys-outline)" opacity="0.35"/>
+              <circle cx="174" cy="124" r="2.5" fill="var(--mat-sys-outline)" opacity="0.35"/>
+              <circle cx="202" cy="124" r="2.5" fill="var(--mat-sys-outline)" opacity="0.35"/>
+              <circle cx="230" cy="124" r="2.5" fill="var(--mat-sys-outline)" opacity="0.35"/>
+              <rect x="78"  y="134" width="20" height="20" rx="5" fill="var(--mat-sys-outline-variant)" opacity="0.22"/>
+              <rect x="106" y="134" width="20" height="20" rx="5" fill="var(--mat-sys-outline-variant)" opacity="0.22"/>
+              <rect x="134" y="134" width="20" height="20" rx="5" fill="var(--mat-sys-outline-variant)" opacity="0.18"/>
+              <rect x="162" y="134" width="20" height="20" rx="5" fill="var(--mat-sys-outline-variant)" opacity="0.15"/>
+              <rect x="190" y="134" width="20" height="20" rx="5" fill="var(--mat-sys-outline-variant)" opacity="0.15"/>
+              <rect x="218" y="134" width="20" height="20" rx="5" fill="var(--mat-sys-outline-variant)" opacity="0.15"/>
+              <rect x="78"  y="162" width="20" height="20" rx="5" fill="var(--mat-sys-outline-variant)" opacity="0.13"/>
+              <rect x="106" y="162" width="20" height="20" rx="5" fill="var(--mat-sys-outline-variant)" opacity="0.13"/>
+              <rect x="134" y="162" width="20" height="20" rx="5" fill="var(--mat-sys-outline-variant)" opacity="0.10"/>
+              <!-- Lock badge -->
+              <circle cx="196" cy="172" r="30"
+                fill="var(--mat-sys-secondary-container)"
+                stroke="var(--mat-sys-secondary)" stroke-width="1.2"
+                opacity="0.92" class="ef-pulse"/>
+              <rect x="182" y="170" width="28" height="20" rx="4"
+                fill="var(--mat-sys-secondary)" opacity="0.85"/>
+              <path d="M188 170 v-6 a8 8 0 0 1 16 0 v6"
+                stroke="var(--mat-sys-secondary)" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <circle cx="196" cy="180" r="3" fill="var(--mat-sys-on-secondary)" opacity="0.9"/>
+            </svg>
+          </div>
+
+          <h1 class="error-title">Inscriptions clôturées</h1>
+          <p class="error-subtitle">
+            La date de cet événement est dépassée.<br>
+            Les inscriptions ne sont plus disponibles.
+          </p>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #notFoundStateTpl>
+      <div class="error-wrap">
+        <div class="error-aurora ea-one"></div>
+        <div class="error-aurora ea-two"></div>
+
+        <div class="error-content">
 
         <!-- Illustration -->
         <div class="error-illustration" aria-hidden="true">
@@ -316,6 +387,7 @@
 
       </div>
     </div>
+    </ng-template>
   </ng-template>
   
   <div class="sr-only">

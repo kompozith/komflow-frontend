@@ -1,0 +1,28 @@
+---
+description: Reusable Angular workspace rules
+globs: ["**/*.ts", "**/*.html", "**/*.scss", "**/*.md"]
+alwaysApply: true
+---
+
+# Purpose
+
+Route Cursor to the canonical reusable instruction files.
+
+extends: ../../.github/agents/base.md
+
+## Loading Order
+
+- `.github/agents/base.md`
+- `.github/agents/coding.md`
+- `.github/agents/testing.md`
+- `.github/agents/security.md`
+- `.github/agents/git.md`
+- `.github/agents/review.md`
+- `.agents/angular.md`
+- `.agents/architecture.md`
+- `.agents/skeleton-loaders.md`
+- `.agents/business.md`
+
+## Rule
+
+- Keep this file as an adapter; do not add implementation rules here.
