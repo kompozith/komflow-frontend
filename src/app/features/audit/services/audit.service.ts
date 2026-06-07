@@ -1,5 +1,5 @@
 // src/app/features/audit/services/audit.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -17,9 +17,14 @@ import {BadgeVariant} from "../../../shared/components/badge/badge.component";
   providedIn: 'root',
 })
 export class AuditService {
+  private http = inject(HttpClient);
+
   private apiUrl = `${environment.apiUrl}/audit`;
 
-  constructor(private http: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');

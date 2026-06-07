@@ -1,236 +1,250 @@
 <!-- Message Header -->
-<div *ngIf="!isLoading && message" class="row mb-3">
-  <div class="col-12">
-    <mat-card class="cardWithShadow">
-      <mat-card-content class="p-4">
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="d-flex align-items-center gap-16">
-            <div>
-              <div class="d-flex align-items-center gap-8 mb-1">
-                <h3 class="m-t-10 f-w-600 mb-0">{{ message?.title || 'Message Details' }}</h3>
+@if (!isLoading && message) {
+  <div class="row mb-3">
+    <div class="col-12">
+      <mat-card class="cardWithShadow">
+        <mat-card-content class="p-4">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-16">
+              <div>
+                <div class="d-flex align-items-center gap-8 mb-1">
+                  <h3 class="m-t-10 f-w-600 mb-0">{{ message?.title || 'Message Details' }}</h3>
+                </div>
+                <p class="m-t-1 f-s-14 f-w-500 text-muted mb-2">Message template for {{ message.channel }} channel</p>
               </div>
-              <p class="m-t-1 f-s-14 f-w-500 text-muted mb-2">Message template for {{ message.channel }} channel</p>
+            </div>
+            <div class="d-flex gap-8">
+              <button mat-stroked-button (click)="openSendTestDialog()">
+                <mat-icon class="me-1">science</mat-icon>
+                Send Test
+              </button>
+              <button mat-flat-button color="primary" (click)="onEdit()">
+                <mat-icon class="me-2">edit</mat-icon>
+                Edit Message
+              </button>
             </div>
           </div>
-          <div class="d-flex gap-8">
-            <button mat-stroked-button (click)="openSendTestDialog()">
-              <mat-icon class="me-1">science</mat-icon>
-              Send Test
-            </button>
-            <button mat-flat-button color="primary" (click)="onEdit()">
-              <mat-icon class="me-2">edit</mat-icon>
-              Edit Message
-            </button>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
-</div>
+}
 
 <!-- Statistics Cards -->
-<div *ngIf="!isLoading && message" class="row mb-3">
-  <div class="col-sm-6 col-lg-3">
-    <mat-card class="cardWithShadow cursor-pointer bg-light-primary shadow-none">
-      <mat-card-content class="d-flex align-items-center gap-16">
-        <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-primary text-white">
-          <mat-icon class="d-flex">{{ getChannelIcon(message.channel) }}</mat-icon>
-        </div>
-        <div class="info">
-          <h5 class="f-w-400 lh-sm f-s-14">Channel</h5>
-          <h5 class="f-w-500 lh-sm f-s-14">{{ message.channel }}</h5>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <div class="col-sm-6 col-lg-3">
-    <mat-card class="cardWithShadow cursor-pointer bg-light-success shadow-none">
-      <mat-card-content class="d-flex align-items-center gap-16">
-        <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-success text-white">
-          <mat-icon class="d-flex">attach_file</mat-icon>
-        </div>
-        <div class="info">
-          <h5 class="f-w-400 lh-sm f-s-14">Attachments</h5>
-          <h5 class="f-w-500 lh-sm f-s-14">{{ message.attachmentCount }} attachments</h5>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <div class="col-sm-6 col-lg-3">
-    <mat-card class="cardWithShadow cursor-pointer bg-light-warning shadow-none">
-      <mat-card-content class="d-flex align-items-center gap-16">
-        <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-warning text-white">
-          <mat-icon class="d-flex">code</mat-icon>
-        </div>
-        <div class="info">
-          <h5 class="f-w-400 lh-sm f-s-14">Variables</h5>
-          <h5 class="f-w-500 lh-sm f-s-14">{{ getDetectedVariables().length }} variables</h5>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <div class="col-sm-6 col-lg-3">
-    <mat-card class="cardWithShadow cursor-pointer bg-light shadow-none">
-      <mat-card-content class="d-flex align-items-center gap-16">
-        <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-info text-white">
-          <mat-icon class="d-flex">schedule</mat-icon>
-        </div>
-        <div class="info">
-          <h5 class="f-w-400 lh-sm f-s-14">Created</h5>
-          <h5 class="f-w-500 lh-sm f-s-14">{{ message.createdAt | date:'dd/MM/yyyy' }}</h5>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-</div>
-
-<div *ngIf="!isLoading && message" class="row mb-3">
-  <div class="col-12">
-    <mat-card class="cardWithShadow">
-      <mat-card-header>
-        <mat-card-title>Additional Information</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="row">
-          <div class="col-6 col-md-3 mb-3">
-            <div class="info-item">
-              <mat-icon class="info-icon">update</mat-icon>
-              <div>
-                <label class="form-label fw-bold text-dark">Last Updated</label>
-                <p class="mb-0 text-muted">{{ message.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-              </div>
-            </div>
+@if (!isLoading && message) {
+  <div class="row mb-3">
+    <div class="col-sm-6 col-lg-3">
+      <mat-card class="cardWithShadow cursor-pointer bg-light-primary shadow-none">
+        <mat-card-content class="d-flex align-items-center gap-16">
+          <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-primary text-white">
+            <mat-icon class="d-flex">{{ getChannelIcon(message.channel) }}</mat-icon>
           </div>
-          <div class="col-6 col-md-3 mb-3">
-            <div class="info-item">
-              <mat-icon class="info-icon">schedule</mat-icon>
-              <div>
-                <label class="form-label fw-bold text-dark">Created</label>
-                <p class="mb-0 text-muted">{{ message.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
-              </div>
-            </div>
+          <div class="info">
+            <h5 class="f-w-400 lh-sm f-s-14">Channel</h5>
+            <h5 class="f-w-500 lh-sm f-s-14">{{ message.channel }}</h5>
           </div>
-          <div class="col-6 col-md-3 mb-3">
-            <div class="info-item">
-              <mat-icon class="info-icon">person</mat-icon>
-              <div>
-                <label class="form-label fw-bold text-dark">Created By</label>
-                <p class="mb-0 text-muted">{{ message.createdBy }}</p>
-              </div>
-            </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <mat-card class="cardWithShadow cursor-pointer bg-light-success shadow-none">
+        <mat-card-content class="d-flex align-items-center gap-16">
+          <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-success text-white">
+            <mat-icon class="d-flex">attach_file</mat-icon>
           </div>
-          <div class="col-6 col-md-3 mb-3" *ngIf="message.event">
-            <div class="info-item">
-              <mat-icon class="info-icon">event</mat-icon>
-              <div>
-                <label class="form-label fw-bold text-dark">Linked Event</label>
-                <p class="mb-0 text-muted">{{ message.event?.title }}</p>
-                <small class="text-muted">{{ getLinkedEventDateTime() }}</small>
-              </div>
-            </div>
+          <div class="info">
+            <h5 class="f-w-400 lh-sm f-s-14">Attachments</h5>
+            <h5 class="f-w-500 lh-sm f-s-14">{{ message.attachmentCount }} attachments</h5>
           </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <mat-card class="cardWithShadow cursor-pointer bg-light-warning shadow-none">
+        <mat-card-content class="d-flex align-items-center gap-16">
+          <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-warning text-white">
+            <mat-icon class="d-flex">code</mat-icon>
+          </div>
+          <div class="info">
+            <h5 class="f-w-400 lh-sm f-s-14">Variables</h5>
+            <h5 class="f-w-500 lh-sm f-s-14">{{ getDetectedVariables().length }} variables</h5>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <mat-card class="cardWithShadow cursor-pointer bg-light shadow-none">
+        <mat-card-content class="d-flex align-items-center gap-16">
+          <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-info text-white">
+            <mat-icon class="d-flex">schedule</mat-icon>
+          </div>
+          <div class="info">
+            <h5 class="f-w-400 lh-sm f-s-14">Created</h5>
+            <h5 class="f-w-500 lh-sm f-s-14">{{ message.createdAt | date:'dd/MM/yyyy' }}</h5>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
-</div>
+}
 
-<div *ngIf="!isLoading && message" class="row mb-3">
-  <div class="col-12">
-    <mat-card class="cardWithShadow">
-      <mat-card-header>
-        <mat-card-title>Message Content</mat-card-title>
-        <mat-card-subtitle>Preview rendered with mock user data and linked event values</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="message-content p-20 bg-light rounded" [innerHTML]="getHighlightedContent()"></div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-</div>
-
-<!-- Attachments -->
-<div *ngIf="!isLoading && message && getAttachments().length > 0" class="row mb-3">
-  <div class="col-12">
-    <mat-card class="cardWithShadow">
-      <mat-card-header>
-        <mat-card-title>Attachments</mat-card-title>
-        <mat-card-subtitle>Files sent with this message</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="row g-2">
-          <div class="col-sm-6 col-lg-4" *ngFor="let attachment of getAttachments()">
-            <div class="border rounded p-2 h-100 cursor-pointer" (click)="openAttachment(attachment)">
-              <div class="d-flex align-items-center justify-content-center bg-light rounded mb-2 overflow-hidden" style="height: 112px;">
-                <img
-                  *ngIf="isImageAttachment(attachment) && !hasPreviewFailed(attachment)"
-                  [src]="attachment.url"
-                  [alt]="attachment.name"
-                  class="img-fluid rounded"
-                  style="max-height: 108px;"
-                  (error)="markPreviewFailed(attachment)">
-
-                <iframe
-                  *ngIf="isPdfAttachment(attachment) && !hasPreviewFailed(attachment)"
-                  [src]="getPdfPreviewUrl(attachment)"
-                  title="PDF preview"
-                  class="w-100 h-100 border-0"
-                  (error)="markPreviewFailed(attachment)">
-                </iframe>
-
-                <div *ngIf="(!isImageAttachment(attachment) && !isPdfAttachment(attachment)) || hasPreviewFailed(attachment)" class="d-flex flex-column align-items-center justify-content-center text-muted">
-                  <mat-icon>{{ getAttachmentIcon(attachment) }}</mat-icon>
-                  <small class="mt-1">{{ getAttachmentTypeLabel(attachment) }}</small>
+@if (!isLoading && message) {
+  <div class="row mb-3">
+    <div class="col-12">
+      <mat-card class="cardWithShadow">
+        <mat-card-header>
+          <mat-card-title>Additional Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-6 col-md-3 mb-3">
+              <div class="info-item">
+                <mat-icon class="info-icon">update</mat-icon>
+                <div>
+                  <label class="form-label fw-bold text-dark">Last Updated</label>
+                  <p class="mb-0 text-muted">{{ message.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
                 </div>
               </div>
-              <div class="text-truncate">
-                <strong class="f-s-13">{{ attachment.name }}</strong>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+              <div class="info-item">
+                <mat-icon class="info-icon">schedule</mat-icon>
+                <div>
+                  <label class="form-label fw-bold text-dark">Created</label>
+                  <p class="mb-0 text-muted">{{ message.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+                </div>
               </div>
             </div>
+            <div class="col-6 col-md-3 mb-3">
+              <div class="info-item">
+                <mat-icon class="info-icon">person</mat-icon>
+                <div>
+                  <label class="form-label fw-bold text-dark">Created By</label>
+                  <p class="mb-0 text-muted">{{ message.createdBy }}</p>
+                </div>
+              </div>
+            </div>
+            @if (message.event) {
+              <div class="col-6 col-md-3 mb-3">
+                <div class="info-item">
+                  <mat-icon class="info-icon">event</mat-icon>
+                  <div>
+                    <label class="form-label fw-bold text-dark">Linked Event</label>
+                    <p class="mb-0 text-muted">{{ message.event?.title }}</p>
+                    <small class="text-muted">{{ getLinkedEventDateTime() }}</small>
+                  </div>
+                </div>
+              </div>
+            }
           </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
-</div>
+}
 
-<div *ngIf="isLoading">
-  <div class="skeleton-stack">
-    <div class="skeleton-card skeleton-stack">
-      <span class="skeleton-line skeleton-line--lg" style="width: 38%;"></span>
-      <span class="skeleton-line" style="width: 58%;"></span>
+@if (!isLoading && message) {
+  <div class="row mb-3">
+    <div class="col-12">
+      <mat-card class="cardWithShadow">
+        <mat-card-header>
+          <mat-card-title>Message Content</mat-card-title>
+          <mat-card-subtitle>Preview rendered with mock user data and linked event values</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="message-content p-20 bg-light rounded" [innerHTML]="getHighlightedContent()"></div>
+        </mat-card-content>
+      </mat-card>
     </div>
+  </div>
+}
 
-    <div class="skeleton-detail-grid three-cols">
-      <div class="skeleton-card skeleton-stack" *ngFor="let _ of [1,2,3]">
-        <span class="skeleton-line" style="width: 45%;"></span>
-        <span class="skeleton-line skeleton-line--md"></span>
-      </div>
+<!-- Attachments -->
+@if (!isLoading && message && getAttachments().length > 0) {
+  <div class="row mb-3">
+    <div class="col-12">
+      <mat-card class="cardWithShadow">
+        <mat-card-header>
+          <mat-card-title>Attachments</mat-card-title>
+          <mat-card-subtitle>Files sent with this message</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="row g-2">
+            @for (attachment of getAttachments(); track attachment) {
+              <div class="col-sm-6 col-lg-4">
+                <div class="border rounded p-2 h-100 cursor-pointer" (click)="openAttachment(attachment)">
+                  <div class="d-flex align-items-center justify-content-center bg-light rounded mb-2 overflow-hidden" style="height: 112px;">
+                    @if (isImageAttachment(attachment) && !hasPreviewFailed(attachment)) {
+                      <img
+                        [src]="attachment.url"
+                        [alt]="attachment.name"
+                        class="img-fluid rounded"
+                        style="max-height: 108px;"
+                        (error)="markPreviewFailed(attachment)">
+                    }
+                    @if (isPdfAttachment(attachment) && !hasPreviewFailed(attachment)) {
+                      <iframe
+                        [src]="getPdfPreviewUrl(attachment)"
+                        title="PDF preview"
+                        class="w-100 h-100 border-0"
+                        (error)="markPreviewFailed(attachment)">
+                      </iframe>
+                    }
+                    @if ((!isImageAttachment(attachment) && !isPdfAttachment(attachment)) || hasPreviewFailed(attachment)) {
+                      <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                        <mat-icon>{{ getAttachmentIcon(attachment) }}</mat-icon>
+                        <small class="mt-1">{{ getAttachmentTypeLabel(attachment) }}</small>
+                      </div>
+                    }
+                  </div>
+                  <div class="text-truncate">
+                    <strong class="f-s-13">{{ attachment.name }}</strong>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
+  </div>
+}
 
-    <div class="skeleton-detail-grid two-cols">
+@if (isLoading) {
+  <div>
+    <div class="skeleton-stack">
       <div class="skeleton-card skeleton-stack">
-        <span class="skeleton-line" style="width: 42%;"></span>
-        <span class="skeleton-line"></span>
-        <span class="skeleton-line"></span>
-        <span class="skeleton-line" style="width: 62%;"></span>
+        <span class="skeleton-line skeleton-line--lg" style="width: 38%;"></span>
+        <span class="skeleton-line" style="width: 58%;"></span>
       </div>
-      <div class="skeleton-card skeleton-stack">
-        <span class="skeleton-line" style="width: 42%;"></span>
-        <span class="skeleton-block" style="height: 120px;"></span>
-      </div>
-    </div>
-
-    <div class="skeleton-card skeleton-stack">
-      <span class="skeleton-line" style="width: 28%;"></span>
       <div class="skeleton-detail-grid three-cols">
-        <span class="skeleton-block" style="height: 90px;"></span>
-        <span class="skeleton-block" style="height: 90px;"></span>
-        <span class="skeleton-block" style="height: 90px;"></span>
+        @for (_ of [1,2,3]; track _) {
+          <div class="skeleton-card skeleton-stack">
+            <span class="skeleton-line" style="width: 45%;"></span>
+            <span class="skeleton-line skeleton-line--md"></span>
+          </div>
+        }
+      </div>
+      <div class="skeleton-detail-grid two-cols">
+        <div class="skeleton-card skeleton-stack">
+          <span class="skeleton-line" style="width: 42%;"></span>
+          <span class="skeleton-line"></span>
+          <span class="skeleton-line"></span>
+          <span class="skeleton-line" style="width: 62%;"></span>
+        </div>
+        <div class="skeleton-card skeleton-stack">
+          <span class="skeleton-line" style="width: 42%;"></span>
+          <span class="skeleton-block" style="height: 120px;"></span>
+        </div>
+      </div>
+      <div class="skeleton-card skeleton-stack">
+        <span class="skeleton-line" style="width: 28%;"></span>
+        <div class="skeleton-detail-grid three-cols">
+          <span class="skeleton-block" style="height: 90px;"></span>
+          <span class="skeleton-block" style="height: 90px;"></span>
+          <span class="skeleton-block" style="height: 90px;"></span>
+        </div>
       </div>
     </div>
   </div>
-</div>
+}

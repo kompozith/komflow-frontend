@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
@@ -31,6 +31,10 @@ import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table
   ],
 })
 export class PersonListComponent implements OnInit {
+  private personService = inject(PersonService);
+  private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
+
   displayedColumns: string[] = [
     'rowNumber',
     'name',
@@ -51,11 +55,10 @@ export class PersonListComponent implements OnInit {
   searchText = '';
   private searchSubject = new Subject<string>();
 
-  constructor(
-    private personService: PersonService,
-    private dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadPersons();

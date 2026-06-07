@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { blogService } from 'src/app/services/apps/blog/blog.service';
 import { MatCardModule } from '@angular/material/card';
@@ -11,9 +11,15 @@ import { MatChipsModule } from '@angular/material/chips';
     templateUrl: './blogs.component.html'
 }) 
 export class AppBlogsComponent implements OnInit {
+  router = inject(Router);
+  blogService = inject(blogService);
+
   posts = this.blogService.getBlog();
 
-  constructor(public router: Router, public blogService: blogService) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   selectBlog(title: string) {
     this.blogService.selectBlogPost(title);

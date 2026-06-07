@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { IconModule } from 'src/app/icon/icon.module';
 import { MaterialModule } from 'src/app/material.module';
@@ -7,9 +7,7 @@ import { FrontEndService } from 'src/app/services/apps/front-pages/front-end.ser
 
 @Component({
   selector: 'app-blog-details',
-  imports: [IconModule, MaterialModule, CommonModule,
-    FooterComponent
-  ],
+  imports: [IconModule, MaterialModule, FooterComponent],
   templateUrl: './blog-details.component.html',
   styleUrl: './blog-details.component.scss'
 })

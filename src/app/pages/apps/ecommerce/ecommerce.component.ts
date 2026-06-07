@@ -11,7 +11,7 @@ import {
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MaterialModule } from 'src/app/material.module';
 
-import { CommonModule } from '@angular/common';
+
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { IconModule } from 'src/app/icon/icon.module';
 import { MatPaginator } from '@angular/material/paginator';
@@ -24,7 +24,7 @@ import { Element, PRODUCT_DATA } from './ecommerceData';
 
 @Component({
   selector: 'app-ecommerce',
-  imports: [MaterialModule, CommonModule, IconModule],
+  imports: [MaterialModule, IconModule],
   templateUrl: './ecommerce.component.html',
   styleUrl: './ecommerce.component.scss',
 })

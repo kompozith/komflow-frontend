@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -12,7 +12,7 @@ import { Contact, ContactPage } from 'src/app/features/contacts/models/contact';
 import { Campaign, CampaignStatus, CreateCampaignRequest } from '../../models/campaign';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -23,11 +23,19 @@ import { forkJoin } from 'rxjs';
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
     RouterModule
-  ]
+]
 })
 export class CampaignEditComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
+  private campaignService = inject(CampaignService);
+  private messageService = inject(MessageService);
+  private tagService = inject(TagService);
+  private contactService = inject(ContactService);
+
   campaignForm: FormGroup;
   isSubmitting = false;
   isLoading = true;
@@ -38,16 +46,10 @@ export class CampaignEditComponent implements OnInit {
   tags: Tag[] = [];
   contacts: Contact[] = [];
 
-  constructor(
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private snackBar: MatSnackBar,
-    private campaignService: CampaignService,
-    private messageService: MessageService,
-    private tagService: TagService,
-    private contactService: ContactService
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.campaignForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', Validators.maxLength(500)],

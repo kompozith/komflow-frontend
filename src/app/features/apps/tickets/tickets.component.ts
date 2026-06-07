@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  AfterViewInit,
-  Inject,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, inject } from '@angular/core';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import {
   MatDialog,
@@ -26,6 +20,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   imports: [MaterialModule, CommonModule, TablerIconsModule],
 })
 export class AppTicketlistComponent implements OnInit, AfterViewInit {
+  private ticketService = inject(TicketService);
+  dialog = inject(MatDialog);
+
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
@@ -46,7 +43,10 @@ export class AppTicketlistComponent implements OnInit, AfterViewInit {
 
   dataSource = new MatTableDataSource<TicketElement>([]);
 
-  constructor(private ticketService: TicketService, public dialog: MatDialog) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadTickets(); // Load the initial tickets
@@ -116,17 +116,22 @@ export class AppTicketlistComponent implements OnInit, AfterViewInit {
   ],
 })
 export class TicketDialogComponent {
+  dialogRef = inject<MatDialogRef<TicketDialogComponent>>(MatDialogRef);
+  data = inject(MAT_DIALOG_DATA);
+  private ticketService = inject(TicketService);
+  private snackBar = inject(MatSnackBar);
+
   action: string;
   local_data: TicketElement;
   users: any[] = [];
   dateControl = new FormControl();
 
-  constructor(
-    public dialogRef: MatDialogRef<TicketDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private ticketService: TicketService,
-    private snackBar: MatSnackBar
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const data = this.data;
+
     this.action = data.action;
     this.local_data = { ...data.ticket };
   }

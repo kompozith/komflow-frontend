@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RoleService } from './role.service';
 import { Role, RoleDetail, RolePage, RoleFilters, CreateRoleRequest, UpdateRoleRequest, Policy } from '../models/role';
@@ -7,10 +7,13 @@ import { Role, RoleDetail, RolePage, RoleFilters, CreateRoleRequest, UpdateRoleR
   providedIn: 'root'
 })
 export class CustomRolesFacade {
+  private roleService = inject(RoleService);
 
-  constructor(
-    private roleService: RoleService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+
+  constructor() {}
 
   // Role operations
   getRoles(filters: RoleFilters = {}): Observable<RolePage> {

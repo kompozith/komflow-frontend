@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable, map, take } from 'rxjs';
 import { PermissionService } from '../services/permission.service';
@@ -7,11 +7,14 @@ import { PermissionService } from '../services/permission.service';
   providedIn: 'root'
 })
 export class PermissionGuard implements CanActivate {
+  private permissionService = inject(PermissionService);
+  private router = inject(Router);
 
-  constructor(
-    private permissionService: PermissionService,
-    private router: Router
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+
+  constructor() {}
 
   canActivate(
     route: ActivatedRouteSnapshot,

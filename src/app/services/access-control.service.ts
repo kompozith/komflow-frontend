@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { PermissionService } from './permission.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccessControlService {
-  constructor(private permissionService: PermissionService) {}
+  private permissionService = inject(PermissionService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   /**
    * Check if user has a specific role

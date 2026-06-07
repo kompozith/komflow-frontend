@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CanActivate, CanActivateChild, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AccessControlService } from '../../../services/access-control.service';
@@ -7,10 +7,13 @@ import { AccessControlService } from '../../../services/access-control.service';
   providedIn: 'root'
 })
 export class AuthzGuard implements CanActivate, CanActivateChild {
-  constructor(
-    private accessControlService: AccessControlService,
-    private router: Router
-  ) {}
+  private accessControlService = inject(AccessControlService);
+  private router = inject(Router);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   canActivate(
     route: ActivatedRouteSnapshot,

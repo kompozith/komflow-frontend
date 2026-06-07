@@ -1,9 +1,4 @@
-import {
-  Component,
-  ViewChild,
-  AfterViewInit,
-  OnInit,
-} from '@angular/core';
+import { Component, ViewChild, AfterViewInit, OnInit, inject } from '@angular/core';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { PageEvent } from '@angular/material/paginator';
@@ -45,6 +40,11 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
   ],
 })
 export class BrandListComponent implements OnInit, AfterViewInit {
+  dialog = inject(MatDialog);
+  private brandService = inject(BrandService);
+  private brandManagementFacade = inject(BrandManagementFacade);
+  private snackBar = inject(MatSnackBar);
+
   @ViewChild(MatTable, { static: true }) table: MatTable<any> =
     Object.create(null);
 
@@ -87,12 +87,10 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     { value: false, label: 'Without Stores' }
   ];
 
-  constructor(
-      public dialog: MatDialog,
-      private brandService: BrandService,
-      private brandManagementFacade: BrandManagementFacade,
-      private snackBar: MatSnackBar
-    ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadBrands();

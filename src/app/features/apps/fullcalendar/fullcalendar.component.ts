@@ -1,10 +1,5 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  Inject,
-  signal,
-} from '@angular/core';
-import { CommonModule, NgSwitch } from '@angular/common';
+import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+
 import {
   MatDialog,
   MatDialogRef,
@@ -68,18 +63,20 @@ const colors: any = {
     templateUrl: './dialog.component.html',
     styleUrls: ['./fullcalendar.component.scss'],
     imports: [
-      MaterialModule,
-      CommonModule,
-      MatDialogModule,
-      TablerIconsModule,
-    ],
+    MaterialModule,
+    MatDialogModule,
+    TablerIconsModule
+],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CalendarDialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<CalendarDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  dialogRef = inject<MatDialogRef<CalendarDialogComponent>>(MatDialogRef);
+  data = inject(MAT_DIALOG_DATA);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   get event(): CalendarEvent | null {
     return this.data?.event ?? null;
@@ -151,15 +148,19 @@ export class CalendarDialogComponent {
       </div>
     `,
     imports: [
-      MaterialModule,
-      CommonModule,
-      MatDialogModule,
-      TablerIconsModule,
-    ],
+    MaterialModule,
+    MatDialogModule,
+    TablerIconsModule
+],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CalendarDeleteDialogComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
+  data = inject(MAT_DIALOG_DATA);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 }
 
 @Component({
@@ -168,19 +169,21 @@ export class CalendarDeleteDialogComponent {
     templateUrl: './fullcalendar.component.html',
     styleUrls: ['./fullcalendar.component.scss'],
     imports: [
-        MaterialModule,
-        FormsModule,
-        ReactiveFormsModule,
-        NgSwitch,
-        CalendarModule,
-        CommonModule,
-        MatDatepickerModule,
-        MatDialogModule,
-        MatFormFieldModule,
-    ],
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CalendarModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatFormFieldModule
+],
     providers: [provideNativeDateAdapter(), CalendarDateFormatter]
 })
 export class AppFullcalendarComponent {
+  dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
+  private eventService = inject(EventService);
+
   dialogRef = signal<MatDialogRef<CalendarDialogComponent> | any>(null);
   dialogRef2 = signal<MatDialogRef<CalendarFormDialogComponent> | any>(null);
   lastCloseResult = signal<string>('');
@@ -207,11 +210,10 @@ export class AppFullcalendarComponent {
   refresh: Subject<any> = new Subject();
   events = signal<CalendarEvent[] | any>([]);
 
-  constructor(
-    public dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private eventService: EventService
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.loadEventsForCurrentView();
   }
 

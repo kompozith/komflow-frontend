@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
@@ -22,6 +22,12 @@ import { ProductCategoriesComponent } from './product-categories/product-categor
   imports: [MaterialModule, TablerIconsModule, CommonModule, DatePipe, ProductCategoriesComponent],
 })
 export class StoreDetailsComponent implements OnInit, AfterViewInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private storeManagementFacade = inject(StoreManagementFacade);
+  private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
+
   store: Store | null = null;
   isLoading = true;
   storeCategories: StoreCategory[] = [];
@@ -33,13 +39,10 @@ export class StoreDetailsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private storeManagementFacade: StoreManagementFacade,
-    private snackBar: MatSnackBar,
-    private dialog: MatDialog
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     const storeId = this.route.snapshot.params['id'];

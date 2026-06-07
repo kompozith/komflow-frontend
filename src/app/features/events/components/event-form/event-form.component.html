@@ -6,222 +6,253 @@
   <mat-card-content>
     <form [formGroup]="form" (ngSubmit)="submit()" class="event-form">
       <div class="row">
-        <ng-container *ngIf="!workflowOnly">
-        <div class="col-md-6 my-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Titre</mat-label>
-            <input matInput formControlName="title" />
-            <mat-error *ngIf="form.get('title')?.hasError('required')">Le titre est requis</mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-md-6 my-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Sous-titre</mat-label>
-            <input matInput formControlName="subtitle" />
-          </mat-form-field>
-        </div>
-
-        <div class="col-md-3 my-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Date de debut</mat-label>
-            <input matInput [matDatepicker]="startDatePicker" [min]="todayDate" formControlName="startDate" />
-            <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #startDatePicker></mat-datepicker>
-            <mat-error *ngIf="form.get('startDate')?.hasError('required')">La date de debut est requise</mat-error>
-            <mat-error *ngIf="form.hasError('startDateInPast') && form.get('startDate')?.touched">
-              La date de debut ne peut pas etre dans le passe
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-md-3 my-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Date de fin</mat-label>
-            <input matInput [matDatepicker]="endDatePicker" [min]="form.get('startDate')?.value" formControlName="endDate" />
-            <mat-datepicker-toggle matIconSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #endDatePicker></mat-datepicker>
-            <mat-error *ngIf="form.get('endDate')?.hasError('required')">La date de fin est requise</mat-error>
-            <mat-error *ngIf="form.hasError('endBeforeStart') && form.get('endDate')?.touched">
-              La date de fin doit etre egale ou apres la date de debut
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-md-3 my-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Heure de debut</mat-label>
-            <input matInput type="time" formControlName="startTime" />
-            <mat-error *ngIf="form.get('startTime')?.hasError('required')">L'heure de debut est requise</mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-md-3 my-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Heure de fin</mat-label>
-            <input matInput type="time" formControlName="endTime" />
-            <mat-error *ngIf="form.get('endTime')?.hasError('required')">L'heure de fin est requise</mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="my-3" [ngClass]="isOnlineMode() ? 'col-md-3' : 'col-md-4'">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Type d'evenement</mat-label>
-            <mat-select formControlName="mode">
-              <mat-option *ngFor="let mode of eventModes" [value]="mode.value">
-                {{ mode.label }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <div class="my-3" [ngClass]="isOnlineMode() ? 'col-md-3' : 'col-md-4'">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Fuseau horaire (pays)</mat-label>
-            <mat-select formControlName="country" (selectionChange)="onCountryChange($event.value)">
-              <mat-option *ngFor="let country of countries" [value]="country.code">
-                {{ country.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <div class="col-md-4 my-3" *ngIf="hasMultipleTimezones()">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Ville</mat-label>
-            <mat-select formControlName="city" (selectionChange)="onCityChange($event.value)" [disabled]="!form.get('country')?.value">
-              <mat-option *ngFor="let city of cities" [value]="city.name">
-                {{ city.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <div class="my-3" [ngClass]="isOnlineMode() ? 'col-md-3' : 'col-md-4'">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Timezone</mat-label>
-            <input matInput formControlName="timezone" />
-          </mat-form-field>
-        </div>
-
-        <div class="col-md-6 my-3" *ngIf="isOnsiteMode()">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Lieu</mat-label>
-            <input matInput formControlName="location" />
-            <mat-error *ngIf="form.get('location')?.hasError('required')">Le lieu est requis pour un evenement sur site</mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-md-6 my-3" *ngIf="isOnsiteMode()">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Adresse</mat-label>
-            <input matInput formControlName="address" />
-          </mat-form-field>
-        </div>
-        <div [ngClass]="'col-md-3 my-3'" *ngIf="isOnlineMode()">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Lien de connexion</mat-label>
-            <input matInput formControlName="meetingUrl" placeholder="https://..." />
-            <mat-error *ngIf="form.get('meetingUrl')?.hasError('required')">Le lien de connexion est requis</mat-error>
-            <mat-error *ngIf="form.get('meetingUrl')?.hasError('pattern')">Entrez une URL valide (http/https)</mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="col-12 my-3">
-          <app-message-editor
-            [contentControl]="form.get('description')!"
-            [showVariablesPanel]="false"
-            [showPreview]="false"
-            label="Description"
-            placeholder="Decrivez votre evenement avec du texte formate (paragraphes, listes, liens...)"
-            [rows]="8">
-          </app-message-editor>
-        </div>
-
-        <div class="col-12 my-3">
-          <div class="highlights-head">
-            <label class="f-w-600">Points forts</label>
-            <span class="hint">Ajoutez les points saillants de l evenement</span>
+        @if (!workflowOnly) {
+          <div class="col-md-6 my-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Titre</mat-label>
+              <input matInput formControlName="title" />
+              @if (form.get('title')?.hasError('required')) {
+                <mat-error>Le titre est requis</mat-error>
+              }
+            </mat-form-field>
           </div>
-          <div class="highlights-input-row">
-            <mat-chip-grid #chipGrid aria-label="Highlights" class="highlights-grid">
-              <mat-chip-row *ngFor="let highlight of highlights" [editable]="true" (edited)="editHighlight(highlight, $event)" (removed)="removeHighlight(highlight)">
-                {{ highlight }}
-                <button matChipRemove [attr.aria-label]="'Supprimer ' + highlight">
-                  <mat-icon>cancel</mat-icon>
-                </button>
-              </mat-chip-row>
-              <input
-                #highlightInput
-                placeholder="Ajouter un point fort"
-                [matChipInputFor]="chipGrid"
-                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                (matChipInputTokenEnd)="addHighlight($event)"
-              />
-            </mat-chip-grid>
+          <div class="col-md-6 my-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Sous-titre</mat-label>
+              <input matInput formControlName="subtitle" />
+            </mat-form-field>
           </div>
-          <p class="empty-highlights" *ngIf="!highlights.length">
-            Aucun point fort ajoute pour le moment.
-          </p>
-        </div>
-
-        <div class="col-12">
-          <div class="agenda-head">
-            <label class="f-w-600">Agenda</label>
-            <button mat-stroked-button type="button" (click)="addAgendaItem()">Ajouter une ligne</button>
+          <div class="col-md-3 my-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Date de debut</mat-label>
+              <input matInput [matDatepicker]="startDatePicker" [min]="todayDate" formControlName="startDate" />
+              <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #startDatePicker></mat-datepicker>
+              @if (form.get('startDate')?.hasError('required')) {
+                <mat-error>La date de debut est requise</mat-error>
+              }
+              @if (form.hasError('startDateInPast') && form.get('startDate')?.touched) {
+                <mat-error>
+                  La date de debut ne peut pas etre dans le passe
+                </mat-error>
+              }
+            </mat-form-field>
           </div>
-          <div class="agenda-list">
-            <div class="agenda-item mb-3" *ngFor="let group of agendaControls; let i = index" [formGroup]="group">
-              <mat-form-field appearance="outline">
-                <mat-label>Heure</mat-label>
-                <input matInput type="time" formControlName="time" />
+          <div class="col-md-3 my-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Date de fin</mat-label>
+              <input matInput [matDatepicker]="endDatePicker" [min]="form.get('startDate')?.value" formControlName="endDate" />
+              <mat-datepicker-toggle matIconSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #endDatePicker></mat-datepicker>
+              @if (form.get('endDate')?.hasError('required')) {
+                <mat-error>La date de fin est requise</mat-error>
+              }
+              @if (form.hasError('endBeforeStart') && form.get('endDate')?.touched) {
+                <mat-error>
+                  La date de fin doit etre egale ou apres la date de debut
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-md-3 my-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Heure de debut</mat-label>
+              <input matInput type="time" formControlName="startTime" />
+              @if (form.get('startTime')?.hasError('required')) {
+                <mat-error>L'heure de debut est requise</mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-md-3 my-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Heure de fin</mat-label>
+              <input matInput type="time" formControlName="endTime" />
+              @if (form.get('endTime')?.hasError('required')) {
+                <mat-error>L'heure de fin est requise</mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="my-3" [ngClass]="isOnlineMode() ? 'col-md-3' : 'col-md-4'">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Type d'evenement</mat-label>
+              <mat-select formControlName="mode">
+                @for (mode of eventModes; track mode) {
+                  <mat-option [value]="mode.value">
+                    {{ mode.label }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="my-3" [ngClass]="isOnlineMode() ? 'col-md-3' : 'col-md-4'">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Fuseau horaire (pays)</mat-label>
+              <mat-select formControlName="country" (selectionChange)="onCountryChange($event.value)">
+                @for (country of countries; track country) {
+                  <mat-option [value]="country.code">
+                    {{ country.name }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          @if (hasMultipleTimezones()) {
+            <div class="col-md-4 my-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Ville</mat-label>
+                <mat-select formControlName="city" (selectionChange)="onCityChange($event.value)" [disabled]="!form.get('country')?.value">
+                  @for (city of cities; track city) {
+                    <mat-option [value]="city.name">
+                      {{ city.name }}
+                    </mat-option>
+                  }
+                </mat-select>
               </mat-form-field>
-              <mat-form-field appearance="outline">
-                <mat-label>Titre</mat-label>
-                <input matInput formControlName="title" />
+            </div>
+          }
+          <div class="my-3" [ngClass]="isOnlineMode() ? 'col-md-3' : 'col-md-4'">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Timezone</mat-label>
+              <input matInput formControlName="timezone" />
+            </mat-form-field>
+          </div>
+          @if (isOnsiteMode()) {
+            <div class="col-md-6 my-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Lieu</mat-label>
+                <input matInput formControlName="location" />
+                @if (form.get('location')?.hasError('required')) {
+                  <mat-error>Le lieu est requis pour un evenement sur site</mat-error>
+                }
               </mat-form-field>
-              <mat-form-field appearance="outline">
-                <mat-label>Intervenant</mat-label>
-                <input matInput formControlName="speaker" />
+            </div>
+          }
+          @if (isOnsiteMode()) {
+            <div class="col-md-6 my-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Adresse</mat-label>
+                <input matInput formControlName="address" />
               </mat-form-field>
-              <mat-form-field appearance="outline">
-                <mat-label>Description</mat-label>
-                <input matInput formControlName="description" />
+            </div>
+          }
+          @if (isOnlineMode()) {
+            <div [ngClass]="'col-md-3 my-3'">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Lien de connexion</mat-label>
+                <input matInput formControlName="meetingUrl" placeholder="https://..." />
+                @if (form.get('meetingUrl')?.hasError('required')) {
+                  <mat-error>Le lien de connexion est requis</mat-error>
+                }
+                @if (form.get('meetingUrl')?.hasError('pattern')) {
+                  <mat-error>Entrez une URL valide (http/https)</mat-error>
+                }
               </mat-form-field>
-              @if(agendaControls.length === 1) {
-                <button mat-icon-button color="warn" type="button" (click)="removeAgendaItem(i)">
-                  <mat-icon>delete</mat-icon>
-                </button>
+            </div>
+          }
+          <div class="col-12 my-3">
+            <app-message-editor
+              [contentControl]="form.get('description')!"
+              [showVariablesPanel]="false"
+              [showPreview]="false"
+              label="Description"
+              placeholder="Decrivez votre evenement avec du texte formate (paragraphes, listes, liens...)"
+              [rows]="8">
+            </app-message-editor>
+          </div>
+          <div class="col-12 my-3">
+            <div class="highlights-head">
+              <label class="f-w-600">Points forts</label>
+              <span class="hint">Ajoutez les points saillants de l evenement</span>
+            </div>
+            <div class="highlights-input-row">
+              <mat-chip-grid #chipGrid aria-label="Highlights" class="highlights-grid">
+                @for (highlight of highlights; track highlight) {
+                  <mat-chip-row [editable]="true" (edited)="editHighlight(highlight, $event)" (removed)="removeHighlight(highlight)">
+                    {{ highlight }}
+                    <button matChipRemove [attr.aria-label]="'Supprimer ' + highlight">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip-row>
+                }
+                <input
+                  #highlightInput
+                  placeholder="Ajouter un point fort"
+                  [matChipInputFor]="chipGrid"
+                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                  (matChipInputTokenEnd)="addHighlight($event)"
+                  />
+              </mat-chip-grid>
+            </div>
+            @if (!highlights.length) {
+              <p class="empty-highlights">
+                Aucun point fort ajoute pour le moment.
+              </p>
+            }
+          </div>
+          <div class="col-12">
+            <div class="agenda-head">
+              <label class="f-w-600">Agenda</label>
+              <button mat-stroked-button type="button" (click)="addAgendaItem()">Ajouter une ligne</button>
+            </div>
+            <div class="agenda-list">
+              @for (group of agendaControls; track group; let i = $index) {
+                <div class="agenda-item mb-3" [formGroup]="group">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Heure</mat-label>
+                    <input matInput type="time" formControlName="time" />
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Titre</mat-label>
+                    <input matInput formControlName="title" />
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Intervenant</mat-label>
+                    <input matInput formControlName="speaker" />
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Description</mat-label>
+                    <input matInput formControlName="description" />
+                  </mat-form-field>
+                  @if(agendaControls.length === 1) {
+                    <button mat-icon-button color="warn" type="button" (click)="removeAgendaItem(i)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  }
+                </div>
               }
             </div>
           </div>
-        </div>
-
-        <div class="col-12 mt-3">
-          <div class="banner-upload">
-            <div class="banner-upload-head">
-              <label class="f-w-600">Banniere de l'evenement</label>
-              <span class="hint">Image courte affichee en haut de la carte d'inscription (recommandation: 1200x360)</span>
-            </div>
-
-            <div class="banner-upload-actions">
-              <input #bannerInput type="file" accept="image/*" hidden (change)="onBannerFileSelected($event)" />
-              <button mat-stroked-button type="button" (click)="bannerInput.click()" [disabled]="bannerUploadInProgress">
-                {{ bannerUploadInProgress ? 'Upload en cours...' : 'Choisir une image' }}
-              </button>
-              <button
-                mat-button
-                color="warn"
-                type="button"
-                *ngIf="form.get('bannerImageUrl')?.value"
-                (click)="clearBannerImage()"
-                [disabled]="bannerUploadInProgress"
-              >
-                Retirer
-              </button>
-            </div>
-
-            <div class="banner-preview" *ngIf="form.get('bannerImageUrl')?.value as bannerUrl">
-              <img [src]="bannerUrl" alt="Banniere evenement" loading="lazy" />
+          <div class="col-12 mt-3">
+            <div class="banner-upload">
+              <div class="banner-upload-head">
+                <label class="f-w-600">Banniere de l'evenement</label>
+                <span class="hint">Image courte affichee en haut de la carte d'inscription (recommandation: 1200x360)</span>
+              </div>
+              <div class="banner-upload-actions">
+                <input #bannerInput type="file" accept="image/*" hidden (change)="onBannerFileSelected($event)" />
+                <button mat-stroked-button type="button" (click)="bannerInput.click()" [disabled]="bannerUploadInProgress">
+                  {{ bannerUploadInProgress ? 'Upload en cours...' : 'Choisir une image' }}
+                </button>
+                @if (form.get('bannerImageUrl')?.value) {
+                  <button
+                    mat-button
+                    color="warn"
+                    type="button"
+                    (click)="clearBannerImage()"
+                    [disabled]="bannerUploadInProgress"
+                    >
+                    Retirer
+                  </button>
+                }
+              </div>
+              @if (form.get('bannerImageUrl')?.value; as bannerUrl) {
+                <div class="banner-preview">
+                  <img [src]="bannerUrl" alt="Banniere evenement" loading="lazy" />
+                </div>
+              }
             </div>
           </div>
-        </div>
-        </ng-container>
+        }
 
         <div class="col-12">
           <div class="workflow-section">
@@ -233,81 +264,93 @@
               <button mat-stroked-button type="button" (click)="addWorkflowStep()">Ajouter une etape</button>
             </div>
 
-            <div class="workflow-list" *ngIf="workflowControls.length; else workflowEmpty" cdkDropList (cdkDropListDropped)="reorderWorkflowSteps($event)">
-              <div class="workflow-item" *ngFor="let group of workflowControls; let i = index" [formGroup]="group" cdkDrag>
-                <div class="drag-handle" cdkDragHandle>
-                  <mat-icon>drag_indicator</mat-icon>
-                </div>
-
-                <mat-form-field appearance="outline">
-                  <mat-label>Type d'etape</mat-label>
-                  <mat-select formControlName="stepType">
-                    <mat-option *ngFor="let type of workflowStepTypes" [value]="type.value">
-                      {{ type.label }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-
-                <ng-container *ngIf="group.get('stepType')?.value === 'SEND_MESSAGE'">
-                  <mat-form-field appearance="outline">
-                    <mat-label>Destinataire</mat-label>
-                    <mat-select formControlName="recipientType">
-                      <mat-option *ngFor="let type of workflowRecipientTypes" [value]="type.value">
-                        {{ type.label }}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline">
-                    <mat-label>Message</mat-label>
-                    <mat-select formControlName="messageId" [disabled]="workflowLoading">
-                      <mat-option *ngIf="workflowLoading" [disabled]="true">Chargement...</mat-option>
-                      <mat-option *ngFor="let message of workflowMessages" [value]="message.id">
-                        {{ message.title }}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" *ngIf="group.get('recipientType')?.value === 'ADMIN'">
-                    <mat-label>Emails admin (optionnel)</mat-label>
-                    <input matInput formControlName="recipientEmails" placeholder="admin@exemple.com, support@exemple.com" />
-                  </mat-form-field>
-                </ng-container>
-
-                <mat-form-field appearance="outline" *ngIf="group.get('stepType')?.value === 'DELAY'">
-                  <mat-label>Delai (minutes)</mat-label>
-                  <input matInput type="number" min="1" formControlName="delayMinutes" />
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" *ngIf="group.get('stepType')?.value === 'CONDITION'">
-                  <mat-label>Condition</mat-label>
-                  <mat-select formControlName="conditionType">
-                    <mat-option *ngFor="let condition of workflowConditionTypes" [value]="condition.value">
-                      {{ condition.label }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-
-                <div class="workflow-actions">
-                  <mat-slide-toggle formControlName="enabled">Actif</mat-slide-toggle>
-                  <button
-                    mat-icon-button
-                    type="button"
-                    (click)="openWorkflowTest(i)"
-                    [disabled]="group.get('stepType')?.value !== 'SEND_MESSAGE'"
-                  >
-                    <mat-icon>mark_email_read</mat-icon>
-                  </button>
-                  <button mat-icon-button color="warn" type="button" (click)="removeWorkflowStep(i)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
+            @if (workflowControls.length) {
+              <div class="workflow-list" cdkDropList (cdkDropListDropped)="reorderWorkflowSteps($event)">
+                @for (group of workflowControls; track group; let i = $index) {
+                  <div class="workflow-item" [formGroup]="group" cdkDrag>
+                    <div class="drag-handle" cdkDragHandle>
+                      <mat-icon>drag_indicator</mat-icon>
+                    </div>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Type d'etape</mat-label>
+                      <mat-select formControlName="stepType">
+                        @for (type of workflowStepTypes; track type) {
+                          <mat-option [value]="type.value">
+                            {{ type.label }}
+                          </mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                    @if (group.get('stepType')?.value === 'SEND_MESSAGE') {
+                      <mat-form-field appearance="outline">
+                        <mat-label>Destinataire</mat-label>
+                        <mat-select formControlName="recipientType">
+                          @for (type of workflowRecipientTypes; track type) {
+                            <mat-option [value]="type.value">
+                              {{ type.label }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
+                      <mat-form-field appearance="outline">
+                        <mat-label>Message</mat-label>
+                        <mat-select formControlName="messageId" [disabled]="workflowLoading">
+                          @if (workflowLoading) {
+                            <mat-option [disabled]="true">Chargement...</mat-option>
+                          }
+                          @for (message of workflowMessages; track message) {
+                            <mat-option [value]="message.id">
+                              {{ message.title }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
+                      @if (group.get('recipientType')?.value === 'ADMIN') {
+                        <mat-form-field appearance="outline">
+                          <mat-label>Emails admin (optionnel)</mat-label>
+                          <input matInput formControlName="recipientEmails" placeholder="admin@exemple.com, support@exemple.com" />
+                        </mat-form-field>
+                      }
+                    }
+                    @if (group.get('stepType')?.value === 'DELAY') {
+                      <mat-form-field appearance="outline">
+                        <mat-label>Delai (minutes)</mat-label>
+                        <input matInput type="number" min="1" formControlName="delayMinutes" />
+                      </mat-form-field>
+                    }
+                    @if (group.get('stepType')?.value === 'CONDITION') {
+                      <mat-form-field appearance="outline">
+                        <mat-label>Condition</mat-label>
+                        <mat-select formControlName="conditionType">
+                          @for (condition of workflowConditionTypes; track condition) {
+                            <mat-option [value]="condition.value">
+                              {{ condition.label }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      </mat-form-field>
+                    }
+                    <div class="workflow-actions">
+                      <mat-slide-toggle formControlName="enabled">Actif</mat-slide-toggle>
+                      <button
+                        mat-icon-button
+                        type="button"
+                        (click)="openWorkflowTest(i)"
+                        [disabled]="group.get('stepType')?.value !== 'SEND_MESSAGE'"
+                        >
+                        <mat-icon>mark_email_read</mat-icon>
+                      </button>
+                      <button mat-icon-button color="warn" type="button" (click)="removeWorkflowStep(i)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                }
               </div>
-            </div>
-
-            <ng-template #workflowEmpty>
+            } @else {
               <p class="workflow-empty">Aucune etape definie. Ajoutez au moins un message a envoyer.</p>
-            </ng-template>
+            }
+
           </div>
         </div>
       </div>

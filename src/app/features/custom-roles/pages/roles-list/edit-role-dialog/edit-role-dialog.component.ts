@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -29,16 +29,21 @@ import { RoleType } from '../../../models/role';
   styleUrl: './edit-role-dialog.component.scss',
 })
 export class EditRoleDialogComponent {
+  dialogRef = inject<MatDialogRef<EditRoleDialogComponent>>(MatDialogRef);
+  private roleService = inject(RoleService);
+  private snackBar = inject(MatSnackBar);
+  data = inject(MAT_DIALOG_DATA);
+
   action: string;
   local_data: any;
   roleTypes: RoleType[] = ['CUSTOM'];
 
-  constructor(
-    public dialogRef: MatDialogRef<EditRoleDialogComponent>,
-    private roleService: RoleService,
-    private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const data = this.data;
+
     this.action = 'Update';
     this.local_data = { ...data.role };
   }

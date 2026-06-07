@@ -6,234 +6,230 @@
         <mat-card-subtitle>View contact information</mat-card-subtitle>
       </mat-card-header>
 
-      <mat-card-content *ngIf="!isLoading && contact">
-        <div class="row">
-          <!-- Contact Avatar and Basic Info -->
-          <div class="col-md-4">
-            <div class="text-center mb-4">
-              <div
-                class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
-                [ngClass]="getContactBadgeClass(contact.id.toString())"
-                style="width: 80px; height: 80px; font-size: 32px; font-weight: 600;"
-              >
-                {{ getContactInitials(contact.person.firstName, contact.person.lastName) }}
+      @if (!isLoading && contact) {
+        <mat-card-content>
+          <div class="row">
+            <!-- Contact Avatar and Basic Info -->
+            <div class="col-md-4">
+              <div class="text-center mb-4">
+                <div
+                  class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                  [ngClass]="getContactBadgeClass(contact.id.toString())"
+                  style="width: 80px; height: 80px; font-size: 32px; font-weight: 600;"
+                  >
+                  {{ getContactInitials(contact.person.firstName, contact.person.lastName) }}
+                </div>
+                <h4 class="mb-1">{{ contact.person.firstName }} {{ contact.person.lastName }}</h4>
+                <p class="text-muted mb-0">{{ contact.person.email }}</p>
               </div>
-              <h4 class="mb-1">{{ contact.person.firstName }} {{ contact.person.lastName }}</h4>
-              <p class="text-muted mb-0">{{ contact.person.email }}</p>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="d-flex gap-2 justify-content-center">
-              <button mat-stroked-button (click)="goBack()">
-                <mat-icon>arrow_back</mat-icon>
-                Back to List
-              </button>
-              <button mat-flat-button color="primary" (click)="editContact()">
-                <mat-icon>edit</mat-icon>
-                Edit Contact
-              </button>
-            </div>
-          </div>
-
-          <!-- Contact Details -->
-          <div class="col-md-8">
-            <div class="row">
-              <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>First Name</mat-label>
-                  <input matInput [value]="contact.person.firstName" readonly>
-                </mat-form-field>
-              </div>
-              <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Last Name</mat-label>
-                  <input matInput [value]="contact.person.lastName" readonly>
-                </mat-form-field>
+              <!-- Action Buttons -->
+              <div class="d-flex gap-2 justify-content-center">
+                <button mat-stroked-button (click)="goBack()">
+                  <mat-icon>arrow_back</mat-icon>
+                  Back to List
+                </button>
+                <button mat-flat-button color="primary" (click)="editContact()">
+                  <mat-icon>edit</mat-icon>
+                  Edit Contact
+                </button>
               </div>
             </div>
-
-            <div class="row">
-              <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Email</mat-label>
-                  <input matInput [value]="contact.person.email" type="email" readonly>
-                  <mat-icon matSuffix>
-                    <i-tabler name="mail" class="icon-20 d-flex m-t-2"></i-tabler>
-                  </mat-icon>
-                </mat-form-field>
-              </div>
-              <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Phone</mat-label>
-                  <input matInput [value]="contact.person.phoneNumber || 'Not provided'" readonly>
-                  <mat-icon matSuffix>
-                    <i-tabler name="phone" class="icon-20 d-flex m-t-2"></i-tabler>
-                  </mat-icon>
-                </mat-form-field>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Status</mat-label>
-                  <input matInput [value]="contact.enabled ? 'Enabled' : 'Disabled'" readonly>
-                </mat-form-field>
-              </div>
-              <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Last Message Received</mat-label>
-                  <input
-                    matInput
-                    [value]="contact.lastMessageReceivedAt ? (contact.lastMessageReceivedAt | date:'dd/MM/yyyy HH:mm') : 'N/A'"
-                    readonly>
-                </mat-form-field>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Civility</mat-label>
-                  <input matInput [value]="contact.civility || 'Not provided'" readonly>
-                </mat-form-field>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-4">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Profession</mat-label>
-                  <input matInput [value]="contact.profession || 'Not provided'" readonly>
-                </mat-form-field>
-              </div>
-              <div class="col-md-4">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Age Range</mat-label>
-                  <input matInput [value]="contact.ageRange || 'Not provided'" readonly>
-                </mat-form-field>
-              </div>
-              <div class="col-md-4">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Website URL</mat-label>
-                  <input matInput [value]="contact.websiteUrl || 'Not provided'" readonly>
-                </mat-form-field>
-              </div>
-              <div class="col-md-8">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Objectives</mat-label>
-                  <textarea matInput [value]="contact.objectives || 'Not provided'" rows="3" readonly></textarea>
-                </mat-form-field>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-3">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Language</mat-label>
-                  <input matInput [value]="contact.person.language || 'Not provided'" readonly>
-                </mat-form-field>
-              </div>
-              <div class="col-md-3">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Country</mat-label>
-                  <input matInput [value]="contact.person.country || 'Not provided'" readonly>
-                </mat-form-field>
-              </div>
-              <div class="col-md-3">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>City</mat-label>
-                  <input matInput [value]="contact.person.city || 'Not provided'" readonly>
-                </mat-form-field>
-              </div>
-              <div class="col-md-3">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Timezone</mat-label>
-                  <input matInput [value]="contact.person.timezone || 'Not provided'" readonly>
-                </mat-form-field>
-              </div>
-            </div>
-
-            <!-- Tags Section -->
-            <div class="row">
-              <div class="col-12">
-                <h6 class="mb-3">Tags</h6>
-                <div class="d-flex flex-wrap gap-2">
-                  <app-badge
-                    *ngFor="let tag of contact.tags"
-                    [variant]="'info'"
-                    [pill]="true"
-                    [content]="tag.name">
-                  </app-badge>
-                  <span *ngIf="!contact.tags || contact.tags.length === 0" class="text-muted">No tags assigned</span>
+            <!-- Contact Details -->
+            <div class="col-md-8">
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>First Name</mat-label>
+                    <input matInput [value]="contact.person.firstName" readonly>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Last Name</mat-label>
+                    <input matInput [value]="contact.person.lastName" readonly>
+                  </mat-form-field>
                 </div>
               </div>
-            </div>
-
-            <!-- Timestamps -->
-            <div class="row mt-4">
-              <div class="col-md-6">
-                <div class="d-flex align-items-center">
-                  <mat-icon class="mr-2 text-muted">schedule</mat-icon>
-                  <div>
-                    <small class="text-muted d-block">Created</small>
-                    <span>{{ contact.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Email</mat-label>
+                    <input matInput [value]="contact.person.email" type="email" readonly>
+                    <mat-icon matSuffix>
+                      <i-tabler name="mail" class="icon-20 d-flex m-t-2"></i-tabler>
+                    </mat-icon>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Phone</mat-label>
+                    <input matInput [value]="contact.person.phoneNumber || 'Not provided'" readonly>
+                    <mat-icon matSuffix>
+                      <i-tabler name="phone" class="icon-20 d-flex m-t-2"></i-tabler>
+                    </mat-icon>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Status</mat-label>
+                    <input matInput [value]="contact.enabled ? 'Enabled' : 'Disabled'" readonly>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Last Message Received</mat-label>
+                    <input
+                      matInput
+                      [value]="contact.lastMessageReceivedAt ? (contact.lastMessageReceivedAt | date:'dd/MM/yyyy HH:mm') : 'N/A'"
+                      readonly>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Civility</mat-label>
+                    <input matInput [value]="contact.civility || 'Not provided'" readonly>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Profession</mat-label>
+                    <input matInput [value]="contact.profession || 'Not provided'" readonly>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Age Range</mat-label>
+                    <input matInput [value]="contact.ageRange || 'Not provided'" readonly>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Website URL</mat-label>
+                    <input matInput [value]="contact.websiteUrl || 'Not provided'" readonly>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-8">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Objectives</mat-label>
+                    <textarea matInput [value]="contact.objectives || 'Not provided'" rows="3" readonly></textarea>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-3">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Language</mat-label>
+                    <input matInput [value]="contact.person.language || 'Not provided'" readonly>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-3">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Country</mat-label>
+                    <input matInput [value]="contact.person.country || 'Not provided'" readonly>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-3">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>City</mat-label>
+                    <input matInput [value]="contact.person.city || 'Not provided'" readonly>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-3">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Timezone</mat-label>
+                    <input matInput [value]="contact.person.timezone || 'Not provided'" readonly>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!-- Tags Section -->
+              <div class="row">
+                <div class="col-12">
+                  <h6 class="mb-3">Tags</h6>
+                  <div class="d-flex flex-wrap gap-2">
+                    @for (tag of contact.tags; track tag) {
+                      <app-badge
+                        [variant]="'info'"
+                        [pill]="true"
+                        [content]="tag.name">
+                      </app-badge>
+                    }
+                    @if (!contact.tags || contact.tags.length === 0) {
+                      <span class="text-muted">No tags assigned</span>
+                    }
                   </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="d-flex align-items-center">
-                  <mat-icon class="mr-2 text-muted">update</mat-icon>
-                  <div>
-                    <small class="text-muted d-block">Last Updated</small>
-                    <span>{{ contact.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+              <!-- Timestamps -->
+              <div class="row mt-4">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <mat-icon class="mr-2 text-muted">schedule</mat-icon>
+                    <div>
+                      <small class="text-muted d-block">Created</small>
+                      <span>{{ contact.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center">
+                    <mat-icon class="mr-2 text-muted">update</mat-icon>
+                    <div>
+                      <small class="text-muted d-block">Last Updated</small>
+                      <span>{{ contact.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </mat-card-content>
+        </mat-card-content>
+      }
 
-      <mat-card-content *ngIf="isLoading">
-        <div class="skeleton-stack">
-          <div class="d-flex align-items-center gap-16">
-            <span class="skeleton-avatar"></span>
-            <div class="w-100 skeleton-stack">
-              <span class="skeleton-line skeleton-line--lg" style="width: 45%;"></span>
-              <span class="skeleton-line" style="width: 65%;"></span>
+      @if (isLoading) {
+        <mat-card-content>
+          <div class="skeleton-stack">
+            <div class="d-flex align-items-center gap-16">
+              <span class="skeleton-avatar"></span>
+              <div class="w-100 skeleton-stack">
+                <span class="skeleton-line skeleton-line--lg" style="width: 45%;"></span>
+                <span class="skeleton-line" style="width: 65%;"></span>
+              </div>
+            </div>
+            <div class="skeleton-detail-grid two-cols">
+              <div class="skeleton-card skeleton-stack">
+                <span class="skeleton-line" style="width: 40%;"></span>
+                <span class="skeleton-line skeleton-line--md"></span>
+              </div>
+              <div class="skeleton-card skeleton-stack">
+                <span class="skeleton-line" style="width: 40%;"></span>
+                <span class="skeleton-line skeleton-line--md"></span>
+              </div>
+              <div class="skeleton-card skeleton-stack">
+                <span class="skeleton-line" style="width: 40%;"></span>
+                <span class="skeleton-line skeleton-line--md"></span>
+              </div>
+              <div class="skeleton-card skeleton-stack">
+                <span class="skeleton-line" style="width: 40%;"></span>
+                <span class="skeleton-line skeleton-line--md"></span>
+              </div>
+            </div>
+            <div class="skeleton-card skeleton-stack">
+              <span class="skeleton-line" style="width: 25%;"></span>
+              <div class="d-flex flex-wrap gap-8">
+                <span class="skeleton-chip" style="width: 96px;"></span>
+                <span class="skeleton-chip" style="width: 88px;"></span>
+                <span class="skeleton-chip" style="width: 104px;"></span>
+              </div>
             </div>
           </div>
-
-          <div class="skeleton-detail-grid two-cols">
-            <div class="skeleton-card skeleton-stack">
-              <span class="skeleton-line" style="width: 40%;"></span>
-              <span class="skeleton-line skeleton-line--md"></span>
-            </div>
-            <div class="skeleton-card skeleton-stack">
-              <span class="skeleton-line" style="width: 40%;"></span>
-              <span class="skeleton-line skeleton-line--md"></span>
-            </div>
-            <div class="skeleton-card skeleton-stack">
-              <span class="skeleton-line" style="width: 40%;"></span>
-              <span class="skeleton-line skeleton-line--md"></span>
-            </div>
-            <div class="skeleton-card skeleton-stack">
-              <span class="skeleton-line" style="width: 40%;"></span>
-              <span class="skeleton-line skeleton-line--md"></span>
-            </div>
-          </div>
-
-          <div class="skeleton-card skeleton-stack">
-            <span class="skeleton-line" style="width: 25%;"></span>
-            <div class="d-flex flex-wrap gap-8">
-              <span class="skeleton-chip" style="width: 96px;"></span>
-              <span class="skeleton-chip" style="width: 88px;"></span>
-              <span class="skeleton-chip" style="width: 104px;"></span>
-            </div>
-          </div>
-        </div>
-      </mat-card-content>
+        </mat-card-content>
+      }
     </mat-card>
   </div>
 </div>

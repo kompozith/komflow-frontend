@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, map } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -20,6 +20,8 @@ export interface UserPermissions {
   providedIn: 'root'
 })
 export class PermissionService {
+  private http = inject(HttpClient);
+
   private permissionsSubject = new BehaviorSubject<string[]>([]);
   public permissions$ = this.permissionsSubject.asObservable();
 
@@ -28,7 +30,10 @@ export class PermissionService {
 
   private readonly API_BASE_URL = `${environment.apiUrl}/auth`;
 
-  constructor(private http: HttpClient) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     // Load permissions and roles from storage on initialization
     this.loadFromStorage();
   }

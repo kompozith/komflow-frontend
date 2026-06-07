@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { NgxRolesService, NgxPermissionsService } from 'ngx-permissions';
@@ -16,6 +16,9 @@ import { MaterialModule } from 'src/app/material.module';
     providers: []
 })
 export class AppPermissionComponent implements OnInit {
+  private rolesSrv = inject(NgxRolesService);
+  private permissionsSrv = inject(NgxPermissionsService);
+
   currentRole!: string;
 
   currentPermissions!: string[];
@@ -28,10 +31,10 @@ export class AppPermissionComponent implements OnInit {
 
   private readonly _destroy$ = new Subject<void>();
 
-  constructor(
-    private rolesSrv: NgxRolesService,
-    private permissionsSrv: NgxPermissionsService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.currentRole = 'ADMIN';

@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material.module';
@@ -9,21 +9,24 @@ import { EventFormComponent } from '../../components/event-form/event-form.compo
 @Component({
   selector: 'app-event-edit',
   standalone: true,
-  imports: [CommonModule, MaterialModule, EventFormComponent],
+  imports: [MaterialModule, EventFormComponent],
   templateUrl: './event-edit.component.html',
 })
 export class EventEditComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private eventService = inject(EventService);
+  private snackBar = inject(MatSnackBar);
+
   event: AppEvent | null = null;
   loading = true;
   saving = false;
   private eventId = 0;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private eventService: EventService,
-    private snackBar: MatSnackBar
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));

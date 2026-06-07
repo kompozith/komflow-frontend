@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -26,6 +26,11 @@ interface DialogData {
   styleUrl: './manage-policies-dialog.component.scss',
 })
 export class ManagePoliciesDialogComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<ManagePoliciesDialogComponent>>(MatDialogRef);
+  data = inject<DialogData>(MAT_DIALOG_DATA);
+  private customRolesFacade = inject(CustomRolesFacade);
+  private snackBar = inject(MatSnackBar);
+
   allPolicies: Policy[] = [];
   selectedPolicyIds = new Set<string>();
   isLoading = false;
@@ -34,12 +39,10 @@ export class ManagePoliciesDialogComponent implements OnInit {
 
   readonly searchControl = new FormControl('');
 
-  constructor(
-    public dialogRef: MatDialogRef<ManagePoliciesDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private customRolesFacade: CustomRolesFacade,
-    private snackBar: MatSnackBar
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.selectedPolicyIds = new Set(this.data.currentPolicies.map((policy) => policy.id));

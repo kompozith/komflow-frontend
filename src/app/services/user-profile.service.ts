@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AuthService } from '../features/authentication/services/auth.service';
 import { AuthUser } from '../features/user-management/models/user';
 
@@ -6,8 +6,13 @@ import { AuthUser } from '../features/user-management/models/user';
   providedIn: 'root'
 })
 export class UserProfileService {
+  private authService = inject(AuthService);
 
-  constructor(private authService: AuthService) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+
+  constructor() {}
 
   /**
    * Get current authenticated user

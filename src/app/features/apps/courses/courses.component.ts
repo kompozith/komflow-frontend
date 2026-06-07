@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CourseService } from 'src/app/services/apps/course/course.service';
 import { course } from './course';
 import { MatCardModule } from '@angular/material/card';
@@ -30,10 +30,15 @@ import { MatButtonModule } from '@angular/material/button';
     ]
 })
 export class AppCoursesComponent {
+  private courseService = inject(CourseService);
+
   courseList = signal<course[]>([]);
   selectedCategory = signal<string>('All');
 
-  constructor(private courseService: CourseService) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.courseList.set(this.courseService.getCourse());
   }
 

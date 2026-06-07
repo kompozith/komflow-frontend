@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CourseService } from 'src/app/services/apps/course/course.service';
 import { MatCardModule } from '@angular/material/card';
@@ -19,15 +19,19 @@ import { Router } from '@angular/router';
     ],
 })
 export class AppCourseDetailComponent {
+  courseService = inject(CourseService);
+  private router = inject(Router);
+
   id = signal<any>(null);
   courseDetail = signal<any>(null);
 
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
 
-  constructor(
-    activatedRouter: ActivatedRoute,
-    public courseService: CourseService,
-    private router: Router,
-  ) {
+
+  constructor() {
+    const activatedRouter = inject(ActivatedRoute);
+
     this.id.set(activatedRouter?.snapshot?.paramMap?.get('id'));
 
     const courses = this.courseService.getCourse();

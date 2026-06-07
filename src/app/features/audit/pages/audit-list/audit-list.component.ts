@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -26,6 +26,9 @@ import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs'
   ],
 })
 export class AuditListComponent implements OnInit, OnDestroy {
+  private auditService = inject(AuditService);
+  private snackBar = inject(MatSnackBar);
+
   logs: AuditLog[] = [];
   totalElements = 0;
   totalPages = 0;
@@ -47,10 +50,10 @@ export class AuditListComponent implements OnInit, OnDestroy {
   AuditAction = AuditAction;
   logSkeletonItems = Array.from({ length: 6 }, (_, i) => i);
 
-  constructor(
-      private auditService: AuditService,
-      private snackBar: MatSnackBar
-    ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadAuditLogs();

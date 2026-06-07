@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
@@ -29,6 +29,13 @@ import { MediaPreviewService } from 'src/app/shared/services/media-preview.servi
   styleUrl: './campaign-details.component.scss'
 })
 export class CampaignDetailsComponent implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private campaignService = inject(CampaignService);
+  private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
+  private mediaPreviewService = inject(MediaPreviewService);
+
   private static readonly EVENT_REGISTRATION_TAG_PREFIX = 'EVENT-REG-';
   campaign: CampaignDetails | null = null;
   isLoading = true;
@@ -66,14 +73,10 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
     '{{whatsappNumber}}': '+33 6 12 34 56 78',
   };
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private campaignService: CampaignService,
-    private snackBar: MatSnackBar,
-    private dialog: MatDialog,
-    private mediaPreviewService: MediaPreviewService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.campaignId = +this.route.snapshot.params['id'];

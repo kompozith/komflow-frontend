@@ -1,10 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  Inject,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -27,8 +21,13 @@ import { mockPosts, Post, topcards } from '../profileData';
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit {
+  private sanitizer = inject(DomSanitizer);
+
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  constructor(private sanitizer: DomSanitizer) {}
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  constructor() {}
   topcards = topcards;
   posts: Post[] = mockPosts;
   transformedPosts: Post[] = [];

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StoreService } from './store.service';
@@ -11,11 +11,14 @@ import { ProductCategory } from '../models/product-category';
   providedIn: 'root'
 })
 export class StoreManagementFacade {
+  private storeService = inject(StoreService);
+  private storeCategoryService = inject(StoreCategoryService);
 
-  constructor(
-    private storeService: StoreService,
-    private storeCategoryService: StoreCategoryService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+
+  constructor() {}
 
   // Store operations
   getStores(filters: StoreFilters = {}): Observable<StorePage> {

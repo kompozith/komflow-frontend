@@ -1,4 +1,4 @@
-import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, TemplateRef, ViewContainerRef, inject } from '@angular/core';
 import { AccessControlService } from '../../services/access-control.service';
 
 @Directive({
@@ -6,13 +6,16 @@ import { AccessControlService } from '../../services/access-control.service';
   standalone: true
 })
 export class CanAccessDirective {
+  private templateRef = inject<TemplateRef<any>>(TemplateRef);
+  private viewContainer = inject(ViewContainerRef);
+  private accessControlService = inject(AccessControlService);
+
   private hasView = false;
 
-  constructor(
-    private templateRef: TemplateRef<any>,
-    private viewContainer: ViewContainerRef,
-    private accessControlService: AccessControlService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   @Input() set canAccess(config: { roles?: string[], permissions?: string[] }) {
     const hasAccess = this.accessControlService.canAccess(config);

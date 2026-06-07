@@ -1,8 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-} from '@angular/core';
+import { Component, OnInit, Input, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavService } from '../../../../../services/nav.service';
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -15,10 +11,16 @@ import { MatIconModule } from '@angular/material/icon';
     templateUrl: './nav-item.component.html'
 })
 export class AppHorizontalNavItemComponent implements OnInit {
+  navService = inject(NavService);
+  router = inject(Router);
+
   @Input() depth: any;
   @Input() item: any;
 
-  constructor(public navService: NavService, public router: Router) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     if (this.depth === undefined) {
       this.depth = 0;
     }

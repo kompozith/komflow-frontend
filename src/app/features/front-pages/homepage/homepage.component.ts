@@ -15,6 +15,8 @@ import { MaterialModule } from 'src/app/material.module';
   styleUrl: './homepage.component.scss'
 })
 export class HomepageComponent {
+  private route = inject(ActivatedRoute);
+
   @ViewChild('customizerRight') customizerRight!: MatSidenav;
   selected: string = ''; // default selected
   mobileQuery: MediaQueryList;
@@ -24,7 +26,10 @@ export class HomepageComponent {
   private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 1199px)`);
   showBackToTop: boolean;
   isTopbarFixed: boolean;
-  constructor(private route: ActivatedRoute) {   
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  constructor() {   
     const media = inject(MediaMatcher);
     this.mobileQuery = media.matchMedia('(max-width: 1199px)');
     this.isMobileView = this.mobileQuery.matches;

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Meta, Title } from '@angular/platform-browser';
@@ -18,6 +18,16 @@ import { PublicEventService } from '../../services/public-event.service';
   styleUrls: ['./event-register.component.scss'],
 })
 export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy {
+  private fb = inject(FormBuilder);
+  private hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
+  private geoService = inject(GeoService);
+  private publicEventService = inject(PublicEventService);
+  private titleService = inject(Title);
+  private metaService = inject(Meta);
+
   slug = '';
   event: PublicEventDetails | null = null;
   isLoading = true;
@@ -72,17 +82,10 @@ export class EventRegisterComponent implements OnInit, AfterViewInit, OnDestroy 
     phoneNumber: [null as any, [Validators.required]],
   });
 
-  constructor(
-    private fb: FormBuilder,
-    private hostRef: ElementRef<HTMLElement>,
-    private route: ActivatedRoute,
-    private router: Router,
-    private snackBar: MatSnackBar,
-    private geoService: GeoService,
-    private publicEventService: PublicEventService,
-    private titleService: Title,
-    private metaService: Meta
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   @HostListener('window:resize')
   onViewportResize(): void {

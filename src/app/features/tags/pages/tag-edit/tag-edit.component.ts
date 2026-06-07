@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -6,7 +6,7 @@ import {
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TablerIconsModule } from 'angular-tabler-icons';
-import { CommonModule } from '@angular/common';
+
 import { TagService } from '../../services/tag.service';
 import { Tag, UpdateTagRequest } from '../../models/tag';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -20,13 +20,21 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    TablerIconsModule,
-    CommonModule,
-  ],
+    TablerIconsModule
+],
   templateUrl: './tag-edit.component.html',
   styleUrl: './tag-edit.component.scss',
 })
 export class TagEditComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<TagEditComponent>>(MatDialogRef);
+  private fb = inject(FormBuilder);
+  private tagService = inject(TagService);
+  private contactService = inject(ContactService);
+  private snackBar = inject(MatSnackBar);
+  data = inject<{
+    tag: Tag;
+}>(MAT_DIALOG_DATA);
+
   tagForm: FormGroup;
   isLoading = false;
   isSaving = false;
@@ -39,15 +47,13 @@ export class TagEditComponent implements OnInit {
   private readonly contactSearchSubject = new Subject<string>();
   contactSearch = '';
 
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
 
-  constructor(
-    public dialogRef: MatDialogRef<TagEditComponent>,
-    private fb: FormBuilder,
-    private tagService: TagService,
-    private contactService: ContactService,
-    private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: { tag: Tag }
-  ) {
+
+  constructor() {
+    const data = this.data;
+
     this.tag = data.tag;
     this.isLoading = true;
     const normalizedColor = this.normalizeColor(data.tag.colorCode || data.tag.color || '#007bff');

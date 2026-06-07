@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material.module';
-import { CommonModule } from '@angular/common';
+
 import { StoreManagementFacade } from '../../services/store-management.facade';
 import { UpdateStoreRequest, Store } from '../../models/store';
 import { BrandManagementFacade } from '../../../brands/services/brand-management.facade';
@@ -14,9 +14,15 @@ import { combineLatest } from 'rxjs';
   selector: 'app-store-edit',
   templateUrl: './store-edit.component.html',
   styleUrls: ['./store-edit.component.scss'],
-  imports: [MaterialModule, ReactiveFormsModule, CommonModule],
+  imports: [MaterialModule, ReactiveFormsModule],
 })
 export class StoreEditComponent implements OnInit {
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private storeManagementFacade = inject(StoreManagementFacade);
+  private brandManagementFacade = inject(BrandManagementFacade);
+  private snackBar = inject(MatSnackBar);
+
   storeId: string = '';
   isLoading = false;
   storeForm: FormGroup;
@@ -24,13 +30,10 @@ export class StoreEditComponent implements OnInit {
   isLoadingBrands = false;
   store: Store | null = null;
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private storeManagementFacade: StoreManagementFacade,
-    private brandManagementFacade: BrandManagementFacade,
-    private snackBar: MatSnackBar
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.storeForm = new FormGroup({
       name: new FormControl('', [Validators.required, Validators.minLength(2)]),
       description: new FormControl(''),

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { InvoiceService } from 'src/app/services/apps/invoice/invoice.service';
 import { InvoiceList, order } from '../invoice';
@@ -29,20 +29,24 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   ],
 })
 export class AppEditInvoiceComponent {
+  private invoiceService = inject(InvoiceService);
+  private router = inject(Router);
+  private fb = inject(UntypedFormBuilder);
+  dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
+
   id = signal<any>(null);
   subTotal = signal<number>(0);
   vat = signal<number>(0);
   grandTotal = signal<number>(0);
   addForm: UntypedFormGroup | any;
   invoice = signal<InvoiceList | any>([]);
-  constructor(
-    activatedRouter: ActivatedRoute,
-    private invoiceService: InvoiceService,
-    private router: Router,
-    private fb: UntypedFormBuilder,
-    public dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) {
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  constructor() {
+    const activatedRouter = inject(ActivatedRoute);
+
     this.id.set(activatedRouter.snapshot.paramMap.get('id'));
     this.loadInvoice(); // Load invoice here
     this.subTotal.set(this.invoice()?.totalCost || 0);

@@ -11,11 +11,19 @@
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Name</mat-label>
             <input matInput formControlName="name" placeholder="VIP Clients">
-            <mat-error *ngIf="tagForm.get('name')?.invalid && tagForm.get('name')?.touched" class="mb-3">
-              <span *ngIf="tagForm.get('name')?.errors?.['required']">Name is required</span>
-              <span *ngIf="tagForm.get('name')?.errors?.['minlength']">Name must be at least 2 characters</span>
-              <span *ngIf="tagForm.get('name')?.errors?.['maxlength']">Name must be less than 50 characters</span>
-            </mat-error>
+            @if (tagForm.get('name')?.invalid && tagForm.get('name')?.touched) {
+              <mat-error class="mb-3">
+                @if (tagForm.get('name')?.errors?.['required']) {
+                  <span>Name is required</span>
+                }
+                @if (tagForm.get('name')?.errors?.['minlength']) {
+                  <span>Name must be at least 2 characters</span>
+                }
+                @if (tagForm.get('name')?.errors?.['maxlength']) {
+                  <span>Name must be less than 50 characters</span>
+                }
+              </mat-error>
+            }
           </mat-form-field>
         </div>
       </div>
@@ -25,9 +33,13 @@
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Description (Optional)</mat-label>
             <textarea matInput formControlName="description" placeholder="Customers to prioritize on premium campaigns" rows="3"></textarea>
-            <mat-error *ngIf="tagForm.get('description')?.invalid && tagForm.get('description')?.touched">
-              <span *ngIf="tagForm.get('description')?.errors?.['maxlength']">Description must be less than 255 characters</span>
-            </mat-error>
+            @if (tagForm.get('description')?.invalid && tagForm.get('description')?.touched) {
+              <mat-error>
+                @if (tagForm.get('description')?.errors?.['maxlength']) {
+                  <span>Description must be less than 255 characters</span>
+                }
+              </mat-error>
+            }
           </mat-form-field>
         </div>
       </div>
@@ -54,15 +66,21 @@
                   (input)="onContactSearchChange($any($event.target).value)"
                   (keydown)="$event.stopPropagation()"
                   (click)="$event.stopPropagation()"
-                />
+                  />
               </mat-option>
-              <mat-option *ngFor="let contact of contacts" [value]="contact.id">
-                {{ contact.person.firstName }} {{ contact.person.lastName }} ({{ contact.person.email }})
-              </mat-option>
-              <mat-option disabled *ngIf="contactsLoading">Loading contacts...</mat-option>
-              <mat-option *ngIf="contactsHasMore && !contactsLoading" (click)="loadMoreContacts()">
-                Load more contacts
-              </mat-option>
+              @for (contact of contacts; track contact) {
+                <mat-option [value]="contact.id">
+                  {{ contact.person.firstName }} {{ contact.person.lastName }} ({{ contact.person.email }})
+                </mat-option>
+              }
+              @if (contactsLoading) {
+                <mat-option disabled>Loading contacts...</mat-option>
+              }
+              @if (contactsHasMore && !contactsLoading) {
+                <mat-option (click)="loadMoreContacts()">
+                  Load more contacts
+                </mat-option>
+              }
             </mat-select>
             <mat-hint>Select one or many contacts</mat-hint>
           </mat-form-field>
@@ -81,8 +99,12 @@
           Cancel
         </button>
         <button mat-flat-button color="primary" type="submit" [disabled]="isLoading || tagForm.invalid">
-          <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
-          <span *ngIf="!isLoading">Create Tag</span>
+          @if (isLoading) {
+            <mat-spinner diameter="20"></mat-spinner>
+          }
+          @if (!isLoading) {
+            <span>Create Tag</span>
+          }
         </button>
       </div>
     </form>

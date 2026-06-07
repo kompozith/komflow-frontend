@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { MaterialModule } from 'src/app/material.module';
 import { EventRegistrationStatsComponent } from '../../components/event-registration-stats/event-registration-stats.component';
 import { EventService } from 'src/app/features/core/services/event.service';
@@ -8,7 +8,7 @@ import { EventService } from 'src/app/features/core/services/event.service';
 @Component({
   selector: 'app-event-stats',
   standalone: true,
-  imports: [CommonModule, RouterModule, MaterialModule, EventRegistrationStatsComponent],
+  imports: [RouterModule, MaterialModule, EventRegistrationStatsComponent],
   template: `
     @if (eventName) {
       <p class="text-muted f-s-13 mb-3 d-flex align-items-center gap-1">
@@ -20,13 +20,16 @@ import { EventService } from 'src/app/features/core/services/event.service';
   `,
 })
 export class EventStatsComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private eventService = inject(EventService);
+
   eventId   = 0;
   eventName = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private eventService: EventService,
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id')) || 0;

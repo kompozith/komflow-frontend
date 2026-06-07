@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import {
   UntypedFormGroup,
   UntypedFormBuilder,
@@ -30,6 +30,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     ]
 })
 export class AppAddInvoiceComponent {
+  private fb = inject(UntypedFormBuilder);
+  private invoiceService = inject(InvoiceService);
+  private router = inject(Router);
+  dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
+
   addForm: UntypedFormGroup | any;
   rows: UntypedFormArray;
   invoice = signal<InvoiceList[] | any>([]);
@@ -37,13 +43,10 @@ export class AppAddInvoiceComponent {
   vat = signal(0);
   grandTotal = signal(0);
 
-  constructor(
-    private fb: UntypedFormBuilder,
-    private invoiceService: InvoiceService,
-    private router: Router,
-    public dialog: MatDialog,
-    private snackBar: MatSnackBar,
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.invoice.set(this.invoiceService.getInvoiceList());
 
     const maxId = Math.max.apply(

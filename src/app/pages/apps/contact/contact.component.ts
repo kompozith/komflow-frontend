@@ -7,7 +7,7 @@ import {
 import { Contact } from './contact';
 import { ContactService } from 'src/app/services/apps/contact/contact.service';
 import { MaterialModule } from 'src/app/material.module';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -30,9 +30,8 @@ export interface ContactData {
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    TablerIconsModule,
-    CommonModule,
-  ],
+    TablerIconsModule
+],
 })
 export class AppContactComponent implements OnInit {
   Contactname = signal<string>('');
@@ -105,9 +104,8 @@ export class AppContactComponent implements OnInit {
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
-    TablerIconsModule,
-  ],
+    TablerIconsModule
+],
   templateUrl: 'contact-dialog-content.html',
 })
 export class AppContactDialogContentComponent {

@@ -1,4 +1,4 @@
-<ng-container *ngIf="!loading && event; else stateTpl">
+@if (!loading && event) {
   <app-event-form
     [initialEvent]="event"
     [submitLabel]="'Sauvegarder le workflow'"
@@ -6,10 +6,9 @@
     [workflowOnly]="true"
     (formSubmitted)="update($event)"
     (cancelled)="cancel()"
-  >
+    >
   </app-event-form>
-</ng-container>
-
-<ng-template #stateTpl>
+} @else {
   <div class="cardWithShadow p-4">Chargement du workflow...</div>
-</ng-template>
+}
+

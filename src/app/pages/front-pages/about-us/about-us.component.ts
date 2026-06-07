@@ -9,13 +9,11 @@ import {
   stats,
   users,
 } from '../front-pagesData';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-about-us',
-  imports: [IconModule,MaterialModule ,CommonModule,ImageSliderComponent,FooterComponent,
-    //PagePricingComponent
-  ],
+  imports: [IconModule, MaterialModule, ImageSliderComponent, FooterComponent],
   templateUrl: './about-us.component.html',
   styleUrl: './about-us.component.scss'
 })

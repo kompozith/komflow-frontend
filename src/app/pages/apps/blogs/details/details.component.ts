@@ -8,7 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-blog-details',
@@ -19,9 +19,8 @@ import { CommonModule } from '@angular/common';
     MatDividerModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
-    CommonModule,
-  ],
+    MatButtonModule
+],
   templateUrl: './details.component.html',
 })
 export class AppBlogDetailsComponent implements OnInit {

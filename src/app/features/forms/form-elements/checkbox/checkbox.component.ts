@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, signal, inject } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../../material.module';
@@ -29,6 +29,8 @@ export interface Task {
     templateUrl: './checkbox.component.html'
 })
 export class AppCheckboxComponent {
+  private _formBuilder = inject(FormBuilder);
+
 
   // 1 [Basic with Checkbox]
   codeForBasicCheckbox = BASIC_CHECKBOX_HTML_SNIPPET;
@@ -49,7 +51,10 @@ export class AppCheckboxComponent {
     mushroom: false,
   });
 
-  constructor(private _formBuilder: FormBuilder) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   //   config
   checked = false;

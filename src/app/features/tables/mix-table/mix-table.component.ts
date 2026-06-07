@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -80,7 +80,12 @@ export class AppMixTableComponent {
     Object.create(null);
   @ViewChild(MatSort, { static: true }) sort: MatSort = Object.create(null);
 
-  constructor(breakpointObserver: BreakpointObserver) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const breakpointObserver = inject(BreakpointObserver);
+
     breakpointObserver.observe(['(max-width: 600px)']).subscribe((result) => {
       this.displayedColumns = result.matches
         ? ['id', 'name', 'progress', 'color']

@@ -1,8 +1,4 @@
-import {
-  Component,
-  ViewChild,
-  OnInit,
-} from '@angular/core';
+import { Component, ViewChild, OnInit, inject } from '@angular/core';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatMenuModule } from '@angular/material/menu';
@@ -10,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
-import { CommonModule } from '@angular/common';
+
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { RoleService } from '../../services/role.service';
@@ -34,14 +30,18 @@ import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table
     FormsModule,
     ReactiveFormsModule,
     TablerIconsModule,
-    CommonModule,
     MatMenuModule,
     MatIconModule,
     BadgeComponent,
-    SkeletonTableComponent,
-  ],
+    SkeletonTableComponent
+],
 })
 export class RolesListComponent implements OnInit {
+  dialog = inject(MatDialog);
+  private roleService = inject(RoleService);
+  private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
+
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
@@ -69,12 +69,10 @@ export class RolesListComponent implements OnInit {
 
   private searchSubject = new Subject<string>();
 
-  constructor(
-    public dialog: MatDialog,
-    private roleService: RoleService,
-    private snackBar: MatSnackBar,
-    private router: Router
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadRoles();

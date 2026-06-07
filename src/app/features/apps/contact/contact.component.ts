@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Optional, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import {
   MatDialog,
   MatDialogRef,
@@ -7,7 +7,7 @@ import {
 import { Contact } from './contact';
 import { ContactService } from 'src/app/services/apps/contact/contact.service';
 import { MaterialModule } from 'src/app/material.module';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -30,11 +30,14 @@ export interface ContactData {
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    TablerIconsModule,
-    CommonModule,
-  ],
+    TablerIconsModule
+],
 })
 export class AppContactComponent implements OnInit {
+  dialog = inject(MatDialog);
+  private contactService = inject(ContactService);
+  private snackBar = inject(MatSnackBar);
+
   Contactname = signal<string>('');
   ContactPost = signal<string>('');
   Contactadd = signal<string>('');
@@ -46,11 +49,10 @@ export class AppContactComponent implements OnInit {
   contacts = signal<Contact[]>([]);
   searchText = signal<string>('');
 
-  constructor(
-    public dialog: MatDialog,
-    private contactService: ContactService,
-    private snackBar: MatSnackBar
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.contacts.set(this.contactService.getContacts());
@@ -105,22 +107,25 @@ export class AppContactComponent implements OnInit {
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
-    TablerIconsModule,
-  ],
+    TablerIconsModule
+],
   templateUrl: 'contact-dialog-content.html',
 })
 export class AppContactDialogContentComponent {
+  dialogRef = inject<MatDialogRef<AppContactDialogContentComponent>>(MatDialogRef);
+  data = inject<ContactData>(MAT_DIALOG_DATA, { optional: true })!;
+
   action: string;
 
   local_data: ContactData | any;
   selectedFile: File | null = null;
 
-  constructor(
-    public dialogRef: MatDialogRef<AppContactDialogContentComponent>,
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
 
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: ContactData
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.local_data = { ...data };
     this.action = this.local_data.action;
   }

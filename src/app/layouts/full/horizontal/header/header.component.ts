@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input, inject } from '@angular/core';
 import { CoreService } from 'src/app/services/core.service';
 import { MatDialog } from '@angular/material/dialog';
 import { navItems } from '../../vertical/sidebar/sidebar-data';
@@ -45,6 +45,11 @@ interface quicklinks {
     templateUrl: './header.component.html'
 })
 export class AppHorizontalHeaderComponent {
+  private settings = inject(CoreService);
+  private vsidenav = inject(CoreService);
+  dialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+
   @Input() showToggle = true;
   @Input() toggleChecked = false;
   @Output() toggleMobileNav = new EventEmitter<void>();
@@ -86,12 +91,12 @@ export class AppHorizontalHeaderComponent {
 
   @Output() optionsChange = new EventEmitter<AppSettings>();
 
-  constructor(
-    private settings: CoreService,
-    private vsidenav: CoreService,
-    public dialog: MatDialog,
-    private translate: TranslateService
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const translate = this.translate;
+
     translate.setDefaultLang('en');
   }
 

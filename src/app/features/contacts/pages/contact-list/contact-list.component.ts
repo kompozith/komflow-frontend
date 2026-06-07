@@ -1,7 +1,4 @@
-import {
-  Component,
-  OnInit,
-} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
@@ -39,6 +36,12 @@ import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table
   ],
 })
 export class ContactListComponent implements OnInit {
+  dialog = inject(MatDialog);
+  private router = inject(Router);
+  private contactService = inject(ContactService);
+  private tagService = inject(TagService);
+  private snackBar = inject(MatSnackBar);
+
 
 
   displayedColumns: string[] = [
@@ -71,13 +74,10 @@ export class ContactListComponent implements OnInit {
   // Search debounce
   private searchSubject = new Subject<string>();
 
-  constructor(
-      public dialog: MatDialog,
-      private router: Router,
-      private contactService: ContactService,
-      private tagService: TagService,
-      private snackBar: MatSnackBar
-    ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadContacts();

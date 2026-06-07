@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CoreService } from 'src/app/services/core.service';
 import { AppSettings } from 'src/app/config';
 import { CommonModule } from '@angular/common';
@@ -12,11 +12,16 @@ import { MaterialModule } from 'src/app/material.module';
   imports: [RouterOutlet, MaterialModule, CommonModule],
 })
 export class BlankComponent {
+  private settings = inject(CoreService);
+
   private htmlElement!: HTMLHtmlElement;
 
   options = this.settings.getOptions();
 
-  constructor(private settings: CoreService) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.htmlElement = document.querySelector('html')!;
     // Initialize project theme with options
     this.receiveOptions(this.options);

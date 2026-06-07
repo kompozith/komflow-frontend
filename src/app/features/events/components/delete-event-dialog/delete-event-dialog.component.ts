@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -24,16 +24,23 @@ import { AppEvent, EventService } from 'src/app/features/core/services/event.ser
   styleUrl: './delete-event-dialog.component.scss',
 })
 export class DeleteEventDialogComponent {
+  dialogRef = inject<MatDialogRef<DeleteEventDialogComponent>>(MatDialogRef);
+  private eventService = inject(EventService);
+  private snackBar = inject(MatSnackBar);
+  data = inject<{
+    event: AppEvent;
+}>(MAT_DIALOG_DATA);
+
   action = 'Delete';
   confirmationText = '';
   localData: AppEvent;
 
-  constructor(
-    public dialogRef: MatDialogRef<DeleteEventDialogComponent>,
-    private eventService: EventService,
-    private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: { event: AppEvent }
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const data = this.data;
+
     this.localData = { ...data.event };
   }
 

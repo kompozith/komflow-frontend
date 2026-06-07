@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -13,13 +13,12 @@ import { MaterialModule } from 'src/app/material.module';
 @Component({
   selector: 'app-submit-campaign-dialog',
   imports: [
-    CommonModule,
     MatDialogActions,
     MatDialogClose,
     MatDialogTitle,
     MatDialogContent,
     MaterialModule
-  ],
+],
   templateUrl: './submit-campaign-dialog.component.html'
 })
 export class SubmitCampaignDialogComponent {

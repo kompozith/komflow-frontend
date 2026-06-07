@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IconModule } from 'src/app/icon/icon.module';
@@ -15,7 +15,7 @@ interface productcards {
 
 @Component({
   selector: 'app-gallery',
-  imports: [MaterialModule,IconModule,CommonModule, FormsModule],
+  imports: [MaterialModule, IconModule, FormsModule],
   templateUrl: './gallery.component.html',
 })
 export class GalleryComponent implements OnInit {

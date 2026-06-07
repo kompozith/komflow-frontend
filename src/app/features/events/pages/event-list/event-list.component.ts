@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
@@ -17,17 +17,20 @@ import { DeleteEventDialogComponent } from '../../components/delete-event-dialog
   styleUrls: ['./event-list.component.scss'],
 })
 export class EventListComponent implements OnInit {
+  private eventService = inject(EventService);
+  private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
+  private dialog = inject(MatDialog);
+
   events: AppEvent[] = [];
   loading = false;
   searchText = '';
   displayedColumns: string[] = ['title', 'mode', 'publicLink', 'startDate', 'startTime', 'location', 'updatedAt', 'actions'];
 
-  constructor(
-    private eventService: EventService,
-    private snackBar: MatSnackBar,
-    private router: Router,
-    private dialog: MatDialog
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadEvents();

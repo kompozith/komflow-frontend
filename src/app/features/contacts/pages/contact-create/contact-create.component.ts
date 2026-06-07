@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -28,6 +28,14 @@ import { CountryISO, NgxIntlTelInputModule, SearchCountryField } from 'ngx-intl-
   styleUrl: './contact-create.component.scss',
 })
 export class ContactCreateComponent {
+  private fb = inject(FormBuilder);
+  private contactService = inject(ContactService);
+  private tagService = inject(TagService);
+  private personService = inject(PersonService);
+  private geoService = inject(GeoService);
+  private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
+
   contactForm: FormGroup;
   isLoading = false;
   availableTags: Tag[] = [];
@@ -43,15 +51,10 @@ export class ContactCreateComponent {
   CountryISO = CountryISO;
   SearchCountryField = SearchCountryField;
 
-  constructor(
-    private fb: FormBuilder,
-    private contactService: ContactService,
-    private tagService: TagService,
-    private personService: PersonService,
-    private geoService: GeoService,
-    private snackBar: MatSnackBar,
-    private router: Router
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.contactForm = this.fb.group({
       personId: [null],
       enabled: [true],

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 
@@ -13,10 +13,15 @@ import {
     templateUrl: './delete-dialog.component.html',
 })
 export class AppDeleteDialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<AppDeleteDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { message: string }
-  ) {}
+  dialogRef = inject<MatDialogRef<AppDeleteDialogComponent>>(MatDialogRef);
+  data = inject<{
+    message: string;
+}>(MAT_DIALOG_DATA);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   onConfirm(): void {
     this.dialogRef.close(true);

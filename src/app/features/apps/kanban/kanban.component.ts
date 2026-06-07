@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   CdkDragDrop,
   DragDropModule,
@@ -30,16 +30,19 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
     ]
 })
 export class AppKanbanComponent {
+  dialog = inject(MatDialog);
+  taskService = inject(KanbanService);
+  private snackBar = inject(MatSnackBar);
+
   todos: Todos[] = [];
   inprogress: Todos[] = [];
   completed: Todos[] = [];
   onhold: Todos[] = [];
 
-  constructor(
-    public dialog: MatDialog,
-    public taskService: KanbanService,
-    private snackBar: MatSnackBar
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.loadTasks();
   }
 

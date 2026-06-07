@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   FormsModule,
@@ -31,6 +31,8 @@ import {
   templateUrl: './form-wizard.component.html',
 })
 export class AppFormWizardComponent {
+  private _formBuilder = inject(FormBuilder);
+
   firstFormGroup = this._formBuilder.group({
     firstCtrl: ['', Validators.required],
   });
@@ -38,7 +40,10 @@ export class AppFormWizardComponent {
     secondCtrl: ['', Validators.required],
   });
 
-  constructor(private _formBuilder: FormBuilder) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   // 1 [basic form wizard]
   codeForFormWizard = BASIC_FORM_WIZARD_HTML_SNIPPET;

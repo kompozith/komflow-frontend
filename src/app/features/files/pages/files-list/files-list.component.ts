@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  AfterViewInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -46,6 +40,11 @@ import { MediaPreviewService } from 'src/app/shared/services/media-preview.servi
   ],
 })
 export class FilesListComponent implements OnInit, OnDestroy, AfterViewInit {
+  private router = inject(Router);
+  private fileService = inject(FileService);
+  private snackBar = inject(MatSnackBar);
+  private mediaPreviewService = inject(MediaPreviewService);
+
   @ViewChild(MatSort) sort: MatSort | undefined;
 
   displayedColumns: string[] = [
@@ -80,12 +79,10 @@ export class FilesListComponent implements OnInit, OnDestroy, AfterViewInit {
   FileMediaType = FileMediaType;
   gridSkeletonItems = Array.from({ length: 8 }, (_, i) => i);
 
-  constructor(
-    private router: Router,
-    private fileService: FileService,
-    private snackBar: MatSnackBar,
-    private mediaPreviewService: MediaPreviewService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadFiles();

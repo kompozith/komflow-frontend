@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { ContactService } from '../../../services/contact.service';
@@ -16,22 +16,31 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     <mat-dialog-actions align="end">
       <button mat-button (click)="onCancel()">Cancel</button>
       <button mat-flat-button color="warn" (click)="onConfirm()" [disabled]="isDeleting">
-        <mat-spinner diameter="20" *ngIf="isDeleting"></mat-spinner>
-        <span *ngIf="!isDeleting">Delete</span>
+        @if (isDeleting) {
+          <mat-spinner diameter="20"></mat-spinner>
+        }
+        @if (!isDeleting) {
+          <span>Delete</span>
+        }
       </button>
     </mat-dialog-actions>
-  `,
+    `,
   imports: [MaterialModule, MatDialogModule],
 })
 export class DeleteContactDialogComponent {
+  dialogRef = inject<MatDialogRef<DeleteContactDialogComponent>>(MatDialogRef);
+  data = inject<{
+    contact: Contact;
+}>(MAT_DIALOG_DATA);
+  private contactService = inject(ContactService);
+  private snackBar = inject(MatSnackBar);
+
   isDeleting = false;
 
-  constructor(
-    public dialogRef: MatDialogRef<DeleteContactDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { contact: Contact },
-    private contactService: ContactService,
-    private snackBar: MatSnackBar
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   onCancel(): void {
     this.dialogRef.close();

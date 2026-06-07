@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, Inject, Optional } from '@angular/core';
+
+import { Component, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -9,23 +9,27 @@ import { DatePipe } from '@angular/common';
     selector: 'app-kanban-dialog',
     templateUrl: './kanban-dialog.component.html',
     imports: [
-        MaterialModule,
-        CommonModule,
-        TablerIconsModule,
-        FormsModule,
-        ReactiveFormsModule,
-    ],
+    MaterialModule,
+    TablerIconsModule,
+    FormsModule,
+    ReactiveFormsModule
+],
     providers: [DatePipe]
 })
 export class AppKanbanDialogComponent {
+  dialogRef = inject<MatDialogRef<AppKanbanDialogComponent>>(MatDialogRef);
+  data = inject(MAT_DIALOG_DATA, { optional: true })!;
+  private datePipe = inject(DatePipe);
+
   action: string;
   local_data: any;
 
-  constructor(
-    public dialogRef: MatDialogRef<AppKanbanDialogComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
-    private datePipe: DatePipe
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const data = this.data;
+
     this.local_data = { ...data };
 
     if (data.action === 'Add') {

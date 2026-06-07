@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Inject,
-  ViewChild,
-  inject,
-  model,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild, inject, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -61,7 +53,12 @@ export interface DialogData {
   templateUrl: 'dialog-overview.component.html',
 })
 export class AppDialogOverviewComponent {
-  constructor(public dialogRef: MatDialogRef<AppDialogOverviewComponent>) {}
+  dialogRef = inject<MatDialogRef<AppDialogOverviewComponent>>(MatDialogRef);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 }
 
 /**
@@ -91,7 +88,12 @@ export class AppDialogContentComponent {}
   templateUrl: 'dialog-data.component.html',
 })
 export class AppDialogDataComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+  data = inject<DialogData>(MAT_DIALOG_DATA);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 }
 
 // 4
@@ -157,6 +159,8 @@ export class DialogOverviewExampleDialog {
   templateUrl: './dialog.component.html',
 })
 export class AppDialogComponent {
+  dialog = inject(MatDialog);
+
   // 1 [dialog with Animations]
   codeFordialogAnimations = DIALOG_ANIMATION_HTML_SNIPPET;
   codeFordialogAnimationsTs = DIALOG_ANIMATION_TS_SNIPPET;
@@ -180,7 +184,10 @@ export class AppDialogComponent {
   // 4
   @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
 
-  constructor(public dialog: MatDialog) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   // 5
   readonly animal = signal('');

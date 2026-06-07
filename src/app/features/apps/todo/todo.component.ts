@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import {
   UntypedFormGroup,
   UntypedFormBuilder,
@@ -27,6 +27,11 @@ import { AppDeleteDialogComponent } from '../kanban/delete-dialog/delete-dialog.
 })
 
 export class AppTodoComponent implements OnInit {
+  fb = inject(UntypedFormBuilder);
+  snackBar = inject(MatSnackBar);
+  todoService = inject(TodoService);
+  private dialog = inject(MatDialog);
+
   sidePanelOpened = signal<boolean>(true);
   public showSidebar = signal<boolean>(false);
   inputFg: UntypedFormGroup;
@@ -38,12 +43,10 @@ export class AppTodoComponent implements OnInit {
   totalTodos = signal<number>(0);
   totalCompleted = signal<number>(0);
   totalIncomplete = signal<number>(0);
-  constructor(
-    public fb: UntypedFormBuilder,
-    public snackBar: MatSnackBar,
-    public todoService: TodoService,
-    private dialog: MatDialog
-  ) {
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  constructor() {
     this.todos.set(this.todoService.getTodos());
   }
 

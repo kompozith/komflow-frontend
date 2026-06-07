@@ -91,7 +91,7 @@
             placeholder="Search in log details"
             [(ngModel)]="searchText"
             (input)="onSearchChange(searchText)"
-          />
+            />
           <mat-icon matSuffix>
             <i-tabler name="search" class="icon-20 d-flex m-t-2"></i-tabler>
           </mat-icon>
@@ -104,57 +104,74 @@
 <mat-card class="cardWithShadow">
   <mat-card-content>
 
-    <div class="audit-summary" *ngIf="!isLoading">
-      <span class="text-muted f-s-13">Showing {{ getStartIndex() }} to {{ getEndIndex() }} of {{ totalElements }} entries</span>
-      <span class="text-muted f-s-13">Page {{ currentPage + 1 }} / {{ totalPages || 1 }}</span>
-    </div>
-
-    <div *ngIf="isLoading" class="audit-timeline">
-      <div class="timeline-item skeleton-card" *ngFor="let _ of logSkeletonItems">
-        <span class="timeline-node skeleton-avatar"></span>
-        <div class="timeline-card skeleton-stack">
-          <span class="skeleton-line skeleton-line--md" style="width: 30%;"></span>
-          <span class="skeleton-line" style="width: 70%;"></span>
-          <span class="skeleton-line skeleton-line--sm" style="width: 45%;"></span>
-          <span class="skeleton-block" style="height: 48px; border-radius: 8px;"></span>
-        </div>
+    @if (!isLoading) {
+      <div class="audit-summary">
+        <span class="text-muted f-s-13">Showing {{ getStartIndex() }} to {{ getEndIndex() }} of {{ totalElements }} entries</span>
+        <span class="text-muted f-s-13">Page {{ currentPage + 1 }} / {{ totalPages || 1 }}</span>
       </div>
-    </div>
+    }
 
-    <div *ngIf="!isLoading" class="audit-timeline">
-      <article class="timeline-item" *ngFor="let log of logs; trackBy: trackByLogId">
-        <div class="timeline-node">{{ getUserInitial(log) }}</div>
-        <div class="timeline-card">
-          <header class="timeline-card-head">
-            <div class="title-wrap">
-              <h6 class="m-0 f-w-600">{{ log.username || log.userId || 'System' }}</h6>
-              <span class="timestamp">{{ log.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+    @if (isLoading) {
+      <div class="audit-timeline">
+        @for (_ of logSkeletonItems; track _) {
+          <div class="timeline-item skeleton-card">
+            <span class="timeline-node skeleton-avatar"></span>
+            <div class="timeline-card skeleton-stack">
+              <span class="skeleton-line skeleton-line--md" style="width: 30%;"></span>
+              <span class="skeleton-line" style="width: 70%;"></span>
+              <span class="skeleton-line skeleton-line--sm" style="width: 45%;"></span>
+              <span class="skeleton-block" style="height: 48px; border-radius: 8px;"></span>
             </div>
-            <div class="badge-wrap">
-              <app-badge [variant]="getActionColor(log.action)" [pill]="true">{{ getActionLabel(log.action) }}</app-badge>
-              <app-badge [variant]="'info'" [pill]="true">{{ getResourceDisplayName(log.resource) }}</app-badge>
-              <app-badge [variant]="log.success ? 'success' : 'error'" [pill]="true">
-                {{ log.success ? 'Success' : 'Failed' }}
-              </app-badge>
-            </div>
-          </header>
-
-          <div class="meta-line">
-            <span class="meta-pill"><mat-icon [fontIcon]="getActionIcon(log.action)"></mat-icon>{{ log.resource }}</span>
-            <span class="meta-pill" *ngIf="log.resourceId">id={{ log.resourceId }}</span>
-            <span class="meta-pill" *ngIf="log.ipAddress">ip={{ log.ipAddress }}</span>
-            <span class="meta-pill" *ngIf="log.channel">channel={{ log.channel }}</span>
           </div>
-
-          <pre class="payload" *ngIf="log.details">{{ log.details }}</pre>
-        </div>
-      </article>
-
-      <div class="text-center p-4" *ngIf="logs.length === 0">
-        <div class="f-s-24 f-w-600">No logs found</div>
-        <div class="f-s-14">Try changing filters.</div>
+        }
       </div>
-    </div>
+    }
+
+    @if (!isLoading) {
+      <div class="audit-timeline">
+        @for (log of logs; track trackByLogId($index, log)) {
+          <article class="timeline-item">
+            <div class="timeline-node">{{ getUserInitial(log) }}</div>
+            <div class="timeline-card">
+              <header class="timeline-card-head">
+                <div class="title-wrap">
+                  <h6 class="m-0 f-w-600">{{ log.username || log.userId || 'System' }}</h6>
+                  <span class="timestamp">{{ log.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+                </div>
+                <div class="badge-wrap">
+                  <app-badge [variant]="getActionColor(log.action)" [pill]="true">{{ getActionLabel(log.action) }}</app-badge>
+                  <app-badge [variant]="'info'" [pill]="true">{{ getResourceDisplayName(log.resource) }}</app-badge>
+                  <app-badge [variant]="log.success ? 'success' : 'error'" [pill]="true">
+                    {{ log.success ? 'Success' : 'Failed' }}
+                  </app-badge>
+                </div>
+              </header>
+              <div class="meta-line">
+                <span class="meta-pill"><mat-icon [fontIcon]="getActionIcon(log.action)"></mat-icon>{{ log.resource }}</span>
+                @if (log.resourceId) {
+                  <span class="meta-pill">id={{ log.resourceId }}</span>
+                }
+                @if (log.ipAddress) {
+                  <span class="meta-pill">ip={{ log.ipAddress }}</span>
+                }
+                @if (log.channel) {
+                  <span class="meta-pill">channel={{ log.channel }}</span>
+                }
+              </div>
+              @if (log.details) {
+                <pre class="payload">{{ log.details }}</pre>
+              }
+            </div>
+          </article>
+        }
+        @if (logs.length === 0) {
+          <div class="text-center p-4">
+            <div class="f-s-24 f-w-600">No logs found</div>
+            <div class="f-s-14">Try changing filters.</div>
+          </div>
+        }
+      </div>
+    }
 
     <mat-paginator
       [length]="totalElements"

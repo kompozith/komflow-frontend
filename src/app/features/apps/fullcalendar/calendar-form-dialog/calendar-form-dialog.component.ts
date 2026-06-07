@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CalendarEvent } from 'angular-calendar';
 import {
@@ -40,16 +35,21 @@ interface DialogData {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CalendarFormDialogComponent {
+  dialogRef = inject<MatDialogRef<CalendarFormDialogComponent>>(MatDialogRef);
+  private data = inject<DialogData>(MAT_DIALOG_DATA);
+  private formBuilder = inject(UntypedFormBuilder);
+
   event = signal<any>(null);
   dialogTitle = signal<string>('');
   action = signal<any>('add');
   eventForm: UntypedFormGroup;
 
-  constructor(
-    public dialogRef: MatDialogRef<CalendarFormDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: DialogData,
-    private formBuilder: UntypedFormBuilder
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const data = this.data;
+
     this.event.set(data.event);
     this.action.set(data.action);
 

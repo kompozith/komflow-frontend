@@ -1,7 +1,7 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal, inject } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { ContactService } from 'src/app/services/apps/contact-list/contact-list.service';
 import { AppDeleteDialogComponent } from '../delete-dialog/delete-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,24 +15,26 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
   imports: [
     MatDividerModule,
     FormsModule,
-    CommonModule,
     MaterialModule,
     TablerIconsModule,
-    NgScrollbarModule,
-  ],
+    NgScrollbarModule
+],
   templateUrl: './detail.component.html',
 })
 export class AppContactListDetailComponent implements OnInit {
+  dialog = inject(MatDialog);
+  private contactService = inject(ContactService);
+  private snackBar = inject(MatSnackBar);
+
   isEditing = signal<boolean>(false);
   contact = signal<any | null>(null);
   formData = signal<any | null>(null);
   selectedContact = computed(() => this.contactService.getSelectedContact());
 
-  constructor(
-    public dialog: MatDialog,
-    private contactService: ContactService,
-    private snackBar: MatSnackBar
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   departments = [
     { id: 1, name: 'Sales' },

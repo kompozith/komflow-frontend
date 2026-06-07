@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -27,16 +27,21 @@ import { Store } from '../../../models/store';
   styleUrl: './delete-store-dialog.component.scss',
 })
 export class DeleteStoreDialogComponent {
+  dialogRef = inject<MatDialogRef<DeleteStoreDialogComponent>>(MatDialogRef);
+  private storeManagementFacade = inject(StoreManagementFacade);
+  private snackBar = inject(MatSnackBar);
+  data = inject(MAT_DIALOG_DATA);
+
   action: string;
   local_data: any;
   confirmationText: string = '';
 
-  constructor(
-    public dialogRef: MatDialogRef<DeleteStoreDialogComponent>,
-    private storeManagementFacade: StoreManagementFacade,
-    private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const data = this.data;
+
     this.action = 'Delete';
     this.local_data = { ...data.store };
   }

@@ -1,10 +1,4 @@
-import {
-  Component,
-  Inject,
-  Optional,
-  ViewChild,
-  AfterViewInit,
-} from '@angular/core';
+import { Component, ViewChild, AfterViewInit, inject } from '@angular/core';
 import {
   MatTableDataSource,
   MatTable,
@@ -154,6 +148,9 @@ const employees = [
     providers: [DatePipe]
 })
 export class AppKichenSinkComponent implements AfterViewInit {
+  dialog = inject(MatDialog);
+  datePipe = inject(DatePipe);
+
   @ViewChild(MatTable, { static: true }) table: MatTable<any> =
     Object.create(null);
   searchText: any;
@@ -171,7 +168,10 @@ export class AppKichenSinkComponent implements AfterViewInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator =
     Object.create(null);
 
-  constructor(public dialog: MatDialog, public datePipe: DatePipe) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
@@ -249,18 +249,22 @@ export class AppKichenSinkComponent implements AfterViewInit {
 })
 // tslint:disable-next-line: component-class-suffix
 export class AppKichenSinkDialogContentComponent {
+  datePipe = inject(DatePipe);
+  dialogRef = inject<MatDialogRef<AppKichenSinkDialogContentComponent>>(MatDialogRef);
+  data = inject<Employee>(MAT_DIALOG_DATA, { optional: true })!;
+
   action: string;
   // tslint:disable-next-line - Disables all
   local_data: any;
   selectedImage: any = '';
   joiningDate: any = '';
 
-  constructor(
-    public datePipe: DatePipe,
-    public dialogRef: MatDialogRef<AppKichenSinkDialogContentComponent>,
-    // @Optional() is used to prevent error if no data is passed
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: Employee
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const data = this.data;
+
     this.local_data = { ...data };
     this.action = this.local_data.action;
     if (this.local_data.DateOfJoining !== undefined) {

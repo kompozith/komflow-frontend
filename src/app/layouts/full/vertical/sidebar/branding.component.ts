@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CoreService } from 'src/app/services/core.service';
 import { environment } from 'src/environments/environment';
 
@@ -24,10 +24,15 @@ import { environment } from 'src/environments/environment';
   `,
 })
 export class BrandingComponent {
+  private settings = inject(CoreService);
+
   options = this.settings.getOptions();
   readonly assetVersion = environment.appVersion || '1.0.0';
 
-  constructor(private settings: CoreService) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   get appName(): string {
     return 'Komflow';

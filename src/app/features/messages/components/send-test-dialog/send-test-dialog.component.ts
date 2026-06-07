@@ -1,8 +1,8 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CommonModule } from '@angular/common';
+
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { CountryISO, NgxIntlTelInputModule, SearchCountryField } from 'ngx-intl-tel-input';
@@ -19,28 +19,30 @@ export interface SendTestDialogData {
   templateUrl: './send-test-dialog.component.html',
   styleUrl: './send-test-dialog.component.scss',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MaterialModule,
     MatDialogModule,
     TablerIconsModule,
-    NgxIntlTelInputModule,
-  ],
+    NgxIntlTelInputModule
+],
 })
 export class SendTestDialogComponent {
+  private fb = inject(FormBuilder);
+  private messageService = inject(MessageService);
+  private snackBar = inject(MatSnackBar);
+  dialogRef = inject<MatDialogRef<SendTestDialogComponent>>(MatDialogRef);
+  data = inject<SendTestDialogData>(MAT_DIALOG_DATA);
+
   form: FormGroup;
   isSending = false;
   MessageChannel = MessageChannel;
   CountryISO = CountryISO;
   SearchCountryField = SearchCountryField;
 
-  constructor(
-    private fb: FormBuilder,
-    private messageService: MessageService,
-    private snackBar: MatSnackBar,
-    public dialogRef: MatDialogRef<SendTestDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: SendTestDialogData
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     const validators = this.isEmailChannel
       ? [Validators.required, Validators.email]
       : [Validators.required];

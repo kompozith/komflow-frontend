@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -10,7 +10,7 @@ import {
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TablerIconsModule } from 'angular-tabler-icons';
-import { CommonModule } from '@angular/common';
+
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PersonService } from '../../../../personnel/services/person.service';
 import { UpdatePersonRequest } from '../../../../personnel/models/person';
@@ -25,22 +25,26 @@ import { UpdatePersonRequest } from '../../../../personnel/models/person';
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    TablerIconsModule,
-    CommonModule,
-  ],
+    TablerIconsModule
+],
   templateUrl: './person-edit-dialog.component.html',
 })
 export class PersonEditDialogComponent {
+  dialogRef = inject<MatDialogRef<PersonEditDialogComponent>>(MatDialogRef);
+  private fb = inject(FormBuilder);
+  private personService = inject(PersonService);
+  private snackBar = inject(MatSnackBar);
+  data = inject<{
+    personId: number;
+}>(MAT_DIALOG_DATA);
+
   personForm: FormGroup;
   isSaving = false;
 
-  constructor(
-    public dialogRef: MatDialogRef<PersonEditDialogComponent>,
-    private fb: FormBuilder,
-    private personService: PersonService,
-    private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: { personId: number }
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.personForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       firstName: [''],

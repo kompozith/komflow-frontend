@@ -1,17 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TablerIconsModule } from 'angular-tabler-icons';
 
 @Component({
   selector: 'app-contact-form-dialog',
   templateUrl: './contact-form-dialog.component.html',
-  imports: [MaterialModule, CommonModule, FormsModule, TablerIconsModule],
+  imports: [MaterialModule, FormsModule, TablerIconsModule],
 })
 export class ContactFormDialogComponent {
+  dialogRef = inject<MatDialogRef<ContactFormDialogComponent>>(MatDialogRef);
+  private snackBar = inject(MatSnackBar);
+
   contact = {
     firstname: '',
     lastname: '',
@@ -32,10 +35,10 @@ export class ContactFormDialogComponent {
   defaultImageUrl = 'assets/images/profile/user-4.jpg';
   imageUrl: string | ArrayBuffer | null = this.defaultImageUrl;
 
-  constructor(
-    public dialogRef: MatDialogRef<ContactFormDialogComponent>,
-    private snackBar: MatSnackBar
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   saveContact(): void {
     this.contact.image = this.imageUrl as string;

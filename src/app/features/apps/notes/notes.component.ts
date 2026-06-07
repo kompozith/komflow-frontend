@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { Note } from './note';
 import { NoteService } from 'src/app/services/apps/notes/note.service';
 import { CommonModule } from '@angular/common';
@@ -21,6 +21,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     ]
 })
 export class AppNotesComponent implements OnInit {
+  noteService = inject(NoteService);
+  private snackBar = inject(MatSnackBar);
+
   sidePanelOpened = signal(true);
 
   notes = signal<Note[]>([]);
@@ -44,7 +47,10 @@ export class AppNotesComponent implements OnInit {
   currentNoteTitle = signal<string>('');
   selectedColor = signal<string | null>(null);
 
-  constructor(public noteService: NoteService, private snackBar: MatSnackBar) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.notes.set(this.noteService.getNotes());

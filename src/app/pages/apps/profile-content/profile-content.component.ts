@@ -7,11 +7,11 @@ import { GalleryComponent } from './gallery/gallery.component';
 import { MaterialModule } from 'src/app/material.module';
 
 
-import { CommonModule } from '@angular/common';
+
 import { IconModule } from 'src/app/icon/icon.module';
 @Component({
   selector: 'app-profile-content',
-  imports: [MaterialModule,ProfileComponent,FollowersComponent,FriendsComponent,GalleryComponent,CommonModule,IconModule ],
+  imports: [MaterialModule, ProfileComponent, FollowersComponent, FriendsComponent, GalleryComponent, IconModule],
   templateUrl: './profile-content.component.html',
   styleUrl: './profile-content.component.scss'
 })

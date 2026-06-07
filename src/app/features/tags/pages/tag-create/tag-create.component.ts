@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -6,7 +6,7 @@ import {
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TablerIconsModule } from 'angular-tabler-icons';
-import { CommonModule } from '@angular/common';
+
 import { TagService } from '../../services/tag.service';
 import { CreateTagRequest } from '../../models/tag';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -20,13 +20,19 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    TablerIconsModule,
-    CommonModule,
-  ],
+    TablerIconsModule
+],
   templateUrl: './tag-create.component.html',
   styleUrl: './tag-create.component.scss',
 })
 export class TagCreateComponent {
+  dialogRef = inject<MatDialogRef<TagCreateComponent>>(MatDialogRef);
+  private fb = inject(FormBuilder);
+  private tagService = inject(TagService);
+  private contactService = inject(ContactService);
+  private snackBar = inject(MatSnackBar);
+  data = inject(MAT_DIALOG_DATA);
+
   tagForm: FormGroup;
   isLoading = false;
   contacts: Contact[] = [];
@@ -37,15 +43,11 @@ export class TagCreateComponent {
   private readonly contactSearchSubject = new Subject<string>();
   contactSearch = '';
 
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
 
-  constructor(
-    public dialogRef: MatDialogRef<TagCreateComponent>,
-    private fb: FormBuilder,
-    private tagService: TagService,
-    private contactService: ContactService,
-    private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
+
+  constructor() {
     this.tagForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       color: ['#007bff'],

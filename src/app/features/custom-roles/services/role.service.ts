@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, map, switchMap } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -47,9 +47,14 @@ interface BackendPermissionDto {
   providedIn: 'root',
 })
 export class RoleService {
+  private http = inject(HttpClient);
+
   private apiUrl = `${environment.apiUrl}/roles`;
 
-  constructor(private http: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');

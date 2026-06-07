@@ -23,13 +23,16 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './logout.component.scss'
 })
 export class LogoutComponent {
+  dialog = inject(MatDialog);
+  dialogRef = inject<MatDialogRef<LogoutComponent>>(MatDialogRef);
+
 
   private authService = inject(AuthService);
 
-  constructor(
-    public dialog: MatDialog,
-    public dialogRef: MatDialogRef<LogoutComponent>
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
   
   logout(): void {  
     this.authService.logout();

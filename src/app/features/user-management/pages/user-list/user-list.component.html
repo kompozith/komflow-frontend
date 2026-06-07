@@ -40,7 +40,9 @@
           <mat-label>Role</mat-label>
           <mat-select [(ngModel)]="selectedRole" (selectionChange)="onRoleFilterChange(selectedRole)">
             <mat-option value="">All Roles</mat-option>
-            <mat-option *ngFor="let role of roleOptions" [value]="role">{{ role }}</mat-option>
+            @for (role of roleOptions; track role) {
+              <mat-option [value]="role">{{ role }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </div>
@@ -49,7 +51,9 @@
           <mat-label>Status</mat-label>
           <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilterChange(selectedStatus)">
             <mat-option value="">All Status</mat-option>
-            <mat-option *ngFor="let status of statusOptions" [value]="status">{{ status }}</mat-option>
+            @for (status of statusOptions; track status) {
+              <mat-option [value]="status">{{ status }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </div>
@@ -60,195 +64,198 @@
             placeholder="Search User"
             [(ngModel)]="searchText"
             (input)="onSearchChange(searchText)"
-          />
-          <mat-icon matSuffix>
-            <i-tabler name="search" class="icon-20 d-flex m-t-2"></i-tabler>
-          </mat-icon>
-        </mat-form-field>
-      </div>
-      <div class="col-md-3 d-flex align-items-end">
-        <button mat-raised-button color="primary" (click)="applyDateFilter()" class="w-100">
-          <mat-icon>filter_list</mat-icon>
-          Apply Filter
-        </button>
-      </div>
-    </div>
-  </mat-card-content>
-</mat-card>
-<mat-card class="cardWithShadow">
-  <mat-card-content>
-    <div class="table-responsive">
-      <ng-container *ngIf="!isLoading; else userListSkeleton">
-      <table mat-table [dataSource]="dataSource" class="w-100">
-        <ng-container matColumnDef="rowNumber">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">#</th>
-           <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 + (currentPage * pageSize) }}</td>
-         </ng-container>
-
-        <ng-container matColumnDef="name">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('firstName')" style="cursor: pointer;">
-             <div class="d-flex align-items-center gap-8">
-               <span>Name</span>
-               <mat-icon *ngIf="sortBy === 'firstName'" class="sort-icon">
-                 {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-               </mat-icon>
-             </div>
-           </th>
-           <td mat-cell *matCellDef="let element">
-             <div class="d-flex align-items-center gap-16">
-               <div
-                 class="rounded-circle d-flex align-items-center justify-content-center f-w-600"
-                 [ngClass]="getUserBadgeClass(element.id)"
-                 style="width: 45px; height: 45px; font-size: 18px;"
-               >
-                 {{ getUserInitials(element.firstName, element.lastName) }}
-               </div>
-               <div>
-                 <h6 class="f-w-600 f-s-16 m-t-0">
-                   {{ element.fullName }}
-                 </h6>
-                 <span class="f-s-14 text-muted">{{ element.email }}</span>
-               </div>
-             </div>
-           </td>
-         </ng-container>
-
-        <ng-container matColumnDef="mobile">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('phone')" style="cursor: pointer;">
-             <div class="d-flex align-items-center gap-8">
-               <span>Mobile</span>
-               <mat-icon *ngIf="sortBy === 'phone'" class="sort-icon">
-                 {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-               </mat-icon>
-             </div>
-           </th>
-           <td mat-cell *matCellDef="let element" class="f-s-14">
-             {{ element.phone }}
-           </td>
-         </ng-container>
-
-        <ng-container matColumnDef="role">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('role')" style="cursor: pointer;">
-             <div class="d-flex align-items-center gap-8">
-               <span>Role</span>
-               <mat-icon *ngIf="sortBy === 'role'" class="sort-icon">
-                 {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-               </mat-icon>
-             </div>
-           </th>
-           <td mat-cell *matCellDef="let element" class="f-s-14">
-             <app-badge [variant]="getRoleVariant(element.role)" [pill]="true">
-               {{ element.role }}
-             </app-badge>
-           </td>
-         </ng-container>
-
-        <ng-container matColumnDef="status">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('accountStatus')" style="cursor: pointer;">
-             <div class="d-flex align-items-center gap-8">
-               <span>Status</span>
-               <mat-icon *ngIf="sortBy === 'accountStatus'" class="sort-icon">
-                 {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-               </mat-icon>
-             </div>
-           </th>
-           <td mat-cell *matCellDef="let element" class="f-s-14">
-             <app-badge [variant]="getStatusVariant(element.accountStatus)" [pill]="true">
-               {{ element.accountStatus }}
-             </app-badge>
-           </td>
-         </ng-container>
-
-        <ng-container matColumnDef="registrationDate">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('registrationDate')" style="cursor: pointer;">
-             <div class="d-flex align-items-center gap-8">
-               <span>Registration Date</span>
-               <mat-icon *ngIf="sortBy === 'registrationDate'" class="sort-icon">
-                 {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-               </mat-icon>
-             </div>
-           </th>
-           <td mat-cell *matCellDef="let element" class="f-s-14">
-             {{ element.registrationDate | date:'dd/MM/yyyy HH:mm' }}
-           </td>
-         </ng-container>
-
-        <ng-container matColumnDef="lastUpdated">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('lastUpdated')" style="cursor: pointer;">
-             <div class="d-flex align-items-center gap-8">
-               <span>Last Updated</span>
-               <mat-icon *ngIf="sortBy === 'lastUpdated'" class="sort-icon">
-                 {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-               </mat-icon>
-             </div>
-           </th>
-           <td mat-cell *matCellDef="let element" class="f-s-14">
-             {{ element.lastUpdated | date:'dd/MM/yyyy HH:mm' }}
-           </td>
-         </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14">
-            Action
-          </th>
-          <td mat-cell *matCellDef="let element" class="f-s-14" (click)="$event.stopPropagation()">
-            <button mat-icon-button [matMenuTriggerFor]="menu" type="button" aria-label="Example icon-button with a menu">
-              <mat-icon>
-                <tabler-icon name="dots-vertical"></tabler-icon>
-              </mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" class="cardWithShadow">
-              <button mat-menu-item>
-                <div class="d-flex align-items-center" (click)="changeUserStatus(element)">
-                  <tabler-icon name="user-check" class="m-x-6"></tabler-icon>
-                  <span>Change Status</span>
-                </div>
-              </button>
-              <button mat-menu-item>
-                <div class="d-flex align-items-center" (click)="changeUserRole(element)">
-                  <tabler-icon name="user-cog" class="m-x-6"></tabler-icon>
-                  <span>Change Role</span>
-                </div>
-              </button>
-              <button mat-menu-item>
-                <div class="d-flex align-items-center text-error" (click)="openDialog(element.id)">
-                  <tabler-icon name="trash" class="m-x-6"></tabler-icon>
-                  <span>Delete</span>
-                </div>
-              </button>
-            </mat-menu>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-
-      <!-- Pagination Info -->
-      <div class="d-flex justify-content-between align-items-center mt-3 mb-3" *ngIf="!isLoading && totalElements > 0">
-        <div class="text-muted f-s-14">
-          Showing {{ getStartIndex() }} to {{ getEndIndex() }} of {{ totalElements }} entries
+            />
+            <mat-icon matSuffix>
+              <i-tabler name="search" class="icon-20 d-flex m-t-2"></i-tabler>
+            </mat-icon>
+          </mat-form-field>
         </div>
-        <div class="text-muted f-s-14">
-          Page {{ currentPage + 1 }} of {{ totalPages }}
+        <div class="col-md-3 d-flex align-items-end">
+          <button mat-raised-button color="primary" (click)="applyDateFilter()" class="w-100">
+            <mat-icon>filter_list</mat-icon>
+            Apply Filter
+          </button>
         </div>
       </div>
-
-      <mat-paginator
-        #paginator
-        [length]="totalElements"
-        [pageSizeOptions]="[5, 10, 20, 50]"
-        [pageSize]="pageSize"
-        [pageIndex]="currentPage"
-        (page)="onPageChange($event)"
-        [showFirstLastButtons]="true"
-        [hidePageSize]="false">
-      </mat-paginator>
-      </ng-container>
-
-      <ng-template #userListSkeleton>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="cardWithShadow">
+    <mat-card-content>
+      <div class="table-responsive">
+        @if (!isLoading) {
+          <table mat-table [dataSource]="dataSource" class="w-100">
+            <ng-container matColumnDef="rowNumber">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">#</th>
+              <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 + (currentPage * pageSize) }}</td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('firstName')" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-8">
+                  <span>Name</span>
+                  @if (sortBy === 'firstName') {
+                    <mat-icon class="sort-icon">
+                      {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                    </mat-icon>
+                  }
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <div class="d-flex align-items-center gap-16">
+                  <div
+                    class="rounded-circle d-flex align-items-center justify-content-center f-w-600"
+                    [ngClass]="getUserBadgeClass(element.id)"
+                    style="width: 45px; height: 45px; font-size: 18px;"
+                    >
+                    {{ getUserInitials(element.firstName, element.lastName) }}
+                  </div>
+                  <div>
+                    <h6 class="f-w-600 f-s-16 m-t-0">
+                      {{ element.fullName }}
+                    </h6>
+                    <span class="f-s-14 text-muted">{{ element.email }}</span>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="mobile">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('phone')" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-8">
+                  <span>Mobile</span>
+                  @if (sortBy === 'phone') {
+                    <mat-icon class="sort-icon">
+                      {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                    </mat-icon>
+                  }
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                {{ element.phone }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="role">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('role')" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-8">
+                  <span>Role</span>
+                  @if (sortBy === 'role') {
+                    <mat-icon class="sort-icon">
+                      {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                    </mat-icon>
+                  }
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                <app-badge [variant]="getRoleVariant(element.role)" [pill]="true">
+                  {{ element.role }}
+                </app-badge>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('accountStatus')" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-8">
+                  <span>Status</span>
+                  @if (sortBy === 'accountStatus') {
+                    <mat-icon class="sort-icon">
+                      {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                    </mat-icon>
+                  }
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                <app-badge [variant]="getStatusVariant(element.accountStatus)" [pill]="true">
+                  {{ element.accountStatus }}
+                </app-badge>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="registrationDate">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('registrationDate')" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-8">
+                  <span>Registration Date</span>
+                  @if (sortBy === 'registrationDate') {
+                    <mat-icon class="sort-icon">
+                      {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                    </mat-icon>
+                  }
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                {{ element.registrationDate | date:'dd/MM/yyyy HH:mm' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="lastUpdated">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('lastUpdated')" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-8">
+                  <span>Last Updated</span>
+                  @if (sortBy === 'lastUpdated') {
+                    <mat-icon class="sort-icon">
+                      {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                    </mat-icon>
+                  }
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                {{ element.lastUpdated | date:'dd/MM/yyyy HH:mm' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14">
+                Action
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14" (click)="$event.stopPropagation()">
+                <button mat-icon-button [matMenuTriggerFor]="menu" type="button" aria-label="Example icon-button with a menu">
+                  <mat-icon>
+                    <tabler-icon name="dots-vertical"></tabler-icon>
+                  </mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" class="cardWithShadow">
+                  <button mat-menu-item>
+                    <div class="d-flex align-items-center" (click)="changeUserStatus(element)">
+                      <tabler-icon name="user-check" class="m-x-6"></tabler-icon>
+                      <span>Change Status</span>
+                    </div>
+                  </button>
+                  <button mat-menu-item>
+                    <div class="d-flex align-items-center" (click)="changeUserRole(element)">
+                      <tabler-icon name="user-cog" class="m-x-6"></tabler-icon>
+                      <span>Change Role</span>
+                    </div>
+                  </button>
+                  <button mat-menu-item>
+                    <div class="d-flex align-items-center text-error" (click)="openDialog(element.id)">
+                      <tabler-icon name="trash" class="m-x-6"></tabler-icon>
+                      <span>Delete</span>
+                    </div>
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+          <!-- Pagination Info -->
+          @if (!isLoading && totalElements > 0) {
+            <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+              <div class="text-muted f-s-14">
+                Showing {{ getStartIndex() }} to {{ getEndIndex() }} of {{ totalElements }} entries
+              </div>
+              <div class="text-muted f-s-14">
+                Page {{ currentPage + 1 }} of {{ totalPages }}
+              </div>
+            </div>
+          }
+          <mat-paginator
+            #paginator
+            [length]="totalElements"
+            [pageSizeOptions]="[5, 10, 20, 50]"
+            [pageSize]="pageSize"
+            [pageIndex]="currentPage"
+            (page)="onPageChange($event)"
+            [showFirstLastButtons]="true"
+            [hidePageSize]="false">
+        </mat-paginator>
+      } @else {
         <app-skeleton-table [columns]="8" [rows]="6" [chipColumns]="[3, 6]"></app-skeleton-table>
-      </ng-template>
+      }
+
     </div>
   </mat-card-content>
 </mat-card>

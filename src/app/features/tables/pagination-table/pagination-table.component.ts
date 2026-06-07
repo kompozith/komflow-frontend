@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -222,7 +222,12 @@ export class AppPaginationTableComponent {
   displayedColumns = ['assigned', 'name', 'priority', 'budget'];
   dataSource = new MatTableDataSource<Element>(PRODUCT_DATA);
 
-  constructor(breakpointObserver: BreakpointObserver) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const breakpointObserver = inject(BreakpointObserver);
+
     breakpointObserver.observe(['(max-width: 600px)']).subscribe((result) => {
       this.displayedColumns = result.matches
         ? ['assigned', 'name', 'priority', 'budget']

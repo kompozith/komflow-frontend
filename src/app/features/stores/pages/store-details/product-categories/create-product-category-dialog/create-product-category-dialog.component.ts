@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -28,15 +28,18 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './create-product-category-dialog.component.scss',
 })
 export class CreateProductCategoryDialogComponent {
+  dialogRef = inject<MatDialogRef<CreateProductCategoryDialogComponent>>(MatDialogRef);
+  private storeManagementFacade = inject(StoreManagementFacade);
+  private snackBar = inject(MatSnackBar);
+  data = inject(MAT_DIALOG_DATA);
+
   action: string;
   local_data: any;
 
-  constructor(
-    public dialogRef: MatDialogRef<CreateProductCategoryDialogComponent>,
-    private storeManagementFacade: StoreManagementFacade,
-    private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.action = 'Add';
     this.local_data = { name: '', description: '' };
   }

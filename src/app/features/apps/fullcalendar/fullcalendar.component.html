@@ -23,42 +23,42 @@
             mat-button class="text-white"
             (click)="setView('month')"
             [class.active]="view() === 'month'"
-          >
+            >
             Month
           </button>
           <button
             mat-button class="text-white"
             (click)="setView('week')"
             [class.active]="view() === 'week'"
-          >
+            >
             Week
           </button>
           <button
             mat-button class="text-white"
             (click)="setView('day')"
             [class.active]="view() === 'day'"
-          >
+            >
             Day
           </button>
           <button
             mat-icon-button class="text-white"
             (click)="setView('month')"
             [class.active]="view() === 'month'"
-          >
+            >
             <mat-icon>view_module</mat-icon>
           </button>
           <button
             mat-icon-button class="text-white"
             (click)="setView('week')"
             [class.active]="view() === 'week'"
-          >
+            >
             <mat-icon>view_week</mat-icon>
           </button>
           <button
             mat-icon-button class="text-white"
             (click)="setView('day')"
             [class.active]="view() === 'day'"
-          >
+            >
             <mat-icon>view_day</mat-icon>
           </button>
 
@@ -66,7 +66,7 @@
             mat-icon-button class="text-white"
             mwlCalendarPreviousView
             (click)="goToPreviousMonth()"
-          >
+            >
             <mat-icon>chevron_left</mat-icon>
           </button>
           <button mat-icon-button mwlCalendarToday class="text-white" (click)="goToToday()">
@@ -80,44 +80,49 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <mat-card-content>
-    <div *ngIf="isLoading()" class="d-flex justify-content-center align-items-center p-3">
-      <mat-spinner diameter="28"></mat-spinner>
-    </div>
-    <div [ngSwitch]="view()">
-      <!-- month view -->
-      <mwl-calendar-month-view
-        *ngSwitchCase="'month'"
-        [viewDate]="viewDate()"
-        [events]="events()"
-        [refresh]="refresh"
-        [activeDayIsOpen]="activeDayIsOpen()"
-        (dayClicked)="dayClicked($event.day)"
-        (eventClicked)="handleEvent('Clicked', $event.event)"
-        (eventTimesChanged)="eventTimesChanged($event)"
-      >
-      </mwl-calendar-month-view>
-
-      <!-- week view -->
-      <mwl-calendar-week-view
-        *ngSwitchCase="'week'"
-        [viewDate]="viewDate()"
-        [events]="events()"
-        [refresh]="refresh"
-        (eventClicked)="handleEvent('Clicked', $event.event)"
-        (eventTimesChanged)="eventTimesChanged($event)"
-      >
-      </mwl-calendar-week-view>
-
-      <!-- day view -->
-      <mwl-calendar-day-view
-        *ngSwitchCase="'day'"
-        [viewDate]="viewDate()"
-        [events]="events()"
-        [refresh]="refresh"
-        (eventClicked)="handleEvent('Clicked', $event.event)"
-        (eventTimesChanged)="eventTimesChanged($event)"
-      >
-      </mwl-calendar-day-view>
+    @if (isLoading()) {
+      <div class="d-flex justify-content-center align-items-center p-3">
+        <mat-spinner diameter="28"></mat-spinner>
+      </div>
+    }
+    <div>
+      @switch (view()) {
+        <!-- month view -->
+        @case ('month') {
+          <mwl-calendar-month-view
+            [viewDate]="viewDate()"
+            [events]="events()"
+            [refresh]="refresh"
+            [activeDayIsOpen]="activeDayIsOpen()"
+            (dayClicked)="dayClicked($event.day)"
+            (eventClicked)="handleEvent('Clicked', $event.event)"
+            (eventTimesChanged)="eventTimesChanged($event)"
+            >
+          </mwl-calendar-month-view>
+        }
+        <!-- week view -->
+        @case ('week') {
+          <mwl-calendar-week-view
+            [viewDate]="viewDate()"
+            [events]="events()"
+            [refresh]="refresh"
+            (eventClicked)="handleEvent('Clicked', $event.event)"
+            (eventTimesChanged)="eventTimesChanged($event)"
+            >
+          </mwl-calendar-week-view>
+        }
+        <!-- day view -->
+        @case ('day') {
+          <mwl-calendar-day-view
+            [viewDate]="viewDate()"
+            [events]="events()"
+            [refresh]="refresh"
+            (eventClicked)="handleEvent('Clicked', $event.event)"
+            (eventTimesChanged)="eventTimesChanged($event)"
+            >
+          </mwl-calendar-day-view>
+        }
+      }
     </div>
   </mat-card-content>
 </mat-card>

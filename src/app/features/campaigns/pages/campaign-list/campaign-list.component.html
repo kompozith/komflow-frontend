@@ -39,181 +39,190 @@
             placeholder="Search Campaigns"
             [(ngModel)]="searchText"
             (input)="onSearchChange(searchText)"
-          />
-          <mat-icon matSuffix>
-            <i-tabler name="search" class="icon-20 d-flex m-t-2"></i-tabler>
-          </mat-icon>
-        </mat-form-field>
-      </div>
-    </div>
-  </mat-card-content>
-</mat-card>
-<mat-card class="cardWithShadow">
-  <mat-card-content>
-    <div class="table-responsive">
-      <ng-container *ngIf="!isLoading; else campaignListSkeleton">
-      <table mat-table [dataSource]="dataSource" class="w-100">
-        <ng-container matColumnDef="rowNumber">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">#</th>
-           <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 + (currentPage * pageSize) }}</td>
-         </ng-container>
-
-        <ng-container matColumnDef="name">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('name')" style="cursor: pointer;">
-             <div class="d-flex align-items-center gap-8">
-               <span>Name</span>
-               <mat-icon *ngIf="sortBy === 'name'" class="sort-icon">
-                 {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-               </mat-icon>
-             </div>
-           </th>
-           <td mat-cell *matCellDef="let element">
-             <div class="d-flex flex-column">
-               <h6 class="f-w-600 f-s-16 m-t-0">{{ element.name }}</h6>
-               <small class="text-muted" *ngIf="element.description">{{ element.description | slice:0:40 }}{{ element.description?.length > 40 ? '...' : '' }}</small>
-             </div>
-           </td>
-         </ng-container>
-
-        <ng-container matColumnDef="message">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Message</th>
-           <td mat-cell *matCellDef="let element" class="f-s-14">
-             <div class="d-flex flex-column">
-               <span class="f-w-600">{{ element.message?.name }}</span>
-               <small class="text-muted">{{ element.message?.channel }}</small>
-             </div>
-           </td>
-         </ng-container>
-
-        <ng-container matColumnDef="status">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Status</th>
-           <td mat-cell *matCellDef="let element" class="f-s-14">
-             <app-badge [variant]="getStatusColor(element.status)" [pill]="true">
-               {{ element.status }}
-             </app-badge>
-           </td>
-         </ng-container>
-
-        <ng-container matColumnDef="recipients">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Recipients</th>
-           <td mat-cell *matCellDef="let element" class="f-s-14">
-             <div class="d-flex flex-column">
-               <span class="f-w-600">{{ element.totalRecipients }}</span>
-               <small class="text-muted">
-                 Sent: {{ element.sentCount }} | Delivered: {{ element.deliveredCount }}
-               </small>
-             </div>
-           </td>
-         </ng-container>
-
-        <ng-container matColumnDef="sentAt">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('sentAt')" style="cursor: pointer;">
-             <div class="d-flex align-items-center gap-8">
-               <span>Sent At</span>
-               <mat-icon *ngIf="sortBy === 'sentAt'" class="sort-icon">
-                 {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-               </mat-icon>
-             </div>
-           </th>
-           <td mat-cell *matCellDef="let element" class="f-s-14">
-             {{ element.sentAt ? (element.sentAt | date:'dd/MM/yyyy HH:mm') : '-' }}
-           </td>
-         </ng-container>
-
-        <ng-container matColumnDef="createdAt">
-           <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('createdAt')" style="cursor: pointer;">
-             <div class="d-flex align-items-center gap-8">
-               <span>Created</span>
-               <mat-icon *ngIf="sortBy === 'createdAt'" class="sort-icon">
-                 {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-               </mat-icon>
-             </div>
-           </th>
-           <td mat-cell *matCellDef="let element" class="f-s-14">
-             {{ element.createdAt | date:'dd/MM/yyyy HH:mm' }}
-           </td>
-         </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14">
-            Action
-          </th>
-          <td mat-cell *matCellDef="let element" class="f-s-14" (click)="$event.stopPropagation()">
-            <button mat-icon-button [matMenuTriggerFor]="menu" type="button" aria-label="Example icon-button with a menu">
-              <mat-icon>
-                <tabler-icon name="dots-vertical"></tabler-icon>
-              </mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" class="cardWithShadow">
-              <button mat-menu-item>
-                <div class="d-flex align-items-center" (click)="viewCampaignDetails(element)">
-                  <tabler-icon name="eye" class="m-x-6"></tabler-icon>
-                  <span>View Details</span>
-                </div>
-              </button>
-              <button mat-menu-item *ngIf="canEditCampaign(element)">
-                <div class="d-flex align-items-center" (click)="editCampaign(element)">
-                  <tabler-icon name="edit" class="m-x-6"></tabler-icon>
-                  <span>Edit</span>
-                </div>
-              </button>
-              <button mat-menu-item *ngIf="canSendCampaign(element)">
-                <div class="d-flex align-items-center" (click)="sendCampaign(element)">
-                  <tabler-icon name="send" class="m-x-6"></tabler-icon>
-                  <span>Send Now</span>
-                </div>
-              </button>
-              <button mat-menu-item *ngIf="element.status === 'DRAFT' || element.status === 'SCHEDULED'">
-                <div class="d-flex align-items-center text-accent" (click)="openScheduleDialog(element)">
-                  <tabler-icon name="calendar-clock" class="m-x-6"></tabler-icon>
-                  <span>{{ element.status === 'SCHEDULED' ? 'Reschedule' : 'Schedule' }}</span>
-                </div>
-              </button>
-              <button mat-menu-item *ngIf="canCancelCampaign(element)">
-                <div class="d-flex align-items-center text-warning" (click)="cancelCampaign(element)">
-                  <tabler-icon name="x" class="m-x-6"></tabler-icon>
-                  <span>Cancel</span>
-                </div>
-              </button>
-              <button mat-menu-item *ngIf="element.status === 'DRAFT' || element.status === 'SUCCESS' || element.status === 'PARTIAL_SUCCESS' || element.status === 'COMPLETED' || element.status === 'CANCELLED' || element.status === 'FAILED'">
-                <div class="d-flex align-items-center text-error" (click)="deleteCampaign(element)">
-                  <tabler-icon name="trash" class="m-x-6"></tabler-icon>
-                  <span>Delete</span>
-                </div>
-              </button>
-            </mat-menu>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-
-      <!-- Pagination Info -->
-      <div class="d-flex justify-content-between align-items-center mt-3 mb-3" *ngIf="!isLoading && totalElements > 0">
-        <div class="text-muted f-s-14">
-          Showing {{ getStartIndex() }} to {{ getEndIndex() }} of {{ totalElements }} entries
-        </div>
-        <div class="text-muted f-s-14">
-          Page {{ currentPage + 1 }} of {{ totalPages }}
+            />
+            <mat-icon matSuffix>
+              <i-tabler name="search" class="icon-20 d-flex m-t-2"></i-tabler>
+            </mat-icon>
+          </mat-form-field>
         </div>
       </div>
-
-      <mat-paginator
-        #paginator
-        [length]="totalElements"
-        [pageSizeOptions]="[5, 10, 20, 50]"
-        [pageSize]="pageSize"
-        [pageIndex]="currentPage"
-        (page)="onPageChange($event)"
-        [showFirstLastButtons]="true"
-        [hidePageSize]="false">
-      </mat-paginator>
-      </ng-container>
-
-      <ng-template #campaignListSkeleton>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="cardWithShadow">
+    <mat-card-content>
+      <div class="table-responsive">
+        @if (!isLoading) {
+          <table mat-table [dataSource]="dataSource" class="w-100">
+            <ng-container matColumnDef="rowNumber">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">#</th>
+              <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 + (currentPage * pageSize) }}</td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('name')" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-8">
+                  <span>Name</span>
+                  @if (sortBy === 'name') {
+                    <mat-icon class="sort-icon">
+                      {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                    </mat-icon>
+                  }
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <div class="d-flex flex-column">
+                  <h6 class="f-w-600 f-s-16 m-t-0">{{ element.name }}</h6>
+                  @if (element.description) {
+                    <small class="text-muted">{{ element.description | slice:0:40 }}{{ element.description?.length > 40 ? '...' : '' }}</small>
+                  }
+                </div>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="message">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Message</th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                <div class="d-flex flex-column">
+                  <span class="f-w-600">{{ element.message?.name }}</span>
+                  <small class="text-muted">{{ element.message?.channel }}</small>
+                </div>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Status</th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                <app-badge [variant]="getStatusColor(element.status)" [pill]="true">
+                  {{ element.status }}
+                </app-badge>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="recipients">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Recipients</th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                <div class="d-flex flex-column">
+                  <span class="f-w-600">{{ element.totalRecipients }}</span>
+                  <small class="text-muted">
+                    Sent: {{ element.sentCount }} | Delivered: {{ element.deliveredCount }}
+                  </small>
+                </div>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="sentAt">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('sentAt')" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-8">
+                  <span>Sent At</span>
+                  @if (sortBy === 'sentAt') {
+                    <mat-icon class="sort-icon">
+                      {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                    </mat-icon>
+                  }
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                {{ element.sentAt ? (element.sentAt | date:'dd/MM/yyyy HH:mm') : '-' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="createdAt">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('createdAt')" style="cursor: pointer;">
+                <div class="d-flex align-items-center gap-8">
+                  <span>Created</span>
+                  @if (sortBy === 'createdAt') {
+                    <mat-icon class="sort-icon">
+                      {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+                    </mat-icon>
+                  }
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                {{ element.createdAt | date:'dd/MM/yyyy HH:mm' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14">
+                Action
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14" (click)="$event.stopPropagation()">
+                <button mat-icon-button [matMenuTriggerFor]="menu" type="button" aria-label="Example icon-button with a menu">
+                  <mat-icon>
+                    <tabler-icon name="dots-vertical"></tabler-icon>
+                  </mat-icon>
+                </button>
+                <mat-menu #menu="matMenu" class="cardWithShadow">
+                  <button mat-menu-item>
+                    <div class="d-flex align-items-center" (click)="viewCampaignDetails(element)">
+                      <tabler-icon name="eye" class="m-x-6"></tabler-icon>
+                      <span>View Details</span>
+                    </div>
+                  </button>
+                  @if (canEditCampaign(element)) {
+                    <button mat-menu-item>
+                      <div class="d-flex align-items-center" (click)="editCampaign(element)">
+                        <tabler-icon name="edit" class="m-x-6"></tabler-icon>
+                        <span>Edit</span>
+                      </div>
+                    </button>
+                  }
+                  @if (canSendCampaign(element)) {
+                    <button mat-menu-item>
+                      <div class="d-flex align-items-center" (click)="sendCampaign(element)">
+                        <tabler-icon name="send" class="m-x-6"></tabler-icon>
+                        <span>Send Now</span>
+                      </div>
+                    </button>
+                  }
+                  @if (element.status === 'DRAFT' || element.status === 'SCHEDULED') {
+                    <button mat-menu-item>
+                      <div class="d-flex align-items-center text-accent" (click)="openScheduleDialog(element)">
+                        <tabler-icon name="calendar-clock" class="m-x-6"></tabler-icon>
+                        <span>{{ element.status === 'SCHEDULED' ? 'Reschedule' : 'Schedule' }}</span>
+                      </div>
+                    </button>
+                  }
+                  @if (canCancelCampaign(element)) {
+                    <button mat-menu-item>
+                      <div class="d-flex align-items-center text-warning" (click)="cancelCampaign(element)">
+                        <tabler-icon name="x" class="m-x-6"></tabler-icon>
+                        <span>Cancel</span>
+                      </div>
+                    </button>
+                  }
+                  @if (element.status === 'DRAFT' || element.status === 'SUCCESS' || element.status === 'PARTIAL_SUCCESS' || element.status === 'COMPLETED' || element.status === 'CANCELLED' || element.status === 'FAILED') {
+                    <button mat-menu-item>
+                      <div class="d-flex align-items-center text-error" (click)="deleteCampaign(element)">
+                        <tabler-icon name="trash" class="m-x-6"></tabler-icon>
+                        <span>Delete</span>
+                      </div>
+                    </button>
+                  }
+                </mat-menu>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+          <!-- Pagination Info -->
+          @if (!isLoading && totalElements > 0) {
+            <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+              <div class="text-muted f-s-14">
+                Showing {{ getStartIndex() }} to {{ getEndIndex() }} of {{ totalElements }} entries
+              </div>
+              <div class="text-muted f-s-14">
+                Page {{ currentPage + 1 }} of {{ totalPages }}
+              </div>
+            </div>
+          }
+          <mat-paginator
+            #paginator
+            [length]="totalElements"
+            [pageSizeOptions]="[5, 10, 20, 50]"
+            [pageSize]="pageSize"
+            [pageIndex]="currentPage"
+            (page)="onPageChange($event)"
+            [showFirstLastButtons]="true"
+            [hidePageSize]="false">
+        </mat-paginator>
+      } @else {
         <app-skeleton-table [columns]="8" [rows]="6" [chipColumns]="[3]"></app-skeleton-table>
-      </ng-template>
+      }
+
     </div>
   </mat-card-content>
 </mat-card>

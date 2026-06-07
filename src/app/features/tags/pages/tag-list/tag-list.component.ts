@@ -1,9 +1,4 @@
-import {
-  Component,
-  ViewChild,
-  AfterViewInit,
-  OnInit,
-} from '@angular/core';
+import { Component, ViewChild, AfterViewInit, OnInit, inject } from '@angular/core';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { PageEvent } from '@angular/material/paginator';
@@ -46,6 +41,11 @@ import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table
   ],
 })
 export class TagListComponent implements OnInit, AfterViewInit {
+  dialog = inject(MatDialog);
+  private router = inject(Router);
+  private tagService = inject(TagService);
+  private snackBar = inject(MatSnackBar);
+
   @ViewChild(MatTable, { static: true }) table: MatTable<any> =
     Object.create(null);
 
@@ -81,12 +81,10 @@ export class TagListComponent implements OnInit, AfterViewInit {
   // Search debounce
   private searchSubject = new Subject<string>();
 
-  constructor(
-      public dialog: MatDialog,
-      private router: Router,
-      private tagService: TagService,
-      private snackBar: MatSnackBar
-    ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadTags();

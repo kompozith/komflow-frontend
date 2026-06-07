@@ -20,6 +20,8 @@ import { productcards } from '../ecommerceData';
   styleUrl: './product-details.component.scss',
 })
 export class ProductDetailsComponent implements AfterViewInit {
+  private router = inject(Router);
+
   @ViewChild('carouselContainer', { static: false })
   private productService = inject(ProductService);
   carouselContainer!: ElementRef;
@@ -93,7 +95,10 @@ export class ProductDetailsComponent implements AfterViewInit {
     { label: 5, value: 15, count: 160 },
   ];
 
-  constructor(private router: Router) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.product = this.productService.getProduct();
 
     if (!this.product) {

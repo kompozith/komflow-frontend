@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CoreService } from 'src/app/services/core.service';
 import { MaterialModule } from '../../../../material.module';
@@ -10,7 +10,12 @@ import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/bra
   templateUrl: './side-two-steps.component.html',
 })
 export class AppSideTwoStepsComponent {
+  private settings = inject(CoreService);
+
   options = this.settings.getOptions();
 
-  constructor(private settings: CoreService) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 }

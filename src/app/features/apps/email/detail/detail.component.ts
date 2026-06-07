@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { getUser } from '../user-data';
 import {
   mailGlobalVariable,
@@ -7,7 +7,7 @@ import {
 import { Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
-import { CommonModule } from '@angular/common';
+
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { FormsModule } from '@angular/forms';
 
@@ -17,12 +17,15 @@ import { FormsModule } from '@angular/forms';
   imports: [
     MaterialModule,
     TablerIconsModule,
-    CommonModule,
     NgScrollbarModule,
-    FormsModule,
-  ],
+    FormsModule
+],
 })
 export class DetailComponent {
+  ms = inject(mailGlobalVariable);
+  mailService = inject(mailService);
+  router = inject(Router);
+
   // tslint:disable-next-line: no-shadowed-variable
 
   selectedMail = this.ms.selectedMail;
@@ -32,11 +35,10 @@ export class DetailComponent {
 
   selectedLabel: string;
 
-  constructor(
-    public ms: mailGlobalVariable,
-    public mailService: mailService,
-    public router: Router
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   labelClick(type: string): void {
     const mail = this.selectedMail();

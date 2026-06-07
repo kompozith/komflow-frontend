@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CoreService } from 'src/app/services/core.service';
 import {
   FormGroup,
@@ -23,9 +23,15 @@ import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/bra
   templateUrl: './side-forgot-password.component.html',
 })
 export class AppSideForgotPasswordComponent {
+  private settings = inject(CoreService);
+  private router = inject(Router);
+
   options = this.settings.getOptions();
 
-  constructor(private settings: CoreService, private router: Router) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   form = new FormGroup({
     email: new FormControl('', [Validators.required]),

@@ -1,12 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Inject,
-  signal,
-  inject,
-  ChangeDetectorRef,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit, signal, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Category, mailbox, filter, label } from './categories';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
@@ -29,7 +21,7 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -54,6 +46,9 @@ type MailboxType = 'Inbox' | 'Sent' | 'Draft' | 'Spam' | 'Trash';
   ],
 })
 export class ListingDialogDataExampleDialogComponent implements OnInit{
+  data = inject(MAT_DIALOG_DATA);
+  private formBuilder = inject(FormBuilder);
+
   form: FormGroup;
 
   html = '';
@@ -69,10 +64,10 @@ export class ListingDialogDataExampleDialogComponent implements OnInit{
     ['align_left', 'align_center', 'align_right', 'align_justify'],
   ];
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private formBuilder: FormBuilder
-  ) { }
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() { }
   ngOnInit(): void {
     this.editor = new Editor();
 
@@ -93,18 +88,22 @@ export class ListingDialogDataExampleDialogComponent implements OnInit{
   templateUrl: './listing.component.html',
   imports: [
     MaterialModule,
-    CommonModule,
     NgScrollbarModule,
     TablerIconsModule,
     NgxPaginationModule,
     DetailComponent,
     MatCheckboxModule,
-    FormsModule,
-   
-  ],
+    FormsModule
+],
  
 })
 export class ListingComponent implements OnInit, OnDestroy {
+  ms = inject(mailGlobalVariable);
+  mailService = inject(mailService);
+  router = inject(Router);
+  dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
+
   searchText = signal('');
   private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 960px)`);
   sidePanelOpened = signal(true);
@@ -124,13 +123,10 @@ export class ListingComponent implements OnInit, OnDestroy {
 
   private _mobileQueryListener: () => void;
 
-  constructor(
-    public ms: mailGlobalVariable,
-    public mailService: mailService,
-    public router: Router,
-    public dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     if (!this.ms.type()) {
       this.router.navigate(['apps/email/inbox']);
     }

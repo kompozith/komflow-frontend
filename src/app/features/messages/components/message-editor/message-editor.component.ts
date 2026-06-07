@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, ViewChild, ElementRef, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewChild, ElementRef, AfterViewInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { AbstractControl, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -33,6 +33,8 @@ import { normalizeVariableKey, renderTemplatePreviewHtml } from '../../utils/mes
   ],
 })
 export class MessageEditorComponent implements OnInit, AfterViewInit, OnChanges {
+  private messageService = inject(MessageService);
+
   @Input() contentControl!: AbstractControl;
   @Input() placeholder = 'Enter your message content...';
   @Input() label = 'Message Content';
@@ -83,7 +85,10 @@ export class MessageEditorComponent implements OnInit, AfterViewInit, OnChanges 
     '{{subscriber_whatsapp_number}}': '+221 77 123 45 67',
   };
 
-  constructor(private messageService: MessageService) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadVariables();

@@ -12,10 +12,16 @@
         <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Email</mat-label>
         <mat-form-field appearance="outline" class="w-100">
           <input matInput formControlName="email" type="email" placeholder="Enter email address" required />
-          <mat-error *ngIf="personForm.get('email')?.invalid && personForm.get('email')?.touched">
-            <span *ngIf="personForm.get('email')?.errors?.['required']">Email is required</span>
-            <span *ngIf="personForm.get('email')?.errors?.['email']">Please enter a valid email</span>
-          </mat-error>
+          @if (personForm.get('email')?.invalid && personForm.get('email')?.touched) {
+            <mat-error>
+              @if (personForm.get('email')?.errors?.['required']) {
+                <span>Email is required</span>
+              }
+              @if (personForm.get('email')?.errors?.['email']) {
+                <span>Please enter a valid email</span>
+              }
+            </mat-error>
+          }
         </mat-form-field>
       </div>
       <div class="col-md-6">
@@ -41,8 +47,12 @@
     <div mat-dialog-actions align="end" class="px-0">
       <button mat-button (click)="close()">Cancel</button>
       <button mat-flat-button color="primary" (click)="save()" [disabled]="isSaving || personForm.invalid">
-        <mat-spinner diameter="20" *ngIf="isSaving"></mat-spinner>
-        <span *ngIf="!isSaving">Save</span>
+        @if (isSaving) {
+          <mat-spinner diameter="20"></mat-spinner>
+        }
+        @if (!isSaving) {
+          <span>Save</span>
+        }
       </button>
     </div>
   </form>

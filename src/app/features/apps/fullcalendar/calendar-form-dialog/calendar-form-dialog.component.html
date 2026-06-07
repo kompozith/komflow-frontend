@@ -6,7 +6,7 @@
       mat-dialog-close
       class="d-flex justify-content-center"
       type="button"
-    >
+      >
       <i-tabler name="x" class="icon-20 d-flex"></i-tabler>
     </button>
   </div>
@@ -66,9 +66,11 @@
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>End time</mat-label>
           <input matInput type="time" formControlName="endTime" />
-          <mat-error *ngIf="eventForm.get('endDate')?.errors?.['beforeStart']">
-            End must be after start
-          </mat-error>
+          @if (eventForm.get('endDate')?.errors?.['beforeStart']) {
+            <mat-error>
+              End must be after start
+            </mat-error>
+          }
         </mat-form-field>
       </div>
 
@@ -82,7 +84,7 @@
         (click)="onSave()"
         [disabled]="eventForm.invalid"
         aria-label="SAVE"
-      >
+        >
         Save
       </button>
       <button mat-button mat-dialog-close class="bg-error text-white" type="button">

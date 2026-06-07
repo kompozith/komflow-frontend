@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
@@ -25,6 +25,14 @@ import { SendTestDialogComponent } from '../../components/send-test-dialog/send-
   ],
 })
 export class MessageDetailsComponent implements OnInit {
+  private sanitizer = inject(DomSanitizer);
+  private messageService = inject(MessageService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
+  private mediaPreviewService = inject(MediaPreviewService);
+
   message: Message | null = null;
   isLoading = false;
   messageId: string = '';
@@ -46,15 +54,10 @@ export class MessageDetailsComponent implements OnInit {
 
   // Enums for template
   MessageChannel = MessageChannel;
-  constructor(
-    private sanitizer: DomSanitizer,
-    private messageService: MessageService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private snackBar: MatSnackBar,
-    private dialog: MatDialog,
-    private mediaPreviewService: MediaPreviewService
-  ) {}
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+  constructor() {}
 
   ngOnInit(): void {
     this.messageId = this.route.snapshot.params['id'];

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EventFormComponent } from '../../components/event-form/event-form.component';
@@ -11,13 +11,16 @@ import { CreateEventRequest, EventService } from 'src/app/features/core/services
   templateUrl: './event-create.component.html',
 })
 export class EventCreateComponent {
+  private eventService = inject(EventService);
+  private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
+
   saving = false;
 
-  constructor(
-    private eventService: EventService,
-    private snackBar: MatSnackBar,
-    private router: Router
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   create(payload: CreateEventRequest): void {
     this.saving = true;

@@ -6,147 +6,179 @@
         <mat-card-subtitle>Update message template and dynamic variables</mat-card-subtitle>
       </mat-card-header>
 
-      <mat-card-content *ngIf="!isLoading">
-        <form [formGroup]="messageForm" (ngSubmit)="onSubmit()">
-          <div class="row">
-            <div class="col-md-6">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Title</mat-label>
-                <input matInput formControlName="title" placeholder="Enter message title">
-                <mat-error *ngIf="messageForm.get('title')?.invalid && messageForm.get('title')?.touched">
-                  <span *ngIf="messageForm.get('title')?.errors?.['required']">Title is required</span>
-                  <span *ngIf="messageForm.get('title')?.errors?.['minlength']">Title must be at least 2 characters</span>
-                  <span *ngIf="messageForm.get('title')?.errors?.['maxlength']">Title must be less than 100 characters</span>
-                </mat-error>
-              </mat-form-field>
-            </div>
-
-            <div class="col-md-6">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Channel</mat-label>
-                <mat-select formControlName="channel">
-                  <mat-option [value]="MessageChannel.EMAIL">Email</mat-option>
-                  <mat-option [value]="MessageChannel.SMS">SMS</mat-option>
-                  <mat-option [value]="MessageChannel.WHATSAPP">WhatsApp</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-          </div>
-
-          <div class="row mt-3">
-            <div class="col-12">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Linked Event (optional)</mat-label>
-                <mat-select formControlName="eventId">
-                  <mat-option [value]="null">No event</mat-option>
-                  <mat-option *ngFor="let event of availableEvents" [value]="event.id">
-                    {{ getEventLabel(event) }}
-                  </mat-option>
-                </mat-select>
-                <mat-error *ngIf="messageForm.get('eventId')?.hasError('required') && messageForm.get('eventId')?.touched">
-                  Linked event is required when the message uses event variables.
-                </mat-error>
-              </mat-form-field>
-            </div>
-          </div>
-
-          <div class="row mt-3">
-            <div class="col-12">
-              <app-message-editor
-                [contentControl]="messageForm.get('content')!"
-                [selectedEvent]="selectedEvent"
-                label="Message Content"
-                placeholder="Enter your message content. Click variables below to insert them."
-                [rows]="6">
-              </app-message-editor>
-              <mat-error *ngIf="messageForm.get('content')?.invalid && messageForm.get('content')?.touched" class="mt-2">
-                <span *ngIf="messageForm.get('content')?.errors?.['required']">Content is required</span>
-                <span *ngIf="messageForm.get('content')?.errors?.['maxlength']">Content must be less than 10000 characters</span>
-              </mat-error>
-              <small class="text-warning d-block mt-1" *ngIf="hasEventVariables() && !messageForm.get('eventId')?.value">
-                Event variables detected: please select a linked event.
-              </small>
-            </div>
-          </div>
-
-          <div class="row mt-3" *ngIf="messageForm.get('channel')?.value === MessageChannel.EMAIL || messageForm.get('channel')?.value === MessageChannel.WHATSAPP">
-            <div class="col-12">
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <h6 class="mb-0">Attachments</h6>
-                <label class="mb-0">
-                  <input
-                    #fileInput
-                    type="file"
-                    hidden
-                    multiple
-                    (change)="onAttachmentSelected($event)">
-                  <button mat-stroked-button type="button" [disabled]="isUploadingAttachment" (click)="fileInput.click()">
-                    <mat-icon class="me-1">upload</mat-icon>
-                    {{ isUploadingAttachment ? 'Uploading...' : 'Upload files' }}
-                  </button>
-                </label>
+      @if (!isLoading) {
+        <mat-card-content>
+          <form [formGroup]="messageForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Title</mat-label>
+                  <input matInput formControlName="title" placeholder="Enter message title">
+                  @if (messageForm.get('title')?.invalid && messageForm.get('title')?.touched) {
+                    <mat-error>
+                      @if (messageForm.get('title')?.errors?.['required']) {
+                        <span>Title is required</span>
+                      }
+                      @if (messageForm.get('title')?.errors?.['minlength']) {
+                        <span>Title must be at least 2 characters</span>
+                      }
+                      @if (messageForm.get('title')?.errors?.['maxlength']) {
+                        <span>Title must be less than 100 characters</span>
+                      }
+                    </mat-error>
+                  }
+                </mat-form-field>
               </div>
-
-              <div class="row g-2" *ngIf="attachments.length > 0">
-                <div class="col-sm-6 col-lg-4" *ngFor="let attachment of attachments; let i = index">
-                  <div class="border rounded p-2 h-100 cursor-pointer" (click)="openAttachment(attachment)">
-                    <div class="d-flex align-items-center justify-content-center bg-light rounded mb-2" style="height: 84px;">
-                      <img
-                        *ngIf="isImageAttachment(attachment)"
-                        [src]="attachment.url"
-                        [alt]="attachment.name"
-                        class="img-fluid rounded"
-                        style="max-height: 80px;">
-                      <mat-icon *ngIf="!isImageAttachment(attachment)" class="text-muted">description</mat-icon>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-between gap-2">
-                      <div class="text-truncate">
-                        <strong class="f-s-13">{{ attachment.name }}</strong>
-                      </div>
-                      <button mat-icon-button color="warn" type="button" (click)="removeAttachment(i); $event.stopPropagation()" aria-label="Remove attachment">
-                        <mat-icon>delete</mat-icon>
+              <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Channel</mat-label>
+                  <mat-select formControlName="channel">
+                    <mat-option [value]="MessageChannel.EMAIL">Email</mat-option>
+                    <mat-option [value]="MessageChannel.SMS">SMS</mat-option>
+                    <mat-option [value]="MessageChannel.WHATSAPP">WhatsApp</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-12">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Linked Event (optional)</mat-label>
+                  <mat-select formControlName="eventId">
+                    <mat-option [value]="null">No event</mat-option>
+                    @for (event of availableEvents; track event) {
+                      <mat-option [value]="event.id">
+                        {{ getEventLabel(event) }}
+                      </mat-option>
+                    }
+                  </mat-select>
+                  @if (messageForm.get('eventId')?.hasError('required') && messageForm.get('eventId')?.touched) {
+                    <mat-error>
+                      Linked event is required when the message uses event variables.
+                    </mat-error>
+                  }
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-12">
+                <app-message-editor
+                  [contentControl]="messageForm.get('content')!"
+                  [selectedEvent]="selectedEvent"
+                  label="Message Content"
+                  placeholder="Enter your message content. Click variables below to insert them."
+                  [rows]="6">
+                </app-message-editor>
+                @if (messageForm.get('content')?.invalid && messageForm.get('content')?.touched) {
+                  <mat-error class="mt-2">
+                    @if (messageForm.get('content')?.errors?.['required']) {
+                      <span>Content is required</span>
+                    }
+                    @if (messageForm.get('content')?.errors?.['maxlength']) {
+                      <span>Content must be less than 10000 characters</span>
+                    }
+                  </mat-error>
+                }
+                @if (hasEventVariables() && !messageForm.get('eventId')?.value) {
+                  <small class="text-warning d-block mt-1">
+                    Event variables detected: please select a linked event.
+                  </small>
+                }
+              </div>
+            </div>
+            @if (messageForm.get('channel')?.value === MessageChannel.EMAIL || messageForm.get('channel')?.value === MessageChannel.WHATSAPP) {
+              <div class="row mt-3">
+                <div class="col-12">
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h6 class="mb-0">Attachments</h6>
+                    <label class="mb-0">
+                      <input
+                        #fileInput
+                        type="file"
+                        hidden
+                        multiple
+                        (change)="onAttachmentSelected($event)">
+                      <button mat-stroked-button type="button" [disabled]="isUploadingAttachment" (click)="fileInput.click()">
+                        <mat-icon class="me-1">upload</mat-icon>
+                        {{ isUploadingAttachment ? 'Uploading...' : 'Upload files' }}
                       </button>
-                    </div>
+                    </label>
                   </div>
+                  @if (attachments.length > 0) {
+                    <div class="row g-2">
+                      @for (attachment of attachments; track attachment; let i = $index) {
+                        <div class="col-sm-6 col-lg-4">
+                          <div class="border rounded p-2 h-100 cursor-pointer" (click)="openAttachment(attachment)">
+                            <div class="d-flex align-items-center justify-content-center bg-light rounded mb-2" style="height: 84px;">
+                              @if (isImageAttachment(attachment)) {
+                                <img
+                                  [src]="attachment.url"
+                                  [alt]="attachment.name"
+                                  class="img-fluid rounded"
+                                  style="max-height: 80px;">
+                              }
+                              @if (!isImageAttachment(attachment)) {
+                                <mat-icon class="text-muted">description</mat-icon>
+                              }
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between gap-2">
+                              <div class="text-truncate">
+                                <strong class="f-s-13">{{ attachment.name }}</strong>
+                              </div>
+                              <button mat-icon-button color="warn" type="button" (click)="removeAttachment(i); $event.stopPropagation()" aria-label="Remove attachment">
+                                <mat-icon>delete</mat-icon>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                  @if (attachments.length === 0) {
+                    <div class="text-muted f-s-12">
+                      No file uploaded.
+                    </div>
+                  }
                 </div>
               </div>
-
-              <div class="text-muted f-s-12" *ngIf="attachments.length === 0">
-                No file uploaded.
+            }
+            <div class="row mt-3">
+              <div class="col-12">
+                <div class="d-flex justify-content-end gap-2">
+                  <button mat-stroked-button type="button" (click)="onCancel()">
+                    Cancel
+                  </button>
+                  <button mat-stroked-button type="button" (click)="openSendTestDialog()" [disabled]="!message">
+                    <mat-icon class="me-1">science</mat-icon>
+                    Send Test
+                  </button>
+                  <button
+                    mat-flat-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="isSaving || isUploadingAttachment || messageForm.invalid">
+                    @if (isSaving) {
+                      <mat-spinner diameter="20"></mat-spinner>
+                    }
+                    @if (!isSaving) {
+                      <span>Update Message</span>
+                    }
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          </form>
+        </mat-card-content>
+      }
 
-          <div class="row mt-3">
-            <div class="col-12">
-              <div class="d-flex justify-content-end gap-2">
-                <button mat-stroked-button type="button" (click)="onCancel()">
-                  Cancel
-                </button>
-                <button mat-stroked-button type="button" (click)="openSendTestDialog()" [disabled]="!message">
-                  <mat-icon class="me-1">science</mat-icon>
-                  Send Test
-                </button>
-                <button
-                  mat-flat-button
-                  color="primary"
-                  type="submit"
-                  [disabled]="isSaving || isUploadingAttachment || messageForm.invalid">
-                  <mat-spinner diameter="20" *ngIf="isSaving"></mat-spinner>
-                  <span *ngIf="!isSaving">Update Message</span>
-                </button>
-              </div>
-            </div>
+      @if (isLoading) {
+        <mat-card-content>
+          <div class="d-flex justify-content-center align-items-center p-4">
+            <mat-spinner diameter="40"></mat-spinner>
+            <span class="ml-2">Loading message...</span>
           </div>
-        </form>
-      </mat-card-content>
-
-      <mat-card-content *ngIf="isLoading">
-        <div class="d-flex justify-content-center align-items-center p-4">
-          <mat-spinner diameter="40"></mat-spinner>
-          <span class="ml-2">Loading message...</span>
-        </div>
-      </mat-card-content>
+        </mat-card-content>
+      }
     </mat-card>
   </div>
 </div>

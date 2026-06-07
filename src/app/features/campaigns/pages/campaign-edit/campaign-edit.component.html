@@ -2,135 +2,160 @@
   <mat-card-header>
     <mat-card-title>Edit Campaign</mat-card-title>
   </mat-card-header>
-  <mat-card-content *ngIf="!isLoading">
-    <form [formGroup]="campaignForm" (ngSubmit)="onSubmit()" class="mt-4">
-      <div class="row">
-        <div class="col-md-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Campaign Name</mat-label>
-            <input matInput formControlName="name" required>
-            <mat-error *ngIf="campaignForm.get('name')?.hasError('required')">
-              Campaign name is required
-            </mat-error>
-          </mat-form-field>
+  @if (!isLoading) {
+    <mat-card-content>
+      <form [formGroup]="campaignForm" (ngSubmit)="onSubmit()" class="mt-4">
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Campaign Name</mat-label>
+              <input matInput formControlName="name" required>
+              @if (campaignForm.get('name')?.hasError('required')) {
+                <mat-error>
+                  Campaign name is required
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Message</mat-label>
+              <mat-select formControlName="messageId" required>
+                @for (message of messages; track message) {
+                  <mat-option [value]="message.id">
+                    {{ message.title }} ({{ message.channel }})
+                  </mat-option>
+                }
+              </mat-select>
+              @if (campaignForm.get('messageId')?.hasError('required')) {
+                <mat-error>
+                  Message is required
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
         </div>
-        <div class="col-md-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Message</mat-label>
-            <mat-select formControlName="messageId" required>
-              <mat-option *ngFor="let message of messages" [value]="message.id">
-                {{ message.title }} ({{ message.channel }})
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="campaignForm.get('messageId')?.hasError('required')">
-              Message is required
-            </mat-error>
-          </mat-form-field>
+        <div class="row mt-3">
+          <div class="col-md-12">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="3"></textarea>
+            </mat-form-field>
+          </div>
         </div>
-      </div>
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Recipients</mat-label>
+              <mat-select formControlName="contactIds" multiple>
+                @for (contact of contacts; track contact) {
+                  <mat-option [value]="contact.id">
+                    {{ contact.person.firstName }} {{ contact.person.lastName }} ({{ contact.person.email }})
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Tags</mat-label>
+              <mat-select formControlName="tagIds" multiple>
+                @for (tag of tags; track tag) {
+                  <mat-option [value]="tag.id">
+                    {{ tag.name }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        @if (campaignForm.get('messageId')?.value && getSelectedMessageChannel() === 'EMAIL') {
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>CC Contacts</mat-label>
+                <mat-select formControlName="mailCcContactIds" multiple>
+                  @for (contact of contacts; track contact) {
+                    <mat-option [value]="contact.id">
+                      {{ contact.person.firstName }} {{ contact.person.lastName }} ({{ contact.person.email }})
+                    </mat-option>
+                  }
+                </mat-select>
+                <mat-hint>Select contacts for CC</mat-hint>
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>CC Tags</mat-label>
+                <mat-select formControlName="mailCcTagIds" multiple>
+                  @for (tag of tags; track tag) {
+                    <mat-option [value]="tag.id">
+                      {{ tag.name }}
+                    </mat-option>
+                  }
+                </mat-select>
+                <mat-hint>Select tags for CC</mat-hint>
+              </mat-form-field>
+            </div>
+          </div>
+        }
+        @if (campaignForm.get('messageId')?.value && getSelectedMessageChannel() === 'EMAIL') {
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>BCC Contacts</mat-label>
+                <mat-select formControlName="mailCciContactIds" multiple>
+                  @for (contact of contacts; track contact) {
+                    <mat-option [value]="contact.id">
+                      {{ contact.person.firstName }} {{ contact.person.lastName }} ({{ contact.person.email }})
+                    </mat-option>
+                  }
+                </mat-select>
+                <mat-hint>Select contacts for BCC</mat-hint>
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>BCC Tags</mat-label>
+                <mat-select formControlName="mailCciTagIds" multiple>
+                  @for (tag of tags; track tag) {
+                    <mat-option [value]="tag.id">
+                      {{ tag.name }}
+                    </mat-option>
+                  }
+                </mat-select>
+                <mat-hint>Select tags for BCC</mat-hint>
+              </mat-form-field>
+            </div>
+          </div>
+        }
+        <div class="row mt-4">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button mat-flat-button type="button" color="warn" [routerLink]="['/campaigns/details', campaignId]" class="me-2">
+              Cancel
+            </button>
+            <button mat-flat-button type="submit" color="primary" [disabled]="campaignForm.invalid || isSubmitting">
+              @if (!isSubmitting) {
+                <span>Update Campaign</span>
+              }
+              @if (isSubmitting) {
+                <span>
+                  <mat-spinner diameter="20" class="me-2"></mat-spinner>
+                  Updating...
+                </span>
+              }
+            </button>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  }
 
-      <div class="row mt-3">
-        <div class="col-md-12">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description" rows="3"></textarea>
-          </mat-form-field>
-        </div>
+  @if (isLoading) {
+    <mat-card-content>
+      <div class="d-flex justify-content-center align-items-center p-4">
+        <mat-spinner diameter="36"></mat-spinner>
       </div>
-
-      <div class="row mt-3">
-        <div class="col-md-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Recipients</mat-label>
-            <mat-select formControlName="contactIds" multiple>
-              <mat-option *ngFor="let contact of contacts" [value]="contact.id">
-                {{ contact.person.firstName }} {{ contact.person.lastName }} ({{ contact.person.email }})
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <div class="col-md-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Tags</mat-label>
-            <mat-select formControlName="tagIds" multiple>
-              <mat-option *ngFor="let tag of tags" [value]="tag.id">
-                {{ tag.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="row mt-3" *ngIf="campaignForm.get('messageId')?.value && getSelectedMessageChannel() === 'EMAIL'">
-        <div class="col-md-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>CC Contacts</mat-label>
-            <mat-select formControlName="mailCcContactIds" multiple>
-              <mat-option *ngFor="let contact of contacts" [value]="contact.id">
-                {{ contact.person.firstName }} {{ contact.person.lastName }} ({{ contact.person.email }})
-              </mat-option>
-            </mat-select>
-            <mat-hint>Select contacts for CC</mat-hint>
-          </mat-form-field>
-        </div>
-        <div class="col-md-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>CC Tags</mat-label>
-            <mat-select formControlName="mailCcTagIds" multiple>
-              <mat-option *ngFor="let tag of tags" [value]="tag.id">
-                {{ tag.name }}
-              </mat-option>
-            </mat-select>
-            <mat-hint>Select tags for CC</mat-hint>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="row mt-3" *ngIf="campaignForm.get('messageId')?.value && getSelectedMessageChannel() === 'EMAIL'">
-        <div class="col-md-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>BCC Contacts</mat-label>
-            <mat-select formControlName="mailCciContactIds" multiple>
-              <mat-option *ngFor="let contact of contacts" [value]="contact.id">
-                {{ contact.person.firstName }} {{ contact.person.lastName }} ({{ contact.person.email }})
-              </mat-option>
-            </mat-select>
-            <mat-hint>Select contacts for BCC</mat-hint>
-          </mat-form-field>
-        </div>
-        <div class="col-md-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>BCC Tags</mat-label>
-            <mat-select formControlName="mailCciTagIds" multiple>
-              <mat-option *ngFor="let tag of tags" [value]="tag.id">
-                {{ tag.name }}
-              </mat-option>
-            </mat-select>
-            <mat-hint>Select tags for BCC</mat-hint>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="row mt-4">
-        <div class="col-md-12 d-flex justify-content-end">
-          <button mat-flat-button type="button" color="warn" [routerLink]="['/campaigns/details', campaignId]" class="me-2">
-            Cancel
-          </button>
-          <button mat-flat-button type="submit" color="primary" [disabled]="campaignForm.invalid || isSubmitting">
-            <span *ngIf="!isSubmitting">Update Campaign</span>
-            <span *ngIf="isSubmitting">
-              <mat-spinner diameter="20" class="me-2"></mat-spinner>
-              Updating...
-            </span>
-          </button>
-        </div>
-      </div>
-    </form>
-  </mat-card-content>
-
-  <mat-card-content *ngIf="isLoading">
-    <div class="d-flex justify-content-center align-items-center p-4">
-      <mat-spinner diameter="36"></mat-spinner>
-    </div>
-  </mat-card-content>
+    </mat-card-content>
+  }
 </mat-card>

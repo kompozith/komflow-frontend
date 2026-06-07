@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,7 +11,7 @@ import { Tag, TagPage } from 'src/app/features/tags/models/tag';
 import { Contact, ContactPage } from 'src/app/features/contacts/models/contact';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -22,11 +22,18 @@ import { RouterModule } from '@angular/router';
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
     RouterModule
-  ]
+]
 })
 export class CampaignCreateComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
+  private campaignService = inject(CampaignService);
+  private messageService = inject(MessageService);
+  private tagService = inject(TagService);
+  private contactService = inject(ContactService);
+
   campaignForm: FormGroup;
   isSubmitting = false;
 
@@ -34,15 +41,10 @@ export class CampaignCreateComponent implements OnInit {
   tags: Tag[] = [];
   contacts: Contact[] = [];
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private snackBar: MatSnackBar,
-    private campaignService: CampaignService,
-    private messageService: MessageService,
-    private tagService: TagService,
-    private contactService: ContactService
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.campaignForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', Validators.maxLength(500)],

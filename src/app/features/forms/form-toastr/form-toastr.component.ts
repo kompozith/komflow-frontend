@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, Inject  } from '@angular/core';
+
+import { Component, inject } from '@angular/core';
 import { ToastrService, ToastrModule } from 'ngx-toastr';
 import { MaterialModule } from '../../../material.module';
 
@@ -7,11 +7,16 @@ import { MaterialModule } from '../../../material.module';
 @Component({
     selector: 'app-form-toastr',
     templateUrl: './form-toastr.component.html',
-    imports: [MaterialModule, CommonModule, ToastrModule],
+    imports: [MaterialModule, ToastrModule],
     providers: [ToastrService]
 })
 export class AppFormToastrComponent {
-  constructor(private toastr: ToastrService) {}
+  private toastr = inject(ToastrService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   showSuccess() {
     this.toastr.success('You are awesome!', 'Success!');

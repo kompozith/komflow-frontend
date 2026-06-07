@@ -1,603 +1,678 @@
 <div class="profile-content">
   <!-- Standalone Submit and Schedule Buttons (outside cards) -->
-  <div *ngIf="!isLoading && campaign" class="row mb-3">
-    <div class="col-12 d-flex justify-content-end gap-8">
-      @if((canSchedule() || !isSubmitting) && (!isSubmitting)) {
-      <button *ngIf="canEditCampaign()" mat-stroked-button color="primary" (click)="editCampaign()">
-        <i-tabler name="edit" class="icon-18 me-2"></i-tabler>
-        Edit Campaign
-      </button>
-      <button *ngIf="canCancelSchedule()" mat-stroked-button color="warn" (click)="cancelSchedule()">
-        <span *ngIf="!isSubmitting">
-          <i-tabler name="calendar-x" class="icon-18 me-2"></i-tabler>
-          Cancel Schedule
-        </span>
-        <span *ngIf="isSubmitting">
-          <mat-spinner diameter="20" class="me-2"></mat-spinner>
-          Cancelling...
-        </span>
-      </button>
-      <button *ngIf="canSchedule()" mat-stroked-button color="accent" (click)="openScheduleDialog()">
-        <span *ngIf="!isScheduled()">
-          <i-tabler name="calendar-clock" class="icon-18 me-2"></i-tabler>
-          Schedule
-        </span>
-        <span *ngIf="isScheduled()">
-          <i-tabler name="calendar-edit" class="icon-18 me-2"></i-tabler>
-          Reschedule
-        </span>
-      </button>
-      <button *ngIf="canSubmit()" mat-flat-button color="primary" (click)="submitCampaign()">
-        <span *ngIf="!isSubmitting">
-          <i-tabler name="send" class="icon-18 me-2"></i-tabler>
-          Submit Campaign
-        </span>
-        <span *ngIf="isSubmitting">
-          <mat-spinner diameter="20" class="me-2"></mat-spinner>
-          Submitting...
-        </span>
-      </button>
-      <button *ngIf="canResubmit()" mat-flat-button color="warn" (click)="resubmitCampaign()">
-        <span *ngIf="!isResubmitting">
-          <i-tabler name="refresh" class="icon-18 me-2"></i-tabler>
-          Retry Failed
-        </span>
-        <span *ngIf="isResubmitting">
-          <mat-spinner diameter="20" class="me-2"></mat-spinner>
-          Retrying...
-        </span>
-      </button>
-      }
+  @if (!isLoading && campaign) {
+    <div class="row mb-3">
+      <div class="col-12 d-flex justify-content-end gap-8">
+        @if((canSchedule() || !isSubmitting) && (!isSubmitting)) {
+          @if (canEditCampaign()) {
+            <button mat-stroked-button color="primary" (click)="editCampaign()">
+              <i-tabler name="edit" class="icon-18 me-2"></i-tabler>
+              Edit Campaign
+            </button>
+          }
+          @if (canCancelSchedule()) {
+            <button mat-stroked-button color="warn" (click)="cancelSchedule()">
+              @if (!isSubmitting) {
+                <span>
+                  <i-tabler name="calendar-x" class="icon-18 me-2"></i-tabler>
+                  Cancel Schedule
+                </span>
+              }
+              @if (isSubmitting) {
+                <span>
+                  <mat-spinner diameter="20" class="me-2"></mat-spinner>
+                  Cancelling...
+                </span>
+              }
+            </button>
+          }
+          @if (canSchedule()) {
+            <button mat-stroked-button color="accent" (click)="openScheduleDialog()">
+              @if (!isScheduled()) {
+                <span>
+                  <i-tabler name="calendar-clock" class="icon-18 me-2"></i-tabler>
+                  Schedule
+                </span>
+              }
+              @if (isScheduled()) {
+                <span>
+                  <i-tabler name="calendar-edit" class="icon-18 me-2"></i-tabler>
+                  Reschedule
+                </span>
+              }
+            </button>
+          }
+          @if (canSubmit()) {
+            <button mat-flat-button color="primary" (click)="submitCampaign()">
+              @if (!isSubmitting) {
+                <span>
+                  <i-tabler name="send" class="icon-18 me-2"></i-tabler>
+                  Submit Campaign
+                </span>
+              }
+              @if (isSubmitting) {
+                <span>
+                  <mat-spinner diameter="20" class="me-2"></mat-spinner>
+                  Submitting...
+                </span>
+              }
+            </button>
+          }
+          @if (canResubmit()) {
+            <button mat-flat-button color="warn" (click)="resubmitCampaign()">
+              @if (!isResubmitting) {
+                <span>
+                  <i-tabler name="refresh" class="icon-18 me-2"></i-tabler>
+                  Retry Failed
+                </span>
+              }
+              @if (isResubmitting) {
+                <span>
+                  <mat-spinner diameter="20" class="me-2"></mat-spinner>
+                  Retrying...
+                </span>
+              }
+            </button>
+          }
+        }
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Statistics Cards -->
-  <div *ngIf="!isLoading && campaign && !isInSubmission" class="row mb-3">
-    <div class="col-sm-6 col-lg-3">
-      <mat-card class="cardWithShadow cursor-pointer bg-light-primary shadow-none">
-        <mat-card-content class="d-flex align-items-center gap-16">
-          <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-primary text-white">
-            <i-tabler name="users" class="icon-24 d-flex"></i-tabler>
-          </div>
-          <div class="info">
-            <h5 class="f-w-400 lh-sm f-s-14">Direct Recipients</h5>
-            <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.contacts?.length }} contacts</h5>
-          </div>
-        </mat-card-content>
-      </mat-card>
+  @if (!isLoading && campaign && !isInSubmission) {
+    <div class="row mb-3">
+      <div class="col-sm-6 col-lg-3">
+        <mat-card class="cardWithShadow cursor-pointer bg-light-primary shadow-none">
+          <mat-card-content class="d-flex align-items-center gap-16">
+            <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-primary text-white">
+              <i-tabler name="users" class="icon-24 d-flex"></i-tabler>
+            </div>
+            <div class="info">
+              <h5 class="f-w-400 lh-sm f-s-14">Direct Recipients</h5>
+              <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.contacts?.length }} contacts</h5>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      @if (campaign.message.channel === 'EMAIL') {
+        <div class="col-sm-6 col-lg-3">
+          <mat-card class="cardWithShadow cursor-pointer bg-light-success shadow-none">
+            <mat-card-content class="d-flex align-items-center gap-16">
+              <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-success text-white">
+                <i-tabler name="mail-plus" class="icon-24 d-flex"></i-tabler>
+              </div>
+              <div class="info">
+                <h5 class="f-w-400 lh-sm f-s-14">CC Recipients</h5>
+                <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.mailCcContacts?.length }} contacts, {{ campaign.mailCcTags?.length }} tags</h5>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+      @if (campaign.message.channel === 'EMAIL') {
+        <div class="col-sm-6 col-lg-3">
+          <mat-card class="cardWithShadow cursor-pointer bg-light-warning shadow-none">
+            <mat-card-content class="d-flex align-items-center gap-16">
+              <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-warning text-white">
+                <i-tabler name="mail-forward" class="icon-24 d-flex"></i-tabler>
+              </div>
+              <div class="info">
+                <h5 class="f-w-400 lh-sm f-s-14">BCC Recipients</h5>
+                <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.mailCciContacts?.length }} contacts, {{ campaign.mailCciTags?.length }} tags</h5>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+      <div class="col-sm-6 col-lg-3">
+        <mat-card class="cardWithShadow cursor-pointer bg-light shadow-none">
+          <mat-card-content class="d-flex align-items-center gap-16">
+            <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-info text-white">
+              <i-tabler name="tag" class="icon-24 d-flex"></i-tabler>
+            </div>
+            <div class="info">
+              <h5 class="f-w-400 lh-sm f-s-14">Tags</h5>
+              <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.tags?.length }} tags</h5>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
-
-    <div class="col-sm-6 col-lg-3" *ngIf="campaign.message.channel === 'EMAIL'">
-      <mat-card class="cardWithShadow cursor-pointer bg-light-success shadow-none">
-        <mat-card-content class="d-flex align-items-center gap-16">
-          <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-success text-white">
-            <i-tabler name="mail-plus" class="icon-24 d-flex"></i-tabler>
-          </div>
-          <div class="info">
-            <h5 class="f-w-400 lh-sm f-s-14">CC Recipients</h5>
-            <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.mailCcContacts?.length }} contacts, {{ campaign.mailCcTags?.length }} tags</h5>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <div class="col-sm-6 col-lg-3" *ngIf="campaign.message.channel === 'EMAIL'">
-      <mat-card class="cardWithShadow cursor-pointer bg-light-warning shadow-none">
-        <mat-card-content class="d-flex align-items-center gap-16">
-          <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-warning text-white">
-            <i-tabler name="mail-forward" class="icon-24 d-flex"></i-tabler>
-          </div>
-          <div class="info">
-            <h5 class="f-w-400 lh-sm f-s-14">BCC Recipients</h5>
-            <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.mailCciContacts?.length }} contacts, {{ campaign.mailCciTags?.length }} tags</h5>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <div class="col-sm-6 col-lg-3">
-      <mat-card class="cardWithShadow cursor-pointer bg-light shadow-none">
-        <mat-card-content class="d-flex align-items-center gap-16">
-          <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-info text-white">
-            <i-tabler name="tag" class="icon-24 d-flex"></i-tabler>
-          </div>
-          <div class="info">
-            <h5 class="f-w-400 lh-sm f-s-14">Tags</h5>
-            <h5 class="f-w-500 lh-sm f-s-14">{{ campaign.tags?.length }} tags</h5>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
+  }
 
   <!-- Campaign Details Card -->
-  <div *ngIf="!isLoading && campaign && !isInSubmission" class="row mb-3">
-    <div class="col-12">
-      <mat-card class="cardWithShadow h-100">
-        <mat-card-header>
-          <mat-card-title>Campaign Info</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="mb-3">
-            <h3 class="m-t-10 f-w-600 mb-0">{{ campaign.name }}</h3>
-            <p class="m-t-1 f-s-14 f-w-500 text-muted mb-0">
-              {{ campaign.description || 'No description available' }}
-            </p>
-          </div>
-          <div class="row g-4">
-            <!-- Message Info -->
-            <div class="col-md-4">
-              <div class="d-flex align-items-center gap-16">
-                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-primary text-white">
-                  <i-tabler name="message" class="icon-24 d-flex"></i-tabler>
-                </div>
-                <div>
-                  <h6 class="f-s-16 f-w-600 mb-1">Message Title</h6>
-                  <p class="f-s-14 mb-0">{{ campaign.message.title }}</p>
+  @if (!isLoading && campaign && !isInSubmission) {
+    <div class="row mb-3">
+      <div class="col-12">
+        <mat-card class="cardWithShadow h-100">
+          <mat-card-header>
+            <mat-card-title>Campaign Info</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="mb-3">
+              <h3 class="m-t-10 f-w-600 mb-0">{{ campaign.name }}</h3>
+              <p class="m-t-1 f-s-14 f-w-500 text-muted mb-0">
+                {{ campaign.description || 'No description available' }}
+              </p>
+            </div>
+            <div class="row g-4">
+              <!-- Message Info -->
+              <div class="col-md-4">
+                <div class="d-flex align-items-center gap-16">
+                  <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-primary text-white">
+                    <i-tabler name="message" class="icon-24 d-flex"></i-tabler>
+                  </div>
+                  <div>
+                    <h6 class="f-s-16 f-w-600 mb-1">Message Title</h6>
+                    <p class="f-s-14 mb-0">{{ campaign.message.title }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <div class="d-flex align-items-center gap-16">
-                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-success text-white">
-                  <i-tabler name="device-desktop" class="icon-24 d-flex"></i-tabler>
-                </div>
-                <div>
-                  <h6 class="f-s-16 f-w-600 mb-1">Channel</h6>
-                  <p class="f-s-14 mb-0">{{ campaign.message.channel }}</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <div class="d-flex align-items-center gap-16">
-                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-info text-white">
-                  <i-tabler name="paperclip" class="icon-24 d-flex"></i-tabler>
-                </div>
-                <div>
-                  <h6 class="f-s-16 f-w-600 mb-1">Attachments</h6>
-                  <p class="f-s-14 mb-0">{{ campaign.message.attachmentCount || 0 }}</p>
+              <div class="col-md-4 mb-3">
+                <div class="d-flex align-items-center gap-16">
+                  <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-success text-white">
+                    <i-tabler name="device-desktop" class="icon-24 d-flex"></i-tabler>
+                  </div>
+                  <div>
+                    <h6 class="f-s-16 f-w-600 mb-1">Channel</h6>
+                    <p class="f-s-14 mb-0">{{ campaign.message.channel }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <!-- Status -->
-            <div class="col-md-4">
-              <div class="d-flex align-items-center gap-16">
-                <div class="rounded-circle d-flex align-items-center justify-content-center f-w-600"
-                     [ngClass]="getStatusBadgeClass(campaign.status)"
-                     style="width: 40px; height: 40px; font-size: 16px;">
-                  <i-tabler [name]="getStatusIcon(campaign.status)" class="text-white"></i-tabler>
-                </div>
-                <div>
-                  <h6 class="f-s-16 f-w-600 mb-1">Status</h6>
-                  <p class="f-s-14 mb-0 d-flex align-items-center gap-8">
-                    <app-badge [variant]="getStatusColor(campaign.status)" [pill]="true">
-                      {{ campaign.status }}
-                    </app-badge>
-                  </p>
+              <div class="col-md-4 mb-3">
+                <div class="d-flex align-items-center gap-16">
+                  <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-info text-white">
+                    <i-tabler name="paperclip" class="icon-24 d-flex"></i-tabler>
+                  </div>
+                  <div>
+                    <h6 class="f-s-16 f-w-600 mb-1">Attachments</h6>
+                    <p class="f-s-14 mb-0">{{ campaign.message.attachmentCount || 0 }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <!-- Dates -->
-            <div class="col-md-4">
-              <div class="d-flex align-items-center gap-16">
-                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-dark text-white">
-                  <i-tabler name="calendar-plus" class="icon-24 d-flex"></i-tabler>
-                </div>
-                <div>
-                  <h6 class="f-s-16 f-w-600 mb-1">Created</h6>
-                  <p class="f-s-14 mb-0">{{ campaign.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="d-flex align-items-center gap-16">
-                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-secondary text-white">
-                  <i-tabler name="calendar-check" class="icon-24 d-flex"></i-tabler>
-                </div>
-                <div>
-                  <h6 class="f-s-16 f-w-600 mb-1">Last Updated</h6>
-                  <p class="f-s-14 mb-0">{{ campaign.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+              <!-- Status -->
+              <div class="col-md-4">
+                <div class="d-flex align-items-center gap-16">
+                  <div class="rounded-circle d-flex align-items-center justify-content-center f-w-600"
+                    [ngClass]="getStatusBadgeClass(campaign.status)"
+                    style="width: 40px; height: 40px; font-size: 16px;">
+                    <i-tabler [name]="getStatusIcon(campaign.status)" class="text-white"></i-tabler>
+                  </div>
+                  <div>
+                    <h6 class="f-s-16 f-w-600 mb-1">Status</h6>
+                    <p class="f-s-14 mb-0 d-flex align-items-center gap-8">
+                      <app-badge [variant]="getStatusColor(campaign.status)" [pill]="true">
+                        {{ campaign.status }}
+                      </app-badge>
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div class="col-md-4" *ngIf="campaign.scheduledAt">
-              <div class="d-flex align-items-center gap-16">
-                <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-warning text-white">
-                  <i-tabler name="clock" class="icon-24 d-flex"></i-tabler>
-                </div>
-                <div>
-                  <h6 class="f-s-16 f-w-600 mb-1">Scheduled For</h6>
-                  <p class="f-s-14 mb-0">{{ campaign.scheduledAt | date:'dd/MM/yyyy HH:mm' }}</p>
+              <!-- Dates -->
+              <div class="col-md-4">
+                <div class="d-flex align-items-center gap-16">
+                  <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-dark text-white">
+                    <i-tabler name="calendar-plus" class="icon-24 d-flex"></i-tabler>
+                  </div>
+                  <div>
+                    <h6 class="f-s-16 f-w-600 mb-1">Created</h6>
+                    <p class="f-s-14 mb-0">{{ campaign.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <!-- Message Content -->
-            <div class="col-12 mt-80">
-              <div *ngIf="hasLinkedEventAudience()" class="alert alert-info mb-3">
-                Audience evenement auto-incluse: tous les contacts du tag d'inscription de
-                <strong>{{ campaign.message.event?.title }}</strong> seront notifies lors de la soumission.
+              <div class="col-md-4">
+                <div class="d-flex align-items-center gap-16">
+                  <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-secondary text-white">
+                    <i-tabler name="calendar-check" class="icon-24 d-flex"></i-tabler>
+                  </div>
+                  <div>
+                    <h6 class="f-s-16 f-w-600 mb-1">Last Updated</h6>
+                    <p class="f-s-14 mb-0">{{ campaign.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+                  </div>
+                </div>
               </div>
-              <h6 class="f-s-16 f-w-600 mb-3">Message Content</h6>
-              <div class="message-content p-20 bg-light rounded" [innerHTML]="getHighlightedContent()"></div>
+              @if (campaign.scheduledAt) {
+                <div class="col-md-4">
+                  <div class="d-flex align-items-center gap-16">
+                    <div class="icon icon-38 rounded d-flex align-items-center justify-content-center bg-warning text-white">
+                      <i-tabler name="clock" class="icon-24 d-flex"></i-tabler>
+                    </div>
+                    <div>
+                      <h6 class="f-s-16 f-w-600 mb-1">Scheduled For</h6>
+                      <p class="f-s-14 mb-0">{{ campaign.scheduledAt | date:'dd/MM/yyyy HH:mm' }}</p>
+                    </div>
+                  </div>
+                </div>
+              }
+              <!-- Message Content -->
+              <div class="col-12 mt-80">
+                @if (hasLinkedEventAudience()) {
+                  <div class="alert alert-info mb-3">
+                    Audience evenement auto-incluse: tous les contacts du tag d'inscription de
+                    <strong>{{ campaign.message.event?.title }}</strong> seront notifies lors de la soumission.
+                  </div>
+                }
+                <h6 class="f-s-16 f-w-600 mb-3">Message Content</h6>
+                <div class="message-content p-20 bg-light rounded" [innerHTML]="getHighlightedContent()"></div>
+              </div>
             </div>
-
-          </div>
-        </mat-card-content>
-      </mat-card>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Recipients and Tags Cards -->
-  <div *ngIf="!isLoading && campaign && !isInSubmission" class="row mb-3">
-    <!-- Direct Recipients -->
-    <div class="col-lg-6" *ngIf="(campaign.contacts?.length ?? 0) > 0">
-      <mat-card class="cardWithShadow h-100">
-        <mat-card-header>
-          <mat-card-title>Direct Recipients</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="recipients-list">
-            <mat-chip-listbox>
-              <mat-chip *ngFor="let contact of campaign.contacts" class="recipient-chip">
-                {{ contact.person.firstName }} {{ contact.person.lastName }}
-              </mat-chip>
-            </mat-chip-listbox>
-          </div>
-        </mat-card-content>
-      </mat-card>
+  @if (!isLoading && campaign && !isInSubmission) {
+    <div class="row mb-3">
+      <!-- Direct Recipients -->
+      @if ((campaign.contacts?.length ?? 0) > 0) {
+        <div class="col-lg-6">
+          <mat-card class="cardWithShadow h-100">
+            <mat-card-header>
+              <mat-card-title>Direct Recipients</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="recipients-list">
+                <mat-chip-listbox>
+                  @for (contact of campaign.contacts; track contact) {
+                    <mat-chip class="recipient-chip">
+                      {{ contact.person.firstName }} {{ contact.person.lastName }}
+                    </mat-chip>
+                  }
+                </mat-chip-listbox>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+      <!-- Tags -->
+      @if ((campaign.tags?.length ?? 0) > 0) {
+        <div class="col-lg-6">
+          <mat-card class="cardWithShadow h-100">
+            <mat-card-header>
+              <mat-card-title>Tags</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="tags-list">
+                <mat-chip-listbox>
+                  @for (tag of campaign.tags; track tag) {
+                    <mat-chip class="tag-chip" [style.background-color]="tag.colorCode">
+                      {{ tag.name }}
+                      @if (isEventRegistrationTag(tag.name)) {
+                        <span> (event audience)</span>
+                      }
+                    </mat-chip>
+                  }
+                </mat-chip-listbox>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
     </div>
-
-    <!-- Tags -->
-    <div class="col-lg-6" *ngIf="(campaign.tags?.length ?? 0) > 0">
-      <mat-card class="cardWithShadow h-100">
-        <mat-card-header>
-          <mat-card-title>Tags</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="tags-list">
-            <mat-chip-listbox>
-              <mat-chip *ngFor="let tag of campaign.tags" class="tag-chip" [style.background-color]="tag.colorCode">
-                {{ tag.name }}
-                <span *ngIf="isEventRegistrationTag(tag.name)"> (event audience)</span>
-              </mat-chip>
-            </mat-chip-listbox>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
+  }
 
   <!-- CC and BCC Recipients (for Email campaigns) -->
-  <div *ngIf="!isLoading && campaign && !isInSubmission && campaign.message.channel === 'EMAIL'" class="row mb-3">
-    <!-- CC Recipients -->
-    <div class="col-lg-6" *ngIf="(campaign.mailCcContacts?.length ?? 0) > 0 || (campaign.mailCcTags?.length ?? 0) > 0">
-      <mat-card class="cardWithShadow h-100">
-        <mat-card-header>
-          <mat-card-title>CC Recipients</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div *ngIf="(campaign.mailCcContacts?.length ?? 0) > 0" class="mb-3">
-            <h6 class="f-s-14 f-w-600 mb-2">Contacts</h6>
-            <div class="recipients-list">
-              <mat-chip-listbox>
-                <mat-chip *ngFor="let contact of campaign.mailCcContacts" class="recipient-chip">
-                  {{ contact.person.firstName }} {{ contact.person.lastName }}
-                </mat-chip>
-              </mat-chip-listbox>
-            </div>
-          </div>
-          
-          <div *ngIf="(campaign.mailCcTags?.length ?? 0) > 0">
-            <h6 class="f-s-14 f-w-600 mb-2">Tags</h6>
-            <div class="tags-list">
-              <mat-chip-listbox>
-                <mat-chip *ngFor="let tag of campaign.mailCcTags" class="tag-chip" [style.background-color]="tag.colorCode">
-                  {{ tag.name }}
-                </mat-chip>
-              </mat-chip-listbox>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
+  @if (!isLoading && campaign && !isInSubmission && campaign.message.channel === 'EMAIL') {
+    <div class="row mb-3">
+      <!-- CC Recipients -->
+      @if ((campaign.mailCcContacts?.length ?? 0) > 0 || (campaign.mailCcTags?.length ?? 0) > 0) {
+        <div class="col-lg-6">
+          <mat-card class="cardWithShadow h-100">
+            <mat-card-header>
+              <mat-card-title>CC Recipients</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              @if ((campaign.mailCcContacts?.length ?? 0) > 0) {
+                <div class="mb-3">
+                  <h6 class="f-s-14 f-w-600 mb-2">Contacts</h6>
+                  <div class="recipients-list">
+                    <mat-chip-listbox>
+                      @for (contact of campaign.mailCcContacts; track contact) {
+                        <mat-chip class="recipient-chip">
+                          {{ contact.person.firstName }} {{ contact.person.lastName }}
+                        </mat-chip>
+                      }
+                    </mat-chip-listbox>
+                  </div>
+                </div>
+              }
+              @if ((campaign.mailCcTags?.length ?? 0) > 0) {
+                <div>
+                  <h6 class="f-s-14 f-w-600 mb-2">Tags</h6>
+                  <div class="tags-list">
+                    <mat-chip-listbox>
+                      @for (tag of campaign.mailCcTags; track tag) {
+                        <mat-chip class="tag-chip" [style.background-color]="tag.colorCode">
+                          {{ tag.name }}
+                        </mat-chip>
+                      }
+                    </mat-chip-listbox>
+                  </div>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+      <!-- BCC Recipients -->
+      @if ((campaign.mailCciContacts?.length ?? 0) > 0 || (campaign.mailCciTags?.length ?? 0) > 0) {
+        <div class="col-lg-6">
+          <mat-card class="cardWithShadow h-100">
+            <mat-card-header>
+              <mat-card-title>BCC Recipients</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              @if ((campaign.mailCciContacts?.length ?? 0) > 0) {
+                <div class="mb-3">
+                  <h6 class="f-s-14 f-w-600 mb-2">Contacts</h6>
+                  <div class="recipients-list">
+                    <mat-chip-listbox>
+                      @for (contact of campaign.mailCciContacts; track contact) {
+                        <mat-chip class="recipient-chip">
+                          {{ contact.person.firstName }} {{ contact.person.lastName }}
+                        </mat-chip>
+                      }
+                    </mat-chip-listbox>
+                  </div>
+                </div>
+              }
+              @if ((campaign.mailCciTags?.length ?? 0) > 0) {
+                <div>
+                  <h6 class="f-s-14 f-w-600 mb-2">Tags</h6>
+                  <div class="tags-list">
+                    <mat-chip-listbox>
+                      @for (tag of campaign.mailCciTags; track tag) {
+                        <mat-chip class="tag-chip" [style.background-color]="tag.colorCode">
+                          {{ tag.name }}
+                        </mat-chip>
+                      }
+                    </mat-chip-listbox>
+                  </div>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
     </div>
-
-    <!-- BCC Recipients -->
-    <div class="col-lg-6" *ngIf="(campaign.mailCciContacts?.length ?? 0) > 0 || (campaign.mailCciTags?.length ?? 0) > 0">
-      <mat-card class="cardWithShadow h-100">
-        <mat-card-header>
-          <mat-card-title>BCC Recipients</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div *ngIf="(campaign.mailCciContacts?.length ?? 0) > 0" class="mb-3">
-            <h6 class="f-s-14 f-w-600 mb-2">Contacts</h6>
-            <div class="recipients-list">
-              <mat-chip-listbox>
-                <mat-chip *ngFor="let contact of campaign.mailCciContacts" class="recipient-chip">
-                  {{ contact.person.firstName }} {{ contact.person.lastName }}
-                </mat-chip>
-              </mat-chip-listbox>
-            </div>
-          </div>
-          
-          <div *ngIf="(campaign.mailCciTags?.length ?? 0) > 0">
-            <h6 class="f-s-14 f-w-600 mb-2">Tags</h6>
-            <div class="tags-list">
-              <mat-chip-listbox>
-                <mat-chip *ngFor="let tag of campaign.mailCciTags" class="tag-chip" [style.background-color]="tag.colorCode">
-                  {{ tag.name }}
-                </mat-chip>
-              </mat-chip-listbox>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
+  }
 
   <!-- Message Attachments -->
-  <div *ngIf="!isLoading && campaign && !isInSubmission && getMessageAttachments().length > 0" class="row mb-3">
-    <div class="col-12">
-      <mat-card class="cardWithShadow h-100">
-        <mat-card-header>
-          <mat-card-title>Message Attachments</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="row g-2">
-            <div class="col-sm-6 col-lg-4" *ngFor="let attachment of getMessageAttachments()">
-              <div class="border rounded p-2 h-100 cursor-pointer" (click)="openAttachment(attachment)">
-                <div class="d-flex align-items-center justify-content-center bg-light rounded mb-2" style="height: 92px;">
-                  <img
-                    *ngIf="isImageAttachment(attachment)"
-                    [src]="attachment.url"
-                    [alt]="attachment.name"
-                    class="img-fluid rounded"
-                    style="max-height: 88px;">
-                  <mat-icon *ngIf="!isImageAttachment(attachment)" class="text-muted">description</mat-icon>
+  @if (!isLoading && campaign && !isInSubmission && getMessageAttachments().length > 0) {
+    <div class="row mb-3">
+      <div class="col-12">
+        <mat-card class="cardWithShadow h-100">
+          <mat-card-header>
+            <mat-card-title>Message Attachments</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="row g-2">
+              @for (attachment of getMessageAttachments(); track attachment) {
+                <div class="col-sm-6 col-lg-4">
+                  <div class="border rounded p-2 h-100 cursor-pointer" (click)="openAttachment(attachment)">
+                    <div class="d-flex align-items-center justify-content-center bg-light rounded mb-2" style="height: 92px;">
+                      @if (isImageAttachment(attachment)) {
+                        <img
+                          [src]="attachment.url"
+                          [alt]="attachment.name"
+                          class="img-fluid rounded"
+                          style="max-height: 88px;">
+                      }
+                      @if (!isImageAttachment(attachment)) {
+                        <mat-icon class="text-muted">description</mat-icon>
+                      }
+                    </div>
+                    <div class="text-truncate">
+                      <strong class="f-s-13">{{ attachment.name }}</strong>
+                    </div>
+                  </div>
                 </div>
-                <div class="text-truncate">
-                  <strong class="f-s-13">{{ attachment.name }}</strong>
-                </div>
-              </div>
+              }
             </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Live Delivery -->
-  <div *ngIf="!isLoading && campaign && (isInSubmission || hasDeliveryReport)" class="row mb-3">
-    <div class="col-12">
-      <mat-card class="cardWithShadow">
-        <mat-card-header>
-          <mat-card-title>{{ isInSubmission ? 'Live Delivery' : 'Delivery Report' }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="d-flex align-items-center justify-content-between mb-2">
-            <div class="f-s-14 f-w-600">Progress</div>
-            <div class="f-s-12 text-muted">
-              {{ progress.processed }} / {{ progress.total }} processed
-            </div>
-          </div>
-          <mat-progress-bar
-            mode="determinate"
-            [value]="progress.total ? (progress.processed / progress.total) * 100 : 0">
-          </mat-progress-bar>
-          <div class="row mt-3">
-            <div class="col-sm-4">
-              <div class="metric-card">
-                <div class="metric-label">Success</div>
-                <div class="metric-value text-success">{{ progress.success }}</div>
+  @if (!isLoading && campaign && (isInSubmission || hasDeliveryReport)) {
+    <div class="row mb-3">
+      <div class="col-12">
+        <mat-card class="cardWithShadow">
+          <mat-card-header>
+            <mat-card-title>{{ isInSubmission ? 'Live Delivery' : 'Delivery Report' }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div class="f-s-14 f-w-600">Progress</div>
+              <div class="f-s-12 text-muted">
+                {{ progress.processed }} / {{ progress.total }} processed
               </div>
             </div>
-            <div class="col-sm-4">
-              <div class="metric-card">
-                <div class="metric-label">Failed</div>
-                <div class="metric-value text-error">{{ progress.failed }}</div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="progress.total ? (progress.processed / progress.total) * 100 : 0">
+            </mat-progress-bar>
+            <div class="row mt-3">
+              <div class="col-sm-4">
+                <div class="metric-card">
+                  <div class="metric-label">Success</div>
+                  <div class="metric-value text-success">{{ progress.success }}</div>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="metric-card">
+                  <div class="metric-label">Failed</div>
+                  <div class="metric-value text-error">{{ progress.failed }}</div>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="metric-card">
+                  <div class="metric-label">Remaining</div>
+                  <div class="metric-value">{{ progress.total - progress.processed }}</div>
+                </div>
               </div>
             </div>
-            <div class="col-sm-4">
-              <div class="metric-card">
-                <div class="metric-label">Remaining</div>
-                <div class="metric-value">{{ progress.total - progress.processed }}</div>
+            <div class="d-flex align-items-center gap-8 mt-3">
+              <span class="live-indicator" [class.active]="isStreaming"></span>
+              <span class="f-s-12 text-muted">
+                {{ isStreaming ? 'Streaming updates in real time' : 'Waiting for campaign execution' }}
+              </span>
+            </div>
+            @if ((liveLogs?.length ?? 0) > 0) {
+              <div class="log-list mt-3">
+                @for (log of liveLogs; track log) {
+                  <div class="log-item">
+                    <div class="log-time">{{ log.timestamp | date:'HH:mm:ss' }}</div>
+                    <div class="log-type" [ngClass]="log.type.toLowerCase()">{{ log.type }}</div>
+                    <div class="log-message">{{ log.message }}</div>
+                  </div>
+                }
               </div>
-            </div>
-          </div>
-
-          <div class="d-flex align-items-center gap-8 mt-3">
-            <span class="live-indicator" [class.active]="isStreaming"></span>
-            <span class="f-s-12 text-muted">
-              {{ isStreaming ? 'Streaming updates in real time' : 'Waiting for campaign execution' }}
-            </span>
-          </div>
-
-          <div class="log-list mt-3" *ngIf="(liveLogs?.length ?? 0) > 0">
-            <div class="log-item" *ngFor="let log of liveLogs">
-              <div class="log-time">{{ log.timestamp | date:'HH:mm:ss' }}</div>
-              <div class="log-type" [ngClass]="log.type.toLowerCase()">{{ log.type }}</div>
-              <div class="log-message">{{ log.message }}</div>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Delivery Results (completed campaigns) -->
-  <div *ngIf="!isLoading && campaign && hasResults" class="row mb-3">
-    <div class="col-12">
-      <mat-card class="cardWithShadow">
-        <mat-card-header>
-          <mat-card-title>Delivery Report</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <!-- Summary metrics -->
-          <div class="delivery-metrics mb-3" *ngIf="resultsSummary">
-            <div class="delivery-metric">
-              <div class="delivery-metric__label">Cibles</div>
-              <div class="delivery-metric__value">{{ resultsSummary.totalTargetCount }}</div>
+  @if (!isLoading && campaign && hasResults) {
+    <div class="row mb-3">
+      <div class="col-12">
+        <mat-card class="cardWithShadow">
+          <mat-card-header>
+            <mat-card-title>Delivery Report</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <!-- Summary metrics -->
+            @if (resultsSummary) {
+              <div class="delivery-metrics mb-3">
+                <div class="delivery-metric">
+                  <div class="delivery-metric__label">Cibles</div>
+                  <div class="delivery-metric__value">{{ resultsSummary.totalTargetCount }}</div>
+                </div>
+                <div class="delivery-metric">
+                  <div class="delivery-metric__label">Traités</div>
+                  <div class="delivery-metric__value">{{ resultsSummary.totalCount }} <span class="delivery-metric__denom">/ {{ resultsSummary.totalTargetCount }}</span></div>
+                </div>
+                <div class="delivery-metric">
+                  <div class="delivery-metric__label">Succès</div>
+                  <div class="delivery-metric__value delivery-metric__value--success">{{ resultsSummary.successCount }} <span class="delivery-metric__denom">/ {{ resultsSummary.totalTargetCount }}</span></div>
+                </div>
+                <div class="delivery-metric">
+                  <div class="delivery-metric__label">Échec</div>
+                  <div class="delivery-metric__value delivery-metric__value--error">{{ resultsSummary.failedCount }}</div>
+                </div>
+              </div>
+            }
+            <!-- Progress bar -->
+            @if (resultsSummary) {
+              <mat-progress-bar
+                mode="determinate"
+                [value]="resultsSummary.totalTargetCount ? (resultsSummary.successCount / resultsSummary.totalTargetCount) * 100 : 0"
+                class="mb-5 mt-3">
+              </mat-progress-bar>
+            }
+            <!-- Filters: search + status tabs on one row -->
+            <div class="results-filters mb-3">
+              <div class="results-status-tabs">
+                <button class="results-tab-btn" [class.active]="resultsStatusFilter === ''" (click)="onResultsStatusFilterChange('')">Tous</button>
+                <button class="results-tab-btn success" [class.active]="resultsStatusFilter === 'SUCCESS'" (click)="onResultsStatusFilterChange('SUCCESS')">
+                  <i-tabler name="check" class="icon-16"></i-tabler> Succès
+                </button>
+                <button class="results-tab-btn failed" [class.active]="resultsStatusFilter === 'FAILED'" (click)="onResultsStatusFilterChange('FAILED')">
+                  <i-tabler name="alert-triangle" class="icon-16"></i-tabler> Échec
+                </button>
+              </div>
+              <mat-form-field appearance="outline" class="results-search-field hide-hint">
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput [(ngModel)]="resultsSearchText" (ngModelChange)="onResultsSearchChange($event)" placeholder="Rechercher un contact...">
+              </mat-form-field>
             </div>
-            <div class="delivery-metric">
-              <div class="delivery-metric__label">Traités</div>
-              <div class="delivery-metric__value">{{ resultsSummary.totalCount }} <span class="delivery-metric__denom">/ {{ resultsSummary.totalTargetCount }}</span></div>
-            </div>
-            <div class="delivery-metric">
-              <div class="delivery-metric__label">Succès</div>
-              <div class="delivery-metric__value delivery-metric__value--success">{{ resultsSummary.successCount }} <span class="delivery-metric__denom">/ {{ resultsSummary.totalTargetCount }}</span></div>
-            </div>
-            <div class="delivery-metric">
-              <div class="delivery-metric__label">Échec</div>
-              <div class="delivery-metric__value delivery-metric__value--error">{{ resultsSummary.failedCount }}</div>
-            </div>
-          </div>
-
-          <!-- Progress bar -->
-          <mat-progress-bar
-            *ngIf="resultsSummary"
-            mode="determinate"
-            [value]="resultsSummary.totalTargetCount ? (resultsSummary.successCount / resultsSummary.totalTargetCount) * 100 : 0"
-            class="mb-5 mt-3">
-          </mat-progress-bar>
-
-          <!-- Filters: search + status tabs on one row -->
-          <div class="results-filters mb-3">
-            <div class="results-status-tabs">
-              <button class="results-tab-btn" [class.active]="resultsStatusFilter === ''" (click)="onResultsStatusFilterChange('')">Tous</button>
-              <button class="results-tab-btn success" [class.active]="resultsStatusFilter === 'SUCCESS'" (click)="onResultsStatusFilterChange('SUCCESS')">
-                <i-tabler name="check" class="icon-16"></i-tabler> Succès
-              </button>
-              <button class="results-tab-btn failed" [class.active]="resultsStatusFilter === 'FAILED'" (click)="onResultsStatusFilterChange('FAILED')">
-                <i-tabler name="alert-triangle" class="icon-16"></i-tabler> Échec
-              </button>
-            </div>
-
-            <mat-form-field appearance="outline" class="results-search-field hide-hint">
-              <mat-icon matPrefix>search</mat-icon>
-              <input matInput [(ngModel)]="resultsSearchText" (ngModelChange)="onResultsSearchChange($event)" placeholder="Rechercher un contact...">
-            </mat-form-field>
-          </div>
-
-          <!-- Loading spinner -->
-          <div *ngIf="isLoadingResults" class="text-center p-4">
-            <mat-spinner diameter="36"></mat-spinner>
-          </div>
-
-          <!-- Results table -->
-          <div *ngIf="!isLoadingResults && resultsPage">
-            <div *ngIf="resultsPage.empty" class="text-center text-muted f-s-14 p-4">
-              No results found.
-            </div>
-            <div *ngIf="!resultsPage.empty" class="table-responsive">
-              <table mat-table [dataSource]="resultsPage.content" class="w-100">
-                <!-- Contact Name + Email -->
-                <ng-container matColumnDef="name">
-                  <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Contact</th>
-                  <td mat-cell *matCellDef="let r">
-                    <div class="d-flex flex-column">
-                      <span class="f-s-14 f-w-600">{{ r.contactFirstName }} {{ r.contactLastName }}</span>
-                      <span class="f-s-12 text-muted">{{ r.contactEmail }}</span>
-                    </div>
-                  </td>
-                </ng-container>
-
-                <!-- Channel -->
-                <ng-container matColumnDef="channel">
-                  <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Channel</th>
-                  <td mat-cell *matCellDef="let r" class="f-s-14">{{ r.channel }}</td>
-                </ng-container>
-
-                <!-- Status -->
-                <ng-container matColumnDef="status">
-                  <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Status</th>
-                  <td mat-cell *matCellDef="let r">
-                    <app-badge [variant]="r.status === 'SUCCESS' ? 'success' : 'error'" [pill]="true">
-                      {{ r.status }}
-                    </app-badge>
-                  </td>
-                </ng-container>
-
-                <!-- Sent At -->
-                <ng-container matColumnDef="sentAt">
-                  <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Sent At</th>
-                  <td mat-cell *matCellDef="let r" class="f-s-14">{{ r.sentAt | date:'dd/MM/yyyy HH:mm:ss' }}</td>
-                </ng-container>
-
-                <!-- Error Message -->
-                <ng-container matColumnDef="error">
-                  <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Error</th>
-                  <td mat-cell *matCellDef="let r" class="f-s-13 text-muted">{{ r.errorMessage || '—' }}</td>
-                </ng-container>
-
-                <tr mat-header-row *matHeaderRowDef="resultsColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: resultsColumns;"></tr>
-              </table>
-            </div>
-
-            <mat-paginator
-              [length]="resultsPage.totalElements"
-              [pageSize]="resultsPageSize"
-              [pageIndex]="resultsCurrentPage"
-              [pageSizeOptions]="[10, 25, 50]"
-              (page)="onResultsPageChange($event)"
-              showFirstLastButtons>
-            </mat-paginator>
-          </div>
-        </mat-card-content>
-      </mat-card>
+            <!-- Loading spinner -->
+            @if (isLoadingResults) {
+              <div class="text-center p-4">
+                <mat-spinner diameter="36"></mat-spinner>
+              </div>
+            }
+            <!-- Results table -->
+            @if (!isLoadingResults && resultsPage) {
+              <div>
+                @if (resultsPage.empty) {
+                  <div class="text-center text-muted f-s-14 p-4">
+                    No results found.
+                  </div>
+                }
+                @if (!resultsPage.empty) {
+                  <div class="table-responsive">
+                    <table mat-table [dataSource]="resultsPage.content" class="w-100">
+                      <!-- Contact Name + Email -->
+                      <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Contact</th>
+                        <td mat-cell *matCellDef="let r">
+                          <div class="d-flex flex-column">
+                            <span class="f-s-14 f-w-600">{{ r.contactFirstName }} {{ r.contactLastName }}</span>
+                            <span class="f-s-12 text-muted">{{ r.contactEmail }}</span>
+                          </div>
+                        </td>
+                      </ng-container>
+                      <!-- Channel -->
+                      <ng-container matColumnDef="channel">
+                        <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Channel</th>
+                        <td mat-cell *matCellDef="let r" class="f-s-14">{{ r.channel }}</td>
+                      </ng-container>
+                      <!-- Status -->
+                      <ng-container matColumnDef="status">
+                        <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Status</th>
+                        <td mat-cell *matCellDef="let r">
+                          <app-badge [variant]="r.status === 'SUCCESS' ? 'success' : 'error'" [pill]="true">
+                            {{ r.status }}
+                          </app-badge>
+                        </td>
+                      </ng-container>
+                      <!-- Sent At -->
+                      <ng-container matColumnDef="sentAt">
+                        <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Sent At</th>
+                        <td mat-cell *matCellDef="let r" class="f-s-14">{{ r.sentAt | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+                      </ng-container>
+                      <!-- Error Message -->
+                      <ng-container matColumnDef="error">
+                        <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Error</th>
+                        <td mat-cell *matCellDef="let r" class="f-s-13 text-muted">{{ r.errorMessage || '—' }}</td>
+                      </ng-container>
+                      <tr mat-header-row *matHeaderRowDef="resultsColumns"></tr>
+                      <tr mat-row *matRowDef="let row; columns: resultsColumns;"></tr>
+                    </table>
+                  </div>
+                }
+                <mat-paginator
+                  [length]="resultsPage.totalElements"
+                  [pageSize]="resultsPageSize"
+                  [pageIndex]="resultsCurrentPage"
+                  [pageSizeOptions]="[10, 25, 50]"
+                  (page)="onResultsPageChange($event)"
+                  showFirstLastButtons>
+                </mat-paginator>
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Loading -->
-  <div *ngIf="isLoading">
-    <div class="skeleton-stack">
-      <div class="d-flex justify-content-end gap-8">
-        <span class="skeleton-line" style="width: 120px;"></span>
-        <span class="skeleton-line" style="width: 140px;"></span>
-      </div>
-
-      <div class="skeleton-detail-grid three-cols">
-        <div class="skeleton-card skeleton-stack" *ngFor="let _ of [1,2,3]">
-          <span class="skeleton-line" style="width: 55%;"></span>
-          <span class="skeleton-line skeleton-line--md"></span>
+  @if (isLoading) {
+    <div>
+      <div class="skeleton-stack">
+        <div class="d-flex justify-content-end gap-8">
+          <span class="skeleton-line" style="width: 120px;"></span>
+          <span class="skeleton-line" style="width: 140px;"></span>
         </div>
-      </div>
-
-      <div class="skeleton-card skeleton-stack">
-        <span class="skeleton-line skeleton-line--lg" style="width: 32%;"></span>
-        <span class="skeleton-line" style="width: 52%;"></span>
         <div class="skeleton-detail-grid three-cols">
-          <span class="skeleton-line"></span>
-          <span class="skeleton-line"></span>
-          <span class="skeleton-line"></span>
-        </div>
-        <span class="skeleton-block" style="height: 140px;"></span>
-      </div>
-
-      <div class="skeleton-detail-grid two-cols">
-        <div class="skeleton-card skeleton-stack">
-          <span class="skeleton-line" style="width: 38%;"></span>
-          <span class="skeleton-block" style="height: 100px;"></span>
+          @for (_ of [1,2,3]; track _) {
+            <div class="skeleton-card skeleton-stack">
+              <span class="skeleton-line" style="width: 55%;"></span>
+              <span class="skeleton-line skeleton-line--md"></span>
+            </div>
+          }
         </div>
         <div class="skeleton-card skeleton-stack">
-          <span class="skeleton-line" style="width: 38%;"></span>
-          <span class="skeleton-block" style="height: 100px;"></span>
+          <span class="skeleton-line skeleton-line--lg" style="width: 32%;"></span>
+          <span class="skeleton-line" style="width: 52%;"></span>
+          <div class="skeleton-detail-grid three-cols">
+            <span class="skeleton-line"></span>
+            <span class="skeleton-line"></span>
+            <span class="skeleton-line"></span>
+          </div>
+          <span class="skeleton-block" style="height: 140px;"></span>
+        </div>
+        <div class="skeleton-detail-grid two-cols">
+          <div class="skeleton-card skeleton-stack">
+            <span class="skeleton-line" style="width: 38%;"></span>
+            <span class="skeleton-block" style="height: 100px;"></span>
+          </div>
+          <div class="skeleton-card skeleton-stack">
+            <span class="skeleton-line" style="width: 38%;"></span>
+            <span class="skeleton-block" style="height: 100px;"></span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  }
 
   <!-- Error State -->
-  <div *ngIf="!isLoading && !campaign" class="text-center mt-5">
-    <mat-icon class="error-icon">error_outline</mat-icon>
-    <h4>Campaign not found</h4>
-    <button mat-stroked-button color="accent" (click)="goBack()">Back to List</button>
-  </div>
+  @if (!isLoading && !campaign) {
+    <div class="text-center mt-5">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h4>Campaign not found</h4>
+      <button mat-stroked-button color="accent" (click)="goBack()">Back to List</button>
+    </div>
+  }
 </div>
 

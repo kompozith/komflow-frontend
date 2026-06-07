@@ -1,10 +1,4 @@
-import {
-  Component,
-  AfterViewInit,
-  ViewChild,
-  Signal,
-  signal,
-} from '@angular/core';
+import { Component, AfterViewInit, ViewChild, Signal, signal, inject } from '@angular/core';
 import { InvoiceService } from 'src/app/services/apps/invoice/invoice.service';
 import { InvoiceList } from '../invoice';
 import { MatTableDataSource } from '@angular/material/table';
@@ -32,6 +26,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     ]
 })
 export class AppInvoiceListComponent implements AfterViewInit {
+  private invoiceService = inject(InvoiceService);
+  private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
+
   allComplete = signal<boolean>(false);
   invoiceList = new MatTableDataSource<InvoiceList>([]);
   activeTab = signal<string>('All');
@@ -50,7 +48,10 @@ export class AppInvoiceListComponent implements AfterViewInit {
   @ViewChild(MatSort) sort: MatSort = Object.create(null);
   @ViewChild(MatPaginator) paginator: MatPaginator = Object.create(null);
 
-  constructor(private invoiceService: InvoiceService,private dialog: MatDialog, private snackBar: MatSnackBar) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     // Fetch all invoices and initialize the data source

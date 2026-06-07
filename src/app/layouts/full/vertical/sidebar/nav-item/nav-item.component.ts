@@ -1,12 +1,4 @@
-import {
-  Component,
-  HostBinding,
-  Input,
-  OnInit,
-  OnChanges,
-  Output,
-  EventEmitter,
-} from '@angular/core';
+import { Component, HostBinding, Input, OnInit, OnChanges, Output, EventEmitter, inject } from '@angular/core';
 import { NavItem } from './nav-item';
 import { Router } from '@angular/router';
 import { NavService } from '../../../../../services/nav.service';
@@ -36,6 +28,9 @@ import { CommonModule } from '@angular/common';
   ]
 })
 export class AppNavItemComponent implements OnChanges {
+  navService = inject(NavService);
+  router = inject(Router);
+
   @Output() toggleMobileLink: any = new EventEmitter<void>();
   @Output() notify: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -46,7 +41,10 @@ export class AppNavItemComponent implements OnChanges {
   @Input() item: NavItem | any;
   @Input() depth: any;
 
-  constructor(public navService: NavService, public router: Router) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     if (this.depth === undefined) {
       this.depth = 0;
     }

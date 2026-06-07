@@ -5,7 +5,7 @@ import {
   signal,
   DOCUMENT
 } from '@angular/core';
-import { CommonModule, NgSwitch } from '@angular/common';
+
 import {
   MatDialog,
   MatDialogRef,
@@ -67,14 +67,14 @@ const colors: any = {
     selector: 'app-calendar-dialog',
     templateUrl: './dialog.component.html',
     imports: [
-        MaterialModule,
-        FormsModule,
-        ReactiveFormsModule,
-        CommonModule,
-        MatNativeDateModule,
-        MatDialogModule,
-        MatDatepickerModule,  TablerIconsModule
-    ],
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatNativeDateModule,
+    MatDialogModule,
+    MatDatepickerModule,
+    TablerIconsModule
+],
     providers: [provideNativeDateAdapter()],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -92,16 +92,14 @@ export class CalendarDialogComponent {
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './fullcalendar.component.html',
     imports: [
-        MaterialModule,
-        FormsModule,
-        ReactiveFormsModule,
-        NgSwitch,
-        CalendarModule,
-        CommonModule,
-        MatDatepickerModule,
-        MatDialogModule,
-        MatFormFieldModule,
-    ],
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CalendarModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatFormFieldModule
+],
     providers: [provideNativeDateAdapter(), CalendarDateFormatter]
 })
 export class AppFullcalendarComponent {

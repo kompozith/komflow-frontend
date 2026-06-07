@@ -4,8 +4,12 @@
     <mat-form-field appearance="outline" class="w-100">
       <mat-label>Brand Name</mat-label>
       <input matInput [formControl]="nameControl" placeholder="Enter brand name">
-      <mat-error *ngIf="nameControl.hasError('required')">Brand name is required</mat-error>
-      <mat-error *ngIf="nameControl.hasError('minlength')">Brand name must be at least 2 characters</mat-error>
+      @if (nameControl.hasError('required')) {
+        <mat-error>Brand name is required</mat-error>
+      }
+      @if (nameControl.hasError('minlength')) {
+        <mat-error>Brand name must be at least 2 characters</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="w-100">
@@ -17,7 +21,9 @@
           </mat-option>
         }
       </mat-select>
-      <mat-error *ngIf="typeControl.hasError('required')">Brand type is required</mat-error>
+      @if (typeControl.hasError('required')) {
+        <mat-error>Brand type is required</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="w-100">
@@ -46,9 +52,9 @@
       </ngx-dropzone-label>
 
       @for (f of files; track f) {
-      <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" [file]="f" [removable]="true" (removed)="onRemove(f)">
-        <ngx-dropzone-label></ngx-dropzone-label>
-      </ngx-dropzone-image-preview>
+        <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" [file]="f" [removable]="true" (removed)="onRemove(f)">
+          <ngx-dropzone-label></ngx-dropzone-label>
+        </ngx-dropzone-image-preview>
       }
     </div>
     <div class="f-s-12 m-t-2">
@@ -65,7 +71,7 @@
     class="m-l-8 bg-primary text-white"
     [disabled]="!isFormValid()"
     (click)="confirmCreate()"
-  >
+    >
     Create Brand
   </button>
 </mat-dialog-actions>

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IconModule } from 'src/app/icon/icon.module';
@@ -12,7 +12,7 @@ interface socialcards {
 }
 @Component({
   selector: 'app-friends',
-  imports: [MaterialModule,IconModule,CommonModule, FormsModule],
+  imports: [MaterialModule, IconModule, FormsModule],
   templateUrl: './friends.component.html',
 })
 export class FriendsComponent implements OnInit{

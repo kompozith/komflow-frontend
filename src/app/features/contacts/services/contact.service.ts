@@ -1,5 +1,5 @@
 // src/app/features/contacts/services/contact.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -11,6 +11,8 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class ContactService {
+  private http = inject(HttpClient);
+
   private apiUrl = `${environment.apiUrl}/contacts`;
 
   // Legacy compatibility properties
@@ -23,7 +25,10 @@ export class ContactService {
   private selectedContactSubject = new BehaviorSubject<any>(null);
   selectedContact$ = this.selectedContactSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   private getAuthHeaders(includeJsonContentType: boolean = true): HttpHeaders {
     const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');

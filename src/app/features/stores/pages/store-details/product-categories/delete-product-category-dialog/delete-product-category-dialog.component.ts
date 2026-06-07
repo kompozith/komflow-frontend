@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -29,14 +29,20 @@ import { ProductCategory } from '../../../../models/product-category';
   styleUrl: './delete-product-category-dialog.component.scss',
 })
 export class DeleteProductCategoryDialogComponent {
+  dialogRef = inject<MatDialogRef<DeleteProductCategoryDialogComponent>>(MatDialogRef);
+  private storeManagementFacade = inject(StoreManagementFacade);
+  private snackBar = inject(MatSnackBar);
+  data = inject<{
+    category: ProductCategory;
+    storeId: string;
+}>(MAT_DIALOG_DATA);
+
   confirmationText: string = '';
 
-  constructor(
-    public dialogRef: MatDialogRef<DeleteProductCategoryDialogComponent>,
-    private storeManagementFacade: StoreManagementFacade,
-    private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: { category: ProductCategory; storeId: string }
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   get category(): ProductCategory {
     return this.data.category;

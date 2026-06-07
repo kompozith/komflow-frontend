@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -30,6 +30,16 @@ import { PhoneNumber } from '../../../personnel/models/person';
   styleUrl: './contact-edit.component.scss',
 })
 export class ContactEditComponent {
+  private fb = inject(FormBuilder);
+  private contactService = inject(ContactService);
+  private tagService = inject(TagService);
+  private personService = inject(PersonService);
+  private phoneNumberService = inject(PhoneNumberService);
+  private geoService = inject(GeoService);
+  private snackBar = inject(MatSnackBar);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
   contactForm: FormGroup;
   isLoading = false;
   isSaving = false;
@@ -50,17 +60,10 @@ export class ContactEditComponent {
   readonly CountryISO = CountryISO;
   readonly SearchCountryField = SearchCountryField;
 
-  constructor(
-    private fb: FormBuilder,
-    private contactService: ContactService,
-    private tagService: TagService,
-    private personService: PersonService,
-    private phoneNumberService: PhoneNumberService,
-    private geoService: GeoService,
-    private snackBar: MatSnackBar,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.contactForm = this.fb.group({
       personId: [null, [Validators.required]],
       email: ['', [Validators.required, Validators.email]],

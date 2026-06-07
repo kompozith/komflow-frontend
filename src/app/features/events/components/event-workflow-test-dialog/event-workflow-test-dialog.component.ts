@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -15,11 +15,21 @@ import { debounceTime, distinctUntilChanged, finalize, map, of, switchMap } from
 @Component({
   selector: 'app-event-workflow-test-dialog',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MaterialModule],
+  imports: [ReactiveFormsModule, MaterialModule],
   templateUrl: './event-workflow-test-dialog.component.html',
   styleUrls: ['./event-workflow-test-dialog.component.scss'],
 })
 export class EventWorkflowTestDialogComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private messageService = inject(MessageService);
+  private contactService = inject(ContactService);
+  private sanitizer = inject(DomSanitizer);
+  private snackBar = inject(MatSnackBar);
+  private dialogRef = inject<MatDialogRef<EventWorkflowTestDialogComponent>>(MatDialogRef);
+  data = inject<{
+    messageId: number;
+}>(MAT_DIALOG_DATA);
+
   message: Message | null = null;
   messageContent: SafeHtml | null = null;
   loading = true;
@@ -32,15 +42,10 @@ export class EventWorkflowTestDialogComponent implements OnInit {
     contactSearch: new FormControl<string | Contact>('', { nonNullable: true }),
   });
 
-  constructor(
-    private fb: FormBuilder,
-    private messageService: MessageService,
-    private contactService: ContactService,
-    private sanitizer: DomSanitizer,
-    private snackBar: MatSnackBar,
-    private dialogRef: MatDialogRef<EventWorkflowTestDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { messageId: number }
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadMessage();

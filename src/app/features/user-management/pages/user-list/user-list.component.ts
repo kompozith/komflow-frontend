@@ -1,11 +1,4 @@
-import {
-  Component,
-  Inject,
-  Optional,
-  ViewChild,
-  AfterViewInit,
-  OnInit,
-} from '@angular/core';
+import { Component, ViewChild, AfterViewInit, OnInit, inject } from '@angular/core';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { PageEvent } from '@angular/material/paginator';
@@ -60,6 +53,11 @@ export interface UserDialog {
   ],
 })
 export class UserListComponent implements OnInit, AfterViewInit {
+  dialog = inject(MatDialog);
+  private userService = inject(UserService);
+  private userManagementFacade = inject(UserManagementFacade);
+  private snackBar = inject(MatSnackBar);
+
   @ViewChild(MatTable, { static: true }) table: MatTable<any> =
     Object.create(null);
 
@@ -103,12 +101,10 @@ export class UserListComponent implements OnInit, AfterViewInit {
   roleOptions: UserRole[] = Object.values(USER_ROLES);
   statusOptions: UserStatus[] = Object.values(USER_STATUSES);
 
-  constructor(
-      public dialog: MatDialog,
-      private userService: UserService,
-      private userManagementFacade: UserManagementFacade,
-      private snackBar: MatSnackBar
-    ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadUsers();

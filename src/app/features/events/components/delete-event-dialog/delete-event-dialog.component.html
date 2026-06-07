@@ -25,9 +25,11 @@
   <mat-form-field appearance="outline" class="w-100">
     <mat-label>Titre de confirmation</mat-label>
     <input matInput [(ngModel)]="confirmationText" placeholder="Saisissez le titre de l evenement" />
-    <mat-hint *ngIf="!isConfirmationValid && confirmationText.length > 0" class="text-error">
-      Le titre ne correspond pas.
-    </mat-hint>
+    @if (!isConfirmationValid && confirmationText.length > 0) {
+      <mat-hint class="text-error">
+        Le titre ne correspond pas.
+      </mat-hint>
+    }
   </mat-form-field>
 </mat-dialog-content>
 

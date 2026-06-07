@@ -22,9 +22,9 @@
 
       <div class="d-flex flex-wrap align-items-center gap-2">
         @if(selectedCount > 0) {
-        <button mat-flat-button color="warn" (click)="bulkDeleteSelected()">
-          Delete Selected ({{ selectedCount }})
-        </button>
+          <button mat-flat-button color="warn" (click)="bulkDeleteSelected()">
+            Delete Selected ({{ selectedCount }})
+          </button>
         }
         <button mat-stroked-button color="error" (click)="deleteOrphans()">
           Delete Orphans
@@ -77,162 +77,179 @@
 
 <mat-card class="cardWithShadow">
   <mat-card-content>
-    <div *ngIf="isLoading && viewMode === 'table'" class="table-responsive">
-      <app-skeleton-table [columns]="7" [rows]="6" [chipColumns]="[4]"></app-skeleton-table>
-    </div>
-
-    <div *ngIf="!isLoading && viewMode === 'table'" class="table-responsive">
-      <table mat-table [dataSource]="dataSource" class="w-100" matSort>
-        <ng-container matColumnDef="select">
-          <th mat-header-cell *matHeaderCellDef>
-            <mat-checkbox
-              [checked]="allCurrentPageSelected"
-              [indeterminate]="someCurrentPageSelected"
-              (change)="toggleSelectAllCurrentPage($event.checked)">
-            </mat-checkbox>
-          </th>
-          <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
-            <mat-checkbox [checked]="isSelected(element.id)" (change)="toggleFileSelection(element.id, $event.checked)"></mat-checkbox>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="preview">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Preview</th>
-          <td mat-cell *matCellDef="let element">
-            <div class="file-preview-box">
-              <img
-                *ngIf="isImage(element)"
-                class="file-preview-image"
-                [src]="getPreviewImageUrl(element)"
-                [alt]="element.name"
-                (error)="$any($event.target).src = element.url"
-              />
-              <mat-icon *ngIf="!isImage(element)" [fontIcon]="getFileIcon(element)"></mat-icon>
-            </div>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="name" class="f-w-600 mat-subtitle-1 f-s-14">Name</th>
-          <td mat-cell *matCellDef="let element">
-            <div class="d-flex flex-column">
-              <span class="f-w-600 file-name">{{ element.name }}</span>
-              <small class="text-muted file-url">{{ element.url }}</small>
-            </div>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="mediaType">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Media Type</th>
-          <td mat-cell *matCellDef="let element" class="f-s-14">
-            <app-badge [variant]="getMediaTypeColor(element.mediaType)" [pill]="true">{{ element.mediaType }}</app-badge>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="createdAt">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="createdAt" class="f-w-600 mat-subtitle-1 f-s-14">Created</th>
-          <td mat-cell *matCellDef="let element" class="f-s-14">{{ element.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14">Action</th>
-          <td mat-cell *matCellDef="let element" class="f-s-14" (click)="$event.stopPropagation()">
-            <button mat-icon-button [matMenuTriggerFor]="menu" type="button">
-              <mat-icon><tabler-icon name="dots-vertical"></tabler-icon></mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" class="cardWithShadow">
-              <button mat-menu-item *ngIf="canPreview(element)" (click)="previewFile(element)">
-                <tabler-icon name="eye" class="m-x-6"></tabler-icon>
-                <span>Preview</span>
-              </button>
-              <button mat-menu-item (click)="downloadFile(element)">
-                <tabler-icon name="download" class="m-x-6"></tabler-icon>
-                <span>Download</span>
-              </button>
-              <button mat-menu-item (click)="deleteSingleFile(element)">
-                <tabler-icon name="trash" class="m-x-6 text-error"></tabler-icon>
-                <span>Delete</span>
-              </button>
-            </mat-menu>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-    </div>
-
-    <div *ngIf="viewMode === 'grid'">
-      <div *ngIf="isLoading" class="row">
-        <div class="col-sm-6 col-lg-3 p-x-12" *ngFor="let _ of gridSkeletonItems">
-          <mat-card class="cardWithShadow productcard overflow-hidden b-1 file-grid-skeleton-card">
-            <div class="img-wrapper">
-              <span class="skeleton-block file-grid-skeleton-image"></span>
-            </div>
-            <mat-card-content class="p-b-24 p-t-12">
-              <div class="skeleton-stack">
-                <span class="skeleton-line skeleton-line--md" style="width: 70%;"></span>
-                <span class="skeleton-line" style="width: 92%;"></span>
-                <span class="skeleton-line skeleton-line--sm" style="width: 42%;"></span>
-              </div>
-            </mat-card-content>
-          </mat-card>
-        </div>
+    @if (isLoading && viewMode === 'table') {
+      <div class="table-responsive">
+        <app-skeleton-table [columns]="7" [rows]="6" [chipColumns]="[4]"></app-skeleton-table>
       </div>
+    }
 
-      <div *ngIf="!isLoading" class="row">
-        <div class="col-sm-6 col-lg-3 p-x-12" *ngFor="let file of dataSource">
-          <mat-card class="cardWithShadow productcard overflow-hidden b-1">
-            <div class="img-wrapper position-relative">
-              <div class="selection-box">
-                <mat-checkbox [checked]="isSelected(file.id)" (change)="toggleFileSelection(file.id, $event.checked)"></mat-checkbox>
+    @if (!isLoading && viewMode === 'table') {
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSource" class="w-100" matSort>
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox
+                [checked]="allCurrentPageSelected"
+                [indeterminate]="someCurrentPageSelected"
+                (change)="toggleSelectAllCurrentPage($event.checked)">
+              </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+              <mat-checkbox [checked]="isSelected(element.id)" (change)="toggleFileSelection(element.id, $event.checked)"></mat-checkbox>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="preview">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Preview</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="file-preview-box">
+                @if (isImage(element)) {
+                  <img
+                    class="file-preview-image"
+                    [src]="getPreviewImageUrl(element)"
+                    [alt]="element.name"
+                    (error)="$any($event.target).src = element.url"
+                    />
+                }
+                @if (!isImage(element)) {
+                  <mat-icon [fontIcon]="getFileIcon(element)"></mat-icon>
+                }
               </div>
-
-              <img *ngIf="isImage(file)" [src]="getPreviewImageUrl(file)" [alt]="file.name" class="file-grid-image" (error)="$any($event.target).src = file.url" />
-              <div *ngIf="!isImage(file)" class="file-grid-icon-wrap">
-                <mat-icon [fontIcon]="getFileIcon(file)"></mat-icon>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="name" class="f-w-600 mat-subtitle-1 f-s-14">Name</th>
+            <td mat-cell *matCellDef="let element">
+              <div class="d-flex flex-column">
+                <span class="f-w-600 file-name">{{ element.name }}</span>
+                <small class="text-muted file-url">{{ element.url }}</small>
               </div>
-
-              <div class="d-flex align-items-center icon-container">
-                <button
-                  *ngIf="canPreview(file)"
-                  mat-mini-fab
-                  class="cart-btn-overlay bg-info text-white"
-                  matTooltip="Preview"
-                  (click)="previewFile(file)">
-                  <i-tabler name="eye" class="icon-16 d-flex"></i-tabler>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="mediaType">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Media Type</th>
+            <td mat-cell *matCellDef="let element" class="f-s-14">
+              <app-badge [variant]="getMediaTypeColor(element.mediaType)" [pill]="true">{{ element.mediaType }}</app-badge>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="createdAt" class="f-w-600 mat-subtitle-1 f-s-14">Created</th>
+            <td mat-cell *matCellDef="let element" class="f-s-14">{{ element.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14">Action</th>
+            <td mat-cell *matCellDef="let element" class="f-s-14" (click)="$event.stopPropagation()">
+              <button mat-icon-button [matMenuTriggerFor]="menu" type="button">
+                <mat-icon><tabler-icon name="dots-vertical"></tabler-icon></mat-icon>
+              </button>
+              <mat-menu #menu="matMenu" class="cardWithShadow">
+                @if (canPreview(element)) {
+                  <button mat-menu-item (click)="previewFile(element)">
+                    <tabler-icon name="eye" class="m-x-6"></tabler-icon>
+                    <span>Preview</span>
+                  </button>
+                }
+                <button mat-menu-item (click)="downloadFile(element)">
+                  <tabler-icon name="download" class="m-x-6"></tabler-icon>
+                  <span>Download</span>
                 </button>
-                <button mat-mini-fab class="cart-btn-overlay bg-primary text-white" matTooltip="Download" (click)="downloadFile(file)">
-                  <i-tabler name="download" class="icon-16 d-flex"></i-tabler>
+                <button mat-menu-item (click)="deleteSingleFile(element)">
+                  <tabler-icon name="trash" class="m-x-6 text-error"></tabler-icon>
+                  <span>Delete</span>
                 </button>
-                <button mat-mini-fab class="cart-btn-overlay bg-error text-white" matTooltip="Delete" (click)="deleteSingleFile(file)">
-                  <i-tabler name="trash" class="icon-16 d-flex"></i-tabler>
-                </button>
-              </div>
-            </div>
-
-            <mat-card-content class="p-b-24 p-t-12">
-              <mat-card-title class="mat-headline-2 f-s-16 m-b-8 file-grid-title">{{ file.name }}</mat-card-title>
-              <div class="d-flex align-items-center justify-content-between gap-2">
-                <app-badge [variant]="getMediaTypeColor(file.mediaType)" [pill]="true">{{ file.mediaType }}</app-badge>
-                <small class="text-muted">{{ file.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
-              </div>
-              <small class="text-muted d-block mt-2 file-url">{{ file.url }}</small>
-            </mat-card-content>
-          </mat-card>
-        </div>
-
-        <div class="col-12 text-center p-4" *ngIf="dataSource.length === 0">
-          <div class="f-s-24 f-w-600">No files found</div>
-          <div class="f-s-14">Try changing filters.</div>
-        </div>
+              </mat-menu>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
       </div>
-    </div>
+    }
 
-    <div class="d-flex justify-content-between align-items-center mt-3 mb-3" *ngIf="!isLoading && totalElements > 0">
-      <div class="text-muted f-s-14">Showing {{ getStartIndex() }} to {{ getEndIndex() }} of {{ totalElements }} entries</div>
-      <div class="text-muted f-s-14">Page {{ currentPage + 1 }} of {{ totalPages }}</div>
-    </div>
+    @if (viewMode === 'grid') {
+      <div>
+        @if (isLoading) {
+          <div class="row">
+            @for (_ of gridSkeletonItems; track _) {
+              <div class="col-sm-6 col-lg-3 p-x-12">
+                <mat-card class="cardWithShadow productcard overflow-hidden b-1 file-grid-skeleton-card">
+                  <div class="img-wrapper">
+                    <span class="skeleton-block file-grid-skeleton-image"></span>
+                  </div>
+                  <mat-card-content class="p-b-24 p-t-12">
+                    <div class="skeleton-stack">
+                      <span class="skeleton-line skeleton-line--md" style="width: 70%;"></span>
+                      <span class="skeleton-line" style="width: 92%;"></span>
+                      <span class="skeleton-line skeleton-line--sm" style="width: 42%;"></span>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            }
+          </div>
+        }
+        @if (!isLoading) {
+          <div class="row">
+            @for (file of dataSource; track file) {
+              <div class="col-sm-6 col-lg-3 p-x-12">
+                <mat-card class="cardWithShadow productcard overflow-hidden b-1">
+                  <div class="img-wrapper position-relative">
+                    <div class="selection-box">
+                      <mat-checkbox [checked]="isSelected(file.id)" (change)="toggleFileSelection(file.id, $event.checked)"></mat-checkbox>
+                    </div>
+                    @if (isImage(file)) {
+                      <img [src]="getPreviewImageUrl(file)" [alt]="file.name" class="file-grid-image" (error)="$any($event.target).src = file.url" />
+                    }
+                    @if (!isImage(file)) {
+                      <div class="file-grid-icon-wrap">
+                        <mat-icon [fontIcon]="getFileIcon(file)"></mat-icon>
+                      </div>
+                    }
+                    <div class="d-flex align-items-center icon-container">
+                      @if (canPreview(file)) {
+                        <button
+                          mat-mini-fab
+                          class="cart-btn-overlay bg-info text-white"
+                          matTooltip="Preview"
+                          (click)="previewFile(file)">
+                          <i-tabler name="eye" class="icon-16 d-flex"></i-tabler>
+                        </button>
+                      }
+                      <button mat-mini-fab class="cart-btn-overlay bg-primary text-white" matTooltip="Download" (click)="downloadFile(file)">
+                        <i-tabler name="download" class="icon-16 d-flex"></i-tabler>
+                      </button>
+                      <button mat-mini-fab class="cart-btn-overlay bg-error text-white" matTooltip="Delete" (click)="deleteSingleFile(file)">
+                        <i-tabler name="trash" class="icon-16 d-flex"></i-tabler>
+                      </button>
+                    </div>
+                  </div>
+                  <mat-card-content class="p-b-24 p-t-12">
+                    <mat-card-title class="mat-headline-2 f-s-16 m-b-8 file-grid-title">{{ file.name }}</mat-card-title>
+                    <div class="d-flex align-items-center justify-content-between gap-2">
+                      <app-badge [variant]="getMediaTypeColor(file.mediaType)" [pill]="true">{{ file.mediaType }}</app-badge>
+                      <small class="text-muted">{{ file.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
+                    </div>
+                    <small class="text-muted d-block mt-2 file-url">{{ file.url }}</small>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            }
+            @if (dataSource.length === 0) {
+              <div class="col-12 text-center p-4">
+                <div class="f-s-24 f-w-600">No files found</div>
+                <div class="f-s-14">Try changing filters.</div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    @if (!isLoading && totalElements > 0) {
+      <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+        <div class="text-muted f-s-14">Showing {{ getStartIndex() }} to {{ getEndIndex() }} of {{ totalElements }} entries</div>
+        <div class="text-muted f-s-14">Page {{ currentPage + 1 }} of {{ totalPages }}</div>
+      </div>
+    }
 
     <mat-paginator
       [length]="totalElements"

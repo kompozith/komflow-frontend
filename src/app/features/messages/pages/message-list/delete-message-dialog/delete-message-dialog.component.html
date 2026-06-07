@@ -35,30 +35,34 @@
       matInput
       [(ngModel)]="confirmationText"
       placeholder="Enter message title here"
-    />
-    <mat-hint *ngIf="!isConfirmationValid && confirmationText.length > 0" class="text-error">
-      Message title doesn't match
-    </mat-hint>
-  </mat-form-field>
+      />
+      @if (!isConfirmationValid && confirmationText.length > 0) {
+        <mat-hint class="text-error">
+          Message title doesn't match
+        </mat-hint>
+      }
+    </mat-form-field>
 
-  <div class="mt-3 p-3 bg-light rounded" *ngIf="confirmationText.length > 0">
-    <small class="text-muted">
-      Expected: <strong>{{message.title}}</strong><br>
-      You typed: <strong>{{confirmationText}}</strong>
-    </small>
-  </div>
-</mat-dialog-content>
+    @if (confirmationText.length > 0) {
+      <div class="mt-3 p-3 bg-light rounded">
+        <small class="text-muted">
+          Expected: <strong>{{message.title}}</strong><br>
+          You typed: <strong>{{confirmationText}}</strong>
+        </small>
+      </div>
+    }
+  </mat-dialog-content>
 
-<mat-dialog-actions align="end" class="px-3 pb-3">
-  <button mat-button (click)="closeDialog()">
-    Cancel
-  </button>
-  <button
-    mat-flat-button
-    color="warn"
-    [disabled]="!isConfirmationValid"
-    (click)="doAction()"
-  >
-    Delete Message
-  </button>
-</mat-dialog-actions>
+  <mat-dialog-actions align="end" class="px-3 pb-3">
+    <button mat-button (click)="closeDialog()">
+      Cancel
+    </button>
+    <button
+      mat-flat-button
+      color="warn"
+      [disabled]="!isConfirmationValid"
+      (click)="doAction()"
+      >
+      Delete Message
+    </button>
+  </mat-dialog-actions>

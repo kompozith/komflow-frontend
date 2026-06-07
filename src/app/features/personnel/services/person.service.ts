@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -14,9 +14,14 @@ import {
   providedIn: 'root',
 })
 export class PersonService {
+  private http = inject(HttpClient);
+
   private apiUrl = `${environment.apiUrl}/personnel/persons`;
 
-  constructor(private http: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');

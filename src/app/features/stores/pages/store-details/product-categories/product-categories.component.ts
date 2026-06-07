@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, AfterViewInit, inject } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
@@ -21,6 +21,10 @@ import { DeleteProductCategoryDialogComponent } from './delete-product-category-
   imports: [MaterialModule, TablerIconsModule, CommonModule, DatePipe, CreateProductCategoryDialogComponent, UpdateProductCategoryDialogComponent, DeleteProductCategoryDialogComponent],
 })
 export class ProductCategoriesComponent implements OnInit, AfterViewInit {
+  private storeManagementFacade = inject(StoreManagementFacade);
+  private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
+
   @Input() storeId!: string;
   @Input() storeName!: string;
 
@@ -31,11 +35,10 @@ export class ProductCategoriesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(
-    private storeManagementFacade: StoreManagementFacade,
-    private dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     console.log('ProductCategoriesComponent initialized with storeId:', this.storeId, 'storeName:', this.storeName);

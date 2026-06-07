@@ -7,7 +7,7 @@ import {
 import { Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
-import { CommonModule } from '@angular/common';
+
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { FormsModule } from '@angular/forms';
 
@@ -17,10 +17,9 @@ import { FormsModule } from '@angular/forms';
   imports: [
     MaterialModule,
     TablerIconsModule,
-    CommonModule,
     NgScrollbarModule,
-    FormsModule,
-  ],
+    FormsModule
+],
 })
 export class DetailComponent {
   // tslint:disable-next-line: no-shadowed-variable

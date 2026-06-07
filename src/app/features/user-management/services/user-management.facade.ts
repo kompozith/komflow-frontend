@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserService } from './user.service';
@@ -9,10 +9,13 @@ import { UserRole, UserStatus } from '../user-management.constants';
   providedIn: 'root'
 })
 export class UserManagementFacade {
+  private userService = inject(UserService);
 
-  constructor(
-    private userService: UserService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+
+  constructor() {}
 
   // User operations
   getUsers(filters: UserFilters = {}): Observable<UserPage> {

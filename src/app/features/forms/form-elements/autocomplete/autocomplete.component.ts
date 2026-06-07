@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -54,6 +54,8 @@ export interface State {
     templateUrl: './autocomplete.component.html'
 })
 export class AppAutocompleteComponent implements OnInit {
+  private _formBuilder = inject(FormBuilder);
+
 
   // 1 [First with Autocomplete]
   codeForFirstAutocompleteOption = FIRST_AUTOCOMPLETE_OPTION_HTML_SNIPPET;
@@ -217,7 +219,10 @@ export class AppAutocompleteComponent implements OnInit {
     },
   ];
 
-  constructor(private _formBuilder: FormBuilder) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.filteredStates = this.stateCtrl.valueChanges.pipe(
       startWith(''),
       map((state) => (state ? this._filterStates(state) : this.states.slice()))

@@ -6,7 +6,7 @@
           matInput
           placeholder="Rechercher un evenement"
           [(ngModel)]="searchText"
-        />
+          />
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
       <button mat-flat-button color="primary" routerLink="/events/create">Creer un evenement</button>
@@ -16,115 +16,119 @@
 
 <mat-card class="cardWithShadow">
   <mat-card-content>
-    <div *ngIf="loading" class="py-4 d-flex justify-content-center">
-      <mat-spinner diameter="36"></mat-spinner>
-    </div>
+    @if (loading) {
+      <div class="py-4 d-flex justify-content-center">
+        <mat-spinner diameter="36"></mat-spinner>
+      </div>
+    }
 
-    <div *ngIf="!loading && filteredEvents.length === 0" class="empty-state">
-      <mat-icon>event_busy</mat-icon>
-      <p>Aucun evenement trouve.</p>
-    </div>
+    @if (!loading && filteredEvents.length === 0) {
+      <div class="empty-state">
+        <mat-icon>event_busy</mat-icon>
+        <p>Aucun evenement trouve.</p>
+      </div>
+    }
 
-    <div class="table-responsive" *ngIf="!loading && filteredEvents.length > 0">
-      <table class="w-100" mat-table [dataSource]="filteredEvents">
-        <ng-container matColumnDef="title">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Titre</th>
-          <td mat-cell *matCellDef="let e">
-            <div class="d-flex flex-column">
-              <span class="f-w-600">{{ e.title }}</span>
-              <small class="text-muted" *ngIf="e.subtitle">{{ e.subtitle }}</small>
-            </div>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="startDate">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Date debut</th>
-          <td mat-cell *matCellDef="let e">
-            {{ e.startDate | date: 'dd/MM/yyyy' }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="startTime">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Heure debut</th>
-          <td mat-cell *matCellDef="let e">
-            <span class="time-badge">{{ e.startTime || '--:--' }}</span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="publicLink">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Lien public</th>
-          <td mat-cell *matCellDef="let e" class="f-s-14">
-            <button
-              mat-stroked-button
-              type="button"
-              class="copy-link-btn"
-              [disabled]="!e.slug"
-              (click)="copyPublicLink(e)">
-              <mat-icon>content_copy</mat-icon>
-              Copier
-            </button>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="mode">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Type</th>
-          <td mat-cell *matCellDef="let e" class="f-s-14">
-            <span class="mode-pill" [class.online]="e.mode === 'ONLINE'">{{ getModeLabel(e.mode) }}</span>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="location">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Lieu</th>
-          <td mat-cell *matCellDef="let e" class="f-s-14">
-            <ng-container *ngIf="e.mode === 'ONLINE'; else onsiteBlock">
-              <a *ngIf="e.meetingUrl; else noMeetingUrl" [href]="e.meetingUrl" target="_blank" rel="noopener">Lien de connexion</a>
-              <ng-template #noMeetingUrl>-</ng-template>
-            </ng-container>
-            <ng-template #onsiteBlock>{{ e.location || '-' }}</ng-template>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="updatedAt">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Mise a jour</th>
-          <td mat-cell *matCellDef="let e" class="f-s-14">
-            {{ (e.updatedAt || e.createdAt) ? ((e.updatedAt || e.createdAt) | date:'dd/MM/yyyy HH:mm') : '-' }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Action</th>
-          <td mat-cell *matCellDef="let e" (click)="$event.stopPropagation()">
-            <button mat-icon-button [matMenuTriggerFor]="menu" type="button" aria-label="Actions evenement">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" class="cardWithShadow">
-              <button mat-menu-item (click)="viewDetails(e)">
-                <mat-icon>visibility</mat-icon>
-                <span>Details</span>
-              </button>
-              <button mat-menu-item (click)="viewStats(e)">
-                <mat-icon>bar_chart</mat-icon>
-                <span>Statistiques</span>
-              </button>
-              <button mat-menu-item (click)="edit(e)">
-                <mat-icon>edit</mat-icon>
-                <span>Editer</span>
-              </button>
-              <button mat-menu-item (click)="copyPublicLink(e)" [disabled]="!e.slug">
+    @if (!loading && filteredEvents.length > 0) {
+      <div class="table-responsive">
+        <table class="w-100" mat-table [dataSource]="filteredEvents">
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Titre</th>
+            <td mat-cell *matCellDef="let e">
+              <div class="d-flex flex-column">
+                <span class="f-w-600">{{ e.title }}</span>
+                @if (e.subtitle) {
+                  <small class="text-muted">{{ e.subtitle }}</small>
+                }
+              </div>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="startDate">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Date debut</th>
+            <td mat-cell *matCellDef="let e">
+              {{ e.startDate | date: 'dd/MM/yyyy' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="startTime">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Heure debut</th>
+            <td mat-cell *matCellDef="let e">
+              <span class="time-badge">{{ e.startTime || '--:--' }}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="publicLink">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Lien public</th>
+            <td mat-cell *matCellDef="let e" class="f-s-14">
+              <button
+                mat-stroked-button
+                type="button"
+                class="copy-link-btn"
+                [disabled]="!e.slug"
+                (click)="copyPublicLink(e)">
                 <mat-icon>content_copy</mat-icon>
-                <span>Copier lien public</span>
+                Copier
               </button>
-              <button mat-menu-item (click)="remove(e)">
-                <mat-icon color="warn">delete</mat-icon>
-                <span>Supprimer</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="mode">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Type</th>
+            <td mat-cell *matCellDef="let e" class="f-s-14">
+              <span class="mode-pill" [class.online]="e.mode === 'ONLINE'">{{ getModeLabel(e.mode) }}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="location">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Lieu</th>
+            <td mat-cell *matCellDef="let e" class="f-s-14">
+              @if (e.mode === 'ONLINE') {
+                @if (e.meetingUrl) {
+                  <a [href]="e.meetingUrl" target="_blank" rel="noopener">Lien de connexion</a>
+                } @else {
+                  -
+                }
+              } @else {
+                {{ e.location || '-' }}
+              }
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="updatedAt">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Mise a jour</th>
+            <td mat-cell *matCellDef="let e" class="f-s-14">
+              {{ (e.updatedAt || e.createdAt) ? ((e.updatedAt || e.createdAt) | date:'dd/MM/yyyy HH:mm') : '-' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Action</th>
+            <td mat-cell *matCellDef="let e" (click)="$event.stopPropagation()">
+              <button mat-icon-button [matMenuTriggerFor]="menu" type="button" aria-label="Actions evenement">
+                <mat-icon>more_vert</mat-icon>
               </button>
-            </mat-menu>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-    </div>
+              <mat-menu #menu="matMenu" class="cardWithShadow">
+                <button mat-menu-item (click)="viewDetails(e)">
+                  <mat-icon>visibility</mat-icon>
+                  <span>Details</span>
+                </button>
+                <button mat-menu-item (click)="viewStats(e)">
+                  <mat-icon>bar_chart</mat-icon>
+                  <span>Statistiques</span>
+                </button>
+                <button mat-menu-item (click)="edit(e)">
+                  <mat-icon>edit</mat-icon>
+                  <span>Editer</span>
+                </button>
+                <button mat-menu-item (click)="copyPublicLink(e)" [disabled]="!e.slug">
+                  <mat-icon>content_copy</mat-icon>
+                  <span>Copier lien public</span>
+                </button>
+                <button mat-menu-item (click)="remove(e)">
+                  <mat-icon color="warn">delete</mat-icon>
+                  <span>Supprimer</span>
+                </button>
+              </mat-menu>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    }
   </mat-card-content>
 </mat-card>

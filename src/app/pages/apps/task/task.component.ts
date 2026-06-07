@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { TasksService } from './tasks-service.service';
 import { TaskSection } from './tasks';
 
@@ -14,6 +14,8 @@ import { TablerIconsModule } from 'angular-tabler-icons';
     imports: [MaterialModule, CommonModule, TablerIconsModule]
 })
 export class AppTaskComponent {
+  ts = inject(TasksService);
+
   sectionTask: TaskSection[] | null = null;
   selectedST: TaskSection | undefined = Object.create(null);
 
@@ -23,7 +25,12 @@ export class AppTaskComponent {
   titleTaskSection = '';
   borderClass = false;
 
-  constructor(public ts: TasksService) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const ts = this.ts;
+
     this.sectionTask = ts.getSectionWiseTask();
     this.remainingTasks();
     this.totalcount = this.sectionTask?.filter(

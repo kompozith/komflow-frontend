@@ -17,9 +17,11 @@
           <input matInput [matDatepicker]="datepicker" formControlName="scheduledDate" [min]="minDate">
           <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
           <mat-datepicker #datepicker></mat-datepicker>
-          <mat-error *ngIf="form.get('scheduledDate')?.hasError('required')">
-            Date is required
-          </mat-error>
+          @if (form.get('scheduledDate')?.hasError('required')) {
+            <mat-error>
+              Date is required
+            </mat-error>
+          }
         </mat-form-field>
       </div>
 
@@ -29,25 +31,29 @@
           <mat-label>Select Time</mat-label>
           <input matInput type="time" formControlName="scheduledTime" placeholder="HH:mm">
           <i-tabler name="clock" matTextSuffix class="text-muted"></i-tabler>
-          <mat-error *ngIf="form.get('scheduledTime')?.hasError('required')">
-            Time is required
-          </mat-error>
+          @if (form.get('scheduledTime')?.hasError('required')) {
+            <mat-error>
+              Time is required
+            </mat-error>
+          }
         </mat-form-field>
       </div>
     </div>
 
     <!-- Preview -->
-    <div class="preview-section mt-4 p-3 bg-light rounded" *ngIf="form.get('scheduledDate')?.valid && form.get('scheduledTime')?.valid">
-      <div class="d-flex align-items-center gap-8">
-        <i-tabler name="calendar-check" class="text-success icon-20"></i-tabler>
-        <span class="f-s-14">
-          Campaign will be sent on
-          <strong>{{ form.value.scheduledDate | date:'EEEE, MMMM d, y' }}</strong>
-          at
-          <strong>{{ form.value.scheduledTime }}</strong>
-        </span>
+    @if (form.get('scheduledDate')?.valid && form.get('scheduledTime')?.valid) {
+      <div class="preview-section mt-4 p-3 bg-light rounded">
+        <div class="d-flex align-items-center gap-8">
+          <i-tabler name="calendar-check" class="text-success icon-20"></i-tabler>
+          <span class="f-s-14">
+            Campaign will be sent on
+            <strong>{{ form.value.scheduledDate | date:'EEEE, MMMM d, y' }}</strong>
+            at
+            <strong>{{ form.value.scheduledTime }}</strong>
+          </span>
+        </div>
       </div>
-    </div>
+    }
   </form>
 </mat-dialog-content>
 

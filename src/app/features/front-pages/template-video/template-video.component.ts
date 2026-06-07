@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { IconModule } from 'src/app/icon/icon.module';
 import { MaterialModule } from 'src/app/material.module';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -10,7 +10,12 @@ import { MatDialogRef } from '@angular/material/dialog';
   styleUrl: './template-video.component.scss'
 })
 export class TemplateVideoComponent {
-constructor(private dialogRef: MatDialogRef<TemplateVideoComponent>){
+private dialogRef = inject<MatDialogRef<TemplateVideoComponent>>(MatDialogRef);
+
+/** Inserted by Angular inject() migration for backwards compatibility */
+constructor(...args: unknown[]);
+
+constructor(){
 
 }
 closeDialog(): void {

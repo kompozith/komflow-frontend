@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
@@ -245,7 +245,12 @@ export class AppBasicTableComponent implements OnInit {
   displayedColumns4 = ['name', 'pname', 'status', 'budget'];
   dataSource4 = new MatTableDataSource<Element>(BASIC_DATA);
 
-  constructor(breakpointObserver: BreakpointObserver) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const breakpointObserver = inject(BreakpointObserver);
+
     breakpointObserver.observe(['(max-width: 600px)']).subscribe((result) => {
       this.displayedColumns4 = result.matches
         ? ['name', 'pname', 'status', 'budget']

@@ -1,5 +1,5 @@
 // src/app/features/stores/services/store.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -11,9 +11,14 @@ import { ProductCategory } from '../models/product-category';
   providedIn: 'root',
 })
 export class StoreService {
+  private http = inject(HttpClient);
+
   private apiUrl = `${environment.apiUrl}/stores`;
 
-  constructor(private http: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');

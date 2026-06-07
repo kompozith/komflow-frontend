@@ -23,18 +23,26 @@
         formControlName="title"
         placeholder="Copie de …"
         autocomplete="off">
-      <mat-hint align="end">{{ form.value.title?.length || 0 }}/255</mat-hint>
-      <mat-error *ngIf="form.get('title')?.errors?.['required']">Le titre est requis</mat-error>
-      <mat-error *ngIf="form.get('title')?.errors?.['maxlength']">255 caractères maximum</mat-error>
-    </mat-form-field>
-  </form>
-</mat-dialog-content>
+        <mat-hint align="end">{{ form.value.title?.length || 0 }}/255</mat-hint>
+        @if (form.get('title')?.errors?.['required']) {
+          <mat-error>Le titre est requis</mat-error>
+        }
+        @if (form.get('title')?.errors?.['maxlength']) {
+          <mat-error>255 caractères maximum</mat-error>
+        }
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
 
-<mat-dialog-actions align="end" class="px-3 pb-3 gap-8">
-  <button mat-stroked-button mat-dialog-close [disabled]="isDuplicating">Annuler</button>
-  <button mat-flat-button color="primary" (click)="onDuplicate()" [disabled]="isDuplicating">
-    <mat-spinner diameter="18" *ngIf="isDuplicating" class="me-1"></mat-spinner>
-    <mat-icon *ngIf="!isDuplicating" class="me-1">content_copy</mat-icon>
-    {{ isDuplicating ? 'Duplication…' : 'Dupliquer' }}
-  </button>
-</mat-dialog-actions>
+  <mat-dialog-actions align="end" class="px-3 pb-3 gap-8">
+    <button mat-stroked-button mat-dialog-close [disabled]="isDuplicating">Annuler</button>
+    <button mat-flat-button color="primary" (click)="onDuplicate()" [disabled]="isDuplicating">
+      @if (isDuplicating) {
+        <mat-spinner diameter="18" class="me-1"></mat-spinner>
+      }
+      @if (!isDuplicating) {
+        <mat-icon class="me-1">content_copy</mat-icon>
+      }
+      {{ isDuplicating ? 'Duplication…' : 'Dupliquer' }}
+    </button>
+  </mat-dialog-actions>

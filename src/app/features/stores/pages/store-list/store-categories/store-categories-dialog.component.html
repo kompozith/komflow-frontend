@@ -8,8 +8,12 @@
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Category Name</mat-label>
           <input matInput [formControl]="newCategoryNameControl" placeholder="Enter category name">
-          <mat-error *ngIf="newCategoryNameControl.hasError('required')">Category name is required</mat-error>
-          <mat-error *ngIf="newCategoryNameControl.hasError('minlength')">Name must be at least 2 characters</mat-error>
+          @if (newCategoryNameControl.hasError('required')) {
+            <mat-error>Category name is required</mat-error>
+          }
+          @if (newCategoryNameControl.hasError('minlength')) {
+            <mat-error>Name must be at least 2 characters</mat-error>
+          }
         </mat-form-field>
       </div>
       <div class="col-md-5">
@@ -25,7 +29,7 @@
           class="w-100 add-btn"
           [disabled]="!newCategoryNameControl.valid"
           (click)="addCategory()"
-        >
+          >
           <mat-icon>add</mat-icon>
           Add
         </button>
@@ -43,34 +47,43 @@
       </mat-form-field>
     </div>
 
-    <div class="categories-container" *ngIf="!isLoading">
-      <mat-card *ngFor="let category of categories" class="category-card">
-        <mat-card-content>
-          <div class="category-info">
-            <div class="category-name">{{ category.name }}</div>
-            <div class="category-description" *ngIf="category.description">{{ category.description }}</div>
-            <div class="category-stats">
-              <span class="product-count">{{ category.productCount }} products</span>
-              <span class="created-date">Created: {{ category.createdAt | date:'dd/MM/yyyy' }}</span>
-            </div>
+    @if (!isLoading) {
+      <div class="categories-container">
+        @for (category of categories; track category) {
+          <mat-card class="category-card">
+            <mat-card-content>
+              <div class="category-info">
+                <div class="category-name">{{ category.name }}</div>
+                @if (category.description) {
+                  <div class="category-description">{{ category.description }}</div>
+                }
+                <div class="category-stats">
+                  <span class="product-count">{{ category.productCount }} products</span>
+                  <span class="created-date">Created: {{ category.createdAt | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </div>
+              <div class="category-actions">
+                <button mat-icon-button color="warn" (click)="deleteCategory(category)" matTooltip="Delete Category">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+        @if (categories.length === 0) {
+          <div class="no-categories">
+            <mat-icon>category</mat-icon>
+            <p>No categories found</p>
           </div>
-          <div class="category-actions">
-            <button mat-icon-button color="warn" (click)="deleteCategory(category)" matTooltip="Delete Category">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <div *ngIf="categories.length === 0" class="no-categories">
-        <mat-icon>category</mat-icon>
-        <p>No categories found</p>
+        }
       </div>
-    </div>
+    }
 
-    <div *ngIf="isLoading" class="loading">
-      <mat-spinner diameter="40"></mat-spinner>
-    </div>
+    @if (isLoading) {
+      <div class="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    }
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>

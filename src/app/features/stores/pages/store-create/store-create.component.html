@@ -5,7 +5,7 @@
         <mat-card class="cardWithShadow b-1 rounded p-30">
           <h4>General</h4>
           <mat-label class="f-s-14 f-w-600 m-b-8 d-block m-t-20">Store Name <span
-              class="text-error">*</span></mat-label>
+          class="text-error">*</span></mat-label>
           <mat-form-field appearance="outline" class="w-100 p-0" color="primary">
             <input type="text" matInput placeholder="Store name" formControlName="name" />
           </mat-form-field>
@@ -20,14 +20,14 @@
           <div class="row">
             <div class="col-lg-6">
               <mat-label class="f-s-14 f-w-600 m-b-8 d-block m-t-20">Street Address <span
-                  class="text-error">*</span></mat-label>
+              class="text-error">*</span></mat-label>
               <mat-form-field appearance="outline" class="w-100 p-0" color="primary">
                 <input type="text" matInput placeholder="Street Address" formControlName="streetAddress" />
               </mat-form-field>
             </div>
             <div class="col-lg-6">
               <mat-label class="f-s-14 f-w-600 m-b-8 d-block m-t-20">City <span
-                  class="text-error">*</span></mat-label>
+              class="text-error">*</span></mat-label>
               <mat-form-field appearance="outline" class="w-100 p-0" color="primary">
                 <input type="text" matInput placeholder="City" formControlName="city" />
               </mat-form-field>
@@ -36,14 +36,14 @@
           <div class="row">
             <div class="col-lg-6">
               <mat-label class="f-s-14 f-w-600 m-b-8 d-block m-t-20">Region <span
-                  class="text-error">*</span></mat-label>
+              class="text-error">*</span></mat-label>
               <mat-form-field appearance="outline" class="w-100 p-0" color="primary">
                 <input type="text" matInput placeholder="Region" formControlName="region" />
               </mat-form-field>
             </div>
             <div class="col-lg-6">
               <mat-label class="f-s-14 f-w-600 m-b-8 d-block m-t-20">Phone <span
-                  class="text-error">*</span></mat-label>
+              class="text-error">*</span></mat-label>
               <mat-form-field appearance="outline" class="w-100 p-0" color="primary">
                 <input type="text" matInput placeholder="Phone Number" formControlName="phone" />
               </mat-form-field>
@@ -73,11 +73,15 @@
 
           <mat-form-field appearance="outline" class="w-100 m-t-20">
             <mat-select formControlName="brandId" disableOptionCentering placeholder="Select Brand" [disabled]="isLoadingBrands">
-              <mat-option *ngFor="let brand of brandOptions" [value]="brand.id">
-                {{ brand.name }}
-              </mat-option>
+              @for (brand of brandOptions; track brand) {
+                <mat-option [value]="brand.id">
+                  {{ brand.name }}
+                </mat-option>
+              }
             </mat-select>
-            <mat-hint *ngIf="isLoadingBrands">Loading brands...</mat-hint>
+            @if (isLoadingBrands) {
+              <mat-hint>Loading brands...</mat-hint>
+            }
           </mat-form-field>
         </mat-card>
         <mat-card class="cardWithShadow b-1 rounded p-30">
@@ -108,7 +112,7 @@
         class="bg-primary text-white"
         type="submit"
         [disabled]="storeForm.invalid"
-      >
+        >
         Create Store
       </button>
     </div>

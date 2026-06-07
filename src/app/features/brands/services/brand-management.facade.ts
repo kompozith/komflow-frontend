@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BrandService } from './brand.service';
@@ -8,10 +8,13 @@ import { Brand, BrandFilters, BrandPage, CreateBrandRequest, UpdateBrandRequest,
   providedIn: 'root'
 })
 export class BrandManagementFacade {
+  private brandService = inject(BrandService);
 
-  constructor(
-    private brandService: BrandService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+
+  constructor() {}
 
   // Brand operations
   getBrands(filters: BrandFilters = {}): Observable<BrandPage> {

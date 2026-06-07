@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { Router, NavigationEnd, ActivatedRoute, Data } from '@angular/router';
@@ -12,16 +12,19 @@ import { TablerIconsModule } from 'angular-tabler-icons';
     styleUrls: ['./breadcrumb.component.scss']
 })
 export class AppBreadcrumbComponent {
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  private titleService = inject(Title);
+
   // @Input() layout;
   pageInfo: Data | any = Object.create(null);
   myurl: any = this.router.url.slice(1).split('/');
   private routeParams: Record<string, string> = {};
 
-  constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private titleService: Title
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .pipe(map(() => this.activatedRoute))

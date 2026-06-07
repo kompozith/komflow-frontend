@@ -29,7 +29,7 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -93,15 +93,13 @@ export class ListingDialogDataExampleDialogComponent implements OnInit{
   templateUrl: './listing.component.html',
   imports: [
     MaterialModule,
-    CommonModule,
     NgScrollbarModule,
     TablerIconsModule,
     NgxPaginationModule,
     DetailComponent,
     MatCheckboxModule,
-    FormsModule,
-   
-  ],
+    FormsModule
+],
  
 })
 export class ListingComponent implements OnInit, OnDestroy {

@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
-import { CommonModule } from '@angular/common';
+
 import { MessageService } from '../../services/message.service';
 import { Message, MessageAttachment, UpdateMessageRequest, MessageChannel } from '../../models/message';
 import { MessageEditorComponent } from '../../components/message-editor/message-editor.component';
@@ -23,11 +23,19 @@ import { MediaPreviewService } from 'src/app/shared/services/media-preview.servi
     ReactiveFormsModule,
     FormsModule,
     TablerIconsModule,
-    CommonModule,
-    MessageEditorComponent,
-  ],
+    MessageEditorComponent
+],
 })
 export class MessageEditComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private messageService = inject(MessageService);
+  private eventService = inject(EventService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
+  private mediaPreviewService = inject(MediaPreviewService);
+
   messageForm: FormGroup;
   isLoading = false;
   isSaving = false;
@@ -41,16 +49,10 @@ export class MessageEditComponent implements OnInit {
   MessageChannel = MessageChannel;
   private readonly eventVariableRegex = /\{\{event[^{}]+\}\}/i;
 
-  constructor(
-    private fb: FormBuilder,
-    private messageService: MessageService,
-    private eventService: EventService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private snackBar: MatSnackBar,
-    private dialog: MatDialog,
-    private mediaPreviewService: MediaPreviewService
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.messageForm = this.fb.group({
       title: ['', [Validators.minLength(2), Validators.maxLength(100)]],
       content: ['', [Validators.required, Validators.maxLength(10000)]],

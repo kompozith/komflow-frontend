@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
@@ -27,6 +27,10 @@ interface UserProfile {
   providedIn: 'root'
 })
 export class AuthService {
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private permissionService = inject(PermissionService);
+
   private readonly API_BASE_URL = `${environment.apiUrl}/auth`;
 
   private currentUserSubject = new BehaviorSubject<AuthUser | null>(this.getSavedUser());
@@ -38,7 +42,10 @@ export class AuthService {
   // Reference to any active auto-logout timer so we can clear/reset it when tokens update
   private logoutTimer: any | null = null;
 
-  constructor(private http: HttpClient, private router: Router, private permissionService: PermissionService) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     // Check token expiration on service initialization
     this.checkTokenExpiration();
   }

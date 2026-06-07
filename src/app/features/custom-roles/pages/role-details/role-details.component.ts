@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -23,6 +23,12 @@ import { SkeletonTableComponent } from '../../../../shared/components/skeleton-t
   templateUrl: './role-details.component.html',
 })
 export class RoleDetailsComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private roleService = inject(RoleService);
+  private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
+
   roleId = '';
   role: RoleDetail | null = null;
   isLoading = true;
@@ -42,13 +48,10 @@ export class RoleDetailsComponent implements OnInit {
     'resource',
   ];
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private roleService: RoleService,
-    private snackBar: MatSnackBar,
-    private dialog: MatDialog,
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.roleId = this.route.snapshot.params['id'];

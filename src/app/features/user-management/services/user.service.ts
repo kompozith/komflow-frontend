@@ -1,5 +1,5 @@
 // src/app/features/user-management/services/user.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -11,9 +11,14 @@ import { USER_MANAGEMENT_API, UserRole, UserStatus } from '../user-management.co
   providedIn: 'root',
 })
 export class UserService {
+  private http = inject(HttpClient);
+
   private apiUrl = `${environment.apiUrl}/${USER_MANAGEMENT_API.BASE}`;
 
-  constructor(private http: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');

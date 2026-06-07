@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   MatSnackBar,
   MatSnackBarHorizontalPosition,
@@ -44,6 +44,8 @@ export class PizzaPartyComponent {}
     templateUrl: './snackbar.component.html'
 })
 export class AppSnackbarComponent {
+  private _snackBar = inject(MatSnackBar);
+
 
   // 1 [basic with snackbar]
   codeForSnackbarBasic = BASIC_SNACKBAR_HTML_SNIPPET;
@@ -62,7 +64,10 @@ export class AppSnackbarComponent {
   horizontalPosition: MatSnackBarHorizontalPosition = 'start';
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
 
-  constructor(private _snackBar: MatSnackBar) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action);

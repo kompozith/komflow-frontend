@@ -1,4 +1,4 @@
-import { Component, signal, ViewChild } from '@angular/core';
+import { Component, signal, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -20,6 +20,8 @@ import { Message } from 'src/app/features/apps/chat/chat';
   templateUrl: './chat.component.html',
 })
 export class AppChatComponent {
+  private chatService = inject(ChatService);
+
   sidePanelOpened = true;
   //input feild for  new msg
   msg = signal('');
@@ -33,9 +35,12 @@ export class AppChatComponent {
 
   searchTerm = signal('');
 
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
   // tslint:disable-next-line - Disables all
 
-  constructor(private chatService: ChatService) {}
+  constructor() {}
 
   isOver(): boolean {
     return window.matchMedia(`(max-width: 960px)`).matches;

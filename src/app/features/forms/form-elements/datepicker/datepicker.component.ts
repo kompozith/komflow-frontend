@@ -1,4 +1,4 @@
-import { Component, Injectable, ViewEncapsulation } from '@angular/core';
+import { Component, Injectable, ViewEncapsulation, inject } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -34,7 +34,12 @@ const year = today.getFullYear();
 @Injectable()
 export class FiveDayRangeSelectionStrategy<D>
   implements MatDateRangeSelectionStrategy<D> {
-  constructor(private _dateAdapter: DateAdapter<D>) { }
+  private _dateAdapter = inject<DateAdapter<D>>(DateAdapter);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() { }
 
   selectionFinished(date: D | null): DateRange<D> {
     return this._createFiveDayRange(date);

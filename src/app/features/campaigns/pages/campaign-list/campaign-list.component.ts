@@ -1,7 +1,4 @@
-import {
-  Component,
-  OnInit,
-} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import {
   MatDialog,
@@ -34,6 +31,11 @@ import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table
   ],
 })
 export class CampaignListComponent implements OnInit {
+  dialog = inject(MatDialog);
+  private router = inject(Router);
+  private campaignService = inject(CampaignService);
+  private snackBar = inject(MatSnackBar);
+
 
 
   displayedColumns: string[] = [
@@ -68,12 +70,10 @@ export class CampaignListComponent implements OnInit {
   // Enums for template
   CampaignStatus = CampaignStatus;
 
-  constructor(
-      public dialog: MatDialog,
-      private router: Router,
-      private campaignService: CampaignService,
-      private snackBar: MatSnackBar
-    ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadCampaigns();

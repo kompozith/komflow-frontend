@@ -1,12 +1,4 @@
-import {
-  Component,
-  Output,
-  EventEmitter,
-  Input,
-  ViewEncapsulation,
-  OnInit,
-  OnDestroy,
-} from '@angular/core';
+import { Component, Output, EventEmitter, Input, ViewEncapsulation, OnInit, OnDestroy, inject } from '@angular/core';
 import { CoreService } from 'src/app/services/core.service';
 import { MatDialog } from '@angular/material/dialog';
 import { navItems } from '../sidebar/sidebar-data';
@@ -63,6 +55,12 @@ interface quicklinks {
     encapsulation: ViewEncapsulation.None
 })
 export class HeaderComponent {
+  private settings = inject(CoreService);
+  private vsidenav = inject(CoreService);
+  dialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+  private userProfileService = inject(UserProfileService);
+
 
   @Input() showToggle = true;
   @Input() toggleChecked = false;
@@ -90,13 +88,12 @@ export class HeaderComponent {
 
   @Output() optionsChange = new EventEmitter<AppSettings>();
 
-  constructor(
-     private settings: CoreService,
-     private vsidenav: CoreService,
-     public dialog: MatDialog,
-     private translate: TranslateService,
-     private userProfileService: UserProfileService
-   ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+     const translate = this.translate;
+
      // Initialize language from saved preference or default to English
      const savedLanguage = this.settings.getLanguage();
      this.selectedLanguage = this.languages.find(lang => lang.code === savedLanguage) || this.languages[0];

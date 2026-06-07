@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -43,6 +43,13 @@ import { EventWorkflowTestDialogComponent } from '../event-workflow-test-dialog/
   styleUrls: ['./event-form.component.scss'],
 })
 export class EventFormComponent implements OnChanges, OnInit {
+  private fb = inject(FormBuilder);
+  private snackBar = inject(MatSnackBar);
+  private geoService = inject(GeoService);
+  private fileService = inject(FileService);
+  private messageService = inject(MessageService);
+  private dialog = inject(MatDialog);
+
   @Input() initialEvent: AppEvent | null = null;
   @Input() submitLabel = 'Enregistrer';
   @Input() submitting = false;
@@ -102,14 +109,10 @@ export class EventFormComponent implements OnChanges, OnInit {
   agendaForm = this.fb.array<FormGroup>([]);
   workflowStepsForm = this.fb.array<FormGroup>([]);
 
-  constructor(
-    private fb: FormBuilder,
-    private snackBar: MatSnackBar,
-    private geoService: GeoService,
-    private fileService: FileService,
-    private messageService: MessageService,
-    private dialog: MatDialog
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.hydrateForm(this.initialEvent);

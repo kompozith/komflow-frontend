@@ -42,15 +42,18 @@ import { MatDividerModule } from '@angular/material/divider';
   templateUrl: './listing.component.html',
 })
 export class AppListingComponent implements OnInit, OnDestroy {
+  dialog = inject(MatDialog);
+  contactService = inject(ContactService);
+  private snackBar = inject(MatSnackBar);
+
   mobileQuery: MediaQueryList;
 
   private _mobileQueryListener: () => void;
 
-  constructor(
-    public dialog: MatDialog,
-    public contactService: ContactService,
-    private snackBar: MatSnackBar
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     const changeDetectorRef = inject(ChangeDetectorRef);
     const media = inject(MediaMatcher);
     this.mobileQuery = media.matchMedia('(max-width: 600px)');

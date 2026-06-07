@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material.module';
@@ -20,16 +20,19 @@ import { BadgeComponent } from '../../../../shared/components/badge/badge.compon
   ],
 })
 export class ContactDetailsComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private contactService = inject(ContactService);
+  private snackBar = inject(MatSnackBar);
+
   contactId: string = '';
   contact: ContactDetails | null = null;
   isLoading = false;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private contactService: ContactService,
-    private snackBar: MatSnackBar
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.contactId = this.route.snapshot.params['id'];

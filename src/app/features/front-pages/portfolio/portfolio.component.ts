@@ -5,12 +5,12 @@ import { IconModule } from 'src/app/icon/icon.module';
 import { MaterialModule } from 'src/app/material.module';
 import { productcards } from '../front-pagesData';
 import { FooterComponent } from '../footer/footer.component';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-portfolio',
-  imports: [MaterialModule, IconModule, FooterComponent, CommonModule, FormsModule],
+  imports: [MaterialModule, IconModule, FooterComponent, FormsModule],
   templateUrl: './portfolio.component.html',
   styleUrl: './portfolio.component.scss'
 })

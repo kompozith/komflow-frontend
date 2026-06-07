@@ -1,5 +1,5 @@
 import { BreakpointObserver, MediaMatcher } from '@angular/cdk/layout';
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
 import { CoreService } from 'src/app/services/core.service';
@@ -68,6 +68,17 @@ interface quicklinks {
     encapsulation: ViewEncapsulation.None
 })
 export class FullComponent implements OnInit {
+    private settings = inject(CoreService);
+    dialog = inject(MatDialog);
+    private mediaMatcher = inject(MediaMatcher);
+    private router = inject(Router);
+    private breakpointObserver = inject(BreakpointObserver);
+    private navService = inject(NavService);
+    private cdr = inject(ChangeDetectorRef);
+    private authService = inject(AuthService);
+    private userProfileService = inject(UserProfileService);
+    private accessControlService = inject(AccessControlService);
+
     private allNavItems = navItems;
     navItems: NavItem[] = [];
     readonly assetVersion = environment.appVersion || '1.0.0';
@@ -210,18 +221,10 @@ export class FullComponent implements OnInit {
     },
   ];
 
-  constructor(
-      private settings: CoreService,
-      public dialog: MatDialog,
-      private mediaMatcher: MediaMatcher,
-      private router: Router,
-      private breakpointObserver: BreakpointObserver,
-      private navService: NavService,
-      private cdr: ChangeDetectorRef,
-      private authService: AuthService,
-      private userProfileService: UserProfileService,
-      private accessControlService: AccessControlService
-     ) {
+    /** Inserted by Angular inject() migration for backwards compatibility */
+    constructor(...args: unknown[]);
+
+  constructor() {
     this.htmlElement = document.querySelector('html')!;
     this.layoutChangesSubscription = this.breakpointObserver
       .observe([MOBILE_VIEW, TABLET_VIEW, MONITOR_VIEW, BELOWMONITOR])

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IconModule } from 'src/app/icon/icon.module';
@@ -16,7 +16,7 @@ interface followercards {
 }
 @Component({
   selector: 'app-followers',
-  imports: [MaterialModule,IconModule,CommonModule, FormsModule],
+  imports: [MaterialModule, IconModule, FormsModule],
   templateUrl: './followers.component.html',
 })
 export class FollowersComponent implements OnInit{

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { merge, Observable, of as observableOf } from 'rxjs';
@@ -40,6 +40,8 @@ import { HighlightLineNumbers } from 'ngx-highlightjs/line-numbers';
   styleUrls: ['./http-table.component.scss'],
 })
 export class AppHttpTableComponent {
+  private _httpClient = inject(HttpClient);
+
   // 1 [Http Row with Table]
   codeForHttpRowTable = HTTP_TABLE_HTML_SNIPPET;
   codeForHttpRowTableTs = HTTP_TABLE_TS_SNIPPET;
@@ -54,8 +56,11 @@ export class AppHttpTableComponent {
 
   @ViewChild(MatPaginator) paginator: MatPaginator = Object.create(null);
   @ViewChild(MatSort) sort: MatSort = Object.create(null);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
   // tslint:disable-next-line - Disables all
-  constructor(private _httpClient: HttpClient) {}
+  constructor() {}
 
   ngAfterViewInit(): void {
     this.exampleDatabase = new ExampleHttpDatabase(this._httpClient);

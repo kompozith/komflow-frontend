@@ -1,10 +1,4 @@
-import {
-  Component,
-  Inject,
-  Optional,
-  ViewChild,
-  AfterViewInit,
-} from '@angular/core';
+import { Component, ViewChild, AfterViewInit, inject } from '@angular/core';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import {
@@ -32,6 +26,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   ],
 })
 export class AppEmployeeComponent implements AfterViewInit {
+  dialog = inject(MatDialog);
+  private employeeService = inject(EmployeeService);
+
   @ViewChild(MatTable, { static: true }) table: MatTable<any> =
     Object.create(null);
 
@@ -53,10 +50,10 @@ export class AppEmployeeComponent implements AfterViewInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator =
     Object.create(null);
 
-  constructor(
-    public dialog: MatDialog,
-    private employeeService: EmployeeService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadEmployees();
@@ -108,21 +105,24 @@ interface DialogData {
 })
 // tslint:disable-next-line: component-class-suffix
 export class AppEmployeeDialogContentComponent {
+  dialog = inject(MatDialog);
+  dialogRef = inject<MatDialogRef<AppEmployeeDialogContentComponent>>(MatDialogRef);
+  private employeeService = inject(EmployeeService);
+  private snackBar = inject(MatSnackBar);
+  data = inject<DialogData>(MAT_DIALOG_DATA, { optional: true })!;
+
   action: string | any;
   // tslint:disable-next-line - Disables all
   local_data: Employee;
   selectedImage: any = '';
   joiningDate = new FormControl();
 
-  constructor(
-    public dialog: MatDialog,
-    public dialogRef: MatDialogRef<AppEmployeeDialogContentComponent>,
-    private employeeService: EmployeeService,
-    private snackBar: MatSnackBar,
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
 
-    // @Optional() is used to prevent error if no data is passed
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: DialogData
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.action = data.action;
     this.local_data = { ...data.employee };
 

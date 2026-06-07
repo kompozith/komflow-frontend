@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Injectable } from '@angular/core';
+import { Component, Injectable, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -108,6 +108,8 @@ export class ChecklistDatabase {
     providers: [ChecklistDatabase]
 })
 export class AppTreeviewComponent {
+  private _database = inject(ChecklistDatabase);
+
   /** Map from flat node to nested node. This helps us finding the nested node to be modified */
   flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
 
@@ -131,7 +133,12 @@ export class AppTreeviewComponent {
     true /* multiple */
   );
 
-  constructor(private _database: ChecklistDatabase) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const _database = this._database;
+
     this.treeFlattener = new MatTreeFlattener(
       this.transformer,
       this.getLevel,

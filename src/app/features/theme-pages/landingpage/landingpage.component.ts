@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input, inject } from '@angular/core';
 import { CoreService } from 'src/app/services/core.service';
 import { ViewportScroller } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -49,6 +49,9 @@ interface features {
   templateUrl: './landingpage.component.html',
 })
 export class AppLandingpageComponent {
+  private settings = inject(CoreService);
+  private scroller = inject(ViewportScroller);
+
   @Input() showToggle = true;
   @Output() toggleMobileNav = new EventEmitter<void>();
   @Output() toggleMobileFilterNav = new EventEmitter<void>();
@@ -57,10 +60,10 @@ export class AppLandingpageComponent {
   options = this.settings.getOptions();
   readonly assetVersion = environment.appVersion || '1.0.0';
 
-  constructor(
-    private settings: CoreService,
-    private scroller: ViewportScroller
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit(): void {}
 
