@@ -155,6 +155,20 @@ export const routes: Routes = [
             (m) => m.UiComponentsRoutes
           ),
       },
+      {
+        path: 'billing',
+        loadChildren: () =>
+          import('./features/billing/billing.routes').then(
+            (m) => m.BILLING_ROUTES
+          ),
+      },
+      {
+        path: 'organization',
+        loadChildren: () =>
+          import('./features/organization/organization.routes').then(
+            (m) => m.ORGANIZATION_ROUTES
+          ),
+      },
     ],
   },
   {
@@ -188,6 +202,14 @@ export const routes: Routes = [
           import('./features/public-event/public-event.routes').then(
             (m) => m.PublicEventRoutes
           ),
+      },
+      {
+        path: 'accept-invite',
+        loadComponent: () =>
+          import('./pages/accept-invite/accept-invite.component').then(
+            (m) => m.AcceptInviteComponent
+          ),
+        title: 'Accepter l\'invitation',
       },
     ],
   },

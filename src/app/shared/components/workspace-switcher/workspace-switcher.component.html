@@ -1,0 +1,57 @@
+<!-- Trigger -->
+<button class="ws-trigger" [matMenuTriggerFor]="wsMenu">
+  <span class="ws-avatar" [style.background]="activeColor">{{ activeInitials }}</span>
+  <div class="flex-grow-1 min-w-0">
+    <div class="ws-name">{{ active?.orgName ?? 'Sélectionner un espace' }}</div>
+    @if (active) {
+      <div class="ws-role">{{ roleLabel(active.myRole) }}</div>
+    }
+  </div>
+  <i-tabler name="chevron-down" class="icon-14 text-muted flex-shrink-0"></i-tabler>
+</button>
+
+<mat-menu #wsMenu="matMenu" panelClass="ws-menu">
+  <!-- En-tête -->
+  <div class="menu-section-label" (click)="$event.stopPropagation()">Mes espaces</div>
+
+  <!-- Espaces actifs -->
+  @for (ws of activeWorkspaces; track ws.orgId) {
+    <div class="ws-item" [class.active]="ws.orgId === service.activeOrgId()" (click)="switchTo(ws)">
+      <span class="ws-item-avatar" [style.background]="roleColor(ws.myRole)">{{ initials(ws.orgName) }}</span>
+      <div class="flex-grow-1 min-w-0">
+        <div class="ws-item-name text-truncate">{{ ws.orgName }}</div>
+        <div class="ws-item-role">{{ roleLabel(ws.myRole) }}</div>
+      </div>
+      @if (ws.orgId === service.activeOrgId()) {
+        <i-tabler name="check" class="icon-14 text-primary flex-shrink-0"></i-tabler>
+      }
+    </div>
+  }
+
+  <!-- Invitations -->
+  @if (pendingWorkspaces.length > 0) {
+    <div class="divider" (click)="$event.stopPropagation()"></div>
+    <div class="menu-section-label" (click)="$event.stopPropagation()">Invitations</div>
+    @for (ws of pendingWorkspaces; track ws.orgId) {
+      <div class="ws-item" (click)="goAccept(ws)">
+        <span class="ws-item-avatar" style="background:#fbbf24">
+          <i-tabler name="mail" class="icon-14 text-dark"></i-tabler>
+        </span>
+        <div class="flex-grow-1 min-w-0">
+          <div class="ws-item-name text-truncate">{{ ws.orgName }}</div>
+          <div class="ws-item-role">Invitation en attente</div>
+        </div>
+        <span class="badge-pending">Accepter</span>
+      </div>
+    }
+  }
+
+  <!-- Actions -->
+  <div class="divider" (click)="$event.stopPropagation()"></div>
+  <div class="action-item" routerLink="/organization/new">
+    <div class="action-item-icon">
+      <i-tabler name="plus" class="icon-14" style="color:#6366f1"></i-tabler>
+    </div>
+    <span class="f-s-13 f-w-600">Créer un espace</span>
+  </div>
+</mat-menu>

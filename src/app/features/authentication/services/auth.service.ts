@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { AuthUser } from '../models/auth-user';
 import { LoginRequest } from '../models/login-request';
 import { LoginResponse } from '../models/login-response';
+import { RegisterRequest } from '../models/register-request';
 import { PasswordResetVerifyResponse } from '../models/password-reset-verify-response';
 import { PasswordResetCompleteResponse } from '../models/password-reset-complete-response';
 import { AUTH_API, AUTH_CONFIG } from '../auth.constants';
@@ -55,6 +56,26 @@ export class AuthService {
       'Content-Type': 'application/json',
       'accept': '*/*'
     };
+  }
+
+  /**
+   * Register a new user and create their organisation.
+   * On success, the session is set automatically (auto-login).
+   */
+  register(request: RegisterRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.API_BASE_URL}/signup`, request, {
+      headers: this.getDefaultHeaders(),
+      withCredentials: true
+    }).pipe(
+      tap(response => {
+        this.setSession(response, false);
+        if (response.permissions) {
+          this.permissionService.updatePermissions(response.permissions.permissions);
+          this.permissionService.updateRoles(response.permissions.roles);
+        }
+      }),
+      catchError(this.handleError)
+    );
   }
 
   /**
@@ -345,39 +366,31 @@ export class AuthService {
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An unknown error occurred';
 
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = `Client error: ${error.error.message}`;
+    if (error.status === 0 || error.error instanceof ErrorEvent) {
+      errorMessage = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
     } else {
-      // Server-side error
       const apiError = error.error || {};
       const apiCode = typeof apiError.error === 'string' ? apiError.error : null;
       const apiMessage = typeof apiError.message === 'string' ? apiError.message : null;
 
-      if (apiCode === 'INVALID_CREDENTIALS' || error.status === 401 || error.status === 404) {
-        errorMessage = 'Invalid credentials';
-      } else if (apiCode === 'ACCESS_DENIED') {
-        errorMessage = 'Account is disabled or suspended';
+      if (apiCode === 'INVALID_CREDENTIALS' || error.status === 401) {
+        errorMessage = 'Identifiants incorrects.';
+      } else if (error.status === 404) {
+        errorMessage = apiMessage ?? 'Ressource introuvable.';
+      } else if (error.status === 409) {
+        errorMessage = apiMessage ?? 'Un compte avec ces informations existe déjà.';
+      } else if (apiCode === 'ACCESS_DENIED' || error.status === 403) {
+        errorMessage = 'Compte désactivé ou accès refusé.';
       } else if (apiMessage === 'INVALID_DATA') {
-        errorMessage = 'Invalid input. Please check the form.';
+        errorMessage = 'Données invalides. Vérifiez le formulaire.';
       } else if (apiMessage) {
         errorMessage = apiMessage;
       } else {
         switch (error.status) {
-          case 400:
-            errorMessage = 'Invalid request';
-            break;
-          case 403:
-            errorMessage = 'Account is disabled or suspended';
-            break;
-          case 429:
-            errorMessage = 'Too many login attempts. Please try again later';
-            break;
-          case 500:
-            errorMessage = 'Server error. Please try again later';
-            break;
-          default:
-            errorMessage = `Server error: ${error.status}`;
+          case 400: errorMessage = 'Requête invalide.'; break;
+          case 429: errorMessage = 'Trop de tentatives. Réessayez plus tard.'; break;
+          case 500: errorMessage = 'Erreur serveur. Réessayez plus tard.'; break;
+          default:  errorMessage = `Erreur inattendue (${error.status}).`;
         }
       }
     }

@@ -40,8 +40,8 @@ export class AuthzGuard implements CanActivate, CanActivateChild {
       });
 
       if (!hasAccess) {
-        // Redirect to access denied page or login
-        this.router.navigate(['/authentication/login']);
+        // Redirect to forbidden page (not login — avoids redirect loop for authenticated users)
+        this.router.navigate(['/authentication/forbidden']);
         return false;
       }
     }

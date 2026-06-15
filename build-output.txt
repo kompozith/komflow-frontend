@@ -1,0 +1,1054 @@
+﻿node.exe : [1m[33m[baseline-browser-mapping] The data in this module is over 
+two months old.  To ensure accurate Baseline data, please update: `npm i 
+baseline-browser-mapping@latest -D`[39m[22m
+At C:\Program Files\nodejs\npx.ps1:16 char:5
++     & "$basedir/node$exe"  "$basedir/node_modules/npm/bin/npx-cli.js" ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([1m[33m[basel...t -D`[39m[22m 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[33mÔØ»[39m Building...
+[baseline-browser-mapping] The data in this module is over two months old.  To 
+ensure accurate Baseline data, please update: `npm i 
+baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To 
+ensure accurate Baseline data, please update: `npm i 
+baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To 
+ensure accurate Baseline data, please update: `npm i 
+baseline-browser-mapping@latest -D`
+[baseline-browser-mapping] The data in this module is over two months old.  To 
+ensure accurate Baseline data, please update: `npm i 
+baseline-browser-mapping@latest -D`
+[32mÔ£ö[39m Building...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m                [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-HTECBUU6.js[39m  [2m | [22m[2m-[22m                    [2m | [22m  [36m2.38 MB[39m[2m | [22m              [36m247.63 kB[39m
+[32mchunk-OSTPRWLJ.js[39m  [2m | [22m[2m-[22m                    [2m | [22m[36m415.45 kB[39m[2m | [22m               [36m66.28 kB[39m
+[32mstyles.css[39m         [2m | [22m[2mstyles[22m               [2m | [22m[36m373.73 kB[39m[2m | [22m               [36m40.23 kB[39m
+[32mchunk-PM77M2HV.js[39m  [2m | [22m[2m-[22m                    [2m | [22m[36m334.06 kB[39m[2m | [22m               [36m57.80 kB[39m
+[32mchunk-DFVLUAMN.js[39m  [2m | [22m[2m-[22m                    [2m | [22m[36m188.50 kB[39m[2m | [22m               [36m54.76 kB[39m
+[32mchunk-IS25TE6J.js[39m  [2m | [22m[2m-[22m                    [2m | [22m[36m159.23 kB[39m[2m | [22m               [36m34.73 kB[39m
+[32mchunk-NW7AZTMM.js[39m  [2m | [22m[2m-[22m                    [2m | [22m[36m101.51 kB[39m[2m | [22m               [36m17.83 kB[39m
+[32mchunk-GDTZIRG7.js[39m  [2m | [22m[2m-[22m                    [2m | [22m [36m89.64 kB[39m[2m | [22m               [36m18.74 kB[39m
+[32mchunk-CAMBL6OR.js[39m  [2m | [22m[2m-[22m                    [2m | [22m [36m77.19 kB[39m[2m | [22m               [36m19.27 kB[39m
+[32mchunk-EFK3D4K3.js[39m  [2m | [22m[2m-[22m                    [2m | [22m [36m76.60 kB[39m[2m | [22m               [36m10.29 kB[39m
+[32mchunk-TFDDYPCH.js[39m  [2m | [22m[2m-[22m                    [2m | [22m [36m69.17 kB[39m[2m | [22m               [36m13.47 kB[39m
+[32mmain.js[39m            [2m | [22m[2mmain[22m                 [2m | [22m [36m66.48 kB[39m[2m | [22m               [36m15.84 kB[39m
+[32mchunk-SAKIMGCN.js[39m  [2m | [22m[2m-[22m                    [2m | [22m [36m48.54 kB[39m[2m | [22m                [36m9.06 kB[39m
+[32mchunk-3YTI5JVA.js[39m  [2m | [22m[2m-[22m                    [2m | [22m [36m43.65 kB[39m[2m | [22m               [36m12.20 kB[39m
+[32mpolyfills.js[39m       [2m | [22m[2mpolyfills[22m            [2m | [22m [36m34.59 kB[39m[2m | [22m               [36m11.33 kB[39m
+[32mchunk-JCN3242O.js[39m  [2m | [22m[2m-[22m                    [2m | [22m [36m34.28 kB[39m[2m | [22m               [36m10.08 kB[39m
+[32mchunk-DBITDKZR.js[39m  [2m | [22m[2m-[22m                    [2m | [22m [36m20.29 kB[39m[2m | [22m                [36m5.50 kB[39m
+[32mchunk-56OCV4ZT.js[39m  [2m | [22m[2m-[22m                    [2m | [22m [36m19.89 kB[39m[2m | [22m                [36m4.28 kB[39m
+[32mchunk-Y5QXZX2S.js[39m  [2m | [22m[2m-[22m                    [2m | [22m  [36m7.18 kB[39m[2m | [22m                [36m1.94 kB[39m
+[32mchunk-ZV3LJ5SX.js[39m  [2m | [22m[2m-[22m                    [2m | [22m  [36m7.18 kB[39m[2m | [22m                [36m1.83 kB[39m
+[32mchunk-YLHCVNEF.js[39m  [2m | [22m[2m-[22m                    [2m | [22m  [36m5.03 kB[39m[2m | [22m                [36m1.09 kB[39m
+[32mchunk-DUKSTT3K.js[39m  [2m | [22m[2m-[22m                    [2m | [22m  [36m3.98 kB[39m[2m | [22m                [36m1.05 kB[39m
+[32mchunk-SZZB7AQW.js[39m  [2m | [22m[2m-[22m                    [2m | [22m  [36m2.07 kB[39m[2m | [22m              [36m793 bytes[39m
+[32mchunk-C4MIDULM.js[39m  [2m | [22m[2m-[22m                    [2m | [22m  [36m2.06 kB[39m[2m | [22m              [36m709 bytes[39m
+[32mchunk-JW2F22G4.js[39m  [2m | [22m[2m-[22m                    [2m | [22m  [36m2.00 kB[39m[2m | [22m              [36m838 bytes[39m
+[32mchunk-4BXWEVQC.js[39m  [2m | [22m[2m-[22m                    [2m | [22m  [36m1.90 kB[39m[2m | [22m              [36m923 bytes[39m
+[32mchunk-CP4UG57K.js[39m  [2m | [22m[2m-[22m                    [2m | [22m  [36m1.51 kB[39m[2m | [22m              [36m564 bytes[39m
+[32mchunk-KHRPFZSV.js[39m  [2m | [22m[2m-[22m                    [2m | [22m[36m878 bytes[39m[2m | [22m              [36m878 bytes[39m
+[32mchunk-7EGUVU7T.js[39m  [2m | [22m[2m-[22m                    [2m | [22m[36m833 bytes[39m[2m | [22m              [36m833 bytes[39m
+[32mchunk-U76NP3IV.js[39m  [2m | [22m[2m-[22m                    [2m | [22m[36m668 bytes[39m[2m | [22m              [36m668 bytes[39m
+[32mchunk-OUX3655C.js[39m  [2m | [22m[2m-[22m                    [2m | [22m[36m233 bytes[39m[2m | [22m              [36m233 bytes[39m
+[32mchunk-JAKNPY4A.js[39m  [2m | [22m[2m-[22m                    [2m | [22m[36m137 bytes[39m[2m | [22m              [36m137 bytes[39m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m        [2m | [22m  [1m4.57 MB[22m[2m | [22m              [1m661.81 kB[22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-F5HDZEJV.js[39m  [2m | [22m[2m-[22m                    [2m | [22m[36m650.71 kB[39m[2m | [22m              [36m115.55 kB[39m
+[32mchunk-UK5YI4VP.js[39m  [2m | [22m[2mapps-routes[22m          [2m | [22m[36m615.43 kB[39m[2m | [22m              [36m129.35 kB[39m
+[32mchunk-DDDQSGQ6.js[39m  [2m | [22m[2mapexcharts-esm[22m       [2m | [22m[36m572.77 kB[39m[2m | [22m              [36m128.10 kB[39m
+[32mchunk-MXQM2UJ2.js[39m  [2m | [22m[2m-[22m                    [2m | [22m[36m303.11 kB[39m[2m | [22m               [36m79.79 kB[39m
+[32mchunk-IQOGOMWQ.js[39m  [2m | [22m[2mforms-routes[22m         [2m | [22m[36m268.43 kB[39m[2m | [22m               [36m27.23 kB[39m
+[32mchunk-DWWAP72A.js[39m  [2m | [22m[2mui-components-routes[22m [2m | [22m[36m211.28 kB[39m[2m | [22m               [36m27.78 kB[39m
+[32mchunk-4ONNDFGX.js[39m  [2m | [22m[2mtables-routes[22m        [2m | [22m[36m193.99 kB[39m[2m | [22m               [36m20.76 kB[39m
+[32mchunk-577MARRV.js[39m  [2m | [22m[2mauthentication-routes[22m[2m | [22m[36m105.13 kB[39m[2m | [22m               [36m11.02 kB[39m
+[32mchunk-2YNENZ56.js[39m  [2m | [22m[2mevents-routes[22m        [2m | [22m [36m95.96 kB[39m[2m | [22m               [36m21.41 kB[39m
+[32mchunk-D4N5YYAT.js[39m  [2m | [22m[2mcampaigns-routes[22m     [2m | [22m [36m83.69 kB[39m[2m | [22m               [36m16.52 kB[39m
+[32mchunk-CJTXIBVI.js[39m  [2m | [22m[2mfront-pages-routes[22m   [2m | [22m [36m82.30 kB[39m[2m | [22m               [36m16.86 kB[39m
+[32mchunk-6757RFVV.js[39m  [2m | [22m[2mstores-routes[22m        [2m | [22m [36m71.92 kB[39m[2m | [22m               [36m13.46 kB[39m
+[32mchunk-CIGUOZBJ.js[39m  [2m | [22m[2mmessages-routes[22m      [2m | [22m [36m69.43 kB[39m[2m | [22m               [36m14.15 kB[39m
+[32mchunk-5YXTXRL7.js[39m  [2m | [22m[2mbrowser[22m              [2m | [22m [36m64.14 kB[39m[2m | [22m               [36m17.16 kB[39m
+[32mchunk-HQZWKVOR.js[39m  [2m | [22m[2mcontacts-routes[22m      [2m | [22m [36m62.21 kB[39m[2m | [22m               [36m12.38 kB[39m
+[2m...and 44 more lazy chunks files. Use "--verbose" to show all the files.[22m
+
+Application bundle generation complete. [175.954 seconds] - 2026-06-14T22:58:35.620Z
+
+[1m[33m[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8109: msg is a 
+function and should be invoked: msg()[0m [1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/features/apps/chat/chat.component.html:116:81:
+[37m      116 Ôöé ...-icon-button matSuffix (click)="sendMessage()" 
+[disabled]="![32mmsg[37m">
+          ÔòÁ                                                                
+[32m~~~[0m
+
+  Warning occurs in the template of component AppChatComponent.
+
+    src/app/features/apps/chat/chat.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./chat.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:93:69:
+[37m      93 Ôöé ...-w-500 lh-sm f-s-14">{{ 
+campaign.contacts?.[32mlength[37m }} contacts</h5>
+         ÔòÁ                                               [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:107:77:
+[37m      107 Ôöé ...{{ campaign.mailCcContacts?.[32mlength[37m }} 
+contacts, {{ campaign.ma...
+          ÔòÁ                                [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:107:121:
+[37m      107 Ôöé ...?.length }} contacts, {{ 
+campaign.mailCcTags?.[32mlength[37m }} tags</h5>
+          ÔòÁ                                                  [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:122:78:
+[37m      122 Ôöé ...{ campaign.mailCciContacts?.[32mlength[37m }} 
+contacts, {{ campaign.ma...
+          ÔòÁ                                [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:122:123:
+[37m      122 Ôöé ....length }} contacts, {{ 
+campaign.mailCciTags?.[32mlength[37m }} tags</h5>
+          ÔòÁ                                                  [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:136:65:
+[37m      136 Ôöé ...lass="f-w-500 lh-sm f-s-14">{{ 
+campaign.tags?.[32mlength[37m }} tags</h5>
+          ÔòÁ                                                  [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:270:31:
+[37m      270 Ôöé       @if ((campaign.contacts?.[32mlength[37m ?? 0) > 0) {
+          ÔòÁ                                [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:291:27:
+[37m      291 Ôöé       @if ((campaign.tags?.[32mlength[37m ?? 0) > 0) {
+          ÔòÁ                            [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:321:37:
+[37m      321 Ôöé ... ((campaign.mailCcContacts?.[32mlength[37m ?? 0) > 0 
+|| (campaign.mail...
+          ÔòÁ                                [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:321:79:
+[37m      321 Ôöé ...ts?.length ?? 0) > 0 || 
+(campaign.mailCcTags?.[32mlength[37m ?? 0) > 0) {
+          ÔòÁ                                                  [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:328:45:
+[37m      328 Ôöé               @if 
+((campaign.mailCcContacts?.[32mlength[37m ?? 0) > 0) {
+          ÔòÁ                                              [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:342:41:
+[37m      342 Ôöé               @if ((campaign.mailCcTags?.[32mlength[37m 
+?? 0) > 0) {
+          ÔòÁ                                          [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:361:38:
+[37m      361 Ôöé ...((campaign.mailCciContacts?.[32mlength[37m ?? 0) > 0 
+|| (campaign.mail...
+          ÔòÁ                                [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:361:81:
+[37m      361 Ôöé ...s?.length ?? 0) > 0 || 
+(campaign.mailCciTags?.[32mlength[37m ?? 0) > 0) {
+          ÔòÁ                                                  [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:368:46:
+[37m      368 Ôöé               @if 
+((campaign.mailCciContacts?.[32mlength[37m ?? 0) > 0) {
+          ÔòÁ                                               [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:382:42:
+[37m      382 Ôöé               @if ((campaign.mailCciTags?.[32mlength[37m 
+?? 0) > 0) {
+          ÔòÁ                                           [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.html:486:28:
+[37m      486 Ôöé             @if ((liveLogs?.[32mlength[37m ?? 0) > 0) {
+          ÔòÁ                             [32m~~~~~~[0m
+
+  Warning occurs in the template of component CampaignDetailsComponent.
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:28:15:
+[37m      28 Ôöé   templateUrl: [32m'./campaign-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: 
+SubmitCampaignDialogComponent is not used within the template of 
+CampaignDetailsComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:27:90:
+[37m      27 Ôöé ...blerIconsModule, [32mSubmitCampaignDialogComponent[37m, 
+ScheduleCampaig...
+         ÔòÁ                     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: 
+ScheduleCampaignDialogComponent is not used within the template of 
+CampaignDetailsComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/campaigns/pages/campaign-details/campaign-details.componen
+t.ts:27:121:
+[37m      27 Ôöé ..., SubmitCampaignDialogComponent, 
+[32mScheduleCampaignDialogComponent[37m],
+         ÔòÁ                                     
+[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: MatDialogTitle is 
+not used within the template of CreateRoleDialogComponent[0m [1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/features/custom-roles/pages/roles-list/create-role-dialog/create-ro
+le-dialog.component.ts:22:4:
+[37m      22 Ôöé     [32mMatDialogTitle[37m,
+         ÔòÁ     [32m~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: MatDialogTitle is 
+not used within the template of DeleteRoleDialogComponent[0m [1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/features/custom-roles/pages/roles-list/delete-role-dialog/delete-ro
+le-dialog.component.ts:20:4:
+[37m      20 Ôöé     [32mMatDialogTitle[37m,
+         ÔòÁ     [32m~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: MatDialogContent is 
+not used within the template of DeleteRoleDialogComponent[0m [1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/features/custom-roles/pages/roles-list/delete-role-dialog/delete-ro
+le-dialog.component.ts:21:4:
+[37m      21 Ôöé     [32mMatDialogContent[37m,
+         ÔòÁ     [32m~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: MatDialogTitle is 
+not used within the template of EditRoleDialogComponent[0m [1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/features/custom-roles/pages/roles-list/edit-role-dialog/edit-role-d
+ialog.component.ts:22:4:
+[37m      22 Ôöé     [32mMatDialogTitle[37m,
+         ÔòÁ     [32m~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/messages/pages/message-details/message-details.component.h
+tml:11:62:
+[37m      11 Ôöé ...-t-10 f-w-600 mb-0">{{ message?.[32mtitle[37m || 
+'Message Details' }}</h3>
+         ÔòÁ                                    [32m~~~~~[0m
+
+  Warning occurs in the template of component MessageDetailsComponent.
+
+    src/app/features/messages/pages/message-details/message-details.component.t
+s:18:15:
+[37m      18 Ôöé   templateUrl: [32m'./message-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/messages/pages/message-details/message-details.component.h
+tml:133:65:
+[37m      133 Ôöé ...        <p class="mb-0 text-muted">{{ 
+message.event?.[32mtitle[37m }}</p>
+          ÔòÁ                                                         
+[32m~~~~~[0m
+
+  Warning occurs in the template of component MessageDetailsComponent.
+
+    src/app/features/messages/pages/message-details/message-details.component.t
+s:18:15:
+[37m      18 Ôöé   templateUrl: [32m'./message-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: BadgeComponent is 
+not used within the template of MessageDetailsComponent[0m [1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/features/messages/pages/message-details/message-details.component.t
+s:24:4:
+[37m      24 Ôöé     [32mBadgeComponent[37m,
+         ÔòÁ     [32m~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/messages/pages/message-list/delete-message-dialog/delete-m
+essage-dialog.component.html:25:70:
+[37m      25 Ôöé ...trong>Variables:</strong> {{ 
+message.variables?.[32mlength[37m || 0 }}</p>
+         ÔòÁ                                                    [32m~~~~~~[0m
+
+  Warning occurs in the template of component DeleteMessageDialogComponent.
+
+    src/app/features/messages/pages/message-list/delete-message-dialog/delete-m
+essage-dialog.component.ts:26:15:
+[37m      26 Ôöé   templateUrl: 
+[32m'./delete-message-dialog.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/public-event/pages/event-register/event-register.component
+.html:56:35:
+[37m      56 Ôöé                 @if (e.highlights?.[32mlength[37m) {
+         ÔòÁ                                    [32m~~~~~~[0m
+
+  Warning occurs in the template of component EventRegisterComponent.
+
+    src/app/features/public-event/pages/event-register/event-register.component
+.ts:17:15:
+[37m      17 Ôöé   templateUrl: [32m'./event-register.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: MatDialogTitle is 
+not used within the template of CreateProductCategoryDialogComponent[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/product-categories/create-produ
+ct-category-dialog/create-product-category-dialog.component.ts:21:4:
+[37m      21 Ôöé     [32mMatDialogTitle[37m,
+         ÔòÁ     [32m~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: MatDialogTitle is 
+not used within the template of DeleteProductCategoryDialogComponent[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/product-categories/delete-produ
+ct-category-dialog/delete-product-category-dialog.component.ts:22:4:
+[37m      22 Ôöé     [32mMatDialogTitle[37m,
+         ÔòÁ     [32m~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/product-categories/product-cate
+gories.component.html:39:84:
+[37m      39 Ôöé ... i = index">{{ (paginator?.[32mpageIndex[37m || 0) * 
+(paginator?.pageSi...
+         ÔòÁ                               [32m~~~~~~~~~[0m
+
+  Warning occurs in the template of component ProductCategoriesComponent.
+
+    src/app/features/stores/pages/store-details/product-categories/product-cate
+gories.component.ts:19:15:
+[37m      19 Ôöé   templateUrl: 
+[32m'./product-categories.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/product-categories/product-cate
+gories.component.html:39:114:
+[37m      39 Ôöé ...tor?.pageIndex || 0) * (paginator?.[32mpageSize[37m || 
+10) + i + 1 }}</td>
+         ÔòÁ                                       [32m~~~~~~~~[0m
+
+  Warning occurs in the template of component ProductCategoriesComponent.
+
+    src/app/features/stores/pages/store-details/product-categories/product-cate
+gories.component.ts:19:15:
+[37m      19 Ôöé   templateUrl: 
+[32m'./product-categories.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: 
+CreateProductCategoryDialogComponent is not used within the template of 
+ProductCategoriesComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/product-categories/product-cate
+gories.component.ts:21:71:
+[37m      21 Ôöé ...le, DatePipe, 
+[32mCreateProductCategoryDialogComponent[37m, UpdateProdu...
+         ÔòÁ                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: 
+UpdateProductCategoryDialogComponent is not used within the template of 
+ProductCategoriesComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/product-categories/product-cate
+gories.component.ts:21:109:
+[37m      21 Ôöé ...logComponent, 
+[32mUpdateProductCategoryDialogComponent[37m, DeleteProdu...
+         ÔòÁ                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: 
+DeleteProductCategoryDialogComponent is not used within the template of 
+ProductCategoriesComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/product-categories/product-cate
+gories.component.ts:21:147:
+[37m      21 Ôöé ...uctCategoryDialogComponent, 
+[32mDeleteProductCategoryDialogComponent[37m],
+         ÔòÁ                                
+[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: MatDialogTitle is 
+not used within the template of UpdateProductCategoryDialogComponent[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/product-categories/update-produ
+ct-category-dialog/update-product-category-dialog.component.ts:22:4:
+[37m      22 Ôöé     [32mMatDialogTitle[37m,
+         ÔòÁ     [32m~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    
+src/app/features/stores/pages/store-details/store-details.component.html:78:65:
+[37m      78 Ôöé ...0 lh-sm f-s-14">{{ storeCategories?.[32mlength[37m || 0 
+}} categories</h5>
+         ÔòÁ                                        [32m~~~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    
+src/app/features/stores/pages/store-details/store-details.component.html:91:63:
+[37m      91 Ôöé ...ass="f-w-500 lh-sm f-s-14">{{ 
+store.address?.[32mcity[37m || 'N/A' }}</h5>
+         ÔòÁ                                                 [32m~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:11
+2:61:
+[37m      112 Ôöé ...-muted">{{ store.address?.[32mfullAddress[37m || 
+store.address?.street...
+          ÔòÁ                              [32m~~~~~~~~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:11
+2:91:
+[37m      112 Ôöé ...ress?.fullAddress || 
+store.address?.[32mstreetAddress[37m || 'N/A' }}</p>
+          ÔòÁ                                        [32m~~~~~~~~~~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:11
+8:61:
+[37m      118 Ôöé ...<p class="mb-0 text-muted">{{ 
+store.address?.[32mcity[37m || 'N/A' }}</p>
+          ÔòÁ                                                 [32m~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:12
+4:61:
+[37m      124 Ôöé ... class="mb-0 text-muted">{{ 
+store.address?.[32mregion[37m || 'N/A' }}</p>
+          ÔòÁ                                               [32m~~~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:13
+0:61:
+[37m      130 Ôöé ...class="mb-0 text-muted">{{ 
+store.address?.[32mcountry[37m || 'N/A' }}</p>
+          ÔòÁ                                              [32m~~~~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:13
+3:32:
+[37m      133 Ôöé             @if (store.address?.[32mpostalCode[37m) {
+          ÔòÁ                                 [32m~~~~~~~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:14
+1:32:
+[37m      141 Ôöé             @if (store.address?.[32mlandmark[37m) {
+          ÔòÁ                                 [32m~~~~~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:14
+9:32:
+[37m      149 Ôöé             @if (store.address?.[32mhasCoordinates[37m) {
+          ÔòÁ                                 [32m~~~~~~~~~~~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:15
+7:32:
+[37m      157 Ôöé             @if (store.address?.[32mhasCoordinates[37m) {
+          ÔòÁ                                 [32m~~~~~~~~~~~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:18
+8:36:
+[37m      188 Ôöé                   @if (store.brand?.[32mlogoUrl[37m) {
+          ÔòÁ                                     [32m~~~~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:19
+1:40:
+[37m      191 Ôöé                   <span>{{ store.brand?.[32mname[37m || 
+'N/A' }}</span>
+          ÔòÁ                                         [32m~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:19
+8:48:
+[37m      198 Ôöé                 <p class="mb-0">{{ 
+store.brand?.[32mtype[37m || 'N/A' }}</p>
+          ÔòÁ                                                 [32m~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-details/store-details.component.html:21
+9:32:
+[37m      219 Ôöé             @if (store.address?.[32minstructions[37m) {
+          ÔòÁ                                 [32m~~~~~~~~~~~~[0m
+
+  Warning occurs in the template of component StoreDetailsComponent.
+
+    
+src/app/features/stores/pages/store-details/store-details.component.ts:20:15:
+[37m      20 Ôöé   templateUrl: [32m'./store-details.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-list/delete-store-dialog/delete-store-d
+ialog.component.html:22:60:
+[37m      22 Ôöé ...and:</strong> {{ store.brand?.[32mname[37m }} ({{ 
+store.brand?.type }})...
+         ÔòÁ                                  [32m~~~~[0m
+
+  Warning occurs in the template of component DeleteStoreDialogComponent.
+
+    src/app/features/stores/pages/store-list/delete-store-dialog/delete-store-d
+ialog.component.ts:26:15:
+[37m      26 Ôöé   templateUrl: 
+[32m'./delete-store-dialog.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+Output location: E:\Workspace\Kompozith\Komflow\komflow-frontend\dist\komflow
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-list/delete-store-dialog/delete-store-d
+ialog.component.html:22:85:
+[37m      22 Ôöé ...nd:</strong> {{ store.brand?.name }} ({{ 
+store.brand?.[32mtype[37m }})</p>
+         ÔòÁ                                                          
+[32m~~~~[0m
+
+  Warning occurs in the template of component DeleteStoreDialogComponent.
+
+    src/app/features/stores/pages/store-list/delete-store-dialog/delete-store-d
+ialog.component.ts:26:15:
+[37m      26 Ôöé   templateUrl: 
+[32m'./delete-store-dialog.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-list/delete-store-dialog/delete-store-d
+ialog.component.html:23:64:
+[37m      23 Ôöé ...s:</strong> {{ store.address?.[32mcity[37m }}, {{ 
+store.address?.region...
+         ÔòÁ                                  [32m~~~~[0m
+
+  Warning occurs in the template of component DeleteStoreDialogComponent.
+
+    src/app/features/stores/pages/store-list/delete-store-dialog/delete-store-d
+ialog.component.ts:26:15:
+[37m      26 Ôöé   templateUrl: 
+[32m'./delete-store-dialog.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: The left side of 
+this optional chain operation does not include 'null' or 'undefined' in its 
+type, therefore the '?.' operator can be replaced with the '.' operator.[0m 
+[1m[35m[plugin angular-compiler][0m
+
+    src/app/features/stores/pages/store-list/delete-store-dialog/delete-store-d
+ialog.component.html:23:91:
+[37m      23 Ôöé ...strong> {{ store.address?.city }}, {{ 
+store.address?.[32mregion[37m }}</p>
+         ÔòÁ                                                         
+[32m~~~~~~[0m
+
+  Warning occurs in the template of component DeleteStoreDialogComponent.
+
+    src/app/features/stores/pages/store-list/delete-store-dialog/delete-store-d
+ialog.component.ts:26:15:
+[37m      26 Ôöé   templateUrl: 
+[32m'./delete-store-dialog.component.html'[37m,
+         ÔòÁ                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: MatDialogTitle is 
+not used within the template of PersonEditDialogComponent[0m [1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/features/user-management/pages/person-list/person-edit-dialog/perso
+n-edit-dialog.component.ts:23:4:
+[37m      23 Ôöé     [32mMatDialogTitle[37m,
+         ÔòÁ     [32m~~~~~~~~~~~~~~[0m
+
+
+[33mÔû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mModule 
+'google-libphonenumber' used by 
+'node_modules/ngx-intl-tel-input/fesm2022/ngx-intl-tel-input.mjs' is not 
+ESM[0m
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: 
+[4mhttps://angular.dev/tools/cli/build#configuring-commonjs-dependencies[0m
+
+[39m[22m

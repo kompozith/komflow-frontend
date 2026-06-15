@@ -84,4 +84,25 @@ export const navItems: NavItem[] = [
       iconName: 'file',
       route: 'files',
    },
+   {
+     navCap: 'Abonnement',
+   },
+   {
+      displayName: 'Mon organisation',
+      iconName: 'building',
+      route: 'organization',
+      roles: ['ADMIN', 'SUPER_ADMIN'],
+   },
+   {
+      displayName: 'Membres',
+      iconName: 'users',
+      route: 'organization/members',
+      roles: ['ADMIN', 'SUPER_ADMIN'],
+   },
+   {
+      displayName: 'Facturation & Quotas',
+      iconName: 'credit-card',
+      route: 'billing',
+      roles: ['ADMIN', 'SUPER_ADMIN'],
+   },
 ];

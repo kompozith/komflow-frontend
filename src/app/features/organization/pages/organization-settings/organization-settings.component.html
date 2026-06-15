@@ -1,0 +1,101 @@
+<div class="container-fluid py-4">
+
+  @if (loading) {
+    <div class="d-flex justify-content-center my-5"><mat-spinner diameter="48"></mat-spinner></div>
+  }
+
+  @if (!loading && org) {
+    <!-- En-tête -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="d-flex align-items-center gap-3">
+          <div class="avatar bg-primary-light rounded-circle d-flex align-items-center justify-content-center"
+               style="width:48px;height:48px">
+            <i-tabler name="building" class="icon-24 text-primary"></i-tabler>
+          </div>
+          <div>
+            <h4 class="mat-headline-6 mb-1">{{ org.name }}</h4>
+            <span class="mat-caption text-muted">slug : {{ org.slug }}</span>
+            &nbsp;·&nbsp;
+            <app-badge [variant]="planVariant(org.planCode)" [pill]="true">{{ org.planCode }}</app-badge>
+          </div>
+          <div class="ms-auto">
+            <a mat-stroked-button routerLink="/billing">
+              <i-tabler name="credit-card" class="icon-16 me-1"></i-tabler>
+              Gérer le plan
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="row">
+      <div class="col-md-8 col-xl-6">
+        <mat-card class="mat-elevation-z1">
+          <mat-card-header>
+            <mat-card-title class="f-s-16">Informations générales</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="pt-3">
+            <form [formGroup]="form" (ngSubmit)="save()">
+
+              <mat-label class="f-s-13 f-w-600 m-b-8 d-block">Nom de l'organisation *</mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <input matInput formControlName="name" (blur)="autoSlug()" />
+                @if(f['name'].touched) {
+                  @if(f['name'].errors?.['required'])  { <mat-error>Nom obligatoire</mat-error> }
+                  @if(f['name'].errors?.['minlength']) { <mat-error>Minimum 2 caractères</mat-error> }
+                }
+              </mat-form-field>
+
+              <mat-label class="f-s-13 f-w-600 m-b-4 d-block">
+                Identifiant URL
+                <span class="f-s-12 text-muted f-w-400">(minuscules, chiffres, tirets)</span>
+              </mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <span matTextPrefix class="text-muted f-s-13">app/</span>
+                <input matInput formControlName="slug"
+                       (input)="f['slug'].markAsDirty()" />
+                @if(f['slug'].touched && f['slug'].errors?.['slugPattern']) {
+                  <mat-error>Format invalide</mat-error>
+                }
+              </mat-form-field>
+
+              <div class="d-flex justify-content-end gap-2 mt-2">
+                <button mat-flat-button color="primary" type="submit" [disabled]="saving || form.invalid">
+                  @if(saving) { <mat-spinner diameter="18" class="me-2 d-inline-block"></mat-spinner> }
+                  Enregistrer
+                </button>
+              </div>
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Infos plan -->
+      <div class="col-md-4 col-xl-3 mt-3 mt-md-0">
+        <mat-card class="mat-elevation-z1">
+          <mat-card-header>
+            <mat-card-title class="f-s-16">Abonnement actuel</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="pt-3">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i-tabler name="shield-check" class="icon-20 text-primary"></i-tabler>
+              <span class="f-w-600 f-s-15">Plan {{ org.planCode }}</span>
+              <app-badge [variant]="planVariant(org.planCode)" [pill]="true">Actif</app-badge>
+            </div>
+            @if(org.trialEndsAt) {
+              <p class="mat-caption text-muted mb-2">
+                Essai jusqu'au {{ org.trialEndsAt | date:'dd/MM/yyyy' }}
+              </p>
+            }
+            <a mat-stroked-button color="primary" routerLink="/billing" class="w-100 mt-1">
+              Voir les quotas & plans
+            </a>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  }
+
+</div>

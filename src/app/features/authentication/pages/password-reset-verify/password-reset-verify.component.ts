@@ -153,7 +153,7 @@ export class PasswordResetVerifyComponent implements OnInit {
 
     this.authService.verifyPasswordReset(this.contact, otpCode).subscribe({
       next: (res: PasswordResetVerifyResponse) => {
-        const resetToken = res?.data?.resetToken;
+        const resetToken = res?.resetToken;
         if (resetToken) {
           this.router.navigate(['/authentication/password-reset/complete'], { queryParams: { resetToken } });
         } else {

@@ -65,6 +65,12 @@ export const AuthenticationRoutes: Routes = [
         component: AppLoginComponent,
         canActivate: [GuestGuard],
       },
+      // alias pour les liens legacy qui utilisent side-login
+      {
+        path: 'side-login',
+        component: AppLoginComponent,
+        canActivate: [GuestGuard],
+      },
       {
         path: 'side-register',
         component: AppSideRegisterComponent,

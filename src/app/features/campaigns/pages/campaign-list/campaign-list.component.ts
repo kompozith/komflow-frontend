@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { CampaignService } from '../../services/campaign.service';
 import { Campaign, CampaignPage, CampaignFilters, CampaignStatus } from '../../models/campaign';
 import {BadgeComponent, BadgeVariant} from '../../../../shared/components/badge/badge.component';
+import { ChannelBadgePipe } from '../../../../shared/pipes/channel-badge.pipe';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ScheduleCampaignDialogComponent, ScheduleCampaignDialogData } from '../../pages/campaign-details/schedule-campaign-dialog.component';
 import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
@@ -28,6 +29,7 @@ import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table
     CommonModule,
     BadgeComponent,
     SkeletonTableComponent,
+    ChannelBadgePipe,
   ],
 })
 export class CampaignListComponent implements OnInit {

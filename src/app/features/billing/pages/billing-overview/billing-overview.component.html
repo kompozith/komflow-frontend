@@ -1,0 +1,78 @@
+<div class="container-fluid py-4">
+
+  @if (loading) {
+    <div class="d-flex justify-content-center my-5">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  }
+
+  @if (error) {
+    <mat-card class="mat-elevation-z1 text-center py-5">
+      <mat-card-content>
+        <i-tabler name="alert-triangle" class="icon-48 text-warning mb-2"></i-tabler>
+        <p class="mat-body-1 text-muted">Impossible de charger les informations de facturation.</p>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (!loading && !error && overview) {
+
+    <!-- Plan header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <mat-card class="mat-elevation-z1">
+          <mat-card-content>
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+              <div>
+                <h4 class="mat-headline-6 mb-1">
+                  Plan <strong>{{ overview.planLabel }}</strong>
+                </h4>
+                <span class="mat-body-2 text-muted">{{ formatPrice(overview.priceMonthlyCtsCents) }}</span>
+                &nbsp;·&nbsp;
+                <span class="mat-body-2 f-w-600" [class]="statusClass(overview.subscriptionStatus)">
+                  {{ overview.subscriptionStatus }}
+                </span>
+              </div>
+              <button mat-raised-button color="primary" *ngIf="overview.planCode === 'FREE' || overview.planCode === 'STARTER'">
+                <i-tabler name="rocket" class="icon-16 me-1"></i-tabler>
+                Passer à un plan supérieur
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Quota gauges -->
+    <div class="row g-3">
+      @for (quota of quotas; track quota.metric) {
+        <div class="col-md-6 col-xl-3">
+          <mat-card class="mat-elevation-z1 h-100">
+            <mat-card-content class="py-3">
+              <div class="d-flex align-items-center mb-3">
+                <i-tabler [name]="quota.icon" class="icon-20 me-2 text-primary"></i-tabler>
+                <span class="mat-body-1 f-w-600">{{ quota.metric | titlecase }}</span>
+              </div>
+              <mat-progress-bar
+                [color]="quota.pct >= 0.9 ? 'warn' : 'primary'"
+                mode="determinate"
+                [value]="quotaPct(quota)"
+                class="mb-2">
+              </mat-progress-bar>
+              <div class="d-flex justify-content-between">
+                <span class="mat-caption text-muted">{{ quotaLabel(quota) }}</span>
+                @if (quota.limit > 0) {
+                  <span class="mat-caption f-w-600" [class.text-danger]="quota.pct >= 1">
+                    {{ quotaPct(quota) }}%
+                  </span>
+                }
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+    </div>
+
+  }
+
+</div>

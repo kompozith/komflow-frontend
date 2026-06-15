@@ -1,0 +1,128 @@
+<div class="container-fluid py-4">
+
+  <!-- En-tête -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h4 class="mat-headline-6 mb-1">Membres de l'espace</h4>
+      <span class="mat-caption text-muted">Gérez les accès et les rôles de votre équipe</span>
+    </div>
+    <button mat-flat-button color="primary" (click)="showInviteForm.set(!showInviteForm())">
+      <i-tabler name="user-plus" class="icon-16 me-1"></i-tabler>
+      Inviter un membre
+    </button>
+  </div>
+
+  <!-- Formulaire d'invitation -->
+  @if (showInviteForm()) {
+    <mat-card class="mat-elevation-z1 mb-4">
+      <mat-card-content class="pt-3">
+        <h6 class="f-w-600 mb-3">Envoyer une invitation</h6>
+        <form [formGroup]="inviteForm" (ngSubmit)="invite()" class="d-flex gap-2 flex-wrap align-items-start">
+          <mat-form-field appearance="outline" class="flex-grow-1" style="min-width:220px">
+            <mat-label>Adresse email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="colleague@exemple.com" />
+            @if(inviteForm.controls['email'].touched && inviteForm.controls['email'].errors?.['required']) {
+              <mat-error>Email obligatoire</mat-error>
+            }
+            @if(inviteForm.controls['email'].touched && inviteForm.controls['email'].errors?.['email']) {
+              <mat-error>Format invalide</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" style="min-width:140px">
+            <mat-label>Rôle</mat-label>
+            <mat-select formControlName="role">
+              @for (r of roles; track r) {
+                <mat-option [value]="r">{{ r }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-flat-button color="primary" type="submit" [disabled]="inviting()">
+            @if(inviting()) { <mat-spinner diameter="18" class="me-1 d-inline-block"></mat-spinner> }
+            Envoyer
+          </button>
+          <button mat-stroked-button type="button" (click)="showInviteForm.set(false)">Annuler</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- Table membres -->
+  @if (loading()) {
+    <div class="d-flex justify-content-center my-5"><mat-spinner diameter="40"></mat-spinner></div>
+  } @else {
+    <mat-card class="mat-elevation-z1">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="members()" class="w-100">
+
+          <!-- Utilisateur -->
+          <ng-container matColumnDef="user">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Utilisateur</th>
+            <td mat-cell *matCellDef="let m" class="py-2">
+              <div class="d-flex align-items-center gap-2">
+                <div class="avatar rounded-circle bg-light d-flex align-items-center justify-content-center"
+                     style="width:36px;height:36px;font-size:13px;font-weight:700;color:#6366f1">
+                  {{ (m.firstName?.[0] ?? m.username[0]).toUpperCase() }}
+                </div>
+                <div class="d-flex flex-column">
+                  <span class="f-w-600 f-s-14">{{ displayName(m) }}</span>
+                  <span class="f-s-12 text-muted">{{ m.email || m.invitedEmail }}</span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Rôle -->
+          <ng-container matColumnDef="role">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Rôle</th>
+            <td mat-cell *matCellDef="let m">
+              <mat-select [value]="m.role"
+                          [disabled]="m.role === 'OWNER'"
+                          (selectionChange)="changeRole(m, $event.value)"
+                          class="f-s-13" style="width:110px">
+                @for (r of roles; track r) {
+                  <mat-option [value]="r">{{ r }}</mat-option>
+                }
+                <mat-option value="OWNER" disabled>OWNER</mat-option>
+              </mat-select>
+            </td>
+          </ng-container>
+
+          <!-- Statut -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Statut</th>
+            <td mat-cell *matCellDef="let m">
+              <app-badge [variant]="m.status === 'ACTIVE' ? 'success' : m.status === 'INVITED' ? 'warning' : 'error'"
+                         [pill]="true">
+                <i-tabler [name]="statusIcon(m.status)" class="icon-12 me-1"></i-tabler>
+                {{ m.status }}
+              </app-badge>
+            </td>
+          </ng-container>
+
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let m" class="text-end">
+              @if (m.role !== 'OWNER' && m.status !== 'SUSPENDED') {
+                <button mat-icon-button color="warn" (click)="revoke(m)"
+                        matTooltip="Révoquer l'accès">
+                  <i-tabler name="user-x" class="icon-18"></i-tabler>
+                </button>
+              }
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['user','role','status','actions']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['user','role','status','actions'];"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center py-4 text-muted" colspan="4">Aucun membre</td>
+          </tr>
+        </table>
+      </div>
+    </mat-card>
+  }
+
+</div>

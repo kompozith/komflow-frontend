@@ -30,6 +30,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 type MailboxType = 'Inbox' | 'Sent' | 'Draft' | 'Spam' | 'Trash';
 
 @Component({
@@ -87,6 +88,7 @@ export class ListingDialogDataExampleDialogComponent implements OnInit{
   selector: 'app-listing',
   templateUrl: './listing.component.html',
   imports: [
+    CommonModule,
     MaterialModule,
     NgScrollbarModule,
     TablerIconsModule,
