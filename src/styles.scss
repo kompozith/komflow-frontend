@@ -1,7 +1,818 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* ========= Skeleton shimmer ========= */
+.skeleton-box {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e2e2e2 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite linear;
+  border-radius: 6px;
+}
+@keyframes skeletonShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ========= tabler-icon inline in buttons ========= */
+/* Ensures icon + label text stay on the same line inside any Angular Material button.
+   !important is needed to override tabler-icon's own :host { display: block } */
+button tabler-icon {
+  align-items: center;
+  display: inline-flex !important;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+/* ========= Info grid: 2-column layout with overflow protection ========= */
+/* Keeps 2 columns on mobile while preventing long values (e.g. email) from overflowing */
+.info-grid > [class*="col"] p {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Global Form Styles - Used across all components for consistent inputs */
+
+/* ========= Tokens ========= */
+:root {
+  --app-field-height: 48px;
+  --app-field-padding-y: 14px;
+  --app-field-padding-x: 12px;
+  --app-field-line-height: 24px;
+  --app-textarea-min-height: 150px;
+  --app-textarea-padding-y: 14px;
+  --app-field-radius: 13px;
+  --app-field-gap: 10px;
+  /* Override Angular Material form-field sizing (was set to 37px elsewhere) */
+  --mat-form-field-container-height: var(--app-field-height);
+  --mat-form-field-container-vertical-padding: var(--app-field-padding-y);
+}
+
+/* ========= Search Form Inputs ========= */
+.search-form, mat-paginator {
+  --app-field-height: 40px;
+  --app-field-padding-y: 6px;
+  --app-field-padding-x: 12px;
+  --app-field-line-height: 20px;
+  --mat-form-field-container-height: 40px;
+  --mat-form-field-container-vertical-padding: 6px;
+}
+
+.search-form input,
+.search-form select {
+  height: 40px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.search-form .mdc-text-field__input,
+.search-form .mat-mdc-select-value-text,
+.search-form .mat-mdc-select-placeholder,
+.search-form .mat-mdc-select-min-line {
+  font-size: 14px;
+}
+
+.search-form .mat-mdc-text-field-wrapper {
+  min-height: 40px;
+}
+
+.search-form .mat-mdc-form-field:not(.mat-mdc-form-field-type-textarea) .mat-mdc-form-field-infix {
+  min-height: 40px;
+}
+
+.search-form .mat-mdc-form-field:not(.mat-mdc-form-field-type-textarea) .mdc-text-field__input {
+  height: 40px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  line-height: 20px;
+}
+
+.search-form .mat-mdc-select-trigger {
+  height: 40px;
+}
+
+/* ========= Form Fields ========= */
+.mat-mdc-form-field {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mat-mdc-text-field-wrapper {
+  min-height: var(--app-field-height);
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+}
+
+.mat-mdc-text-field-wrapper.mdc-text-field {
+  align-items: center !important;
+  padding: 0 var(--app-field-padding-x) !important;
+}
+
+.mat-mdc-form-field-flex {
+  align-items: center;
+}
+
+.mdc-text-field__input {
+  line-height: var(--app-field-line-height);
+}
+
+/* Center placeholder/content vertically for standard inputs */
+.mat-mdc-form-field:not(.mat-mdc-form-field-type-textarea) .mat-mdc-form-field-infix {
+  display: flex;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+  min-height: var(--app-field-height);
+}
+
+.mat-mdc-form-field:not(.mat-mdc-form-field-type-textarea) .mdc-text-field__input {
+  height: var(--app-field-height);
+  padding-top: var(--app-field-padding-y);
+  padding-bottom: var(--app-field-padding-y);
+  line-height: var(--app-field-line-height);
+  box-sizing: border-box;
+}
+
+/* Ensure MDC internal padding doesn't push text off-center */
+.mat-mdc-form-field .mdc-text-field__input {
+  padding-top: 0;
+  padding-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+.mat-mdc-form-field-flex,
+.mat-mdc-form-field-infix {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Stronger vertical centering for MDC (minimal !important) */
+.mat-mdc-form-field .mat-mdc-form-field-infix {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Apply fixed height only to single-line inputs, not textareas */
+.mat-mdc-form-field:not(.mat-mdc-form-field-type-textarea) input.mdc-text-field__input {
+  height: var(--app-field-height) !important;
+  line-height: var(--app-field-line-height) !important;
+  padding-top: var(--app-field-padding-y) !important;
+  padding-bottom: var(--app-field-padding-y) !important;
+  box-sizing: border-box !important;
+}
+
+.form-control:focus {
+    border-color: transparent !important;
+}
+
+.mat-mdc-form-field .mdc-text-field__input::placeholder {
+  line-height: var(--app-field-line-height) !important;
+}
+
+/* Textarea: allow multi-line while staying visually aligned */
+.mat-mdc-form-field.mat-mdc-form-field-type-textarea .mat-mdc-text-field-wrapper {
+  min-height: var(--app-textarea-min-height) !important;
+  height: auto !important;
+  display: flex;
+  align-items: stretch;
+}
+
+.mat-mdc-form-field.mat-mdc-form-field-type-textarea .mdc-text-field__input {
+  min-height: var(--app-textarea-min-height);
+  padding-top: var(--app-textarea-padding-y) !important;
+  padding-bottom: var(--app-textarea-padding-y) !important;
+  line-height: 1.4 !important;
+  height: auto !important;
+  width: 100%;
+  resize: vertical;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.mat-mdc-form-field.mat-mdc-form-field-type-textarea .mat-mdc-form-field-infix {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  min-height: var(--app-textarea-min-height) !important;
+}
+
+/* Stronger targeting for textarea element */
+.mat-mdc-form-field.mat-mdc-form-field-type-textarea textarea.mdc-text-field__input {
+  width: 100%;
+  min-height: var(--app-textarea-min-height);
+  padding: var(--app-textarea-padding-y) var(--app-field-padding-x) !important;
+  line-height: 1.4 !important;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Final override: textarea must not inherit single-line input height */
+.mat-mdc-form-field.mat-mdc-form-field-type-textarea .mdc-text-field__input,
+.mat-mdc-form-field.mat-mdc-form-field-type-textarea textarea.mdc-text-field__input {
+  height: auto !important;
+  min-height: var(--app-textarea-min-height) !important;
+  padding: var(--app-textarea-padding-y) var(--app-field-padding-x) !important;
+  line-height: 1.4 !important;
+  resize: vertical;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+textarea.app-textarea.mdc-text-field__input {
+  min-height: 150px !important;
+  padding-top: 14px !important;
+  padding-bottom: 14px !important;
+  line-height: 1.5 !important;
+  resize: vertical;
+  overflow: hidden;
+}
+
+textarea[matInput],
+textarea.mat-mdc-input-element {
+  min-height: 150px !important;
+  padding-top: 14px !important;
+  padding-bottom: 14px !important;
+  line-height: 1.5 !important;
+  resize: vertical;
+  overflow: hidden;
+}
+
+/* Selects: match input height */
+.mat-mdc-select-trigger {
+  height: var(--app-field-height);
+  align-items: center;
+  display: flex;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.mat-mdc-select {
+  --mat-select-trigger-text-line-height: var(--app-field-line-height);
+}
+
+.mat-form-field-appearance-fill .mat-mdc-select-arrow-wrapper {
+  transform: none !important;
+}
+.mat-mdc-select-value {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  line-height: var(--app-field-line-height);
+}
+
+.mat-mdc-select-value-text {
+  line-height: var(--app-field-line-height);
+}
+
+.mat-mdc-select-placeholder,
+.mat-mdc-select-min-line {
+  line-height: var(--app-field-line-height) !important;
+}
+
+.mat-mdc-select-arrow-wrapper {
+  border-left: none !important;
+}
+
+/* ========= Phone Input ========= */
+.phone-input-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Force red styling when phone input has errors - Material Design style */
+ngx-intl-tel-input.phone-input-error .iti {
+  border: 1px solid #f44336 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+/* Ensure proper border-radius for internal elements */
+ngx-intl-tel-input.phone-input-error .iti__flag-container {
+  border-top-left-radius: 8px !important;
+  border-bottom-left-radius: 8px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+ngx-intl-tel-input.phone-input-error input {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+ngx-intl-tel-input.phone-input-error input {
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+ngx-intl-tel-input.phone-input-error .iti__flag-container {
+  border-color: #f44336 !important;
+  background-color: transparent !important;
+}
+
+/* Also support the wrapper class approach as fallback */
+.phone-input-wrapper.phone-error {
+  ngx-intl-tel-input .iti {
+    border: 1px solid #f44336 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+  }
+
+  ngx-intl-tel-input input {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+  }
+
+  ngx-intl-tel-input .iti__flag-container {
+    border-color: #f44336 !important;
+    background-color: transparent !important;
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  ngx-intl-tel-input input {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+  }
+
+  ngx-intl-tel-input .iti__selected-flag {
+    background-color: transparent !important;
+  }
+}
+
+/* Global ngx-intl-tel-input styling for consistency */
+ngx-intl-tel-input {
+  display: block;
+  width: 100%;
+}
+
+ngx-intl-tel-input .iti {
+  width: 100%;
+  height: var(--app-field-height);
+  display: flex;
+  align-items: center;
+  border-radius: var(--app-field-radius);
+  background-color: var(--mat-sys-surface);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+ngx-intl-tel-input .iti:focus-within {
+  border-color: var(--mat-sys-primary, #1976d2);
+  box-shadow: 0 0 0 1px var(--mat-sys-primary, #1976d2);
+}
+
+ngx-intl-tel-input input {
+  width: 100%;
+  height: var(--app-field-height);
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: var(--app-field-padding-x);
+  padding-right: var(--app-field-padding-x);
+  line-height: var(--app-field-line-height);
+  box-sizing: border-box;
+  font: inherit;
+  color: inherit;
+  background-color: transparent;
+}
+
+ngx-intl-tel-input .iti__selected-flag,
+ngx-intl-tel-input .iti__flag-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+ngx-intl-tel-input .iti__selected-flag {
+  display: flex;
+  align-items: center;
+}
+
+/* ========= OTP Inputs ========= */
+.otp-container {
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.otp-input {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: transparent;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.otp-input::-webkit-outer-spin-button,
+.otp-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.otp-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.otp-input:focus {
+  border: 2px solid #1976d2;
+  box-shadow: none;
+}
+
+.otp-input:hover:not(:focus) {
+  border-color: rgba(0, 0, 0, 0.42);
+}
+
+.otp-input.otp-error {
+  border: 1px solid #f44336;
+}
+
+.otp-input.otp-error:focus {
+  border: 2px solid #f44336;
+}
+
+/* Responsive OTP inputs */
+@media (max-width: 576px) {
+  .otp-input {
+    width: 40px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .otp-container {
+    gap: 8px;
+  }
+}
+
+/* ========= Error Messages ========= */
+.login-error-message {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: transparent;
+  border: 1px solid #f44336;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* ========= Buttons ========= */
+.resend-btn {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 6px 12px !important;
+  min-height: 32px !important;
+  line-height: 1.2 !important;
+  border-radius: 4px !important;
+  text-transform: none !important;
+}
+
+.resend-btn:hover:not(:disabled) {
+  background-color: rgba(25, 118, 210, 0.04) !important;
+}
+
+.resend-btn:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+/* ========= Maps Autocomplete Spacing ========= */
+.google-maps-autocomplete .mat-mdc-form-field {
+  margin-top: 20px;
+}
+
+.google-maps-autocomplete .mat-mdc-form-field.pt-2 {
+  padding-top: 0;
+}
+
+/* dropdown country list styling */
+ngx-intl-tel-input .iti__country-list {
+  z-index: 2500 !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  border-radius: 4px !important;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+              0 8px 10px 1px rgba(0, 0, 0, 0.14),
+              0 3px 14px 2px rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  background: transparent !important;
+
+  /* Completely hide scrollbar */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+}
+
+/* Style the search input in country dropdown */
+ngx-intl-tel-input .iti__search-input {
+  /* Compact size for dropdown search */
+  width: 100% !important;
+  height: 40px !important; /* Smaller than main inputs */
+  padding: 8px 12px !important; /* Reduced padding */
+  border: none !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.42) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  font-size: 14px !important; /* Smaller font */
+  font-family: inherit !important;
+  color: inherit !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  transition: border-bottom-color 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+  &:focus {
+    border-bottom: 2px solid #1976d2 !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  &:focus-visible {
+    border-bottom: 2px solid #1976d2 !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  &::placeholder {
+    color: inherit !important;
+    font-size: 14px !important;
+  }
+
+  /* Remove all browser default styles */
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active,
+  &:-webkit-autofill:valid,
+  &:-webkit-autofill:invalid {
+    -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0) inset !important;
+    -webkit-text-fill-color: inherit !important;
+    background-color: inherit !important;
+    background-image: none !important;
+    background: inherit !important;
+    border-color: inherit !important;
+    transition: none !important;
+    color: inherit !important;
+    opacity: 1 !important;
+  }
+
+  /* Force remove any inherited borders */
+  &[style*="border"] {
+    border: none !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.42) !important;
+  }
+}
+
+/* Style country list items */
+ngx-intl-tel-input .iti__country {
+  padding: 8px 16px !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s ease !important;
+
+  &:hover {
+    background: transparent !important;
+  }
+
+  &.iti__highlight {
+    background: transparent !important;
+  }
+}
+
+/* Style country names */
+ngx-intl-tel-input .iti__country-name {
+  color: inherit !important;
+  font-size: 14px !important;
+}
+
+/* Style dial codes */
+ngx-intl-tel-input .iti__dial-code {
+  color: inherit !important;
+  font-size: 13px !important;
+}
+
+/* Remove Bootstrap box-shadow from all inputs globally */
+ngx-intl-tel-input input {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+/* Style the search container */
+ngx-intl-tel-input .iti[_ngcontent-ng-c4036060811] input#country-search-box[_ngcontent-ng-c4036060811],
+ngx-intl-tel-input .iti[_ngcontent-ng-c4036060811] input#country-search-box[_ngcontent-ng-c4036060811]:focus-visible {
+  display: block;
+  width: 100%;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--bs-body-color);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: var(--bs-body-bg);
+  background-clip: padding-box;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+  border-radius: var(--bs-border-radius);
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  height: 35px !important;
+}
+
+/* Neutralize browser autofill styling - Enhanced */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+input:-webkit-autofill:valid,
+input:-webkit-autofill:invalid,
+ngx-intl-tel-input input:-webkit-autofill,
+ngx-intl-tel-input input:-webkit-autofill:hover,
+ngx-intl-tel-input input:-webkit-autofill:focus,
+ngx-intl-tel-input input:-webkit-autofill:active,
+ngx-intl-tel-input input:-webkit-autofill:valid,
+ngx-intl-tel-input input:-webkit-autofill:invalid {
+  -webkit-box-shadow: 0 0 0 1000px inherit inset !important;
+  -webkit-text-fill-color: inherit !important;
+  background-color: inherit !important;
+  background-image: none !important;
+  background: inherit !important;
+  border-color: inherit !important;
+  transition: none !important;
+  color: inherit !important;
+  opacity: 1 !important;
+}
+
+/* Additional autofill neutralization for different browsers */
+input:-moz-autofill,
+input:-moz-autofill:hover,
+input:-moz-autofill:focus,
+ngx-intl-tel-input input:-moz-autofill,
+ngx-intl-tel-input input:-moz-autofill:hover,
+ngx-intl-tel-input input:-moz-autofill:focus {
+  background-color: transparent !important;
+  background-image: none !important;
+  color: inherit !important;
+  opacity: 1 !important;
+}
+
+input:-ms-input-placeholder,
+ngx-intl-tel-input input:-ms-input-placeholder {
+  color: inherit !important;
+  opacity: 0.6 !important;
+}
+
+/* Theme-aware placeholder colors for email input */
+ngx-intl-tel-input input::placeholder {
+  color: rgba(0, 0, 0, 0.38) !important;
+  opacity: 1 !important;
+}
+
+ngx-intl-tel-input input::-webkit-input-placeholder {
+  color: rgba(0, 0, 0, 0.38) !important;
+  opacity: 1 !important;
+}
+
+ngx-intl-tel-input input::-moz-placeholder {
+  color: rgba(0, 0, 0, 0.38) !important;
+  opacity: 1 !important;
+}
+
+ngx-intl-tel-input input:-ms-input-placeholder {
+  color: rgba(0, 0, 0, 0.38) !important;
+  opacity: 1 !important;
+}
+
+/* Dark theme placeholder colors */
+html.dark-theme ngx-intl-tel-input input::placeholder {
+  color: rgba(255, 255, 255, 0.38) !important;
+  opacity: 1 !important;
+}
+
+html.dark-theme ngx-intl-tel-input input::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.38) !important;
+  opacity: 1 !important;
+}
+
+html.dark-theme ngx-intl-tel-input input::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.38) !important;
+  opacity: 1 !important;
+}
+
+html.dark-theme ngx-intl-tel-input input:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.38) !important;
+  opacity: 1 !important;
+}
+
+/* Aggressive autofill background removal for inputs */
+input.mat-mdc-input-element:-webkit-autofill,
+input.mat-mdc-input-element.cdk-text-field-autofilled,
+input.mdc-text-field__input:-webkit-autofill,
+input.mdc-text-field__input.cdk-text-field-autofilled,
+ngx-intl-tel-input input.mat-mdc-input-element:-webkit-autofill,
+ngx-intl-tel-input input.mat-mdc-input-element.cdk-text-field-autofilled {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  box-shadow: 0 0 0 1000px transparent inset !important;
+  background-color: transparent !important;
+  background: transparent !important;
+  background-image: none !important;
+  -webkit-text-fill-color: inherit !important;
+  caret-color: inherit !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Additional autofill override with high specificity */
+ngx-intl-tel-input input.mat-mdc-input-element:-webkit-autofill,
+ngx-intl-tel-input input.mat-mdc-input-element.cdk-text-field-autofilled {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  box-shadow: 0 0 0 1000px transparent inset !important;
+  background-color: transparent !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* Phone error messages styling */
+.phone-error-messages {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--mat-form-field-subscript-text-font, var(--mat-sys-body-small-font));
+  line-height: var(--mat-form-field-subscript-text-line-height, var(--mat-sys-body-small-line-height) 1rem);
+  font-size: var(--mat-form-field-subscript-text-size, var(--mat-sys-body-small-size));
+  letter-spacing: var(--mat-form-field-subscript-text-tracking, var(--mat-sys-body-small-tracking));
+  font-weight: var(--mat-form-field-subscript-text-weight, var(--mat-sys-body-small-weight));
+  margin-top: 4px;
+  min-height: 20px;
+  text-align: left !important;
+}
+
+.phone-error-messages.text-end {
+  text-align: left !important;
+}
+
+.mat-mdc-form-field-hint-wrapper,
+.mat-mdc-form-field-error-wrapper,
+.error-msg {
+  text-align: left !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  justify-content: flex-start !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper .mat-mdc-form-field-hint-wrapper,
+.mat-mdc-form-field-subscript-wrapper .mat-mdc-form-field-error-wrapper {
+  justify-content: flex-start !important;
+}
+
+.mat-mdc-form-field-hint-end {
+  margin-left: 0 !important;
+  justify-content: flex-start !important;
+}
+
+mat-error,
+.mat-mdc-form-field-error {
+  display: block;
+  text-align: left !important;
+}
+
+mat-hint,
+.mat-mdc-form-field-hint {
+  display: block;
+  text-align: left !important;
+}
+
+.text-end,
+.text-right {
+  text-align: left !important;
+}
+
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: "Inter", sans-serif; }
 
 .sortable-header {
   cursor: pointer;
@@ -89,6 +900,18 @@ select:-webkit-autofill:invalid {
   top: 0 !important;
 }
 
+/* ========= Clickable table cell ========= */
+/* Applied to the first data column (after the row number) so the WHOLE cell
+   navigates to the row's details page. The direct child stretches to fill the
+   cell so multi-line content (avatar + title + subtitle) is fully clickable. */
+.clickable-cell {
+  cursor: pointer;
+
+  > * {
+    width: 100%;
+  }
+}
+
 .translated-left-checkbox {
   transform: translateX(-10px) !important;
 }
@@ -113,6 +936,15 @@ select:-webkit-autofill:invalid {
 
 .form-section:last-child {
    margin-bottom: 16px; /* Slightly less for the last section before button */
+}
+
+/* Tighter spacing between specific sections when needed */
+.form-section-tight {
+  margin-bottom: 12px;
+}
+
+.form-section-tightest {
+  margin-bottom: 6px;
 }
 
 /* Theme-aware placeholder colors for form-control elements */
@@ -164,7 +996,7 @@ html.dark-theme .form-control {
   color: rgba(255, 255, 255, 0.9) !important;
 }
 
-html.dark-theme .form-control {
+html.dark-theme .form-control:focus {
   background-color: #141a21 !important;
   border-color: #465670 !important;
   color: rgba(255, 255, 255, 0.9) !important;
@@ -174,122 +1006,251 @@ html.dark-theme .form-control {
   height: 25px !important;
 }
 
-/* Global ngx-intl-tel-input alignment with Material text fields */
-html {
-  --app-intl-phone-height: var(--mat-form-field-container-height, 37px);
-  --app-intl-phone-radius: 4px 4px 0 0;
-  --app-intl-phone-bg: color-mix(in srgb, var(--mat-sys-surface-container-low) 88%, transparent);
-  --app-intl-phone-text: var(--mat-sys-on-background);
-  --app-intl-phone-border: var(--mat-sys-outline-variant);
-  --app-intl-phone-dropdown-bg: color-mix(in srgb, var(--mat-sys-surface-container) 92%, transparent);
-  --app-intl-phone-hover-bg: color-mix(in srgb, var(--mat-sys-primary) 10%, var(--mat-sys-surface-container));
+.iti, ngx-intl-tel-input input {
+    width: 100% !important;
 }
 
-ngx-intl-tel-input .iti {
-  width: 100%;
-}
-
-ngx-intl-tel-input .iti__flag-container,
-ngx-intl-tel-input .iti__selected-flag {
-  height: var(--app-intl-phone-height);
-}
-
-ngx-intl-tel-input input.iti__tel-input {
-  width: 100%;
-  height: var(--app-intl-phone-height);
-  min-height: var(--app-intl-phone-height);
-  border-radius: 8px;
-  background: var(--app-intl-phone-bg);
-  color: var(--app-intl-phone-text);
-  padding: 0 14px 0 92px;
-  line-height: normal;
-  outline: none;
-  box-sizing: border-box;
-}
-
-ngx-intl-tel-input #country-search-box {
-  min-height: 42px;
-  padding: 10px 12px;
-}
-
-ngx-intl-tel-input .dropdown-menu.iti__dropdown-content {
-  z-index: 2200;
-  border-radius: var(--app-intl-phone-radius);
-  border: 1px solid var(--app-intl-phone-border);
-  background: var(--app-intl-phone-dropdown-bg);
-  color: var(--app-intl-phone-text);
-}
-
-ngx-intl-tel-input .iti__flag-container,
-ngx-intl-tel-input .iti__selected-flag {
-  background: var(--app-intl-phone-bg);
-  color: var(--app-intl-phone-text);
-}
-
-ngx-intl-tel-input .iti__country-list {
-  background: var(--app-intl-phone-dropdown-bg);
-  color: var(--app-intl-phone-text);
-}
-
-ngx-intl-tel-input .iti__country {
-  color: var(--app-intl-phone-text);
-}
-
-ngx-intl-tel-input .iti__country:hover,
-ngx-intl-tel-input .iti__country.iti__highlight {
-  background: var(--app-intl-phone-hover-bg);
-}
-
-ngx-intl-tel-input .iti__country-name,
-ngx-intl-tel-input .iti__dial-code,
-ngx-intl-tel-input .iti__selected-dial-code {
-  color: var(--app-intl-phone-text);
-}
-
-ngx-intl-tel-input #country-search-box,
-ngx-intl-tel-input .iti__search-input {
-  background: var(--app-intl-phone-bg);
-  color: var(--app-intl-phone-text);
-}
-
-/* Shared rich-text rendering (event/message descriptions) */
-.app-rich-text {
-  line-height: 1.55;
-
-  p {
-    margin: 0 0 0.8rem;
+@media (min-width: 992px) {
+  .position-lg-sticky {
+    position: sticky !important;
+    top: 75px;
+    align-self: flex-start;
   }
+}
 
-  p:last-child {
-    margin-bottom: 0;
-  }
+/* Global action-button spinners (business-operations and reusable dialogs) */
+.action-btn {
+  min-width: 32px !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  border-radius: 6px !important;
+  margin: 0 2px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+}
 
-  ul,
-  ol {
-    margin: 0 0 0.8rem;
-    padding-left: 1.2rem;
-  }
+.action-btn i-tabler {
+  font-size: 16px;
+}
 
-  li + li {
-    margin-top: 0.2rem;
-  }
+.action-btn-spinner {
+  --mdc-circular-progress-active-indicator-color: #ffffff;
+  color: #ffffff !important;
+}
 
-  a {
-    text-decoration: underline;
-  }
+// Standard wrapper for button content that combines an icon or loader with text.
+// Guarantees vertical centering and a consistent horizontal gap inside any button.
+.btn-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 
-  blockquote {
-    margin: 0 0 0.8rem;
-    padding-left: 0.8rem;
-    border-left: 3px solid color-mix(in srgb, var(--mat-sys-primary) 35%, transparent);
+.action-btn-spinner .mdc-circular-progress__indeterminate-circle-graphic,
+.action-btn-spinner .mdc-circular-progress__determinate-circle,
+.action-btn-spinner circle {
+  stroke: #ffffff !important;
+}
+
+.btn-spinner-white {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: btn-spinner-rotate 0.7s linear infinite;
+}
+
+@keyframes btn-spinner-rotate {
+  to {
+    transform: rotate(360deg);
   }
 }
 
 .brand-logo {
-  height: 40px;
+  height: 35px  !important;
   width: auto;
 }
 
 .mat-mdc-form-field-hint-wrapper, .mat-mdc-form-field-error-wrapper {
-    padding: 0 !important;
+  padding: 0 0 !important;
+}
+.mat-horizontal-stepper-header {
+    height: 45px !important;
+}
+
+/* Landing mobile sidebar overrides */
+.landing-mobile-sidebar {
+  min-height: 100vh;
+  height: 100vh;
+  position: fixed !important;
+  top: 0;
+  bottom: 0;
+  width: min(320px, 90vw);
+  max-width: 100%;
+  background-color: var(--mat-sys-surface);
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.22);
+  z-index: 1000;
+}
+
+.landing-mobile-sidebar .mat-drawer-inner-container {
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+}
+
+.mobile-sidebar-content {
+  min-height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-sidebar-scroll {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 0 8px;
+  margin-top: 12px;
+}
+
+.mobile-sidebar-footer {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  background-color: var(--mat-sys-surface);
+}
+
+.landing-mobile-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.close-sidebar {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.landing-mobile-menu {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.landing-mobile-menu mat-list-item {
+  padding: 0;
+}
+
+.landing-mobile-menu-btn {
+  width: 100%;
+  justify-content: flex-start;
+  text-transform: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  min-height: 44px;
+}
+
+.landing-mobile-menu-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.landing-mobile-menu-icon {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 18px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-mobile-menu-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.landing-mobile-menu-arrow {
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.landing-mobile-menu-theme-icon {
+  display: flex;
+  align-items: center;
+}
+
+.landing-mobile-menu-btn:hover {
+  background-color: rgba(15, 23, 42, 0.04);
+}
+
+.mobile-sidebar-footer button,
+.mobile-sidebar-footer a {
+  gap: 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.landing-mobile-sidebar .mat-mdc-list-item .mdc-list-item__content {
+  display: flex;
+  align-items: center;
+}
+
+.landing-mobile-sidebar .mat-mdc-button.mobile-trigger-btn {
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.withdrawal-account-dialog-panel .mat-mdc-dialog-surface {
+  overflow: hidden !important;
+  border-radius: 20px;
+}
+
+.withdrawal-account-dialog-panel .mat-mdc-dialog-content {
+  overflow-x: hidden !important;
+  padding: 0 !important;
+}
+
+.withdrawal-account-dialog-panel .mat-mdc-dialog-container .mdc-dialog__surface {
+  max-height: 90vh;
+}
+
+.confirmation-dialog-panel .mat-mdc-dialog-surface {
+  overflow: hidden !important;
+  border-radius: 18px;
+}
+
+.confirmation-dialog-panel .mat-mdc-dialog-content {
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+.confirmation-dialog-panel .mat-mdc-dialog-container .mdc-dialog__surface {
+  max-height: none !important;
+}
+
+.add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.32);
+
+  margin-left: 8px;
+  cursor: pointer;
+  vertical-align: middle;
 }
