@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CoreService } from 'src/app/services/core.service';
 import { AuthService } from 'src/app/features/authentication/services/auth.service';
 import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -8,10 +8,11 @@ import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/bra
 import { MatInputModule } from '@angular/material/input';
 import { PasswordVisibilityToggleComponent } from '../../../../components/shared/password-visibility-toggle.component';
 import { LoginRequest } from '../../models/login-request';
+import { AuthHeroComponent } from '../../components/auth-hero/auth-hero.component';
 
 @Component({
     selector: 'app-login',
-    imports: [RouterModule, MaterialModule, MatInputModule, FormsModule, ReactiveFormsModule, BrandingComponent, PasswordVisibilityToggleComponent],
+    imports: [RouterModule, MaterialModule, MatInputModule, FormsModule, ReactiveFormsModule, BrandingComponent, PasswordVisibilityToggleComponent, AuthHeroComponent],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
@@ -20,15 +21,11 @@ export class AppLoginComponent implements OnInit {
    private settings = inject(CoreService);
    private router = inject(Router);
    private route = inject(ActivatedRoute);
-   private cdr = inject(ChangeDetectorRef);
 
   // UI state management
   isLoading = signal(false);
   loginError = signal<string | null>(null);
   passwordVisible = signal(false);
-
-  // Track fields being edited to hide errors during typing
-  private fieldsBeingEdited = new Set<string>();
 
   options = this.settings.getOptions();
 
@@ -42,9 +39,8 @@ export class AppLoginComponent implements OnInit {
 
   ngOnInit(): void {
      this.form.updateValueAndValidity();
-     this.cdr.detectChanges();
 
-     // Clear general error when user starts typing in any field
+     // Clear global error when user starts typing in any field
      this.form.valueChanges.subscribe(() => {
        if (this.loginError()) {
          this.loginError.set(null);
@@ -99,25 +95,18 @@ export class AppLoginComponent implements OnInit {
     this.passwordVisible.update(visible => !visible);
   }
 
+  /** Hide mat-error while the user is actively typing by clearing touched state. */
   onFieldInput(fieldName: string): void {
-    // Mark field as being edited to hide errors during typing
-    this.fieldsBeingEdited.add(fieldName);
+    this.form.get(fieldName)?.markAsUntouched();
   }
 
+  /** Trigger error display once the field loses focus. */
   onFieldBlur(fieldName: string): void {
-    // Remove field from being edited set when it loses focus
-    this.fieldsBeingEdited.delete(fieldName);
-
-    // Trigger validation on blur
     const control = this.form.get(fieldName);
     if (control) {
-      control.updateValueAndValidity();
       control.markAsTouched();
+      control.updateValueAndValidity();
     }
-  }
-
-  isFieldBeingEdited(fieldName: string): boolean {
-    return this.fieldsBeingEdited.has(fieldName);
   }
 
   private markFormGroupTouched(): void {

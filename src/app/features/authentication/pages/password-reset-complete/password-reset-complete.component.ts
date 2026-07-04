@@ -8,10 +8,11 @@ import { MaterialModule } from '../../../../material.module';
 import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/branding.component';
 import { PasswordVisibilityToggleComponent } from '../../../../components/shared/password-visibility-toggle.component';
 import { PasswordResetCompleteResponse } from '../../models/password-reset-complete-response';
+import { AuthHeroComponent } from '../../components/auth-hero/auth-hero.component';
 
 @Component({
   selector: 'app-password-reset-complete',
-  imports: [RouterModule, MaterialModule, MatInputModule, FormsModule, ReactiveFormsModule, BrandingComponent, PasswordVisibilityToggleComponent],
+  imports: [RouterModule, MaterialModule, MatInputModule, FormsModule, ReactiveFormsModule, BrandingComponent, PasswordVisibilityToggleComponent, AuthHeroComponent],
   templateUrl: './password-reset-complete.component.html',
   styleUrls: ['../login/login.component.scss']
 })
@@ -31,9 +32,6 @@ export class PasswordResetCompleteComponent implements OnInit {
   resetToken: string | null = null;
   passwordVisible = signal(false);
   confirmPasswordVisible = signal(false);
-  
-  // Track fields being edited to hide errors during typing
-  private fieldsBeingEdited = new Set<string>();
 
   ngOnInit(): void {
     this.resetToken = this.route.snapshot.queryParams['resetToken'] || null;
@@ -66,27 +64,16 @@ export class PasswordResetCompleteComponent implements OnInit {
   }
   
   onFieldInput(fieldName: string): void {
-    // Mark field as being edited to hide errors during typing
-    this.fieldsBeingEdited.add(fieldName);
+    this.form.get(fieldName)?.markAsUntouched();
   }
-  
+
   onFieldBlur(fieldName: string): void {
-    // Remove field from being edited set when it loses focus
-    this.fieldsBeingEdited.delete(fieldName);
-    
-    // Trigger validation on blur
     const control = this.form.get(fieldName);
     if (control) {
-      control.updateValueAndValidity();
       control.markAsTouched();
+      control.updateValueAndValidity();
     }
-    
-    // Also update form-level validation for password match
     this.form.updateValueAndValidity();
-  }
-  
-  isFieldBeingEdited(fieldName: string): boolean {
-    return this.fieldsBeingEdited.has(fieldName);
   }
 
   submit(): void {

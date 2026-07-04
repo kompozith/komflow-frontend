@@ -1,0 +1,72 @@
+<svg width="640" height="520" viewBox="0 0 640 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Outer ambient glow blobs -->
+  <ellipse cx="340" cy="290" rx="210" ry="200" fill="rgba(255,128,74,0.05)"/>
+  <ellipse cx="340" cy="290" rx="155" ry="148" fill="rgba(255,128,74,0.07)"/>
+
+  <!-- Dashed orbit ring -->
+  <circle cx="340" cy="290" r="168" stroke="rgba(255,255,255,0.07)" stroke-width="1" stroke-dasharray="5 9"/>
+  <circle cx="340" cy="290" r="120" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="3 7"/>
+
+  <!-- ─── Connecting spokes (center → each bubble) ───────────────────── -->
+  <!-- Top -->
+  <line x1="340" y1="246" x2="340" y2="136" stroke="rgba(255,255,255,0.09)" stroke-width="1" stroke-dasharray="3 7"/>
+  <!-- Top-right -->
+  <line x1="384" y1="266" x2="478" y2="196" stroke="rgba(255,255,255,0.09)" stroke-width="1" stroke-dasharray="3 7"/>
+  <!-- Bottom-right -->
+  <line x1="376" y1="334" x2="440" y2="404" stroke="rgba(255,255,255,0.09)" stroke-width="1" stroke-dasharray="3 7"/>
+  <!-- Bottom-left -->
+  <line x1="304" y1="334" x2="240" y2="404" stroke="rgba(255,255,255,0.09)" stroke-width="1" stroke-dasharray="3 7"/>
+  <!-- Top-left -->
+  <line x1="296" y1="266" x2="202" y2="196" stroke="rgba(255,255,255,0.09)" stroke-width="1" stroke-dasharray="3 7"/>
+
+  <!-- ─── Satellite app bubbles ──────────────────────────────────────── -->
+  <!-- Top (WhatsApp — green accent) -->
+  <circle cx="340" cy="118" r="34" fill="rgba(37,211,102,0.12)" stroke="rgba(37,211,102,0.3)" stroke-width="1.5"/>
+  <path d="M340 104 C331.7 104 325 110.7 325 119 C325 121.9 325.8 124.6 327.3 126.9 L325 135 L333.4 132.8 C335.6 134.1 338.2 134.9 341 134.9 C349.3 134.9 356 128.2 356 119.9 C356 111.6 349.3 104 341 104 Z M349 126.5 C348.3 128.4 345.7 129.9 343.7 130.2 C341.9 130.5 339.6 130.6 334.6 128.5 C328.7 125.9 324.8 119.9 324.5 119.5 C324.2 119.1 322 116.2 322 113.2 C322 110.2 323.5 108.8 324.1 108.1 C324.7 107.4 325.4 107.2 325.8 107.2 L327.1 107.2 C327.6 107.2 328.2 107 328.8 108.5 C329.4 110 330.9 113 331.1 113.4 C331.3 113.8 331.4 114.3 331.1 114.7 C330.8 115.1 330.7 115.4 330.3 115.9 C329.9 116.3 329.5 116.9 329.2 117.2 C328.9 117.5 328.5 117.9 328.9 118.6 C329.3 119.3 330.8 121.7 333 123.8 C335.8 126.3 338.1 127 339 127.4 C339.9 127.8 340.4 127.7 340.9 127.1 C341.4 126.5 342.8 124.8 343.4 124.1 C344 123.4 344.5 123.5 345.2 123.8 C345.9 124.1 348.8 125.5 349.5 125.9 C350.2 126.3 350.7 126.5 350.8 126.8 C351 127.2 351 128.5 350.3 130.5 Z" fill="rgba(37,211,102,0.85)"/>
+
+  <!-- Top-right (Gmail — red accent) -->
+  <circle cx="500" cy="186" r="34" fill="rgba(234,67,53,0.1)" stroke="rgba(234,67,53,0.28)" stroke-width="1.5"/>
+  <rect x="484" y="175" width="32" height="22" rx="2" fill="none" stroke="rgba(234,67,53,0.7)" stroke-width="1.5"/>
+  <polyline points="484,177 500,190 516,177" fill="none" stroke="rgba(234,67,53,0.7)" stroke-width="1.5"/>
+
+  <!-- Bottom-right (Telegram — blue accent) -->
+  <circle cx="460" cy="424" r="34" fill="rgba(40,160,240,0.1)" stroke="rgba(40,160,240,0.28)" stroke-width="1.5"/>
+  <path d="M476 411 L444 424 L456 427 L459 437 L464 430 L472 436 L476 411 Z M458 426 L453 423 L471 416 Z" fill="rgba(40,160,240,0.85)" stroke="none"/>
+
+  <!-- Bottom-left (Calendar — orange accent) -->
+  <circle cx="220" cy="424" r="34" fill="rgba(255,128,74,0.12)" stroke="rgba(255,128,74,0.32)" stroke-width="1.5"/>
+  <rect x="206" y="412" width="28" height="24" rx="2" fill="none" stroke="rgba(255,128,74,0.75)" stroke-width="1.5"/>
+  <line x1="206" y1="418" x2="234" y2="418" stroke="rgba(255,128,74,0.75)" stroke-width="1.5"/>
+  <line x1="213" y1="408" x2="213" y2="416" stroke="rgba(255,128,74,0.75)" stroke-width="1.5"/>
+  <line x1="227" y1="408" x2="227" y2="416" stroke="rgba(255,128,74,0.75)" stroke-width="1.5"/>
+  <text x="216" y="430" fill="rgba(255,128,74,0.8)" font-size="9" font-family="sans-serif">24</text>
+
+  <!-- Top-left (LinkedIn — blue) -->
+  <circle cx="180" cy="186" r="34" fill="rgba(10,102,194,0.1)" stroke="rgba(10,102,194,0.28)" stroke-width="1.5"/>
+  <rect x="169" y="173" width="22" height="22" rx="3" fill="none" stroke="rgba(10,102,194,0.7)" stroke-width="1.5"/>
+  <text x="174" y="189" fill="rgba(10,102,194,0.85)" font-size="13" font-weight="700" font-family="sans-serif">in</text>
+
+  <!-- ─── Central hub ─────────────────────────────────────────────────── -->
+  <!-- Glow rings -->
+  <circle cx="340" cy="290" r="62" fill="rgba(255,128,74,0.1)" stroke="rgba(255,128,74,0.2)" stroke-width="1"/>
+  <circle cx="340" cy="290" r="48" fill="rgba(255,128,74,0.18)" stroke="rgba(255,128,74,0.4)" stroke-width="1.5"/>
+
+  <!-- Message bubble icon (center) -->
+  <path d="M322 278 Q322 270 330 270 L350 270 Q358 270 358 278 L358 294 Q358 302 350 302 L334 302 L326 310 L326 302 Q322 302 322 294 Z" fill="rgba(255,128,74,0.95)" stroke="none"/>
+  <!-- Chat dots -->
+  <circle cx="333" cy="286" r="2" fill="white" opacity="0.9"/>
+  <circle cx="340" cy="286" r="2" fill="white" opacity="0.9"/>
+  <circle cx="347" cy="286" r="2" fill="white" opacity="0.9"/>
+
+  <!-- ─── Small floating dots (atmosphere) ──────────────────────────── -->
+  <circle cx="280" cy="145" r="3" fill="rgba(255,255,255,0.15)"/>
+  <circle cx="410" cy="155" r="2.5" fill="rgba(255,255,255,0.12)"/>
+  <circle cx="490" cy="300" r="4" fill="rgba(255,128,74,0.2)"/>
+  <circle cx="170" cy="320" r="3" fill="rgba(255,128,74,0.18)"/>
+  <circle cx="370" cy="450" r="3.5" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="295" cy="452" r="2" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="460" cy="255" r="2.5" fill="rgba(37,211,102,0.2)"/>
+  <circle cx="215" cy="268" r="2" fill="rgba(40,160,240,0.2)"/>
+
+</svg>

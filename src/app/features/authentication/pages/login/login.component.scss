@@ -1,8 +1,7 @@
-// ── Auth forms: consistent email/phone field spacing ─────────────────────────
-// mat-form-field uses subscriptSizing="dynamic" so it expands only on error.
-// The phone-input-wrapper global style has margin-bottom: 16px which we zero
-// here so both fields have zero natural bottom spacing — spacing comes from
-// the wrapping form-section or explicit margin on the containing block.
-.phone-input-wrapper {
-  margin-bottom: 0;
+// ── Login error banner ────────────────────────────────────────────────────────
+.login-error-message {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--mat-sys-error-fixed-dim);
+  margin-bottom: 16px;
 }

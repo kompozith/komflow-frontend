@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CoreService } from 'src/app/services/core.service';
 import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -7,10 +7,11 @@ import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/bra
 import { AuthService } from 'src/app/features/authentication/services/auth.service';
 import { NgxIntlTelInputModule, CountryISO, SearchCountryField } from 'ngx-intl-tel-input';
 import { MatInputModule } from '@angular/material/input';
+import { AuthHeroComponent } from '../../components/auth-hero/auth-hero.component';
 
 @Component({
   selector: 'app-password-reset-initiate',
-  imports: [RouterModule, MaterialModule, MatInputModule, FormsModule, ReactiveFormsModule, NgxIntlTelInputModule, BrandingComponent],
+  imports: [RouterModule, MaterialModule, MatInputModule, FormsModule, ReactiveFormsModule, NgxIntlTelInputModule, BrandingComponent, AuthHeroComponent],
   templateUrl: './password-reset-initiate.component.html',
   styleUrls: ['../login/login.component.scss']
 })
@@ -18,7 +19,6 @@ export class PasswordResetInitiateComponent implements OnInit {
   private authService = inject(AuthService);
   private settings = inject(CoreService);
   private router = inject(Router);
-  private cdr = inject(ChangeDetectorRef);
 
   options = this.settings.getOptions();
   CountryISO = CountryISO;
@@ -34,15 +34,11 @@ export class PasswordResetInitiateComponent implements OnInit {
 
   isLoading = signal(false);
   error = signal<string | null>(null);
-  
-  // Track fields being edited to hide errors during typing
-  private fieldsBeingEdited = new Set<string>();
 
   ngOnInit(): void {
     // Ensure validators match active tab on init
     this.updateValidators(this.activeMode());
     this.form.updateValueAndValidity();
-    this.cdr.detectChanges();
     
     // Clear general error when user starts typing in any field
     this.form.valueChanges.subscribe(() => {
@@ -80,7 +76,6 @@ export class PasswordResetInitiateComponent implements OnInit {
 
     try {
       this.form.updateValueAndValidity();
-      this.cdr.detectChanges();
     } catch { /* ignore */ }
   }
 
@@ -94,24 +89,15 @@ export class PasswordResetInitiateComponent implements OnInit {
   }
 
   onFieldInput(fieldName: string): void {
-    // Mark field as being edited to hide errors during typing
-    this.fieldsBeingEdited.add(fieldName);
+    this.form.get(fieldName)?.markAsUntouched();
   }
-  
+
   onFieldBlur(fieldName: string): void {
-    // Remove field from being edited set when it loses focus
-    this.fieldsBeingEdited.delete(fieldName);
-    
-    // Trigger validation on blur
     const control = this.form.get(fieldName);
     if (control) {
-      control.updateValueAndValidity();
       control.markAsTouched();
+      control.updateValueAndValidity();
     }
-  }
-  
-  isFieldBeingEdited(fieldName: string): boolean {
-    return this.fieldsBeingEdited.has(fieldName);
   }
 
   submit(): void {

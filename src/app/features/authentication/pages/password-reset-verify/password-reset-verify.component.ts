@@ -5,10 +5,11 @@ import { AuthService } from 'src/app/features/authentication/services/auth.servi
 import { MaterialModule } from '../../../../material.module';
 import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/branding.component';
 import { PasswordResetVerifyResponse } from '../../models/password-reset-verify-response';
+import { AuthHeroComponent } from '../../components/auth-hero/auth-hero.component';
 
 @Component({
   selector: 'app-password-reset-verify',
-  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, BrandingComponent],
+  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, BrandingComponent, AuthHeroComponent],
   templateUrl: './password-reset-verify.component.html',
   styleUrls: ['../login/login.component.scss']
 })
@@ -31,9 +32,6 @@ export class PasswordResetVerifyComponent implements OnInit {
   isLoading = signal(false);
   error = signal<string | null>(null);
   contact: string | null = null;
-  
-  // Track fields being edited to hide errors during typing
-  private fieldsBeingEdited = new Set<string>();
 
   ngOnInit(): void {
     this.contact = this.route.snapshot.queryParams['contact'] || null;
@@ -54,9 +52,9 @@ export class PasswordResetVerifyComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const value = input.value;
     
-    // Mark field as being edited
+    // Mark field as untouched to hide error while typing
     const fieldName = `digit${currentIndex}`;
-    this.fieldsBeingEdited.add(fieldName);
+    this.form.get(fieldName)?.markAsUntouched();
 
     // Only allow numbers
     if (value && !/^[0-9]$/.test(value)) {
@@ -87,19 +85,12 @@ export class PasswordResetVerifyComponent implements OnInit {
   
   onDigitBlur(currentIndex: number): void {
     const fieldName = `digit${currentIndex}`;
-    // Remove field from being edited set when it loses focus
-    this.fieldsBeingEdited.delete(fieldName);
-    
     // Trigger validation on blur
     const control = this.form.get(fieldName);
     if (control) {
       control.updateValueAndValidity();
       control.markAsTouched();
     }
-  }
-  
-  isFieldBeingEdited(fieldName: string): boolean {
-    return this.fieldsBeingEdited.has(fieldName);
   }
 
   onDigitPaste(event: ClipboardEvent, startIndex: number): void {
