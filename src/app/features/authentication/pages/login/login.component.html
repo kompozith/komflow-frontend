@@ -1,132 +1,75 @@
-<div class="blank-layout-container">
-  <div class="row w-100 h-100 m-0">
+<app-auth-layout title="Welcome back" subtitle="At a step to your growth — Let's get started">
 
-    <!-- ── Form panel (left) ──────────────────────────────────────────── -->
-    <div class="col-lg-5 col-xl-5 p-0">
-      <div class="auth-form-panel">
+  <form [formGroup]="form" (ngSubmit)="submit()" class="tw:flex tw:flex-col tw:gap-6">
 
-        <!-- Logo -->
-        <div class="auth-form-logo">
-          <app-branding />
-        </div>
+    <ds-text-field
+      [control]="form.controls.email"
+      label="Email"
+      type="email"
+      placeholder="Enter your email"
+      autocomplete="email"
+      [errorMessages]="{ required: 'Email is required.', email: 'Please enter a valid email.' }"
+    />
 
-        <!-- Form body -->
-        <div class="auth-form-body">
-          <h4 class="auth-form-title">Welcome back</h4>
-          <span class="auth-form-subtitle">At a step to your growth — Let's get started</span>
+    <ds-text-field
+      [control]="form.controls.password"
+      label="Password"
+      type="password"
+      placeholder="Enter your password"
+      autocomplete="current-password"
+      [errorMessages]="{ required: 'Password is required.' }"
+    />
 
-          <form [formGroup]="form" (ngSubmit)="submit()">
-
-            <!-- Username / Email -->
-            <div class="form-section">
-              <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Username or email</mat-label>
-              <mat-form-field appearance="outline" class="w-100" color="primary" subscriptSizing="fixed">
-                <input
-                  matInput
-                  formControlName="email"
-                  placeholder="Enter username or email"
-                  autocomplete="username"
-                  (input)="onFieldInput('email')"
-                  (blur)="onFieldBlur('email')"
-                />
-                <mat-error>Username or email is required.</mat-error>
-              </mat-form-field>
-            </div>
-
-            <!-- Password -->
-            <div class="form-section">
-              <mat-label class="f-s-14 f-w-600 m-b-8 d-block">Password</mat-label>
-              <mat-form-field appearance="outline" class="w-100" color="primary" subscriptSizing="fixed">
-                <input
-                  matInput
-                  [type]="passwordVisible() ? 'text' : 'password'"
-                  formControlName="password"
-                  placeholder="Enter your password"
-                  autocomplete="current-password"
-                  (input)="onFieldInput('password')"
-                  (blur)="onFieldBlur('password')"
-                />
-                <app-password-visibility-toggle
-                  [isVisible]="passwordVisible()"
-                  (toggleVisibility)="togglePasswordVisibility()"
-                />
-                <mat-error>Password is required.</mat-error>
-              </mat-form-field>
-            </div>
-
-            <!-- Remember me + Forgot password -->
-            <div class="form-section d-flex align-items-center justify-content-between">
-              <mat-checkbox color="primary" formControlName="rememberMe">Remember me</mat-checkbox>
-              <a
-                [routerLink]="['/authentication/password-reset/initiate']"
-                class="text-primary f-w-600 text-decoration-none f-s-14"
-              >Forgot password?</a>
-            </div>
-
-            <!-- Global error -->
-            @if (loginError()) {
-              <div class="login-error-message m-b-16">
-                <div class="text-error f-s-14">{{ loginError() }}</div>
-              </div>
-            }
-
-            <!-- Submit -->
-            <button
-              mat-flat-button
-              color="primary"
-              class="w-100"
-              [disabled]="!form.valid || isLoading()"
-              type="submit"
-            >
-              @if (isLoading()) {
-                <span>Signing in...</span>
-              } @else {
-                <span>Sign In</span>
-              }
-            </button>
-
-          </form>
-
-          <!-- OAuth divider -->
-          <div class="or-border m-t-24"><span class="or-border__text">Or sign in with</span></div>
-
-          <!-- Google -->
-          <div class="m-t-16">
-            <button mat-stroked-button class="w-100" type="button">
-              <img
-                src="/assets/images/svgs/google-icon.svg"
-                alt=""
-                width="16"
-                class="m-r-8"
-              />
-              <span>Google</span>
-            </button>
-          </div>
-
-          <!-- Footer links -->
-          <div class="d-flex align-items-center justify-content-between m-t-24">
-            <span class="f-s-14 f-w-500">
-              New on Komflow?
-              <a
-                [routerLink]="['/authentication/side-register']"
-                class="text-decoration-none text-primary f-w-600"
-              >Sign up</a>
-            </span>
-            <a
-              [routerLink]="['/help']"
-              class="text-decoration-none f-s-14 f-w-600"
-              style="color: var(--mat-sys-on-surface-variant)"
-            >Need help?</a>
-          </div>
-
-        </div>
-      </div>
+    <!-- Remember me + Forgot password -->
+    <div class="tw:flex tw:items-center tw:justify-between">
+      <label class="tw:flex tw:items-center tw:gap-2 tw:text-sm tw:text-on-surface tw:cursor-pointer tw:select-none">
+        <input
+          type="checkbox"
+          formControlName="rememberMe"
+          class="tw:h-4 tw:w-4 tw:rounded tw:border-outline-variant tw:text-primary tw:focus:ring-2 tw:focus:ring-primary/30 tw:accent-primary"
+        />
+        Remember me
+      </label>
+      <a
+        [routerLink]="['/authentication/password-reset/initiate']"
+        class="tw:text-sm tw:font-semibold tw:text-primary tw:no-underline tw:hover:underline"
+      >Forgot password?</a>
     </div>
 
-    <!-- ── Hero panel (right, desktop only) ──────────────────────────── -->
-    <div class="col-lg-7 col-xl-7 p-0 d-none d-lg-block">
-      <app-auth-hero />
-    </div>
+    @if (loginError()) {
+      <ds-alert variant="error">{{ loginError() }}</ds-alert>
+    }
 
+    <ds-button type="submit" [disabled]="!form.valid" [loading]="isLoading()" loadingText="Signing in...">
+      Sign In
+    </ds-button>
+
+  </form>
+
+  <!-- OAuth divider -->
+  <div class="or-border tw:mt-6"><span class="or-border__text">Or sign in with</span></div>
+
+  <!-- Google -->
+  <div class="tw:mt-4">
+    <ds-button variant="outline" type="button">
+      <img src="/assets/images/svgs/google-icon.svg" alt="" width="16" />
+      <span>Google</span>
+    </ds-button>
   </div>
-</div>
+
+  <!-- Footer links -->
+  <div class="tw:flex tw:items-center tw:justify-between tw:mt-6">
+    <span class="tw:text-sm tw:font-medium tw:text-on-surface">
+      New on Komflow?
+      <a
+        [routerLink]="['/authentication/side-register']"
+        class="tw:no-underline tw:text-primary tw:font-semibold"
+      >Sign up</a>
+    </span>
+    <a
+      [routerLink]="['/help']"
+      class="tw:no-underline tw:text-sm tw:font-semibold tw:text-on-surface-variant"
+    >Need help?</a>
+  </div>
+
+</app-auth-layout>

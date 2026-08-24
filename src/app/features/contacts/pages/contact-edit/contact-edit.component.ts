@@ -15,6 +15,7 @@ import { GeoCity, GeoCountry, GeoService } from '../../../core/services/geo.serv
 import { CountryISO, NgxIntlTelInputModule, SearchCountryField } from 'ngx-intl-tel-input';
 import { PhoneNumberService } from '../../../personnel/services/phone-number.service';
 import { PhoneNumber } from '../../../personnel/models/person';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-contact-edit',
@@ -39,6 +40,7 @@ export class ContactEditComponent {
   private snackBar = inject(MatSnackBar);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private workspaceService = inject(WorkspaceService);
 
   contactForm: FormGroup;
   isLoading = false;
@@ -153,7 +155,7 @@ export class ContactEditComponent {
           this.deletedPhoneIds = [];
           this.pendingPhones = [];
           this.snackBar.open('Contact mis à jour avec succès', 'Fermer', { duration: 3000 });
-          this.router.navigate(['/contacts/details', contactId]);
+          this.router.navigate(this.workspaceService.workspacePath('contacts', 'details', contactId));
         },
         error: (error) => {
           console.error('Error updating contact:', error);
@@ -169,10 +171,10 @@ export class ContactEditComponent {
   onCancel(): void {
     const contactId = this.contact?.id;
     if (contactId) {
-      this.router.navigate(['/contacts/details', contactId]);
+      this.router.navigate(this.workspaceService.workspacePath('contacts', 'details', contactId));
       return;
     }
-    this.router.navigate(['/contacts']);
+    this.router.navigate(this.workspaceService.workspacePath('contacts'));
   }
 
   private markFormGroupTouched(): void {

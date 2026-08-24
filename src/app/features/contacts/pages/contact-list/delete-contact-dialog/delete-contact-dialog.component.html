@@ -1,0 +1,50 @@
+<div class="tw:fixed tw:inset-0 tw:z-50 tw:flex tw:items-center tw:justify-center tw:p-4">
+  <!-- Backdrop -->
+  <button
+    type="button"
+    (click)="onCancel()"
+    aria-label="Close dialog"
+    class="tw:absolute tw:inset-0 tw:h-full tw:w-full tw:cursor-default tw:border-0 tw:bg-on-surface/40"
+  ></button>
+
+  <!-- Dialog -->
+  <div class="tw:relative tw:w-full tw:max-w-md tw:rounded-2xl tw:bg-surface tw:p-6 tw:shadow-xl" role="alertdialog" aria-modal="true">
+    <div class="tw:flex tw:items-start tw:gap-3">
+      <div class="tw:flex tw:h-10 tw:w-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-error-container tw:text-error">
+        <i-tabler name="trash" class="tw:h-5 tw:w-5"></i-tabler>
+      </div>
+      <div class="tw:flex tw:flex-col tw:gap-1">
+        <h2 class="tw:m-0 tw:text-lg tw:font-semibold tw:text-on-surface">Delete Contact</h2>
+        <p class="tw:m-0 tw:text-sm tw:text-on-surface">
+          Are you sure you want to delete <strong>{{ contact().person.firstName }} {{ contact().person.lastName }}</strong>?
+        </p>
+        <p class="tw:m-0 tw:text-sm tw:text-on-surface-variant">This action cannot be undone.</p>
+      </div>
+    </div>
+
+    <div class="tw:mt-6 tw:flex tw:gap-3">
+      <button
+        type="button"
+        (click)="onCancel()"
+        [disabled]="isDeleting()"
+        class="ds-btn ds-btn--outline tw:flex-1"
+      >Cancel</button>
+      <button
+        type="button"
+        (click)="onConfirm()"
+        [disabled]="isDeleting()"
+        class="ds-btn tw:flex-1 tw:bg-error tw:text-on-primary tw:hover:opacity-90"
+      >
+        @if (isDeleting()) {
+          <svg class="tw:h-4 tw:w-4 tw:animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle class="tw:opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="tw:opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+          </svg>
+          <span>Deleting...</span>
+        } @else {
+          <span>Delete</span>
+        }
+      </button>
+    </div>
+  </div>
+</div>

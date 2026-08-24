@@ -11,6 +11,7 @@ import { ManagePoliciesDialogComponent } from './manage-policies-dialog/manage-p
 import { PageEvent } from '@angular/material/paginator';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { SkeletonTableComponent } from '../../../../shared/components/skeleton-table/skeleton-table.component';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-role-details',
@@ -28,6 +29,7 @@ export class RoleDetailsComponent implements OnInit {
   private roleService = inject(RoleService);
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
+  private workspaceService = inject(WorkspaceService);
 
   roleId = '';
   role: RoleDetail | null = null;
@@ -58,7 +60,7 @@ export class RoleDetailsComponent implements OnInit {
 
     if (!this.roleId) {
       this.snackBar.open('Role ID not found', 'Close', { duration: 3000 });
-      this.router.navigate(['/roles']);
+      this.router.navigate(this.workspaceService.workspacePath('roles'));
       return;
     }
 
@@ -79,13 +81,13 @@ export class RoleDetailsComponent implements OnInit {
         console.error('Error loading role details:', error);
         this.snackBar.open('Error loading role details', 'Close', { duration: 3000 });
         this.isLoading = false;
-        this.router.navigate(['/roles']);
+        this.router.navigate(this.workspaceService.workspacePath('roles'));
       },
     });
   }
 
   goBack(): void {
-    this.router.navigate(['/roles']);
+    this.router.navigate(this.workspaceService.workspacePath('roles'));
   }
 
   getRoleTypeBadgeClass(isSystem: boolean): string {

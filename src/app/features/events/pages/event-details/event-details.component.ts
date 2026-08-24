@@ -13,6 +13,7 @@ import {
   EventWorkflowRecipientType,
 } from 'src/app/features/core/services/event.service';
 import { DeleteEventDialogComponent } from '../../components/delete-event-dialog/delete-event-dialog.component';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-event-details',
@@ -27,6 +28,7 @@ export class EventDetailsComponent implements OnInit {
   private eventService = inject(EventService);
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
+  private workspaceService = inject(WorkspaceService);
 
   event: AppEvent | null = null;
   loading = true;
@@ -40,7 +42,7 @@ export class EventDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
     if (!this.eventId) {
-      this.router.navigate(['/events']);
+      this.router.navigate(this.workspaceService.workspacePath('events'));
       return;
     }
     this.loadEvent();
@@ -56,7 +58,7 @@ export class EventDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.event === 'Delete') {
-        this.router.navigate(['/events']);
+        this.router.navigate(this.workspaceService.workspacePath('events'));
       }
     });
   }
@@ -152,7 +154,7 @@ export class EventDetailsComponent implements OnInit {
       this.snackBar.open('Evenement invalide pour la modification', 'Fermer', { duration: 2500 });
       return;
     }
-    this.router.navigate(['/events/edit', this.event.id]).then((navigated) => {
+    this.router.navigate(this.workspaceService.workspacePath('events', 'edit', this.event.id)).then((navigated) => {
       if (!navigated) {
         this.snackBar.open('Navigation vers la modification impossible', 'Fermer', { duration: 2500 });
       }
@@ -169,7 +171,7 @@ export class EventDetailsComponent implements OnInit {
       error: () => {
         this.loading = false;
         this.snackBar.open('Evenement introuvable', 'Fermer', { duration: 3000 });
-        this.router.navigate(['/events']);
+        this.router.navigate(this.workspaceService.workspacePath('events'));
       },
     });
   }

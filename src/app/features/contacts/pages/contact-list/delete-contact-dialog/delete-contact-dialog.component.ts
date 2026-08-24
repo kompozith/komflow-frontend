@@ -1,62 +1,53 @@
-import { Component, inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { MaterialModule } from 'src/app/material.module';
+import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
+import { TablerIconsModule } from 'angular-tabler-icons';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ContactService } from '../../../services/contact.service';
 import { Contact } from '../../../models/contact';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
+/**
+ * Lightweight Tailwind confirmation modal for deleting a contact.
+ * Page-local (not yet a shared/reusable confirm-dialog component) — lives as
+ * a sibling folder to contact-list, same convention as the previous
+ * MatDialog-based version it replaces.
+ */
 @Component({
   selector: 'app-delete-contact-dialog',
-  template: `
-    <h2 mat-dialog-title>Delete Contact</h2>
-    <mat-dialog-content>
-      <p>Are you sure you want to delete the contact <strong>{{ data.contact.person.firstName }} {{ data.contact.person.lastName }}</strong>?</p>
-      <p class="text-muted">This action cannot be undone.</p>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="onCancel()">Cancel</button>
-      <button mat-flat-button color="warn" (click)="onConfirm()" [disabled]="isDeleting">
-        @if (isDeleting) {
-          <mat-spinner diameter="20"></mat-spinner>
-        }
-        @if (!isDeleting) {
-          <span>Delete</span>
-        }
-      </button>
-    </mat-dialog-actions>
-    `,
-  imports: [MaterialModule, MatDialogModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [TablerIconsModule],
+  templateUrl: './delete-contact-dialog.component.html',
 })
 export class DeleteContactDialogComponent {
-  dialogRef = inject<MatDialogRef<DeleteContactDialogComponent>>(MatDialogRef);
-  data = inject<{
-    contact: Contact;
-}>(MAT_DIALOG_DATA);
   private contactService = inject(ContactService);
   private snackBar = inject(MatSnackBar);
 
-  isDeleting = false;
+  contact = input.required<Contact>();
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  /** Emitted when the user cancels or dismisses the dialog without deleting. */
+  cancelled = output<void>();
+  /** Emitted after the contact has been successfully deleted. */
+  deleted = output<void>();
 
-  constructor() {}
+  isDeleting = signal(false);
 
   onCancel(): void {
-    this.dialogRef.close();
+    if (this.isDeleting()) {
+      return;
+    }
+    this.cancelled.emit();
   }
 
   onConfirm(): void {
-    this.isDeleting = true;
-    this.contactService.deleteContact(this.data.contact.id.toString()).subscribe({
+    this.isDeleting.set(true);
+    this.contactService.deleteContact(this.contact().id.toString()).subscribe({
       next: () => {
         this.snackBar.open('Contact deleted successfully', 'Close', { duration: 3000 });
-        this.dialogRef.close({ event: 'Delete' });
+        this.isDeleting.set(false);
+        this.deleted.emit();
       },
       error: (error) => {
         console.error('Error deleting contact:', error);
         this.snackBar.open('Error deleting contact', 'Close', { duration: 3000 });
-        this.isDeleting = false;
+        this.isDeleting.set(false);
       }
     });
   }

@@ -98,7 +98,7 @@ export class MembersPageComponent implements OnInit {
   }
 
   revoke(member: MemberDto): void {
-    if (!confirm(`Révoquer l'accès de ${member.username} ?`)) return;
+    if (!confirm(`Révoquer l'accès de ${this.displayName(member)} ?`)) return;
     this.workspaceService.revokeMember(this.orgId, member.id).subscribe({
       next: () => {
         this.members.update(ms => ms.map(m => m.id === member.id ? { ...m, status: 'SUSPENDED' } : m));
@@ -109,6 +109,6 @@ export class MembersPageComponent implements OnInit {
   }
 
   displayName(m: MemberDto): string {
-    return [m.firstName, m.lastName].filter(Boolean).join(' ') || m.username;
+    return [m.firstName, m.lastName].filter(Boolean).join(' ') || m.email;
   }
 }

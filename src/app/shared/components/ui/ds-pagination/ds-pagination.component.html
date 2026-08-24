@@ -1,0 +1,94 @@
+<div class="tw:flex tw:flex-col tw:gap-3 tw:border-t tw:border-outline-variant tw:pt-4 tw:sm:flex-row tw:sm:items-center tw:sm:justify-between">
+
+  <!-- Result count + page size dropdown -->
+  <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:sm:justify-start">
+    <span class="ds-hint tw:whitespace-nowrap">
+      @if (totalElements() > 0) {
+        {{ startIndex() }}–{{ endIndex() }} of {{ totalElements() }}
+      } @else {
+        0 results
+      }
+    </span>
+
+    <select
+      [value]="pageSize()"
+      (change)="onPageSizeChange($any($event.target).value)"
+      class="tw:h-9 tw:rounded-lg tw:border tw:border-outline-variant tw:bg-transparent tw:px-2 tw:text-sm tw:text-on-surface tw:focus:outline-none tw:focus:ring-2 tw:focus:ring-primary/30"
+    >
+      @for (size of pageSizeOptions(); track size) {
+        <option [value]="size">{{ size }} / page</option>
+      }
+    </select>
+  </div>
+
+  <!-- Page controls -->
+  <div class="tw:flex tw:items-center tw:justify-center tw:gap-1">
+
+    <button
+      type="button"
+      (click)="goToFirst()"
+      [disabled]="currentPage() === 0"
+      aria-label="First page"
+      class="tw:hidden tw:h-9 tw:w-9 tw:items-center tw:justify-center tw:rounded-lg tw:border-0 tw:bg-transparent tw:text-on-surface-variant tw:transition-colors tw:hover:bg-surface-variant tw:disabled:cursor-not-allowed tw:disabled:opacity-40 tw:sm:flex"
+    >
+      <i-tabler name="chevrons-left" class="tw:h-4 tw:w-4"></i-tabler>
+    </button>
+
+    <button
+      type="button"
+      (click)="goToPrevious()"
+      [disabled]="currentPage() === 0"
+      aria-label="Previous page"
+      class="tw:flex tw:h-9 tw:w-9 tw:items-center tw:justify-center tw:rounded-lg tw:border-0 tw:bg-transparent tw:text-on-surface-variant tw:transition-colors tw:hover:bg-surface-variant tw:disabled:cursor-not-allowed tw:disabled:opacity-40"
+    >
+      <i-tabler name="chevron-left" class="tw:h-4 tw:w-4"></i-tabler>
+    </button>
+
+    <!-- Page numbers: hidden on mobile, shown from sm: up -->
+    <div class="tw:hidden tw:items-center tw:gap-1 tw:sm:flex">
+      @for (item of pages(); track $index) {
+        @if (item === 'ellipsis') {
+          <span class="tw:flex tw:h-9 tw:w-9 tw:items-center tw:justify-center tw:text-sm tw:text-on-surface-variant">…</span>
+        } @else {
+          <button
+            type="button"
+            (click)="goToPage(item)"
+            [attr.aria-current]="item === currentPage() + 1 ? 'page' : null"
+            class="tw:flex tw:h-9 tw:w-9 tw:items-center tw:justify-center tw:rounded-lg tw:border-0 tw:text-sm tw:font-semibold tw:transition-colors"
+            [class.tw:bg-primary]="item === currentPage() + 1"
+            [class.tw:text-on-primary]="item === currentPage() + 1"
+            [class.tw:text-on-surface-variant]="item !== currentPage() + 1"
+            [class.tw:hover:bg-surface-variant]="item !== currentPage() + 1"
+          >{{ item }}</button>
+        }
+      }
+    </div>
+
+    <!-- Compact "Page X of Y" label: shown only on mobile -->
+    <span class="tw:px-2 tw:text-sm tw:text-on-surface-variant tw:sm:hidden">
+      Page {{ currentPage() + 1 }} / {{ totalPages() }}
+    </span>
+
+    <button
+      type="button"
+      (click)="goToNext()"
+      [disabled]="currentPage() >= totalPages() - 1"
+      aria-label="Next page"
+      class="tw:flex tw:h-9 tw:w-9 tw:items-center tw:justify-center tw:rounded-lg tw:border-0 tw:bg-transparent tw:text-on-surface-variant tw:transition-colors tw:hover:bg-surface-variant tw:disabled:cursor-not-allowed tw:disabled:opacity-40"
+    >
+      <i-tabler name="chevron-right" class="tw:h-4 tw:w-4"></i-tabler>
+    </button>
+
+    <button
+      type="button"
+      (click)="goToLast()"
+      [disabled]="currentPage() >= totalPages() - 1"
+      aria-label="Last page"
+      class="tw:hidden tw:h-9 tw:w-9 tw:items-center tw:justify-center tw:rounded-lg tw:border-0 tw:bg-transparent tw:text-on-surface-variant tw:transition-colors tw:hover:bg-surface-variant tw:disabled:cursor-not-allowed tw:disabled:opacity-40 tw:sm:flex"
+    >
+      <i-tabler name="chevrons-right" class="tw:h-4 tw:w-4"></i-tabler>
+    </button>
+
+  </div>
+
+</div>

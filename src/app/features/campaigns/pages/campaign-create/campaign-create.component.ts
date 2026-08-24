@@ -11,6 +11,7 @@ import { Tag, TagPage } from 'src/app/features/tags/models/tag';
 import { Contact, ContactPage } from 'src/app/features/contacts/models/contact';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 import { RouterModule } from '@angular/router';
 
@@ -33,6 +34,7 @@ export class CampaignCreateComponent implements OnInit {
   private messageService = inject(MessageService);
   private tagService = inject(TagService);
   private contactService = inject(ContactService);
+  private workspaceService = inject(WorkspaceService);
 
   campaignForm: FormGroup;
   isSubmitting = false;
@@ -136,7 +138,7 @@ export class CampaignCreateComponent implements OnInit {
     this.campaignService.createCampaign(campaignData).subscribe({
       next: (createdCampaign) => {
         this.snackBar.open('Campaign created successfully', 'Close', { duration: 3000 });
-        this.router.navigate(['/campaigns']);
+        this.router.navigate(this.workspaceService.workspacePath('campaigns'));
       },
       error: (error) => {
         console.error('Error creating campaign:', error);

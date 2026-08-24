@@ -1,0 +1,37 @@
+<div class="tw:flex tw:flex-col tw:gap-2">
+  @if (label()) {
+    <label [for]="inputId()" class="ds-label">{{ label() }}</label>
+  }
+
+  <div class="tw:relative">
+    <input
+      [id]="inputId()"
+      [type]="resolvedType()"
+      [formControl]="control()"
+      [placeholder]="placeholder()"
+      [autocomplete]="autocomplete()"
+      (input)="onInput()"
+      (blur)="onBlur()"
+      class="ds-input"
+      [class.ds-input--error]="showError()"
+      [class.tw:pr-12]="type() === 'password'"
+    />
+
+    @if (type() === 'password') {
+      <button
+        type="button"
+        (click)="togglePasswordVisibility()"
+        [attr.aria-label]="passwordVisible() ? 'Hide password' : 'Show password'"
+        class="tw:absolute tw:right-2 tw:top-1/2 tw:-translate-y-1/2 tw:flex tw:h-9 tw:w-9 tw:items-center tw:justify-center tw:rounded-full tw:border-0 tw:bg-transparent tw:text-on-surface-variant/70 tw:outline-none tw:transition-colors tw:hover:bg-surface-variant"
+      >
+        <i-tabler [name]="passwordVisible() ? 'eye-off' : 'eye'" class="tw:h-5 tw:w-5"></i-tabler>
+      </button>
+    }
+  </div>
+
+  @if (showError() && errorText()) {
+    <span class="ds-error-text">{{ errorText() }}</span>
+  } @else if (hint()) {
+    <span class="ds-hint">{{ hint() }}</span>
+  }
+</div>

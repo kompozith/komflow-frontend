@@ -20,6 +20,7 @@ import { DeleteRoleDialogComponent } from './delete-role-dialog/delete-role-dial
 import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog/confirm-delete-dialog.component';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-roles-list',
@@ -41,6 +42,7 @@ export class RolesListComponent implements OnInit {
   private roleService = inject(RoleService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
+  private workspaceService = inject(WorkspaceService);
 
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
@@ -103,7 +105,7 @@ export class RolesListComponent implements OnInit {
   }
 
   viewRoleDetails(role: Role): void {
-    this.router.navigate(['/roles/details', role.id]);
+    this.router.navigate(this.workspaceService.workspacePath('roles', 'details', role.id));
   }
 
   createRole(): void {

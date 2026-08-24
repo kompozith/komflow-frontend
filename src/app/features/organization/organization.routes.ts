@@ -10,14 +10,6 @@ export const ORGANIZATION_ROUTES: Routes = [
     title: 'Mon Organisation',
   },
   {
-    path: 'new',
-    loadComponent: () =>
-      import('./pages/create-organization/create-organization.component').then(
-        m => m.CreateOrganizationComponent
-      ),
-    title: 'Créer un espace',
-  },
-  {
     path: 'members',
     loadComponent: () =>
       import('./pages/members/members-page.component').then(m => m.MembersPageComponent),

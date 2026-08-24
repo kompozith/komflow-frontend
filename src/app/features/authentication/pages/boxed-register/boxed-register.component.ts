@@ -10,6 +10,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { MaterialModule } from '../../../../material.module';
 import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/branding.component';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-boxed-register',
@@ -25,6 +26,7 @@ import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/bra
 export class AppBoxedRegisterComponent {
   private settings = inject(CoreService);
   private router = inject(Router);
+  private workspaceService = inject(WorkspaceService);
 
   options = this.settings.getOptions();
 
@@ -45,6 +47,6 @@ export class AppBoxedRegisterComponent {
 
   submit() {
     // console.log(this.form.value);
-    this.router.navigate(['/dashboards/dashboard1']);
+    this.router.navigate(this.workspaceService.workspacePath('dashboards', 'dashboard1'));
   }
 }

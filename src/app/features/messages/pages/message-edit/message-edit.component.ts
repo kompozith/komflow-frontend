@@ -13,6 +13,7 @@ import { SendTestDialogComponent } from '../../components/send-test-dialog/send-
 import { finalize } from 'rxjs/operators';
 import { AppEvent, EventService } from '../../../core/services/event.service';
 import { MediaPreviewService } from 'src/app/shared/services/media-preview.service';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-message-edit',
@@ -35,6 +36,7 @@ export class MessageEditComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
   private mediaPreviewService = inject(MediaPreviewService);
+  private workspaceService = inject(WorkspaceService);
 
   messageForm: FormGroup;
   isLoading = false;
@@ -114,7 +116,7 @@ export class MessageEditComponent implements OnInit {
         console.error('Error loading message:', error);
         this.snackBar.open('Error loading message', 'Close', { duration: 3000 });
         this.isLoading = false;
-        this.router.navigate(['/messages']);
+        this.router.navigate(this.workspaceService.workspacePath('messages'));
       }
     });
   }
@@ -187,7 +189,7 @@ export class MessageEditComponent implements OnInit {
       this.messageService.updateMessage(this.messageId, messageData).subscribe({
         next: (message) => {
           this.snackBar.open('Message updated successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/messages']);
+          this.router.navigate(this.workspaceService.workspacePath('messages'));
         },
         error: (error) => {
           console.error('Error updating message:', error);
@@ -201,7 +203,7 @@ export class MessageEditComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/messages']);
+    this.router.navigate(this.workspaceService.workspacePath('messages'));
   }
 
   openSendTestDialog(): void {

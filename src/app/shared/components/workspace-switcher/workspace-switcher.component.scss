@@ -6,6 +6,14 @@
 }
 .ws-trigger:hover { background: rgba(99,102,241,.08); border-color: rgba(99,102,241,.18); }
 
+.ws-inline-list { margin-bottom: 8px; }
+
+.ws-trigger--pinned {
+  border: 1px solid rgba(0,0,0,.08);
+  background: rgba(0,0,0,.02);
+}
+.ws-trigger--pinned:hover { background: rgba(99,102,241,.08); }
+
 .ws-avatar {
   width: 32px; height: 32px; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;

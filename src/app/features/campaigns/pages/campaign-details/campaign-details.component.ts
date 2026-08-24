@@ -21,6 +21,7 @@ import { TablerIconsModule } from 'angular-tabler-icons';
 import { SubmitCampaignDialogComponent } from 'src/app/features/campaigns/pages/campaign-details/submit-campaign-dialog.component';
 import { ScheduleCampaignDialogComponent, ScheduleCampaignDialogData } from 'src/app/features/campaigns/pages/campaign-details/schedule-campaign-dialog.component';
 import { MediaPreviewService } from 'src/app/shared/services/media-preview.service';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-campaign-details',
@@ -35,6 +36,7 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
   private mediaPreviewService = inject(MediaPreviewService);
+  private workspaceService = inject(WorkspaceService);
 
   private static readonly EVENT_REGISTRATION_TAG_PREFIX = 'EVENT-REG-';
   campaign: CampaignDetails | null = null;
@@ -185,7 +187,7 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
 
   editCampaign(): void {
     if (!this.campaign || !this.canEditCampaign()) return;
-    this.router.navigate(['/campaigns/edit', this.campaign.id]);
+    this.router.navigate(this.workspaceService.workspacePath('campaigns', 'edit', this.campaign.id));
   }
 
   openScheduleDialog(): void {
@@ -432,7 +434,7 @@ export class CampaignDetailsComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/campaigns']);
+    this.router.navigate(this.workspaceService.workspacePath('campaigns'));
   }
 
   private startEventStream(): void {

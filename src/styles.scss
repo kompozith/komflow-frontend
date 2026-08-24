@@ -667,6 +667,21 @@ ngx-intl-tel-input input:-webkit-autofill:invalid {
   opacity: 1 !important;
 }
 
+/* The rules above use `inherit`, which resolves against the parent element,
+   not the input's own normal (non-autofill) value — so on a bare <input>
+   with no matching parent background/border it falls through to Chrome's
+   defaults (light blue fill, dark border). Force the same white surface +
+   light border used by the Tailwind auth inputs so autofill matches the
+   non-autofill state exactly. */
+input.tw\:border:-webkit-autofill,
+input.tw\:border:-webkit-autofill:hover,
+input.tw\:border:-webkit-autofill:focus,
+input.tw\:border:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--mat-sys-surface, #fff) inset !important;
+  -webkit-text-fill-color: var(--mat-sys-on-background, #1f2937) !important;
+  border-color: var(--mat-sys-outline-variant, #d7dde2) !important;
+}
+
 /* Additional autofill neutralization for different browsers */
 input:-moz-autofill,
 input:-moz-autofill:hover,

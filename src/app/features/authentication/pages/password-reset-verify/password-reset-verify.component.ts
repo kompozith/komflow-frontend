@@ -1,17 +1,17 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/features/authentication/services/auth.service';
-import { MaterialModule } from '../../../../material.module';
-import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/branding.component';
 import { PasswordResetVerifyResponse } from '../../models/password-reset-verify-response';
-import { AuthHeroComponent } from '../../components/auth-hero/auth-hero.component';
+import { AuthLayoutComponent } from '../../components/auth-layout/auth-layout.component';
+import { DsButtonComponent } from 'src/app/shared/components/ui/ds-button/ds-button.component';
+import { DsAlertComponent } from 'src/app/shared/components/ui/ds-alert/ds-alert.component';
 
 @Component({
   selector: 'app-password-reset-verify',
-  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, BrandingComponent, AuthHeroComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterModule, FormsModule, ReactiveFormsModule, AuthLayoutComponent, DsButtonComponent, DsAlertComponent],
   templateUrl: './password-reset-verify.component.html',
-  styleUrls: ['../login/login.component.scss']
 })
 export class PasswordResetVerifyComponent implements OnInit {
   private authService = inject(AuthService);

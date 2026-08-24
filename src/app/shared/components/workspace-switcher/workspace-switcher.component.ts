@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
@@ -25,12 +25,17 @@ const ROLE_LABELS: Record<string, string> = {
   styleUrl: './workspace-switcher.component.scss',
 })
 export class WorkspaceSwitcherComponent implements OnInit {
+  /** 'dropdown' (default): today's trigger + Material menu. 'inline': always-visible list, for the sidebar panel. */
+  @Input() mode: 'dropdown' | 'inline' = 'dropdown';
+
   readonly service = inject(WorkspaceService);
   private router   = inject(Router);
   private snackBar = inject(MatSnackBar);
 
   get active(): WorkspaceSummary | null { return this.service.activeWorkspace(); }
   get activeWorkspaces()  { return this.service.workspaces().filter(w => w.myStatus === 'ACTIVE'); }
+  /** For the inline sidebar list: every other active workspace, excluding the one currently pinned at the bottom. */
+  get otherWorkspaces()   { return this.activeWorkspaces.filter(w => w.orgId !== this.service.activeOrgId()); }
   get pendingWorkspaces() { return this.service.workspaces().filter(w => w.myStatus === 'INVITED'); }
   get activeInitials(): string { return this.initials(this.active?.orgName ?? '?'); }
   get activeColor(): string    { return this.roleColor(this.active?.myRole ?? 'MEMBER'); }
@@ -46,9 +51,11 @@ export class WorkspaceSwitcherComponent implements OnInit {
     this.service.switchWorkspace(ws.orgId).subscribe({
       next: () => {
         this.snackBar.open(`Espace « ${ws.orgName} » activé`, '✓', { duration: 1500 });
-        // Recharger la page entière pour que tous les composants reconstruisent
-        // leurs données depuis le backend avec le nouveau JWT/organizationId
-        setTimeout(() => window.location.reload(), 600);
+        // Navigate into the new workspace's slug-prefixed URL rather than
+        // reloading — a hard reload would re-request the OLD slug's URL
+        // under the NEW org's auth context, which is exactly the mismatch
+        // the workspace-slug-in-URL design is meant to prevent.
+        this.router.navigate(['/', ws.orgSlug, 'contacts']);
       },
       error: () => this.snackBar.open('Erreur lors du changement d\'espace', 'Fermer', { duration: 4000 }),
     });

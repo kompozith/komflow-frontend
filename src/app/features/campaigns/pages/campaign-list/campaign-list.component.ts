@@ -16,6 +16,7 @@ import { ChannelBadgePipe } from '../../../../shared/pipes/channel-badge.pipe';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ScheduleCampaignDialogComponent, ScheduleCampaignDialogData } from '../../pages/campaign-details/schedule-campaign-dialog.component';
 import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-campaign-list',
@@ -37,6 +38,7 @@ export class CampaignListComponent implements OnInit {
   private router = inject(Router);
   private campaignService = inject(CampaignService);
   private snackBar = inject(MatSnackBar);
+  private workspaceService = inject(WorkspaceService);
 
 
 
@@ -177,7 +179,7 @@ export class CampaignListComponent implements OnInit {
   }
 
   createCampaign(): void {
-    this.router.navigate(['/campaigns/create']);
+    this.router.navigate(this.workspaceService.workspacePath('campaigns', 'create'));
   }
 
   editCampaign(campaign: Campaign): void {

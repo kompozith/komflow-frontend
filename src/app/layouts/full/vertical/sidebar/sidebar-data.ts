@@ -72,11 +72,6 @@ export const navItems: NavItem[] = [
      permissions: ['PERSONNEL_VIEW']
    },
    {
-      displayName: 'Audit Log',
-      iconName: 'clipboard-list',
-      route: 'audit',
-   },
-   {
      navCap: 'Storage',
    },
    {

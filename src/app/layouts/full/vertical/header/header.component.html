@@ -1,154 +1,39 @@
 <mat-toolbar class="topbar" style="overflow: hidden; max-width: 100vw;">
   <!-- --------------------------------------------------------------- -->
-  <!-- Desktop Menu -->
-  @if(showToggle) {
-  <button
-    mat-icon-button
-    (click)="toggleCollapsed.emit()"
-    class="d-flex justify-content-center"
-  >
-    <i-tabler name="menu-2" class="icon-20 d-flex"></i-tabler>
-  </button>
-  }
+  <!-- Logo -->
+  <!-- --------------------------------------------------------------- -->
+  <app-branding class="header-branding d-none d-lg-flex"></app-branding>
 
-  <!-- Mobile Menu -->
-  @if(!showToggle) {
+  <!-- Mobile Menu (opens the sidebar sheet) -->
   <button
     mat-icon-button
     (click)="toggleMobileNav.emit()"
-    class="d-flex justify-content-center"
+    class="d-flex d-lg-none justify-content-center"
   >
     <i-tabler name="menu-2" class="icon-20 d-flex"></i-tabler>
   </button>
-  }
-  <!-- --------------------------------------------------------------- -->
 
   <!-- --------------------------------------------------------------- -->
   <!--  Search -->
   <!-- --------------------------------------------------------------- -->
+  <button class="search-bar d-none d-md-flex" (click)="openDialog()" type="button">
+    <i-tabler name="search" class="icon-18 d-flex"></i-tabler>
+    <span>Search</span>
+  </button>
+
   <button
     mat-icon-button
     (click)="openDialog()"
-    class="d-flex justify-content-center"
+    class="d-flex d-md-none justify-content-center"
   >
     <i-tabler name="search" class="icon-20 d-flex"></i-tabler>
   </button>
 
-  <div class="d-none d-lg-flex">
-    <!-- --------------------------------------------------------------- -->
-    <!--  Links -->
-    <!-- --------------------------------------------------------------- -->
-    <button
-      mat-button
-      [matMenuTriggerFor]="appsmenu"
-      aria-label="Notifications"
-    >
-      <div class="d-flex align-items-center">
-        Apps <i-tabler name="chevron-down" class="icon-16 m-l-4"></i-tabler>
-      </div>
-    </button>
-    <mat-menu #appsmenu="matMenu" class="apps-dd cardWithShadow">
-      <div class="row">
-        <div class="col-sm-8 b-r-1 p-r-0">
-          <div class="p-32 p-b-0">
-            <div class="row">
-              @for(appdd of apps; track appdd.title) {
-              <div class="col-sm-6 text-hover-primary">
-                <a
-                  [routerLink]="[appdd.link]"
-                  class="d-flex align-items-center text-decoration-none m-b-24"
-                >
-                  <span
-                    class="text-primary bg-light rounded icon-40 d-flex align-items-center justify-content-center"
-                  >
-                    <img [src]="appdd.img" width="20" />
-                  </span>
-
-                  <div class="m-l-16">
-                    <h5
-                      class="f-s-14 f-w-600 m-0 textprimary  hover-text"
-                    >
-                      {{ appdd.title }}
-                    </h5>
-                    <span class="f-s-12 text-body">{{ appdd.subtitle }}</span>
-                  </div>
-                </a>
-              </div>
-              }
-            </div>
-          </div>
-          <div
-            class="b-t-1 p-24 d-none d-lg-flex align-items-center justify-content-between"
-          >
-            <span
-              class="d-flex align-items-center  f-s-16 f-w-500"
-            >
-              <i-tabler name="help" class="icon-20 m-r-8"></i-tabler>Frequently
-              Asked Questions
-            </span>
-            <a
-              [routerLink]="['/theme-pages/faq']"
-              mat-flat-button
-              color="primary"
-              >Check</a
-            >
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="p-x-16 p-y-32">
-            <h4 class="f-s-18 f-w-600  m-b-16">Quick Links</h4>
-            @for(quicklink of quicklinks; track quicklink.title) {
-            <div class="text-hover-primary">
-              <a
-                [routerLink]="[quicklink.link]"
-                class="hover-text text-decoration-none f-s-14 f-w-600 d-block p-y-8"
-                >{{ quicklink.title }}</a
-              >
-            </div>
-            }
-          </div>
-        </div>
-      </div>
-    </mat-menu>
-    <a mat-button [routerLink]="['/contacts']">Contacts</a>
-    <a mat-button [routerLink]="['/messages']">Messages</a>
-    <a mat-button [routerLink]="['/campaigns']">Campaigns</a>
-  </div>
-
   <span class="flex-1-auto" style="min-width: 0;"></span>
 
-  <!-- Mobile Menu -->
-  <button
-    mat-icon-button
-    (click)="toggleMobileFilterNav.emit()"
-    class="d-flex d-lg-none justify-content-center"
-  >
-    <i-tabler name="grid-dots" class="icon-20 d-flex"></i-tabler>
-  </button>
-
   <!-- --------------------------------------------------------------- -->
-  <!-- langugage Dropdown -->
+  <!-- Light/dark toggle -->
   <!-- --------------------------------------------------------------- -->
-  <button [matMenuTriggerFor]="flags" mat-icon-button class="m-r-5">
-    <img
-      [src]="selectedLanguage.icon"
-      class="rounded-circle object-cover icon-20"
-    />
-  </button>
-  <mat-menu #flags="matMenu" class="cardWithShadow">
-    @for(lang of languages; track lang.icon) {
-    <button mat-menu-item (click)="changeLanguage(lang)">
-      <div class="d-flex align-items-center">
-        <img
-          [src]="lang.icon"
-          class="rounded-circle object-cover m-r-8 icon-20"
-        />
-        <span class=" f-s-14">{{ lang.language }}</span>
-      </div>
-    </button>
-    }
-  </mat-menu>
-
   @if(options.theme=='light'){
     <button mat-icon-button aria-label="lightdark" class="d-flex justify-content-center" (click)="setlightDark('dark')" >
       <i-tabler class="d-flex icon-22" [name]="'moon'"></i-tabler>
@@ -259,7 +144,7 @@
         @for(profile of profiledd; track profile.title) {
         <a
           class="p-y-16 text-decoration-none d-block text-hover-primary"
-          [routerLink]="[profile.link]"
+          [routerLink]="workspaceService.workspacePath(profile.link)"
         >
           <div class="d-flex align-items-center">
             <button

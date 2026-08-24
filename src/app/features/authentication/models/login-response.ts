@@ -1,4 +1,5 @@
 import { AuthUser } from "./auth-user";
+import { WorkspaceSummary } from "../../organization/services/workspace.service";
 
 export interface LoginResponse {
   accessToken: string;
@@ -6,7 +7,6 @@ export interface LoginResponse {
   tokenType: string;
   expiresIn: number;
   user: {
-    username: string;
     email: string;
     firstName: string;
     lastName: string;
@@ -17,4 +17,6 @@ export interface LoginResponse {
     permissions: string[];
     roles: string[];
   };
+  /** Workspaces the user belongs to, so the app can detect "no workspace" right after login. */
+  workspaces?: WorkspaceSummary[];
 }

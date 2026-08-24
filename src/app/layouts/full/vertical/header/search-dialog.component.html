@@ -26,14 +26,14 @@
 
   @for(item of navItemsData; track item.displayName) {
   <a
-    [routerLink]="[item.route]"
+    [routerLink]="item.routerLink"
     mat-dialog-close
     class="p-y-12 text-decoration-none d-block"
   >
     <h5 class="f-s-14 f-w-500 d-block  m-0">
       {{ item.displayName }}
     </h5>
-    <span class="f-s-12 f-s-16">{{ item.route }}</span>
+    <span class="f-s-12 f-s-16">{{ item.routeLabel }}</span>
   </a>
   }
 </mat-dialog-content>

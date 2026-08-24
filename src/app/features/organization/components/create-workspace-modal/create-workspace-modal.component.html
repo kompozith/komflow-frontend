@@ -1,0 +1,82 @@
+<div class="tw:fixed tw:inset-0 tw:z-50 tw:flex tw:items-center tw:justify-center tw:bg-on-surface/40 tw:p-4 tw:backdrop-blur-sm">
+  <div class="tw:w-full tw:max-w-md tw:rounded-2xl tw:bg-surface tw:p-6 tw:shadow-xl tw:sm:p-8" role="dialog" aria-modal="true" aria-labelledby="create-workspace-title">
+
+    <div class="tw:flex tw:items-start tw:justify-between tw:gap-4">
+      <div>
+        <h2 id="create-workspace-title" class="tw:text-lg tw:font-bold tw:text-on-surface">Create a new workspace</h2>
+        <p class="ds-hint tw:mt-1">Each space is a standalone environment with its own data</p>
+      </div>
+      @if (dismissible()) {
+        <button type="button" (click)="close()" aria-label="Close" class="tw:shrink-0 tw:rounded-lg tw:p-1 tw:text-on-surface-variant tw:transition-colors tw:hover:bg-surface-variant tw:hover:text-on-surface">
+          <i-tabler name="x" class="tw:h-5 tw:w-5"></i-tabler>
+        </button>
+      }
+    </div>
+
+    <form class="tw:mt-6 tw:flex tw:flex-col tw:gap-5" [formGroup]="form" (ngSubmit)="submit()">
+
+      <ds-text-field
+        [control]="form.controls.name"
+        label="Workspace name *"
+        placeholder="Dream Team"
+        [errorMessages]="{ required: 'Nom obligatoire', minlength: 'Minimum 2 caractères' }"
+      />
+
+      <div class="tw:flex tw:flex-col tw:gap-2">
+        <label for="workspace-slug" class="ds-label">Workspace URL *</label>
+        <div class="tw:flex tw:h-12 tw:items-center tw:overflow-hidden tw:rounded-xl tw:border"
+             [class.tw:border-outline-variant]="slugCheckState() === 'idle' || slugCheckState() === 'checking'"
+             [class.tw:border-success]="slugCheckState() === 'available'"
+             [class.tw:border-error]="slugCheckState() === 'taken' || slugCheckState() === 'invalid'">
+          <input
+            id="workspace-slug"
+            formControlName="slug"
+            placeholder="dream-team"
+            (input)="markSlugManuallyEdited()"
+            class="tw:h-full tw:w-full tw:border-0 tw:bg-transparent tw:px-4 tw:text-sm tw:text-on-surface tw:placeholder:text-on-surface-variant tw:focus:outline-none"
+          />
+          <span class="tw:flex tw:h-full tw:w-10 tw:shrink-0 tw:items-center tw:justify-center">
+            @switch (slugCheckState()) {
+              @case ('checking') {
+                <svg class="tw:h-4 tw:w-4 tw:animate-spin tw:text-on-surface-variant" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle class="tw:opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="tw:opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+              }
+              @case ('available') {
+                <i-tabler name="circle-check" class="tw:h-4 tw:w-4 tw:text-success"></i-tabler>
+              }
+              @case ('taken') {
+                <i-tabler name="circle-x" class="tw:h-4 tw:w-4 tw:text-error"></i-tabler>
+              }
+            }
+          </span>
+        </div>
+        @if (slugCheckState() === 'invalid') {
+          <span class="ds-error-text">Uniquement minuscules, chiffres et tirets</span>
+        } @else if (slugCheckState() === 'taken') {
+          <span class="ds-error-text">Déjà pris</span>
+        } @else if (slugCheckState() === 'available') {
+          <span class="ds-success-text">Disponible</span>
+        }
+      </div>
+
+      <div class="tw:flex tw:items-start tw:gap-2 tw:rounded-xl tw:bg-primary-container/40 tw:p-3">
+        <i-tabler name="info-circle" class="tw:h-5 tw:w-5 tw:shrink-0 tw:text-primary"></i-tabler>
+        <p class="tw:text-sm tw:text-on-surface">
+          You'll be automatically the <strong>OWNER</strong> of this new workspace. You can invite your team members.
+        </p>
+      </div>
+
+      @if (error()) {
+        <ds-alert variant="error">{{ error() }}</ds-alert>
+      }
+
+      <ds-button type="submit" [disabled]="!canSubmit()" [loading]="isLoading()" loadingText="Création en cours...">
+        Create workspace
+      </ds-button>
+
+    </form>
+
+  </div>
+</div>

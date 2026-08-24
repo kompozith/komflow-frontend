@@ -7,6 +7,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 @Component({
     selector: 'app-course-detail',
     templateUrl: './course-detail.component.html',
@@ -21,6 +22,7 @@ import { Router } from '@angular/router';
 export class AppCourseDetailComponent {
   courseService = inject(CourseService);
   private router = inject(Router);
+  private workspaceService = inject(WorkspaceService);
 
   id = signal<any>(null);
   courseDetail = signal<any>(null);
@@ -39,7 +41,7 @@ export class AppCourseDetailComponent {
   }
 
   goBack(): void {
-    
-    this.router.navigate(['/apps/courses']);
+
+    this.router.navigate(this.workspaceService.workspacePath('apps', 'courses'));
   }
 }

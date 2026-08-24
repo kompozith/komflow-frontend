@@ -1,20 +1,24 @@
-<div class="d-flex align-items-center justify-content-between">
-  <div class="branding">
-    <app-branding></app-branding>
+@if(showToggle) {
+  <div class="d-flex align-items-center justify-content-end">
+    <a
+      href="javascript:void(0)"
+      (click)="toggleMobileNav.emit()"
+      class="d-flex justify-content-center ng-star-inserted icon-40 align-items-center f-s-14"
+    >
+      <i-tabler name="x" class="icon-20 d-flex"></i-tabler>
+    </a>
   </div>
+}
 
-  @if(showToggle) {
-  <a
-    href="javascript:void(0)"
-    (click)="toggleMobileNav.emit()"
-    class="d-flex justify-content-center ng-star-inserted icon-40 align-items-center f-s-14"
-  >
-    <i-tabler name="x" class="icon-20 d-flex"></i-tabler>
-  </a>
+<!-- Page-specific filters, projected by the current route's page component via SidebarFiltersService -->
+<div class="px-2">
+  <div class="ds-label tw:mb-2">Filters</div>
+  @if (filtersService.template()) {
+    <ng-container *ngTemplateOutlet="filtersService.template()"></ng-container>
   }
 </div>
 
-<!-- Workspace switcher -->
-<div class="px-2 py-2">
-  <app-workspace-switcher></app-workspace-switcher>
+<!-- Workspace switcher, pinned to the very bottom of the sidebar -->
+<div class="tw:mt-auto tw:px-2 tw:py-2">
+  <app-workspace-switcher mode="inline"></app-workspace-switcher>
 </div>

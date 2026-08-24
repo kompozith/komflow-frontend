@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { ContactService } from '../../services/contact.service';
 import { ContactDetails } from '../../models/contact';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-contact-details',
@@ -24,6 +25,7 @@ export class ContactDetailsComponent implements OnInit {
   private router = inject(Router);
   private contactService = inject(ContactService);
   private snackBar = inject(MatSnackBar);
+  private workspaceService = inject(WorkspaceService);
 
   contactId: string = '';
   contact: ContactDetails | null = null;
@@ -59,7 +61,7 @@ export class ContactDetailsComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/contacts']);
+    this.router.navigate(this.workspaceService.workspacePath('contacts'));
   }
 
   getContactInitials(firstName: string | null | undefined, lastName: string | null | undefined): string {

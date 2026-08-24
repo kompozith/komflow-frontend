@@ -13,6 +13,7 @@ import { SendTestDialogComponent } from '../../components/send-test-dialog/send-
 import { finalize } from 'rxjs/operators';
 import { AppEvent, EventService } from '../../../core/services/event.service';
 import { MediaPreviewService } from 'src/app/shared/services/media-preview.service';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-message-create',
@@ -34,6 +35,7 @@ export class MessageCreateComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
   private mediaPreviewService = inject(MediaPreviewService);
+  private workspaceService = inject(WorkspaceService);
 
   messageForm: FormGroup;
   isLoading = false;
@@ -113,7 +115,7 @@ export class MessageCreateComponent implements OnInit {
       this.messageService.createMessage(messageData).subscribe({
         next: (message) => {
           this.snackBar.open('Message created successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/messages'])
+          this.router.navigate(this.workspaceService.workspacePath('messages'))
         },
         error: (error) => {
           console.error('Error creating message:', error);
@@ -127,7 +129,7 @@ export class MessageCreateComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/messages'])
+    this.router.navigate(this.workspaceService.workspacePath('messages'))
   }
 
   openSendTestDialog(): void {

@@ -1,46 +1,44 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
-import { CoreService } from 'src/app/services/core.service';
+import { ChangeDetectionStrategy, Component, signal, inject, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/features/authentication/services/auth.service';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { MaterialModule } from '../../../../material.module';
-import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/branding.component';
-import { MatInputModule } from '@angular/material/input';
-import { PasswordVisibilityToggleComponent } from '../../../../components/shared/password-visibility-toggle.component';
 import { LoginRequest } from '../../models/login-request';
-import { AuthHeroComponent } from '../../components/auth-hero/auth-hero.component';
+import { AuthLayoutComponent } from '../../components/auth-layout/auth-layout.component';
+import { DsTextFieldComponent } from 'src/app/shared/components/ui/ds-text-field/ds-text-field.component';
+import { DsButtonComponent } from 'src/app/shared/components/ui/ds-button/ds-button.component';
+import { DsAlertComponent } from 'src/app/shared/components/ui/ds-alert/ds-alert.component';
 
 @Component({
     selector: 'app-login',
-    imports: [RouterModule, MaterialModule, MatInputModule, FormsModule, ReactiveFormsModule, BrandingComponent, PasswordVisibilityToggleComponent, AuthHeroComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        RouterModule,
+        FormsModule,
+        ReactiveFormsModule,
+        AuthLayoutComponent,
+        DsTextFieldComponent,
+        DsButtonComponent,
+        DsAlertComponent,
+    ],
     templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss']
 })
 export class AppLoginComponent implements OnInit {
    private authService = inject(AuthService);
-   private settings = inject(CoreService);
+   private workspaceService = inject(WorkspaceService);
    private router = inject(Router);
    private route = inject(ActivatedRoute);
 
-  // UI state management
   isLoading = signal(false);
   loginError = signal<string | null>(null);
-  passwordVisible = signal(false);
 
-  options = this.settings.getOptions();
-
-  // Initialize controls with username/email login
-  // updateOn: 'change' makes validation errors appear on every input change
   form = new FormGroup({
-    email: new FormControl('', { validators: [Validators.required], updateOn: 'change' }),
+    email: new FormControl('', { validators: [Validators.required, Validators.email], updateOn: 'change' }),
     password: new FormControl('', { validators: [Validators.required], updateOn: 'change' }),
     rememberMe: new FormControl(false)
   });
 
   ngOnInit(): void {
-     this.form.updateValueAndValidity();
-
-     // Clear global error when user starts typing in any field
      this.form.valueChanges.subscribe(() => {
        if (this.loginError()) {
          this.loginError.set(null);
@@ -48,16 +46,11 @@ export class AppLoginComponent implements OnInit {
      });
    }
 
-   get f() {
-     return this.form.controls;
-   }
-
-
   submit(): void {
     this.loginError.set(null);
 
     if (this.form.invalid) {
-      this.markFormGroupTouched();
+      this.form.markAllAsTouched();
       return;
     }
 
@@ -69,17 +62,27 @@ export class AppLoginComponent implements OnInit {
       password: formValue.password || ''
     };
 
-    const returnUrl: string = this.route.snapshot.queryParams['returnUrl'] || '/contacts';
+    const returnUrl: string | null = this.route.snapshot.queryParams['returnUrl'] || null;
 
     this.authService.login(loginData, formValue.rememberMe || false).subscribe({
-      next: (response) => {
-        this.router.navigateByUrl(returnUrl).then(navigated => {
-          if (!navigated) {
-            this.router.navigate(['/contacts']);
-          }
-        }).catch(() => {
-          this.router.navigate(['/contacts']);
-        });
+      next: () => {
+        // Only trust a returnUrl that targets the workspace the user just
+        // logged into — a stale one from a previous session's slug (or the
+        // slug-less pre-login state) would otherwise bounce them into a
+        // mismatched/dead route.
+        const activeSlug = this.workspaceService.activeWorkspace()?.orgSlug;
+        const isReturnUrlSafe = !!returnUrl && !!activeSlug && returnUrl.startsWith(`/${activeSlug}/`);
+        const destination = isReturnUrlSafe ? returnUrl! : null;
+
+        const fallback = () => this.router.navigate(this.workspaceService.workspacePath('contacts'));
+
+        if (destination) {
+          this.router.navigateByUrl(destination).then(navigated => {
+            if (!navigated) fallback();
+          }).catch(fallback);
+        } else {
+          fallback();
+        }
       },
       error: (error) => {
         this.loginError.set(error.message || 'Login failed. Please try again.');
@@ -88,31 +91,6 @@ export class AppLoginComponent implements OnInit {
       complete: () => {
         this.isLoading.set(false);
       }
-    });
-  }
-
-  togglePasswordVisibility(): void {
-    this.passwordVisible.update(visible => !visible);
-  }
-
-  /** Hide mat-error while the user is actively typing by clearing touched state. */
-  onFieldInput(fieldName: string): void {
-    this.form.get(fieldName)?.markAsUntouched();
-  }
-
-  /** Trigger error display once the field loses focus. */
-  onFieldBlur(fieldName: string): void {
-    const control = this.form.get(fieldName);
-    if (control) {
-      control.markAsTouched();
-      control.updateValueAndValidity();
-    }
-  }
-
-  private markFormGroupTouched(): void {
-    Object.keys(this.form.controls).forEach(key => {
-      const control = this.form.get(key);
-      control?.markAsTouched();
     });
   }
 }

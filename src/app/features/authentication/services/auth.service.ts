@@ -12,10 +12,10 @@ import { PasswordResetCompleteResponse } from '../models/password-reset-complete
 import { AUTH_API, AUTH_CONFIG } from '../auth.constants';
 import { Router } from '@angular/router';
 import { PermissionService } from '../../../services/permission.service';
+import { WorkspaceService } from '../../organization/services/workspace.service';
 
 interface UserProfile {
   id: string;
-  username: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -31,6 +31,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private permissionService = inject(PermissionService);
+  private workspaceService = inject(WorkspaceService);
 
   private readonly API_BASE_URL = `${environment.apiUrl}/auth`;
 
@@ -56,6 +57,14 @@ export class AuthService {
       'Content-Type': 'application/json',
       'accept': '*/*'
     };
+  }
+
+  /** Check whether an organization workspace slug is still available. */
+  checkOrganizationSlugAvailability(slug: string): Observable<boolean> {
+    const params = new HttpParams().set('slug', slug);
+    return this.http
+      .get<{ available: boolean }>(`${this.API_BASE_URL}/organizations/slug-availability`, { params })
+      .pipe(map((response) => response.available));
   }
 
   /**
@@ -252,9 +261,14 @@ export class AuthService {
     storage.setItem(AUTH_CONFIG.TOKEN_KEY, response.accessToken);
     // Refresh token is stored in HttpOnly cookie by backend
 
+    // Workspace list — read the accessToken's organizationId claim (activeOrgId)
+    // and store the workspace list alongside the token.
+    this.workspaceService.activeOrgId.set(this.workspaceService.decodeOrgIdFromToken(response.accessToken));
+    this.workspaceService.hydrateFromLogin(response.workspaces);
+
     // User - map backend user to AuthUser format
     const authUser: AuthUser = {
-      id: response.user.username, // Use username as ID for now
+      id: response.user.email, // Email is the sole identifier
       firstName: response.user.firstName,
       lastName: response.user.lastName,
       email: response.user.email,
@@ -290,6 +304,7 @@ export class AuthService {
       storage.removeItem(AUTH_CONFIG.REMEMBER_KEY);
       storage.removeItem(`${AUTH_CONFIG.TOKEN_KEY_EXPIRES}`);
     });
+    this.workspaceService.clear();
   }
 
   private getSavedUser(): AuthUser | null {
