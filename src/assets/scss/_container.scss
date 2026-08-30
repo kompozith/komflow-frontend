@@ -15,10 +15,14 @@ body {
 
 .mainWrapper {
   display: flex;
-  min-height: 100vh;
   width: 100%;
   flex: 1;
-  height: 100%;
+  /* Fixed (not min-) height: the sidenav sits absolutely positioned inside this
+     container, so it must be bounded to the viewport rather than allowed to
+     stretch past it — otherwise its own internal scroll areas (e.g. the
+     sidebar's sticky-bottom workspace switcher) never get a real scroll
+     boundary to work against. */
+  height: 100vh;
 }
 
 .container {
@@ -147,8 +151,4 @@ td.hljs-ln-line.hljs-ln-numbers {
   html .flex-sm-row {
     flex-direction: row !important;
   }
-}
-
-.mat-drawer[style*="visibility: hidden"] {
-  display: none;
 }

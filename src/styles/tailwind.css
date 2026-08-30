@@ -1,0 +1,225 @@
+/*
+ * Tailwind entry point.
+ *
+ * Preflight is intentionally excluded: Bootstrap and Angular Material are
+ * still used across the rest of the app, and Tailwind's base reset would
+ * fight their own resets during the progressive migration. Only the theme
+ * (design tokens) and utilities layers are imported.
+ *
+ * All utilities are namespaced under the `tw:` prefix (e.g. `tw:flex`,
+ * `tw:bg-primary`). Bootstrap ships identically-named classes (`bg-primary`,
+ * `text-error`, `text-muted`, ...) with `!important`, which would silently
+ * win over unprefixed Tailwind output no matter the import order. The
+ * prefix removes the collision entirely instead of fighting the cascade.
+ *
+ * Colors map to the existing Angular Material M3 tokens (--mat-sys-*) so
+ * Tailwind utilities (tw:bg-primary, tw:text-error, etc.) stay in sync with
+ * the active theme instead of hardcoding new values.
+ */
+@import "tailwindcss/theme.css" prefix(tw);
+@import "tailwindcss/utilities.css" prefix(tw) source("../../src");
+
+/*
+ * Preflight is skipped (see above), so native form-control chrome survives:
+ * Chrome/Windows render <input>/<select>/<button> with `appearance: auto`,
+ * which draws its own border/outline (visible only as a focus ring until
+ * then) instead of respecting our `tw:border` utility, plus a default 3D
+ * "outset" border on buttons. `appearance: none` alone does not drop the
+ * browser's default button border, so it needs an explicit reset too.
+ * Scoped to elements carrying our own Tailwind utility classes or
+ * design-system classes (ds-input, ds-btn), so the rest of the app
+ * (Bootstrap forms, Angular Material) keeps its native chrome.
+ */
+input.tw\:border,
+input.ds-input,
+select.tw\:border,
+select.ds-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: none;
+  box-shadow: none;
+}
+
+/*
+ * select/input[type=date]'s own OS-level rendering repaints a border/background
+ * regardless of appearance:none once *any* value is present, unless border-color
+ * and background-color are forced here too — appearance:none alone visually
+ * "worked" only for an empty <select> in earlier testing.
+ */
+select.ds-input {
+  border-color: var(--mat-sys-outline-variant);
+  background-color: transparent;
+}
+
+input[type="date"].ds-input,
+input[type="date"].tw\:border {
+  appearance: none;
+  -webkit-appearance: none;
+  border-color: var(--mat-sys-outline-variant);
+  background-color: transparent;
+  color-scheme: light;
+}
+
+.dark-theme input[type="date"].ds-input,
+.dark-theme input[type="date"].tw\:border {
+  color-scheme: dark;
+}
+
+button[class*="tw:"],
+button[class*="ds-btn"],
+button.search-bar {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+}
+
+@theme {
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+
+  --color-primary: var(--mat-sys-primary);
+  --color-primary-container: var(--mat-sys-primary-fixed-dim);
+  --color-on-primary: var(--mat-sys-on-primary);
+  --color-secondary: var(--mat-sys-secondary);
+  --color-secondary-container: var(--mat-sys-secondary-fixed-dim);
+  --color-tertiary: var(--mat-sys-tertiary);
+
+  --color-error: var(--mat-sys-error);
+  --color-error-container: var(--mat-sys-error-fixed-dim);
+  --color-success: #13deb9;
+  --color-success-container: #13deb940;
+  --color-warning: #ffae1f;
+  --color-warning-container: #ffad1f40;
+
+  --color-surface: var(--mat-sys-surface);
+  --color-surface-bright: var(--mat-sys-surface-bright);
+  --color-surface-variant: var(--mat-sys-surface-variant);
+  --color-on-surface: var(--mat-sys-on-background);
+  --color-on-surface-variant: var(--mat-sys-on-surface-variant);
+  --color-outline: var(--mat-sys-outline);
+  --color-outline-variant: var(--mat-sys-outline-variant);
+
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+}
+
+/*
+ * Design-system component classes.
+ *
+ * These exist so templates never repeat the same long Tailwind utility
+ * string on every input/button. Each class is defined once here and
+ * consumed by the shared components in `src/app/shared/components/ui/`
+ * (ds-text-field, ds-button, ds-alert, ...) — templates should reach for
+ * those components rather than re-typing `tw:h-12 tw:rounded-xl tw:border ...`
+ * by hand. Colors always resolve through the tokens above, never hardcoded.
+ *
+ * Deliberately NOT wrapped in `@layer components`: per the CSS Cascade
+ * Layers spec, any rule inside a `@layer` always loses to unlayered CSS,
+ * regardless of source order or selector specificity. Bootstrap's reset
+ * (`button{border-radius:0}` etc.) ships as plain unlayered CSS, so a layered
+ * `.ds-btn` silently lost every such fight (0 border-radius, collapsed
+ * height) even though it appeared later in the stylesheet. Keeping these
+ * rules unlayered lets normal specificity/order rules decide instead.
+ */
+.ds-label {
+  @apply tw:text-sm tw:font-semibold tw:text-on-surface;
+}
+
+.ds-input {
+  @apply tw:h-12 tw:w-full tw:rounded-xl tw:border tw:border-outline-variant tw:bg-transparent tw:px-4 tw:text-sm tw:text-on-surface tw:placeholder:text-on-surface-variant tw:transition-colors tw:focus:outline-none tw:focus:ring-2 tw:focus:ring-primary/30;
+}
+
+.ds-input--error {
+  @apply tw:border-error;
+}
+
+.ds-input--success {
+  @apply tw:border-success;
+}
+
+/*
+ * .ds-input sets px-4 directly (not just as a default), so a plain utility
+ * class like tw:pl-10 placed on the same element loses the cascade fight
+ * (same specificity, .ds-input's rule appears later in this file) — same
+ * class of bug as the earlier button height issue. Use this modifier for
+ * inputs that need room for a leading icon instead of fighting px-4 inline.
+ */
+.ds-input--icon-left {
+  @apply tw:pl-10;
+}
+
+.ds-hint {
+  @apply tw:text-xs tw:text-on-surface-variant;
+}
+
+.ds-error-text {
+  @apply tw:text-xs tw:text-error;
+}
+
+.ds-success-text {
+  @apply tw:text-xs tw:text-success;
+}
+
+.ds-alert {
+  @apply tw:rounded-lg tw:border tw:px-4 tw:py-3 tw:text-center tw:text-sm;
+}
+
+.ds-alert--error {
+  @apply tw:border-error tw:bg-error-container tw:text-error;
+}
+
+.ds-alert--success {
+  @apply tw:border-success tw:bg-success-container tw:text-success;
+}
+
+.ds-btn {
+  @apply tw:flex tw:h-12 tw:w-full tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:text-sm tw:font-semibold tw:transition-opacity tw:disabled:cursor-not-allowed tw:disabled:opacity-50;
+}
+
+.ds-btn--grow-1 {
+  @apply tw:flex-1;
+}
+
+.ds-btn--grow-2 {
+  @apply tw:flex-[2];
+}
+
+.ds-btn--grow-3 {
+  @apply tw:flex-[3];
+}
+
+.ds-btn--primary {
+  @apply tw:bg-primary tw:text-on-primary tw:hover:opacity-90;
+}
+
+.ds-btn--outline {
+  @apply tw:border tw:border-outline-variant tw:text-on-surface tw:hover:bg-surface-variant;
+}
+
+/* Navbar search trigger (app-header) — looks like an inline search bar, opens the search dialog on click. */
+.search-bar {
+  @apply tw:flex tw:h-10 tw:w-64 tw:items-center tw:gap-2 tw:rounded-xl tw:border tw:border-outline-variant tw:bg-surface-variant/40 tw:px-3 tw:text-sm tw:text-on-surface-variant tw:transition-colors tw:hover:bg-surface-variant;
+}
+
+/*
+ * ds-menu's panel is rendered through CDK Overlay into a top-level overlay
+ * container, detached from the component tree — so it needs a global class
+ * rather than component-scoped styles, same reason mat-menu needed ::ng-deep.
+ */
+.ds-menu-panel {
+  @apply tw:box-border tw:w-full tw:overflow-hidden tw:rounded-xl tw:border tw:border-outline-variant tw:bg-surface tw:py-1 tw:shadow-lg;
+}
+
+/* Circular icon-only button — mirrors what mat-icon-button gave for free. */
+.ds-icon-btn {
+  @apply tw:flex tw:h-10 tw:w-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:border-0 tw:bg-transparent tw:text-on-surface-variant tw:transition-colors tw:hover:bg-surface-variant;
+}
+
+/* Backdrop CDK creates for ds-menu overlays — invisible (menus aren't modal
+   dialogs) but still present to catch the outside click that closes the menu. */
+.cdk-overlay-transparent-backdrop {
+  background: transparent;
+}

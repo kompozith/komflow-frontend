@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
     <a [routerLink]="workspaceService.workspacePath()" class="logodark">
       <img
         [src]="'./assets/images/logos/dark-logo.svg?v=' + assetVersion"
-        class="brand-logo align-middle m-2"
+        class="brand-logo align-middle"
         alt="Komflow Logo"
       />
     </a>
@@ -19,7 +19,7 @@ import { environment } from 'src/environments/environment';
     <a [routerLink]="workspaceService.workspacePath()" class="logolight">
       <img
         [src]="'./assets/images/logos/light-logo.svg?v=' + assetVersion"
-        class="brand-logo align-middle m-2"
+        class="brand-logo align-middle"
         alt="Komflow Logo"
       />
     </a>

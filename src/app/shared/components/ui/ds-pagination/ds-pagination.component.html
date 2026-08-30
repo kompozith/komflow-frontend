@@ -2,14 +2,7 @@
 
   <!-- Result count + page size dropdown -->
   <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:sm:justify-start">
-    <span class="ds-hint tw:whitespace-nowrap">
-      @if (totalElements() > 0) {
-        {{ startIndex() }}–{{ endIndex() }} of {{ totalElements() }}
-      } @else {
-        0 results
-      }
-    </span>
-
+    
     <select
       [value]="pageSize()"
       (change)="onPageSizeChange($any($event.target).value)"
@@ -19,6 +12,14 @@
         <option [value]="size">{{ size }} / page</option>
       }
     </select>
+
+    <span class="ds-hint tw:whitespace-nowrap">
+      @if (totalElements() > 0) {
+        {{ startIndex() }}–{{ endIndex() }} of {{ totalElements() }}
+      } @else {
+        0 results
+      }
+    </span>
   </div>
 
   <!-- Page controls -->

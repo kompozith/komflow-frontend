@@ -1,19 +1,18 @@
-import { Component, Output, EventEmitter, Input, ViewEncapsulation, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, Output, EventEmitter, Input, ViewEncapsulation, inject, signal } from '@angular/core';
 import { CoreService } from 'src/app/services/core.service';
-import { MatDialog } from '@angular/material/dialog';
 import { TAB_BAR_ITEMS } from '../../tab-bar/tab-bar.component';
 import { TranslateService } from '@ngx-translate/core';
 import { TablerIconsModule } from 'angular-tabler-icons';
-import { MaterialModule } from 'src/app/material.module';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgScrollbarModule } from 'ngx-scrollbar';
 import { AppSettings } from 'src/app/config';
-import { LogoutComponent } from 'src/app/features/authentication/pages/logout/logout.component';
+import { AuthService } from 'src/app/features/authentication/services/auth.service';
 import { UserProfileService } from 'src/app/services/user-profile.service';
 import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
-import { BrandingComponent } from '../sidebar/branding.component';
+import { SidenavService } from '../../sidenav.service';
+import { DsMenuComponent } from 'src/app/shared/components/ui/ds-menu/ds-menu.component';
+import { DsButtonComponent } from 'src/app/shared/components/ui/ds-button/ds-button.component';
 
 interface notifications {
   id: number;
@@ -35,29 +34,42 @@ interface profiledd {
     imports: [
         RouterModule,
         CommonModule,
-        NgScrollbarModule,
+        FormsModule,
         TablerIconsModule,
-        BrandingComponent,
-        MaterialModule,
+        DsMenuComponent,
+        DsButtonComponent,
     ],
     templateUrl: './header.component.html',
     encapsulation: ViewEncapsulation.None
 })
 export class HeaderComponent {
   private settings = inject(CoreService);
-  private vsidenav = inject(CoreService);
-  dialog = inject(MatDialog);
   private translate = inject(TranslateService);
   private userProfileService = inject(UserProfileService);
+  private authService = inject(AuthService);
   workspaceService = inject(WorkspaceService);
-
+  sidenavService = inject(SidenavService);
 
   @Input() showToggle = true;
   @Input() toggleChecked = false;
-  @Output() toggleMobileNav = new EventEmitter<void>();
-  @Output() toggleCollapsed = new EventEmitter<void>();
 
   showFiller = false;
+
+  showSearchDialog = signal(false);
+  showLogoutConfirm = signal(false);
+  searchText = '';
+
+  navItemsData = TAB_BAR_ITEMS.map((item) => ({
+    displayName: item.displayName,
+    iconName: item.iconName,
+    routeLabel: item.route,
+    routerLink: this.workspaceService.workspacePath(item.route),
+  }));
+
+  confirmLogout(): void {
+    this.showLogoutConfirm.set(false);
+    this.authService.logout();
+  }
 
   public selectedLanguage: any;
 
@@ -91,27 +103,8 @@ export class HeaderComponent {
      translate.use(savedLanguage);
    }
 
-  logout(
-    enterAnimationDuration: string,
-    exitAnimationDuration: string
-  ): void {
-    this.dialog.open(LogoutComponent, {
-      width: '290px',
-      enterAnimationDuration,
-      exitAnimationDuration,
-    });
-  }
-
   get options() {
     return this.settings.getOptions();
-  }
-
-  openDialog() {
-    const dialogRef = this.dialog.open(AppSearchDialogComponent);
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
-    });
   }
 
   private emitOptions() {
@@ -199,21 +192,4 @@ export class HeaderComponent {
       link: 'user-management',
     },
   ];
-}
-
-@Component({
-    selector: 'search-dialog',
-    imports: [RouterModule, MaterialModule, TablerIconsModule, FormsModule],
-    templateUrl: 'search-dialog.component.html'
-})
-export class AppSearchDialogComponent {
-  private workspaceService = inject(WorkspaceService);
-
-  searchText: string = '';
-  navItemsData = TAB_BAR_ITEMS.map((item) => ({
-    displayName: item.displayName,
-    iconName: item.iconName,
-    routeLabel: item.route,
-    routerLink: this.workspaceService.workspacePath(item.route),
-  }));
 }

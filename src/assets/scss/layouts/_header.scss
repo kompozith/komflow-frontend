@@ -5,28 +5,8 @@ html .topbar {
   top: 0;
   z-index: 9;
   height: $header-height;
-
-  .notification-badge{
-    .mat-badge-content{
-      left: 80%;
-      bottom: 85%;
-      width: 16px;
-      height: 16px;
-    }
-  }
-}
-
-.topbar-dd {
-  min-width: 360px !important;
-}
-
-.apps-dd {
-  min-width: 830px !important;
-  overflow: unset !important;
-
-  .mat-mdc-menu-content {
-    padding: 0;
-  }
+  background: var(--mat-sys-surface);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
 }
 
 .text-hover-primary:hover {
@@ -51,14 +31,3 @@ html .topbar {
   margin-left: -5px;
 }
 
-.dark-theme {
-  .topbar {
-    .mat-mdc-icon-button {
-      color: $dark-text-secondary !important;
-    }
-
-    .mdc-button {
-      --mat-button-text-label-text-color: $dark-text-secondary !important;
-    }
-  }
-}

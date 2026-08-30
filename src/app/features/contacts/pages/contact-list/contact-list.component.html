@@ -11,10 +11,51 @@
         <i-tabler name="users" class="tw:h-5 tw:w-5"></i-tabler>
       </div>
     </div>
+
+    <!-- Per-channel breakdown: no backend aggregation yet, shown as placeholders pending that endpoint -->
+    <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4">
+      <div>
+        <p class="ds-hint tw:m-0">WhatsApp</p>
+        <p class="tw:m-0 tw:text-2xl tw:font-bold tw:text-on-surface">—</p>
+      </div>
+      <div class="tw:flex tw:h-10 tw:w-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-[#25D366]/15 tw:text-[#25D366]">
+        <i-tabler name="brand-whatsapp" class="tw:h-5 tw:w-5"></i-tabler>
+      </div>
+    </div>
+
+    <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4">
+      <div>
+        <p class="ds-hint tw:m-0">Mail</p>
+        <p class="tw:m-0 tw:text-2xl tw:font-bold tw:text-on-surface">—</p>
+      </div>
+      <div class="tw:flex tw:h-10 tw:w-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-[#EA4335]/15 tw:text-[#EA4335]">
+        <i-tabler name="mail" class="tw:h-5 tw:w-5"></i-tabler>
+      </div>
+    </div>
+
+    <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4">
+      <div>
+        <p class="ds-hint tw:m-0">SMS/MMS</p>
+        <p class="tw:m-0 tw:text-2xl tw:font-bold tw:text-on-surface">—</p>
+      </div>
+      <div class="tw:flex tw:h-10 tw:w-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-[#34C759]/15 tw:text-[#34C759]">
+        <i-tabler name="message-circle" class="tw:h-5 tw:w-5"></i-tabler>
+      </div>
+    </div>
+
+    <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4">
+      <div>
+        <p class="ds-hint tw:m-0">Telegram</p>
+        <p class="tw:m-0 tw:text-2xl tw:font-bold tw:text-on-surface">—</p>
+      </div>
+      <div class="tw:flex tw:h-10 tw:w-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-[#26A5E4]/15 tw:text-[#26A5E4]">
+        <i-tabler name="brand-telegram" class="tw:h-5 tw:w-5"></i-tabler>
+      </div>
+    </div>
   </div>
 
   <!-- Toolbar -->
-  <div class="tw:flex tw:flex-col tw:gap-3 tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4 tw:md:flex-row tw:md:items-center tw:md:justify-between">
+  <div class="tw:flex tw:flex-col tw:gap-3 tw:bg-surface tw:p-0 tw:md:flex-row tw:md:items-center tw:md:justify-between">
     <input
       #importFileInput
       type="file"
@@ -25,12 +66,12 @@
 
     <!-- List/Grid toggle + search -->
     <div class="tw:flex tw:flex-1 tw:flex-col tw:gap-3 tw:sm:flex-row tw:sm:items-center">
-      <div class="tw:inline-flex tw:shrink-0 tw:overflow-hidden tw:rounded-xl tw:border tw:border-outline-variant">
+      <div class="tw:inline-flex tw:align-middle tw:shrink-0 tw:overflow-hidden tw:rounded-xl tw:border tw:border-outline-variant">
         <button
           type="button"
           (click)="viewMode.set('list')"
           [class.tw:bg-surface-variant]="viewMode() === 'list'"
-          class="tw:flex tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-3 tw:py-2 tw:text-sm tw:font-medium tw:text-on-surface"
+          class="tw:flex tw:h-10 tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-3 tw:text-sm tw:font-medium tw:text-on-surface"
         >
           <i-tabler name="list" class="tw:h-4 tw:w-4"></i-tabler>
           List
@@ -39,7 +80,7 @@
           type="button"
           (click)="viewMode.set('grid')"
           [class.tw:bg-surface-variant]="viewMode() === 'grid'"
-          class="tw:flex tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-3 tw:py-2 tw:text-sm tw:font-medium tw:text-on-surface"
+          class="tw:flex tw:h-10 tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-3 tw:text-sm tw:font-medium tw:text-on-surface"
         >
           <i-tabler name="layout-grid" class="tw:h-4 tw:w-4"></i-tabler>
           Grid
@@ -52,7 +93,7 @@
           placeholder="Search a contact"
           [(ngModel)]="searchText"
           (ngModelChange)="onSearchChange($event)"
-          class="ds-input ds-input--icon-left"
+          class="ds-input ds-input--icon-left tw:h-10"
           />
         <i-tabler name="search" class="tw:absolute tw:left-3 tw:top-1/2 tw:h-4 tw:w-4 tw:-translate-y-1/2 tw:text-on-surface-variant"></i-tabler>
       </div>
@@ -60,15 +101,26 @@
 
     <!-- Actions -->
     <div class="tw:flex tw:flex-col tw:gap-2 tw:sm:flex-row tw:md:shrink-0">
+      <button
+        type="button"
+        (click)="toggleFilters()"
+        [class.tw:bg-surface-variant]="filtersOpen()"
+        aria-label="Filters"
+        class="ds-btn ds-btn--outline tw:h-10 tw:w-full tw:px-4 tw:sm:w-auto"
+      >
+        <i-tabler name="filter" class="tw:h-4 tw:w-4"></i-tabler>
+        <span class="tw:hidden tw:sm:inline">Filters</span>
+      </button>
       <!-- Export dropdown -->
       <div class="tw:relative" data-export-menu>
         <button
           type="button"
           (click)="exportMenuOpen.set(!exportMenuOpen())"
-          class="ds-btn ds-btn--outline tw:w-full tw:px-4 tw:sm:w-auto"
+          aria-label="Export"
+          class="ds-btn ds-btn--outline tw:h-10 tw:w-full tw:px-4 tw:sm:w-auto"
         >
           <i-tabler name="download" class="tw:h-4 tw:w-4"></i-tabler>
-          Export
+          <span class="tw:hidden tw:sm:inline">Export</span>
         </button>
         @if (exportMenuOpen()) {
           <div
@@ -92,22 +144,109 @@
         type="button"
         (click)="triggerImport(importFileInput)"
         [disabled]="isImporting()"
-        class="ds-btn ds-btn--outline tw:w-full tw:px-4 tw:sm:w-auto"
+        aria-label="Import"
+        class="ds-btn ds-btn--outline tw:h-10 tw:w-full tw:px-4 tw:sm:w-auto"
       >
         <i-tabler name="upload" class="tw:h-4 tw:w-4"></i-tabler>
-        {{ isImporting() ? 'Importing...' : 'Import' }}
+        <span class="tw:hidden tw:sm:inline">{{ isImporting() ? 'Importing...' : 'Import' }}</span>
       </button>
 
       <button
         type="button"
         (click)="createContact()"
-        class="ds-btn ds-btn--primary tw:w-full tw:whitespace-nowrap tw:px-4 tw:sm:w-auto"
+        aria-label="Add a new contact"
+        class="ds-btn ds-btn--primary tw:h-10 tw:w-full tw:whitespace-nowrap tw:px-4 tw:sm:w-auto"
       >
         <i-tabler name="plus" class="tw:h-4 tw:w-4 tw:shrink-0"></i-tabler>
-        Add a new contact
+        <span class="tw:hidden tw:sm:inline">Add a new contact</span>
       </button>
     </div>
   </div>
+
+  <!-- Filters panel, toggled by the "Filters" button in the toolbar above -->
+  @if (filtersOpen()) {
+    <div class="tw:grid tw:grid-cols-1 tw:gap-4 tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4 tw:sm:grid-cols-2 tw:lg:grid-cols-4">
+      <!-- Tags multi-select -->
+      <div class="tw:flex tw:flex-col tw:gap-2">
+        <label class="ds-label">Tags</label>
+        <div class="tw:relative" data-tags-dropdown>
+          <button
+            type="button"
+            (click)="toggleTagsDropdown()"
+            class="ds-input tw:flex tw:items-center tw:justify-between tw:text-left"
+          >
+            <span class="tw:truncate">
+              @if (selectedTagIds.length === 0) {
+                All tags
+              } @else {
+                {{ selectedTagIds.length }} tag{{ selectedTagIds.length > 1 ? 's' : '' }} selected
+              }
+            </span>
+            <i-tabler name="chevron-down" class="tw:h-4 tw:w-4 tw:shrink-0 tw:text-on-surface-variant"></i-tabler>
+          </button>
+          @if (tagsDropdownOpen()) {
+            <div class="tw:absolute tw:z-20 tw:mt-2 tw:max-h-60 tw:w-full tw:overflow-y-auto tw:rounded-xl tw:border tw:border-outline-variant tw:bg-surface tw:py-1 tw:shadow-lg">
+              @if (availableTags.length === 0) {
+                <span class="tw:block tw:px-4 tw:py-2 tw:text-sm tw:text-on-surface-variant">No tags available</span>
+              }
+              @for (tag of availableTags; track tag.id) {
+                <button
+                  type="button"
+                  (click)="toggleTagFilter(tag.id)"
+                  class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-4 tw:py-2 tw:text-left tw:text-sm tw:text-on-surface tw:hover:bg-surface-variant"
+                >
+                  <input
+                    type="checkbox"
+                    [checked]="isTagSelected(tag.id)"
+                    class="tw:h-4 tw:w-4 tw:rounded tw:border-outline-variant tw:text-primary tw:accent-primary"
+                    tabindex="-1"
+                    />
+                  <span class="tw:truncate">{{ tag.name }}</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="tw:flex tw:flex-col tw:gap-2">
+        <label for="contact-status-filter" class="ds-label">Status</label>
+        <select
+          id="contact-status-filter"
+          class="ds-input"
+          [ngModel]="selectedEnabled === '' ? '' : selectedEnabled ? 'true' : 'false'"
+          (ngModelChange)="onEnabledFilterChange($event)"
+        >
+          <option value="">All</option>
+          <option value="true">Enabled</option>
+          <option value="false">Disabled</option>
+        </select>
+      </div>
+
+      <!-- Created date range -->
+      <div class="tw:flex tw:flex-col tw:gap-2">
+        <label for="contact-created-from" class="ds-label">Created From</label>
+        <input
+          id="contact-created-from"
+          type="date"
+          [(ngModel)]="createdAtFrom"
+          (ngModelChange)="onDateFilterChange()"
+          class="ds-input"
+          />
+      </div>
+      <div class="tw:flex tw:flex-col tw:gap-2">
+        <label for="contact-created-to" class="ds-label">Created To</label>
+        <input
+          id="contact-created-to"
+          type="date"
+          [(ngModel)]="createdAtTo"
+          (ngModelChange)="onDateFilterChange()"
+          class="ds-input"
+          />
+      </div>
+    </div>
+  }
 
   <!-- Results -->
   <div class="tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4">
@@ -146,7 +285,7 @@
                   aria-label="Contact actions"
                   class="tw:flex tw:h-10 tw:w-10 tw:items-center tw:justify-center tw:rounded-full tw:border-0 tw:bg-transparent tw:text-on-surface-variant tw:hover:bg-surface-variant"
                 >
-                  <tabler-icon name="dots-vertical"></tabler-icon>
+                  <tabler-icon name="dots"></tabler-icon>
                 </button>
                 @if (openActionsMenuId() === contact.id) {
                   <div class="tw:absolute tw:right-0 tw:z-20 tw:mt-1 tw:w-40 tw:rounded-xl tw:border tw:border-outline-variant tw:bg-surface tw:py-1 tw:shadow-lg">
@@ -170,7 +309,12 @@
             <div class="tw:grid tw:grid-cols-2 tw:gap-2 tw:text-sm">
               <div class="tw:flex tw:flex-col">
                 <span class="tw:text-xs tw:text-on-surface-variant">Country</span>
-                <span class="tw:text-on-surface">{{ countryFlag(contact.person.country) }} {{ contact.person.country || '-' }}</span>
+                <span class="tw:text-on-surface">@if (contact.person.country) {
+                    <img [src]="countryFlagSrc(contact.person.country)" alt="" class="tw:inline-block tw:h-3 tw:w-4 tw:rounded-[2px] tw:align-middle tw:object-cover" />
+                    {{ countryName(contact.person.country) }}
+                  } @else {
+                    -
+                  }</span>
               </div>
               <div class="tw:flex tw:flex-col">
                 <span class="tw:text-xs tw:text-on-surface-variant">Phone</span>
@@ -242,7 +386,12 @@
                 </td>
                 <td class="tw:whitespace-nowrap tw:px-3 tw:py-3 tw:text-sm tw:text-on-surface">{{ contact.person.email }}</td>
                 <td class="tw:whitespace-nowrap tw:px-3 tw:py-3 tw:text-sm tw:text-on-surface">
-                  {{ countryFlag(contact.person.country) }} {{ contact.person.country || '-' }}
+                  @if (contact.person.country) {
+                    <img [src]="countryFlagSrc(contact.person.country)" alt="" class="tw:inline-block tw:h-3 tw:w-4 tw:rounded-[2px] tw:align-middle tw:object-cover" />
+                    {{ countryName(contact.person.country) }}
+                  } @else {
+                    -
+                  }
                 </td>
                 <td class="tw:whitespace-nowrap tw:px-3 tw:py-3 tw:text-sm tw:text-on-surface">{{ contact.person.phoneNumber || '-' }}</td>
                 <td class="tw:whitespace-nowrap tw:px-3 tw:py-3 tw:text-sm tw:text-on-surface">
@@ -259,7 +408,7 @@
                       aria-label="Contact actions"
                       class="tw:flex tw:h-10 tw:w-10 tw:items-center tw:justify-center tw:rounded-full tw:border-0 tw:bg-transparent tw:text-on-surface-variant tw:hover:bg-surface-variant"
                     >
-                      <tabler-icon name="dots-vertical"></tabler-icon>
+                      <tabler-icon name="dots"></tabler-icon>
                     </button>
                     @if (openActionsMenuId() === contact.id) {
                       <div class="tw:absolute tw:right-0 tw:z-20 tw:mt-1 tw:w-40 tw:rounded-xl tw:border tw:border-outline-variant tw:bg-surface tw:py-1 tw:shadow-lg">
@@ -310,89 +459,3 @@
     (deleted)="onDeleteConfirmed()"
   />
 }
-
-<!-- Projected into the shared sidebar via SidebarFiltersService -->
-<ng-template #filtersPanel>
-  <div class="tw:flex tw:flex-col tw:gap-4">
-
-    <!-- Tags multi-select -->
-    <div class="tw:flex tw:flex-col tw:gap-2">
-      <label class="ds-label">Tags</label>
-      <div class="tw:relative" data-tags-dropdown>
-        <button
-          type="button"
-          (click)="toggleTagsDropdown()"
-          class="ds-input tw:flex tw:items-center tw:justify-between tw:text-left"
-        >
-          <span class="tw:truncate">
-            @if (selectedTagIds.length === 0) {
-              All tags
-            } @else {
-              {{ selectedTagIds.length }} tag{{ selectedTagIds.length > 1 ? 's' : '' }} selected
-            }
-          </span>
-          <i-tabler name="chevron-down" class="tw:h-4 tw:w-4 tw:shrink-0 tw:text-on-surface-variant"></i-tabler>
-        </button>
-        @if (tagsDropdownOpen()) {
-          <div class="tw:absolute tw:z-20 tw:mt-2 tw:max-h-60 tw:w-full tw:overflow-y-auto tw:rounded-xl tw:border tw:border-outline-variant tw:bg-surface tw:py-1 tw:shadow-lg">
-            @if (availableTags.length === 0) {
-              <span class="tw:block tw:px-4 tw:py-2 tw:text-sm tw:text-on-surface-variant">No tags available</span>
-            }
-            @for (tag of availableTags; track tag.id) {
-              <button
-                type="button"
-                (click)="toggleTagFilter(tag.id)"
-                class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-4 tw:py-2 tw:text-left tw:text-sm tw:text-on-surface tw:hover:bg-surface-variant"
-              >
-                <input
-                  type="checkbox"
-                  [checked]="isTagSelected(tag.id)"
-                  class="tw:h-4 tw:w-4 tw:rounded tw:border-outline-variant tw:text-primary tw:accent-primary"
-                  tabindex="-1"
-                  />
-                <span class="tw:truncate">{{ tag.name }}</span>
-              </button>
-            }
-          </div>
-        }
-      </div>
-    </div>
-
-    <!-- Status -->
-    <div class="tw:flex tw:flex-col tw:gap-2">
-      <label for="contact-status-filter" class="ds-label">Status</label>
-      <select
-        id="contact-status-filter"
-        class="ds-input"
-        [ngModel]="selectedEnabled === '' ? '' : selectedEnabled ? 'true' : 'false'"
-        (ngModelChange)="onEnabledFilterChange($event)"
-      >
-        <option value="">All</option>
-        <option value="true">Enabled</option>
-        <option value="false">Disabled</option>
-      </select>
-    </div>
-
-    <!-- Created date range -->
-    <div class="tw:flex tw:flex-col tw:gap-2">
-      <label for="contact-created-from" class="ds-label">Created From</label>
-      <input
-        id="contact-created-from"
-        type="date"
-        [(ngModel)]="createdAtFrom"
-        (ngModelChange)="onDateFilterChange()"
-        class="ds-input"
-        />
-    </div>
-    <div class="tw:flex tw:flex-col tw:gap-2">
-      <label for="contact-created-to" class="ds-label">Created To</label>
-      <input
-        id="contact-created-to"
-        type="date"
-        [(ngModel)]="createdAtTo"
-        (ngModelChange)="onDateFilterChange()"
-        class="ds-input"
-        />
-    </div>
-  </div>
-</ng-template>

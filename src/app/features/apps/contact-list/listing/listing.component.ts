@@ -22,7 +22,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ContactBox } from 'src/app/features/apps/contact-list/contact-list';
 
 import { AppDeleteDialogComponent } from '../delete-dialog/delete-dialog.component';
-import { AppSearchDialogComponent } from 'src/app/layouts/full/vertical/header/header.component';
 import { CommonModule } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 
@@ -78,16 +77,6 @@ export class AppListingComponent implements OnInit, OnDestroy {
 
   isOver(): boolean {
     return this.mediaMatcher.matches;
-  }
-
-  openDialog() {
-    const dialogRef = this.dialog.open(AppSearchDialogComponent, {
-      autoFocus: false,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
-    });
   }
 
   filteredContacts = computed(() => {
