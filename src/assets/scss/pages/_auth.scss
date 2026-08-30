@@ -7,6 +7,198 @@
   align-items: center;
 }
 
+// ── Auth form panel (light side) ─────────────────────────────────────────────
+
+.auth-form-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 40px 48px;
+  overflow-y: auto;
+}
+
+.auth-form-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+// Sits inside .auth-form-body so its left edge lines up with the form fields
+// instead of the panel's own padding.
+.auth-form-logo {
+  flex-shrink: 0;
+  margin-bottom: 40px;
+
+  .brand-logo {
+    height: 28px;
+    width: auto;
+  }
+
+  // Remove extra link margin from BrandingComponent
+  a {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+  }
+}
+
+.auth-form-title {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 8px;
+  color: var(--mat-sys-on-background);
+}
+
+.auth-form-subtitle {
+  font-size: 14px;
+  color: var(--mat-sys-on-surface-variant);
+  display: block;
+  margin-bottom: 32px;
+}
+
+// ── Auth mode tab switch (email / phone) ─────────────────────────────────────
+
+.auth-mode-tabs {
+  display: flex;
+  gap: 8px;
+
+  .auth-mode-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--mat-sys-outline);
+    background: transparent;
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+    i {
+      font-size: 16px;
+    }
+
+    &:hover:not(.active) {
+      background: var(--mat-sys-surface-variant);
+    }
+
+    &.active {
+      background: var(--mat-sys-primary-container);
+      border-color: var(--mat-sys-primary);
+      color: var(--mat-sys-on-primary-container);
+      font-weight: 600;
+    }
+  }
+}
+
+// ── Auth Hero Panel (dark branding side) ─────────────────────────────────────
+
+.auth-hero {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100vh;
+  padding: 40px 48px;
+  background-color: #12100e;
+  position: relative;
+  overflow: hidden;
+
+  // Subtle radial glow tied to the brand primary
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at 70% 15%,
+      rgba(255, 128, 74, 0.14) 0%,
+      transparent 55%
+    );
+    pointer-events: none;
+  }
+
+  // Subtle bottom glow
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -80px;
+    left: -80px;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 128, 74, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  &__logo {
+    flex-shrink: 0;
+    margin-bottom: 60px;
+    position: relative;
+    z-index: 1;
+
+    &-img {
+      height: 28px;
+      width: auto;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__headline {
+    font-size: 52px;
+    line-height: 1.15;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 20px;
+    letter-spacing: -0.5px;
+
+    &-accent {
+      color: var(--mat-sys-primary);
+    }
+  }
+
+  &__desc {
+    font-size: 15px;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.55);
+    max-width: 420px;
+    margin: 0;
+  }
+
+  &__illustration {
+    margin-top: auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding-top: 40px;
+    position: relative;
+    z-index: 1;
+
+    &-img {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      display: block;
+      opacity: 0.95;
+    }
+  }
+}
+
 .auth-title {
   font-size: 36px;
   line-height: 44px;

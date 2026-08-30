@@ -12,6 +12,7 @@ import { Contact, ContactPage } from 'src/app/features/contacts/models/contact';
 import { Campaign, CampaignStatus, CreateCampaignRequest } from '../../models/campaign';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 import { forkJoin } from 'rxjs';
 
@@ -35,6 +36,7 @@ export class CampaignEditComponent implements OnInit {
   private messageService = inject(MessageService);
   private tagService = inject(TagService);
   private contactService = inject(ContactService);
+  private workspaceService = inject(WorkspaceService);
 
   campaignForm: FormGroup;
   isSubmitting = false;
@@ -68,7 +70,7 @@ export class CampaignEditComponent implements OnInit {
     this.campaignId = this.route.snapshot.params['id'];
     if (!this.campaignId) {
       this.snackBar.open('Campaign id is missing', 'Close', { duration: 3000 });
-      this.router.navigate(['/campaigns']);
+      this.router.navigate(this.workspaceService.workspacePath('campaigns'));
       return;
     }
 
@@ -88,7 +90,7 @@ export class CampaignEditComponent implements OnInit {
         this.currentStatus = campaign.status;
         if (!editability.editable) {
           this.snackBar.open(editability.reason || 'This campaign is not editable', 'Close', { duration: 5000 });
-          this.router.navigate(['/campaigns/details', this.campaignId]);
+          this.router.navigate(this.workspaceService.workspacePath('campaigns', 'details', this.campaignId));
           return;
         }
 
@@ -101,7 +103,7 @@ export class CampaignEditComponent implements OnInit {
       error: (error) => {
         console.error('Error loading campaign edit data:', error);
         this.snackBar.open('Error loading campaign', 'Close', { duration: 3000 });
-        this.router.navigate(['/campaigns']);
+        this.router.navigate(this.workspaceService.workspacePath('campaigns'));
       }
     });
   }
@@ -163,7 +165,7 @@ export class CampaignEditComponent implements OnInit {
         this.campaignService.updateCampaign(this.campaignId, payload).subscribe({
           next: () => {
             this.snackBar.open('Campaign updated successfully', 'Close', { duration: 3000 });
-            this.router.navigate(['/campaigns/details', this.campaignId]);
+            this.router.navigate(this.workspaceService.workspacePath('campaigns', 'details', this.campaignId));
           },
           error: (error) => {
             console.error('Error updating campaign:', error);

@@ -1,23 +1,22 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal, inject, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { MatInputModule } from '@angular/material/input';
 import { AuthService } from 'src/app/features/authentication/services/auth.service';
-import { CoreService } from 'src/app/services/core.service';
-import { MaterialModule } from '../../../../material.module';
-import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/branding.component';
-import { PasswordVisibilityToggleComponent } from '../../../../components/shared/password-visibility-toggle.component';
 import { PasswordResetCompleteResponse } from '../../models/password-reset-complete-response';
+import { AuthLayoutComponent } from '../../components/auth-layout/auth-layout.component';
+import { DsTextFieldComponent } from 'src/app/shared/components/ui/ds-text-field/ds-text-field.component';
+import { DsButtonComponent } from 'src/app/shared/components/ui/ds-button/ds-button.component';
+import { DsAlertComponent } from 'src/app/shared/components/ui/ds-alert/ds-alert.component';
 
 @Component({
   selector: 'app-password-reset-complete',
-  imports: [RouterModule, MaterialModule, MatInputModule, FormsModule, ReactiveFormsModule, BrandingComponent, PasswordVisibilityToggleComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterModule, FormsModule, ReactiveFormsModule, AuthLayoutComponent, DsTextFieldComponent, DsButtonComponent, DsAlertComponent],
   templateUrl: './password-reset-complete.component.html',
-  styleUrls: ['../login/login.component.scss']
 })
 export class PasswordResetCompleteComponent implements OnInit {
   private authService = inject(AuthService);
-  options = inject(CoreService).getOptions();
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -29,16 +28,18 @@ export class PasswordResetCompleteComponent implements OnInit {
   isLoading = signal(false);
   error = signal<string | null>(null);
   resetToken: string | null = null;
-  passwordVisible = signal(false);
-  confirmPasswordVisible = signal(false);
-  
-  // Track fields being edited to hide errors during typing
-  private fieldsBeingEdited = new Set<string>();
+
+  private formStatus = toSignal(this.form.statusChanges, { initialValue: this.form.status });
+
+  /** Cross-field error, shown separately since it lives on the FormGroup, not a single control. */
+  showPasswordMismatch = computed(() => {
+    this.formStatus();
+    return this.form.controls.confirmPassword.touched && !!this.form.errors?.['passwordMismatch'];
+  });
 
   ngOnInit(): void {
     this.resetToken = this.route.snapshot.queryParams['resetToken'] || null;
-    
-    // Clear general error when user starts typing in any field
+
     this.form.valueChanges.subscribe(() => {
       if (this.error()) {
         this.error.set(null);
@@ -46,47 +47,11 @@ export class PasswordResetCompleteComponent implements OnInit {
     });
   }
 
-  get f() {
-    return this.form.controls;
-  }
-
   passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
     const group = control as FormGroup;
     const np = group.get('newPassword')?.value;
     const cp = group.get('confirmPassword')?.value;
     return np && cp && np === cp ? null : { passwordMismatch: true };
-  }
-
-  togglePasswordVisibility(): void {
-    this.passwordVisible.update(visible => !visible);
-  }
-
-  toggleConfirmPasswordVisibility(): void {
-    this.confirmPasswordVisible.update(visible => !visible);
-  }
-  
-  onFieldInput(fieldName: string): void {
-    // Mark field as being edited to hide errors during typing
-    this.fieldsBeingEdited.add(fieldName);
-  }
-  
-  onFieldBlur(fieldName: string): void {
-    // Remove field from being edited set when it loses focus
-    this.fieldsBeingEdited.delete(fieldName);
-    
-    // Trigger validation on blur
-    const control = this.form.get(fieldName);
-    if (control) {
-      control.updateValueAndValidity();
-      control.markAsTouched();
-    }
-    
-    // Also update form-level validation for password match
-    this.form.updateValueAndValidity();
-  }
-  
-  isFieldBeingEdited(fieldName: string): boolean {
-    return this.fieldsBeingEdited.has(fieldName);
   }
 
   submit(): void {

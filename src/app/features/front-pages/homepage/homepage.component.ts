@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/route
 import { IconModule } from 'src/app/icon/icon.module';
 import { BrandingComponent } from 'src/app/layouts/full/vertical/sidebar/branding.component';
 import { MaterialModule } from 'src/app/material.module';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-homepage',
@@ -23,6 +24,7 @@ export class HomepageComponent {
   isMobileView = false;
   hideCloserBtn: boolean = true;
   private router = inject(Router)
+  private workspaceService = inject(WorkspaceService);
   private mediaMatcher: MediaQueryList = matchMedia(`(max-width: 1199px)`);
   showBackToTop: boolean;
   isTopbarFixed: boolean;
@@ -56,7 +58,7 @@ export class HomepageComponent {
     this.hideCloserBtn = false;
   }
   getNavigate() {
-    this.router.navigate(['/dashboards/dashboard1'])
+    this.router.navigate(this.workspaceService.workspacePath('dashboards', 'dashboard1'))
   }
 
   scrollToTop(): void {

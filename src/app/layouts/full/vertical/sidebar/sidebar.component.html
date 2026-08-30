@@ -1,20 +1,19 @@
-<div class="d-flex align-items-center justify-content-between">
-  <div class="branding">
-    <app-branding></app-branding>
-  </div>
-
+<div class="tw:flex tw:items-center tw:justify-between tw:px-3 tw:py-2">
+  <app-branding></app-branding>
   @if(showToggle) {
-  <a
-    href="javascript:void(0)"
-    (click)="toggleMobileNav.emit()"
-    class="d-flex justify-content-center ng-star-inserted icon-40 align-items-center f-s-14"
-  >
-    <i-tabler name="x" class="icon-20 d-flex"></i-tabler>
-  </a>
+    <a
+      href="javascript:void(0)"
+      (click)="sidenavService.close()"
+      class="d-flex justify-content-center ng-star-inserted icon-40 align-items-center f-s-14"
+    >
+      <i-tabler name="x" class="icon-20 d-flex"></i-tabler>
+    </a>
   }
 </div>
 
-<!-- Workspace switcher -->
-<div class="px-2 py-2">
-  <app-workspace-switcher></app-workspace-switcher>
+<div class="tw:min-h-0 tw:flex-1"></div>
+
+<!-- Workspace switcher, sticky to the very bottom of the sidebar -->
+<div class="tw:sticky tw:bottom-0 tw:mt-auto tw:shrink-0 tw:bg-surface tw:px-2 tw:py-2">
+  <app-workspace-switcher mode="inline"></app-workspace-switcher>
 </div>

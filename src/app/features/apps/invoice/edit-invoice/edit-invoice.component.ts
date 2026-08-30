@@ -16,6 +16,7 @@ import { MaterialModule } from 'src/app/material.module';
 import { CommonModule } from '@angular/common';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 @Component({
   selector: 'app-edit-invoice',
   templateUrl: './edit-invoice.component.html',
@@ -34,6 +35,7 @@ export class AppEditInvoiceComponent {
   private fb = inject(UntypedFormBuilder);
   dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
+  private workspaceService = inject(WorkspaceService);
 
   id = signal<any>(null);
   subTotal = signal<number>(0);
@@ -153,7 +155,7 @@ export class AppEditInvoiceComponent {
       }
       this.dialog.open(OkDialogComponent);
       this.invoiceService.updateInvoice(currentInvoice.id, currentInvoice);
-      this.router.navigate(['/apps/invoice/list']);
+      this.router.navigate(this.workspaceService.workspacePath('apps', 'invoice', 'list'));
       this.showSnackbar('Invoice updated  successfully!');
     }
   }

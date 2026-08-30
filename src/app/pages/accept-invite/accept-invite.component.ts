@@ -65,7 +65,7 @@ export class AcceptInviteComponent implements OnInit {
       next: (resp) => {
         this.orgName.set(resp.workspace.orgName);
         this.state.set('success');
-        setTimeout(() => this.router.navigate(['/contacts']), 2000);
+        setTimeout(() => this.router.navigate(this.wsService.workspacePath('contacts')), 2000);
       },
       error: (err) => {
         this.state.set('error');

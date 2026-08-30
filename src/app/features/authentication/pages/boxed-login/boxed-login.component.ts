@@ -10,6 +10,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { MaterialModule } from '../../../../material.module';
 import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/branding.component';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-boxed-login',
@@ -25,6 +26,7 @@ import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/bra
 export class AppBoxedLoginComponent {
   private settings = inject(CoreService);
   private router = inject(Router);
+  private workspaceService = inject(WorkspaceService);
 
   options = this.settings.getOptions();
 
@@ -44,6 +46,6 @@ export class AppBoxedLoginComponent {
 
   submit() {
     // console.log(this.form.value);
-    this.router.navigate(['/contacts']);
+    this.router.navigate(this.workspaceService.workspacePath('contacts'));
   }
 }

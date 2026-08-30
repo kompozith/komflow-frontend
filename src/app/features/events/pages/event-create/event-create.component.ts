@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EventFormComponent } from '../../components/event-form/event-form.component';
 import { CreateEventRequest, EventService } from 'src/app/features/core/services/event.service';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-event-create',
@@ -14,6 +15,7 @@ export class EventCreateComponent {
   private eventService = inject(EventService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
+  private workspaceService = inject(WorkspaceService);
 
   saving = false;
 
@@ -28,7 +30,7 @@ export class EventCreateComponent {
       next: (created) => {
         this.saving = false;
         this.snackBar.open('Evenement cree avec succes', 'Fermer', { duration: 2500 });
-        this.router.navigate(['/events/details', created.id]);
+        this.router.navigate(this.workspaceService.workspacePath('events', 'details', created.id));
       },
       error: () => {
         this.saving = false;
@@ -38,6 +40,6 @@ export class EventCreateComponent {
   }
 
   cancel(): void {
-    this.router.navigate(['/events']);
+    this.router.navigate(this.workspaceService.workspacePath('events'));
   }
 }

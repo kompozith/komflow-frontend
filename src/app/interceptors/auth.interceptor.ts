@@ -10,6 +10,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, switchMap, filter, take } from 'rxjs/operators';
 import { AuthService } from '../features/authentication/services/auth.service';
 import { Router } from '@angular/router';
+import { WorkspaceService } from '../features/organization/services/workspace.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -29,6 +30,13 @@ export class AuthInterceptor implements HttpInterceptor {
 
     if (token && !request.headers.has('Authorization')) {
       request = this.addToken(request, token);
+    }
+
+    if (!this.isAuthEndpoint(request.url) && !request.headers.has('X-Workspace-Slug')) {
+      const slug = this.injector.get(WorkspaceService).activeWorkspace()?.orgSlug;
+      if (slug) {
+        request = request.clone({ setHeaders: { 'X-Workspace-Slug': slug } });
+      }
     }
 
     return next.handle(request).pipe(

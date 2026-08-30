@@ -1,16 +1,17 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/features/authentication/services/auth.service';
-import { MaterialModule } from '../../../../material.module';
-import { BrandingComponent } from '../../../../layouts/full/vertical/sidebar/branding.component';
 import { PasswordResetVerifyResponse } from '../../models/password-reset-verify-response';
+import { AuthLayoutComponent } from '../../components/auth-layout/auth-layout.component';
+import { DsButtonComponent } from 'src/app/shared/components/ui/ds-button/ds-button.component';
+import { DsAlertComponent } from 'src/app/shared/components/ui/ds-alert/ds-alert.component';
 
 @Component({
   selector: 'app-password-reset-verify',
-  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, BrandingComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterModule, FormsModule, ReactiveFormsModule, AuthLayoutComponent, DsButtonComponent, DsAlertComponent],
   templateUrl: './password-reset-verify.component.html',
-  styleUrls: ['../login/login.component.scss']
 })
 export class PasswordResetVerifyComponent implements OnInit {
   private authService = inject(AuthService);
@@ -31,9 +32,6 @@ export class PasswordResetVerifyComponent implements OnInit {
   isLoading = signal(false);
   error = signal<string | null>(null);
   contact: string | null = null;
-  
-  // Track fields being edited to hide errors during typing
-  private fieldsBeingEdited = new Set<string>();
 
   ngOnInit(): void {
     this.contact = this.route.snapshot.queryParams['contact'] || null;
@@ -54,9 +52,9 @@ export class PasswordResetVerifyComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const value = input.value;
     
-    // Mark field as being edited
+    // Mark field as untouched to hide error while typing
     const fieldName = `digit${currentIndex}`;
-    this.fieldsBeingEdited.add(fieldName);
+    this.form.get(fieldName)?.markAsUntouched();
 
     // Only allow numbers
     if (value && !/^[0-9]$/.test(value)) {
@@ -87,19 +85,12 @@ export class PasswordResetVerifyComponent implements OnInit {
   
   onDigitBlur(currentIndex: number): void {
     const fieldName = `digit${currentIndex}`;
-    // Remove field from being edited set when it loses focus
-    this.fieldsBeingEdited.delete(fieldName);
-    
     // Trigger validation on blur
     const control = this.form.get(fieldName);
     if (control) {
       control.updateValueAndValidity();
       control.markAsTouched();
     }
-  }
-  
-  isFieldBeingEdited(fieldName: string): boolean {
-    return this.fieldsBeingEdited.has(fieldName);
   }
 
   onDigitPaste(event: ClipboardEvent, startIndex: number): void {

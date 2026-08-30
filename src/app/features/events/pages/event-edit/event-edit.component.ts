@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material.module';
 import { AppEvent, CreateEventRequest, EventService } from 'src/app/features/core/services/event.service';
 import { EventFormComponent } from '../../components/event-form/event-form.component';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-event-edit',
@@ -17,6 +18,7 @@ export class EventEditComponent implements OnInit {
   private router = inject(Router);
   private eventService = inject(EventService);
   private snackBar = inject(MatSnackBar);
+  private workspaceService = inject(WorkspaceService);
 
   event: AppEvent | null = null;
   loading = true;
@@ -31,7 +33,7 @@ export class EventEditComponent implements OnInit {
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
     if (!this.eventId) {
-      this.router.navigate(['/events']);
+      this.router.navigate(this.workspaceService.workspacePath('events'));
       return;
     }
     this.loadEvent();
@@ -45,7 +47,7 @@ export class EventEditComponent implements OnInit {
       next: () => {
         this.saving = false;
         this.snackBar.open('Evenement mis a jour', 'Fermer', { duration: 2500 });
-        this.router.navigate(['/events/details', this.eventId]);
+        this.router.navigate(this.workspaceService.workspacePath('events', 'details', this.eventId));
       },
       error: () => {
         this.saving = false;
@@ -56,10 +58,10 @@ export class EventEditComponent implements OnInit {
 
   cancel(): void {
     if (!this.eventId) {
-      this.router.navigate(['/events']);
+      this.router.navigate(this.workspaceService.workspacePath('events'));
       return;
     }
-    this.router.navigate(['/events/details', this.eventId]);
+    this.router.navigate(this.workspaceService.workspacePath('events', 'details', this.eventId));
   }
 
   private loadEvent(): void {
@@ -72,7 +74,7 @@ export class EventEditComponent implements OnInit {
       error: () => {
         this.loading = false;
         this.snackBar.open('Evenement introuvable', 'Fermer', { duration: 3000 });
-        this.router.navigate(['/events']);
+        this.router.navigate(this.workspaceService.workspacePath('events'));
       },
     });
   }

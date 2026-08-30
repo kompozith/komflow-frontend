@@ -13,6 +13,7 @@ import { PersonService } from '../../../personnel/services/person.service';
 import { Person } from '../../../personnel/models/person';
 import { GeoCity, GeoCountry, GeoService } from '../../../core/services/geo.service';
 import { CountryISO, NgxIntlTelInputModule, SearchCountryField } from 'ngx-intl-tel-input';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-contact-create',
@@ -35,6 +36,7 @@ export class ContactCreateComponent {
   private geoService = inject(GeoService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
+  private workspaceService = inject(WorkspaceService);
 
   contactForm: FormGroup;
   isLoading = false;
@@ -119,7 +121,7 @@ export class ContactCreateComponent {
       this.contactService.createContact(contactData).subscribe({
         next: () => {
           this.snackBar.open('Contact created successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/contacts']);
+          this.router.navigate(this.workspaceService.workspacePath('contacts'));
         },
         error: (error) => {
           console.error('Error creating contact:', error);
@@ -133,7 +135,7 @@ export class ContactCreateComponent {
   }
 
   closeDialog(): void {
-    this.router.navigate(['/contacts']);
+    this.router.navigate(this.workspaceService.workspacePath('contacts'));
   }
 
   private markFormGroupTouched(): void {

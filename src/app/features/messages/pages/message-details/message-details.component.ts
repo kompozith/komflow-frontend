@@ -12,6 +12,7 @@ import { BadgeComponent, BadgeVariant } from '../../../../shared/components/badg
 import { normalizeVariableKey, renderTemplatePreviewHtml } from '../../utils/message-rich-text.util';
 import { MediaPreviewService } from 'src/app/shared/services/media-preview.service';
 import { SendTestDialogComponent } from '../../components/send-test-dialog/send-test-dialog.component';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-message-details',
@@ -32,6 +33,7 @@ export class MessageDetailsComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
   private mediaPreviewService = inject(MediaPreviewService);
+  private workspaceService = inject(WorkspaceService);
 
   message: Message | null = null;
   isLoading = false;
@@ -90,17 +92,17 @@ export class MessageDetailsComponent implements OnInit {
         console.error('Error loading message:', error);
         this.snackBar.open('Error loading message', 'Close', { duration: 3000 });
         this.isLoading = false;
-        this.router.navigate(['/messages']);
+        this.router.navigate(this.workspaceService.workspacePath('messages'));
       }
     });
   }
 
   onEdit(): void {
-    this.router.navigate(['/messages/edit', this.messageId]);
+    this.router.navigate(this.workspaceService.workspacePath('messages', 'edit', this.messageId));
   }
 
   onBack(): void {
-    this.router.navigate(['/messages']);
+    this.router.navigate(this.workspaceService.workspacePath('messages'));
   }
 
   openSendTestDialog(): void {

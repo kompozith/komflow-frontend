@@ -1,0 +1,18 @@
+<nav class="tab-bar" aria-label="Main navigation">
+  @for (item of items(); track item.route) {
+    <a
+      [routerLink]="workspaceService.workspacePath(item.route)"
+      routerLinkActive="tab-bar__item--active"
+      #rla="routerLinkActive"
+      class="tab-bar__item"
+      [class.tab-bar__item--with-label]="rla.isActive"
+      [attr.aria-label]="item.displayName"
+      [title]="item.displayName"
+    >
+      <i-tabler [name]="item.iconName" class="tab-bar__icon"></i-tabler>
+      @if (rla.isActive) {
+        <span class="tab-bar__label">{{ item.displayName }}</span>
+      }
+    </a>
+  }
+</nav>

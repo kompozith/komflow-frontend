@@ -1,0 +1,7 @@
+<button [type]="type()" [disabled]="disabled() || loading()" [class]="classes()">
+  @if (loading()) {
+    <span>{{ loadingText() || 'Loading...' }}</span>
+  } @else {
+    <ng-content />
+  }
+</button>

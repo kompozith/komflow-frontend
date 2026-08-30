@@ -8,6 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material.module';
 import { AppEvent, EventService } from 'src/app/features/core/services/event.service';
 import { DeleteEventDialogComponent } from '../../components/delete-event-dialog/delete-event-dialog.component';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
   selector: 'app-event-list',
@@ -21,6 +22,7 @@ export class EventListComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
   private dialog = inject(MatDialog);
+  private workspaceService = inject(WorkspaceService);
 
   events: AppEvent[] = [];
   loading = false;
@@ -68,15 +70,15 @@ export class EventListComponent implements OnInit {
   }
 
   viewDetails(event: AppEvent): void {
-    this.router.navigate(['/events/details', event.id]);
+    this.router.navigate(this.workspaceService.workspacePath('events', 'details', event.id));
   }
 
   viewStats(event: AppEvent): void {
-    this.router.navigate(['/events', event.id, 'stats']);
+    this.router.navigate(this.workspaceService.workspacePath('events', event.id, 'stats'));
   }
 
   edit(event: AppEvent): void {
-    this.router.navigate(['/events/edit', event.id]);
+    this.router.navigate(this.workspaceService.workspacePath('events', 'edit', event.id));
   }
 
   getPublicEventUrl(event: AppEvent): string | null {

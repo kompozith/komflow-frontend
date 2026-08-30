@@ -1,23 +1,50 @@
-<!-- Trigger -->
-<button class="ws-trigger" [matMenuTriggerFor]="wsMenu">
-  <span class="ws-avatar" [style.background]="activeColor">{{ activeInitials }}</span>
-  <div class="flex-grow-1 min-w-0">
-    <div class="ws-name">{{ active?.orgName ?? 'Sélectionner un espace' }}</div>
-    @if (active) {
-      <div class="ws-role">{{ roleLabel(active.myRole) }}</div>
-    }
-  </div>
-  <i-tabler name="chevron-down" class="icon-14 text-muted flex-shrink-0"></i-tabler>
-</button>
+@if (mode === 'dropdown') {
+  <ds-menu #menu [panelWidth]="'254px'">
+    <button trigger class="ws-trigger" (click)="menu.toggle()">
+      <span class="ws-avatar" [ngClass]="activeColorClass">{{ activeInitials }}</span>
+      <div class="flex-grow-1 min-w-0">
+        <div class="ws-name">{{ active?.orgName ?? 'Sélectionner un espace' }}</div>
+        @if (active) {
+          <div class="ws-role">{{ roleLabel(active.myRole) }}</div>
+        }
+      </div>
+      <i-tabler [name]="menu.isOpen() ? 'chevron-up' : 'chevron-down'" class="ws-chevron icon-14 text-muted flex-shrink-0"></i-tabler>
+    </button>
+    <ng-template #panel>
+      <div class="ds-menu-panel">
+        <ng-container *ngTemplateOutlet="wsList; context: { close: menu.close.bind(menu) }"></ng-container>
+      </div>
+    </ng-template>
+  </ds-menu>
+} @else {
+  <!-- Inline sidebar panel: just the pinned active-workspace trigger; opens the
+       full switch/create list (#wsList) as a dropdown above it. -->
+  @if (active) {
+    <ds-menu #pinnedMenu [position]="'above'" [panelWidth]="'254px'">
+      <button trigger class="ws-trigger ws-trigger--pinned" (click)="pinnedMenu.toggle()">
+        <span class="ws-avatar" [ngClass]="activeColorClass">{{ activeInitials }}</span>
+        <div class="flex-grow-1 min-w-0">
+          <div class="ws-name text-truncate">{{ active.orgName }}</div>
+        </div>
+        <i-tabler [name]="pinnedMenu.isOpen() ? 'chevron-down' : 'chevron-up'" class="ws-chevron icon-14 text-muted flex-shrink-0"></i-tabler>
+      </button>
+      <ng-template #panel>
+        <div class="ds-menu-panel">
+          <ng-container *ngTemplateOutlet="wsList; context: { close: pinnedMenu.close.bind(pinnedMenu) }"></ng-container>
+        </div>
+      </ng-template>
+    </ds-menu>
+  }
+}
 
-<mat-menu #wsMenu="matMenu" panelClass="ws-menu">
+<ng-template #wsList let-close="close">
   <!-- En-tête -->
-  <div class="menu-section-label" (click)="$event.stopPropagation()">Mes espaces</div>
+  <div class="menu-section-label">Mes espaces</div>
 
   <!-- Espaces actifs -->
   @for (ws of activeWorkspaces; track ws.orgId) {
-    <div class="ws-item" [class.active]="ws.orgId === service.activeOrgId()" (click)="switchTo(ws)">
-      <span class="ws-item-avatar" [style.background]="roleColor(ws.myRole)">{{ initials(ws.orgName) }}</span>
+    <div class="ws-item" [class.active]="ws.orgId === service.activeOrgId()" (click)="switchTo(ws); close()">
+      <span class="ws-item-avatar" [ngClass]="roleColorClass(ws.myRole)">{{ initials(ws.orgName) }}</span>
       <div class="flex-grow-1 min-w-0">
         <div class="ws-item-name text-truncate">{{ ws.orgName }}</div>
         <div class="ws-item-role">{{ roleLabel(ws.myRole) }}</div>
@@ -30,11 +57,11 @@
 
   <!-- Invitations -->
   @if (pendingWorkspaces.length > 0) {
-    <div class="divider" (click)="$event.stopPropagation()"></div>
-    <div class="menu-section-label" (click)="$event.stopPropagation()">Invitations</div>
+    <div class="divider"></div>
+    <div class="menu-section-label">Invitations</div>
     @for (ws of pendingWorkspaces; track ws.orgId) {
-      <div class="ws-item" (click)="goAccept(ws)">
-        <span class="ws-item-avatar" style="background:#fbbf24">
+      <div class="ws-item" (click)="goAccept(ws); close()">
+        <span class="ws-item-avatar tw:bg-tertiary">
           <i-tabler name="mail" class="icon-14 text-dark"></i-tabler>
         </span>
         <div class="flex-grow-1 min-w-0">
@@ -47,11 +74,11 @@
   }
 
   <!-- Actions -->
-  <div class="divider" (click)="$event.stopPropagation()"></div>
-  <div class="action-item" routerLink="/organization/new">
+  <div class="divider"></div>
+  <div class="action-item" (click)="service.openCreateWorkspaceModal(); close()">
     <div class="action-item-icon">
-      <i-tabler name="plus" class="icon-14" style="color:#6366f1"></i-tabler>
+      <i-tabler name="plus" class="icon-14 tw:text-primary"></i-tabler>
     </div>
     <span class="f-s-13 f-w-600">Créer un espace</span>
   </div>
-</mat-menu>
+</ng-template>

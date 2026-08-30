@@ -16,6 +16,7 @@ import { MaterialModule } from 'src/app/material.module';
 import { CommonModule } from '@angular/common';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { WorkspaceService } from 'src/app/features/organization/services/workspace.service';
 
 @Component({
     selector: 'app-add-invoice',
@@ -35,6 +36,7 @@ export class AppAddInvoiceComponent {
   private router = inject(Router);
   dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
+  private workspaceService = inject(WorkspaceService);
 
   addForm: UntypedFormGroup | any;
   rows: UntypedFormArray;
@@ -133,7 +135,7 @@ export class AppAddInvoiceComponent {
     }
     this.dialog.open(AddedDialogComponent);
     this.invoiceService.addInvoice(this.invoice());
-    this.router.navigate(['/apps/invoice']);
+    this.router.navigate(this.workspaceService.workspacePath('apps', 'invoice'));
     this.showSnackbar('Invoice added successfully!');
 
   }

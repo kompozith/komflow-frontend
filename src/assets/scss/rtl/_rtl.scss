@@ -2,13 +2,6 @@
 
 [dir="rtl"] {
 
-.mat-drawer.mat-drawer-end {
-  transform: translate3d(0, 0, 0);
-  &.mat-drawer-opened {
-    transform: none !important;
-  }
-}
-
   // ------------------------------------------------------
   // header
   // ------------------------------------------------------
@@ -22,12 +15,6 @@
   td.hljs-ln-line.hljs-ln-numbers {
     padding-left: 10px;
     padding-right: 0;
-  }
-
-  // customizer
-  .customizerBtn {
-    left: 30px;
-    right: unset;
   }
 
   //   logo flip
@@ -54,46 +41,8 @@
 
   // sidebar
 
-  .mat-drawer.sidebarNav {
+  .sidebarNav {
     border-left: 1px solid var(--mat-sys-outline-variant);
     border-right: 0;
-  }
-
-  .sidebar-list.mdc-list .menu-list-item .mdc-list-item__start {
-    margin-right: 0 !important;
-    margin-left: 14px !important;
-  }
-
-  // minisidebar
-  &.sidebarNav-mini {
-    .contentWrapper {
-      margin-right: $sidenav-mini !important;
-      margin-left: 0 !important;
-      transition: swift-ease-out(width);
-    }
-
-    .sidebarNav {
-
-      // sidebar
-      .sidebar-list {
-        .menu-list-item {
-          .mdc-list-item__start {
-            margin-right: 8px !important;
-            margin-left: 7px !important;
-          }
-        }
-      }
-
-      &:hover {
-        .sidebar-list {
-          .menu-list-item {
-            .mdc-list-item__start {
-              margin-right: 0 !important;
-              margin-left: 16px !important;
-            }
-          }
-        }
-      }
-    }
   }
 }

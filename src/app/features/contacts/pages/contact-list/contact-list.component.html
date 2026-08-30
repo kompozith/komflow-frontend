@@ -1,202 +1,461 @@
-<mat-card class="cardWithShadow">
-  <mat-card-content>
-    <div class="d-flex justify-content-end align-items-center mb-3 gap-2">
-      <input
-        #importFileInput
-        type="file"
-        accept=".csv,.xlsx"
-        class="d-none"
-        (change)="onImportFileSelected($event)"
-        />
-      <button mat-stroked-button [matMenuTriggerFor]="exportMenu">
-        Export
-      </button>
-      <mat-menu #exportMenu="matMenu">
-        <button mat-menu-item (click)="exportContacts('csv')">Export CSV</button>
-        <button mat-menu-item (click)="exportContacts('xlsx')">Export Excel</button>
-      </mat-menu>
-      <button mat-stroked-button (click)="triggerImport(importFileInput)" [disabled]="isImporting">
-        {{ isImporting ? 'Importing...' : 'Import' }}
-      </button>
-      <button mat-flat-button (click)="createContact()" color="primary">
-        Create Contact
-      </button>
-    </div>
-    <div class="row mt-3">
-      <div class="col-md-4">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Tags</mat-label>
-          <mat-select [(ngModel)]="selectedTagIds" (selectionChange)="onTagFilterChange($event.value)" multiple>
-            @for (tag of availableTags; track tag) {
-              <mat-option [value]="tag.id">
-                {{ tag.name }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+<div class="tw:flex tw:flex-col tw:gap-4">
+
+  <!-- Stats bandeau -->
+  <div class="tw:grid tw:grid-cols-2 tw:gap-3 tw:sm:grid-cols-3 tw:lg:grid-cols-5">
+    <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4">
+      <div>
+        <p class="ds-hint tw:m-0">Total contacts</p>
+        <p class="tw:m-0 tw:text-2xl tw:font-bold tw:text-on-surface">{{ totalElements() }}</p>
       </div>
-      <div class="col-md-4">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Status</mat-label>
-          <mat-select [(ngModel)]="selectedEnabled" (selectionChange)="onEnabledFilterChange($event.value)">
-            <mat-option [value]="''">All</mat-option>
-            <mat-option [value]="true">Enabled</mat-option>
-            <mat-option [value]="false">Disabled</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col-md-4">
-        <mat-form-field appearance="outline" class="w-100 hide-hint">
-          <input
-            matInput
-            placeholder="Search Contact"
-            [(ngModel)]="searchText"
-            (input)="onSearchChange(searchText)"
-            />
-          <mat-icon matSuffix>
-            <i-tabler name="search" class="icon-20 d-flex m-t-2"></i-tabler>
-          </mat-icon>
-        </mat-form-field>
+      <div class="tw:flex tw:h-10 tw:w-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-primary-container/60 tw:text-primary">
+        <i-tabler name="users" class="tw:h-5 tw:w-5"></i-tabler>
       </div>
     </div>
-    <div class="row mt-3">
-      <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Created From</mat-label>
-          <input matInput [matDatepicker]="createdFromPicker" [(ngModel)]="createdAtFrom" (dateChange)="onDateFilterChange()" />
-          <mat-datepicker-toggle matIconSuffix [for]="createdFromPicker"></mat-datepicker-toggle>
-          <mat-datepicker #createdFromPicker></mat-datepicker>
-        </mat-form-field>
+
+    <!-- Per-channel breakdown: no backend aggregation yet, shown as placeholders pending that endpoint -->
+    <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4">
+      <div>
+        <p class="ds-hint tw:m-0">WhatsApp</p>
+        <p class="tw:m-0 tw:text-2xl tw:font-bold tw:text-on-surface">—</p>
       </div>
-      <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Created To</mat-label>
-          <input matInput [matDatepicker]="createdToPicker" [(ngModel)]="createdAtTo" (dateChange)="onDateFilterChange()" />
-          <mat-datepicker-toggle matIconSuffix [for]="createdToPicker"></mat-datepicker-toggle>
-          <mat-datepicker #createdToPicker></mat-datepicker>
-        </mat-form-field>
+      <div class="tw:flex tw:h-10 tw:w-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-[#25D366]/15 tw:text-[#25D366]">
+        <i-tabler name="brand-whatsapp" class="tw:h-5 tw:w-5"></i-tabler>
       </div>
     </div>
-  </mat-card-content>
-</mat-card>
-<mat-card class="cardWithShadow">
-  <mat-card-content>
-    <div class="table-responsive">
-      @if (!isLoading) {
-        <table mat-table [dataSource]="dataSource" class="w-100">
-          <ng-container matColumnDef="rowNumber">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">#</th>
-            <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 + (currentPage * pageSize) }}</td>
-          </ng-container>
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Name</th>
-            <td mat-cell *matCellDef="let element">
-              <div class="d-flex align-items-center gap-16">
-                <div
-                  class="rounded-circle d-flex align-items-center justify-content-center f-w-600"
-                  [ngClass]="getContactBadgeClass(element.id.toString())"
-                  style="width: 45px; height: 45px; font-size: 18px;"
-                  >
-                  {{ getContactInitials(element.person.firstName, element.person.lastName) }}
-                </div>
-                <div>
-                  <h6 class="f-w-600 f-s-16 m-t-0">
-                    {{ element.person.firstName }} {{ element.person.lastName }}
-                  </h6>
-                </div>
-              </div>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Email</th>
-            <td mat-cell *matCellDef="let element" class="f-s-14">
-              {{ element.person.email }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="phone">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Phone</th>
-            <td mat-cell *matCellDef="let element" class="f-s-14">
-              {{ element.person.phoneNumber || '-' }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="tags">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Tags</th>
-            <td mat-cell *matCellDef="let element" class="f-s-14">
-              <div class="d-flex flex-wrap gap-1">
-                <app-badge
-                  [variant]="'purple'"
-                  [pill]="true"
-                  [content]="element.tagCount">
-                </app-badge>
-              </div>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="createdAt">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Created</th>
-            <td mat-cell *matCellDef="let element" class="f-s-14">
-              {{ element.createdAt | date:'dd/MM/yyyy HH:mm' }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14">
-              Action
-            </th>
-            <td mat-cell *matCellDef="let element" class="f-s-14" (click)="$event.stopPropagation()">
-              <button mat-icon-button [matMenuTriggerFor]="menu" type="button" aria-label="Example icon-button with a menu">
-                <mat-icon>
-                  <tabler-icon name="dots-vertical"></tabler-icon>
-                </mat-icon>
-              </button>
-              <mat-menu #menu="matMenu" class="cardWithShadow">
-                <button mat-menu-item>
-                  <div class="d-flex align-items-center" (click)="viewContactDetails(element)">
-                    <tabler-icon name="eye" class="m-x-6"></tabler-icon>
-                    <span>View Details</span>
-                  </div>
+
+    <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4">
+      <div>
+        <p class="ds-hint tw:m-0">Mail</p>
+        <p class="tw:m-0 tw:text-2xl tw:font-bold tw:text-on-surface">—</p>
+      </div>
+      <div class="tw:flex tw:h-10 tw:w-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-[#EA4335]/15 tw:text-[#EA4335]">
+        <i-tabler name="mail" class="tw:h-5 tw:w-5"></i-tabler>
+      </div>
+    </div>
+
+    <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4">
+      <div>
+        <p class="ds-hint tw:m-0">SMS/MMS</p>
+        <p class="tw:m-0 tw:text-2xl tw:font-bold tw:text-on-surface">—</p>
+      </div>
+      <div class="tw:flex tw:h-10 tw:w-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-[#34C759]/15 tw:text-[#34C759]">
+        <i-tabler name="message-circle" class="tw:h-5 tw:w-5"></i-tabler>
+      </div>
+    </div>
+
+    <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4">
+      <div>
+        <p class="ds-hint tw:m-0">Telegram</p>
+        <p class="tw:m-0 tw:text-2xl tw:font-bold tw:text-on-surface">—</p>
+      </div>
+      <div class="tw:flex tw:h-10 tw:w-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-[#26A5E4]/15 tw:text-[#26A5E4]">
+        <i-tabler name="brand-telegram" class="tw:h-5 tw:w-5"></i-tabler>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="tw:flex tw:flex-col tw:gap-3 tw:bg-surface tw:p-0 tw:md:flex-row tw:md:items-center tw:md:justify-between">
+    <input
+      #importFileInput
+      type="file"
+      accept=".csv,.xlsx"
+      class="tw:hidden"
+      (change)="onImportFileSelected($event)"
+      />
+
+    <!-- List/Grid toggle + search -->
+    <div class="tw:flex tw:flex-1 tw:flex-col tw:gap-3 tw:sm:flex-row tw:sm:items-center">
+      <div class="tw:inline-flex tw:align-middle tw:shrink-0 tw:overflow-hidden tw:rounded-xl tw:border tw:border-outline-variant">
+        <button
+          type="button"
+          (click)="viewMode.set('list')"
+          [class.tw:bg-surface-variant]="viewMode() === 'list'"
+          class="tw:flex tw:h-10 tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-3 tw:text-sm tw:font-medium tw:text-on-surface"
+        >
+          <i-tabler name="list" class="tw:h-4 tw:w-4"></i-tabler>
+          List
+        </button>
+        <button
+          type="button"
+          (click)="viewMode.set('grid')"
+          [class.tw:bg-surface-variant]="viewMode() === 'grid'"
+          class="tw:flex tw:h-10 tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-3 tw:text-sm tw:font-medium tw:text-on-surface"
+        >
+          <i-tabler name="layout-grid" class="tw:h-4 tw:w-4"></i-tabler>
+          Grid
+        </button>
+      </div>
+
+      <div class="tw:relative tw:flex-1 tw:sm:max-w-xs">
+        <input
+          type="text"
+          placeholder="Search a contact"
+          [(ngModel)]="searchText"
+          (ngModelChange)="onSearchChange($event)"
+          class="ds-input ds-input--icon-left tw:h-10"
+          />
+        <i-tabler name="search" class="tw:absolute tw:left-3 tw:top-1/2 tw:h-4 tw:w-4 tw:-translate-y-1/2 tw:text-on-surface-variant"></i-tabler>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="tw:flex tw:flex-col tw:gap-2 tw:sm:flex-row tw:md:shrink-0">
+      <button
+        type="button"
+        (click)="toggleFilters()"
+        [class.tw:bg-surface-variant]="filtersOpen()"
+        aria-label="Filters"
+        class="ds-btn ds-btn--outline tw:h-10 tw:w-full tw:px-4 tw:sm:w-auto"
+      >
+        <i-tabler name="filter" class="tw:h-4 tw:w-4"></i-tabler>
+        <span class="tw:hidden tw:sm:inline">Filters</span>
+      </button>
+      <!-- Export dropdown -->
+      <div class="tw:relative" data-export-menu>
+        <button
+          type="button"
+          (click)="exportMenuOpen.set(!exportMenuOpen())"
+          aria-label="Export"
+          class="ds-btn ds-btn--outline tw:h-10 tw:w-full tw:px-4 tw:sm:w-auto"
+        >
+          <i-tabler name="download" class="tw:h-4 tw:w-4"></i-tabler>
+          <span class="tw:hidden tw:sm:inline">Export</span>
+        </button>
+        @if (exportMenuOpen()) {
+          <div
+            class="tw:absolute tw:right-0 tw:z-20 tw:mt-2 tw:w-44 tw:rounded-xl tw:border tw:border-outline-variant tw:bg-surface tw:py-1 tw:shadow-lg"
+          >
+            <button
+              type="button"
+              (click)="exportContacts('csv'); exportMenuOpen.set(false)"
+              class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-4 tw:py-2 tw:text-left tw:text-sm tw:text-on-surface tw:hover:bg-surface-variant"
+            >Export CSV</button>
+            <button
+              type="button"
+              (click)="exportContacts('xlsx'); exportMenuOpen.set(false)"
+              class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-4 tw:py-2 tw:text-left tw:text-sm tw:text-on-surface tw:hover:bg-surface-variant"
+            >Export Excel</button>
+          </div>
+        }
+      </div>
+
+      <button
+        type="button"
+        (click)="triggerImport(importFileInput)"
+        [disabled]="isImporting()"
+        aria-label="Import"
+        class="ds-btn ds-btn--outline tw:h-10 tw:w-full tw:px-4 tw:sm:w-auto"
+      >
+        <i-tabler name="upload" class="tw:h-4 tw:w-4"></i-tabler>
+        <span class="tw:hidden tw:sm:inline">{{ isImporting() ? 'Importing...' : 'Import' }}</span>
+      </button>
+
+      <button
+        type="button"
+        (click)="createContact()"
+        aria-label="Add a new contact"
+        class="ds-btn ds-btn--primary tw:h-10 tw:w-full tw:whitespace-nowrap tw:px-4 tw:sm:w-auto"
+      >
+        <i-tabler name="plus" class="tw:h-4 tw:w-4 tw:shrink-0"></i-tabler>
+        <span class="tw:hidden tw:sm:inline">Add a new contact</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters panel, toggled by the "Filters" button in the toolbar above -->
+  @if (filtersOpen()) {
+    <div class="tw:grid tw:grid-cols-1 tw:gap-4 tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4 tw:sm:grid-cols-2 tw:lg:grid-cols-4">
+      <!-- Tags multi-select -->
+      <div class="tw:flex tw:flex-col tw:gap-2">
+        <label class="ds-label">Tags</label>
+        <div class="tw:relative" data-tags-dropdown>
+          <button
+            type="button"
+            (click)="toggleTagsDropdown()"
+            class="ds-input tw:flex tw:items-center tw:justify-between tw:text-left"
+          >
+            <span class="tw:truncate">
+              @if (selectedTagIds.length === 0) {
+                All tags
+              } @else {
+                {{ selectedTagIds.length }} tag{{ selectedTagIds.length > 1 ? 's' : '' }} selected
+              }
+            </span>
+            <i-tabler name="chevron-down" class="tw:h-4 tw:w-4 tw:shrink-0 tw:text-on-surface-variant"></i-tabler>
+          </button>
+          @if (tagsDropdownOpen()) {
+            <div class="tw:absolute tw:z-20 tw:mt-2 tw:max-h-60 tw:w-full tw:overflow-y-auto tw:rounded-xl tw:border tw:border-outline-variant tw:bg-surface tw:py-1 tw:shadow-lg">
+              @if (availableTags.length === 0) {
+                <span class="tw:block tw:px-4 tw:py-2 tw:text-sm tw:text-on-surface-variant">No tags available</span>
+              }
+              @for (tag of availableTags; track tag.id) {
+                <button
+                  type="button"
+                  (click)="toggleTagFilter(tag.id)"
+                  class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-4 tw:py-2 tw:text-left tw:text-sm tw:text-on-surface tw:hover:bg-surface-variant"
+                >
+                  <input
+                    type="checkbox"
+                    [checked]="isTagSelected(tag.id)"
+                    class="tw:h-4 tw:w-4 tw:rounded tw:border-outline-variant tw:text-primary tw:accent-primary"
+                    tabindex="-1"
+                    />
+                  <span class="tw:truncate">{{ tag.name }}</span>
                 </button>
-                <button mat-menu-item>
-                  <div class="d-flex align-items-center" (click)="editContact(element)">
-                    <tabler-icon name="edit" class="m-x-6"></tabler-icon>
-                    <span>Edit</span>
-                  </div>
-                </button>
-                <button mat-menu-item>
-                  <div class="d-flex align-items-center text-error" (click)="deleteContact(element)">
-                    <tabler-icon name="trash" class="m-x-6"></tabler-icon>
-                    <span>Delete</span>
-                  </div>
-                </button>
-              </mat-menu>
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-        </table>
-        <!-- Pagination Info -->
-        @if (!isLoading && totalElements > 0) {
-          <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
-            <div class="text-muted f-s-14">
-              Showing {{ getStartIndex() }} to {{ getEndIndex() }} of {{ totalElements }} entries
+              }
             </div>
-            <div class="text-muted f-s-14">
-              Page {{ currentPage + 1 }} of {{ totalPages }}
+          }
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="tw:flex tw:flex-col tw:gap-2">
+        <label for="contact-status-filter" class="ds-label">Status</label>
+        <select
+          id="contact-status-filter"
+          class="ds-input"
+          [ngModel]="selectedEnabled === '' ? '' : selectedEnabled ? 'true' : 'false'"
+          (ngModelChange)="onEnabledFilterChange($event)"
+        >
+          <option value="">All</option>
+          <option value="true">Enabled</option>
+          <option value="false">Disabled</option>
+        </select>
+      </div>
+
+      <!-- Created date range -->
+      <div class="tw:flex tw:flex-col tw:gap-2">
+        <label for="contact-created-from" class="ds-label">Created From</label>
+        <input
+          id="contact-created-from"
+          type="date"
+          [(ngModel)]="createdAtFrom"
+          (ngModelChange)="onDateFilterChange()"
+          class="ds-input"
+          />
+      </div>
+      <div class="tw:flex tw:flex-col tw:gap-2">
+        <label for="contact-created-to" class="ds-label">Created To</label>
+        <input
+          id="contact-created-to"
+          type="date"
+          [(ngModel)]="createdAtTo"
+          (ngModelChange)="onDateFilterChange()"
+          class="ds-input"
+          />
+      </div>
+    </div>
+  }
+
+  <!-- Results -->
+  <div class="tw:rounded-2xl tw:border tw:border-outline-variant tw:bg-surface tw:p-4">
+    @if (isLoading()) {
+      <app-skeleton-table [columns]="8" [rows]="6" [chipColumns]="[3]"></app-skeleton-table>
+    } @else {
+
+      <!-- Mobile: card list (below md:) -->
+      <div class="tw:flex tw:flex-col tw:gap-3 tw:md:hidden">
+        @if (contacts().length === 0) {
+          <p class="tw:py-8 tw:text-center tw:text-sm tw:text-on-surface-variant">No contacts found.</p>
+        }
+        @for (contact of contacts(); track contact.id) {
+          <div class="tw:relative tw:flex tw:flex-col tw:gap-3 tw:rounded-xl tw:border tw:border-outline-variant tw:p-4">
+            <div class="tw:flex tw:items-center tw:justify-between tw:gap-3">
+              <div class="tw:flex tw:min-w-0 tw:items-center tw:gap-3">
+                <div
+                  class="tw:flex tw:h-11 tw:w-11 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:text-base tw:font-semibold"
+                  [ngClass]="getContactBadgeClass(contact.id.toString())"
+                  >
+                  {{ getContactInitials(contact.person.firstName, contact.person.lastName) }}
+                </div>
+                <div class="tw:min-w-0">
+                  <h6 class="tw:m-0 tw:truncate tw:text-base tw:font-semibold tw:text-on-surface">
+                    {{ contact.person.firstName }} {{ contact.person.lastName }}
+                  </h6>
+                  <p class="tw:m-0 tw:truncate tw:text-sm tw:text-on-surface-variant">{{ contact.person.email }}</p>
+                </div>
+              </div>
+
+              <!-- Row actions -->
+              <div class="tw:relative tw:shrink-0" [attr.data-actions-menu-open]="openActionsMenuId() === contact.id ? '' : null">
+                <button
+                  type="button"
+                  (click)="toggleActionsMenu(contact)"
+                  aria-label="Contact actions"
+                  class="tw:flex tw:h-10 tw:w-10 tw:items-center tw:justify-center tw:rounded-full tw:border-0 tw:bg-transparent tw:text-on-surface-variant tw:hover:bg-surface-variant"
+                >
+                  <tabler-icon name="dots"></tabler-icon>
+                </button>
+                @if (openActionsMenuId() === contact.id) {
+                  <div class="tw:absolute tw:right-0 tw:z-20 tw:mt-1 tw:w-40 tw:rounded-xl tw:border tw:border-outline-variant tw:bg-surface tw:py-1 tw:shadow-lg">
+                    <button type="button" (click)="viewContactDetails(contact)" class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-4 tw:py-2 tw:text-left tw:text-sm tw:text-on-surface tw:hover:bg-surface-variant">
+                      <tabler-icon name="eye" class="tw:h-4 tw:w-4"></tabler-icon>
+                      <span>View Details</span>
+                    </button>
+                    <button type="button" (click)="editContact(contact)" class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-4 tw:py-2 tw:text-left tw:text-sm tw:text-on-surface tw:hover:bg-surface-variant">
+                      <tabler-icon name="edit" class="tw:h-4 tw:w-4"></tabler-icon>
+                      <span>Edit</span>
+                    </button>
+                    <button type="button" (click)="deleteContact(contact)" class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-4 tw:py-2 tw:text-left tw:text-sm tw:text-error tw:hover:bg-surface-variant">
+                      <tabler-icon name="trash" class="tw:h-4 tw:w-4"></tabler-icon>
+                      <span>Delete</span>
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="tw:grid tw:grid-cols-2 tw:gap-2 tw:text-sm">
+              <div class="tw:flex tw:flex-col">
+                <span class="tw:text-xs tw:text-on-surface-variant">Country</span>
+                <span class="tw:text-on-surface">@if (contact.person.country) {
+                    <img [src]="countryFlagSrc(contact.person.country)" alt="" class="tw:inline-block tw:h-3 tw:w-4 tw:rounded-[2px] tw:align-middle tw:object-cover" />
+                    {{ countryName(contact.person.country) }}
+                  } @else {
+                    -
+                  }</span>
+              </div>
+              <div class="tw:flex tw:flex-col">
+                <span class="tw:text-xs tw:text-on-surface-variant">Phone</span>
+                <span class="tw:text-on-surface">{{ contact.person.phoneNumber || '-' }}</span>
+              </div>
+              <div class="tw:flex tw:flex-col">
+                <span class="tw:text-xs tw:text-on-surface-variant">Created</span>
+                <span class="tw:text-on-surface">{{ contact.createdAt | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="tw:flex tw:flex-col">
+                <span class="tw:text-xs tw:text-on-surface-variant">Updated</span>
+                <span class="tw:text-on-surface">{{ contact.updatedAt | date:'dd/MM/yyyy' }}</span>
+              </div>
             </div>
           </div>
         }
-        <mat-paginator
-          #paginator
-          [length]="totalElements"
-          [pageSizeOptions]="[5, 10, 20, 50]"
-          [pageSize]="pageSize"
-          [pageIndex]="currentPage"
-          (page)="onPageChange($event)"
-          [showFirstLastButtons]="true"
-          [hidePageSize]="false">
-        </mat-paginator>
-      } @else {
-        <app-skeleton-table [columns]="7" [rows]="6" [chipColumns]="[4]"></app-skeleton-table>
-      }
+      </div>
 
-    </div>
-  </mat-card-content>
-</mat-card>
+      <!-- Desktop: table (md: and up) -->
+      <div class="tw:hidden tw:md:block tw:md:overflow-x-auto">
+        <table class="tw:w-full tw:border-collapse tw:text-left">
+          <thead>
+            <tr class="tw:border-b tw:border-outline-variant">
+              <th class="tw:w-10 tw:whitespace-nowrap tw:px-3 tw:py-2">
+                <input
+                  type="checkbox"
+                  [checked]="areAllContactsSelected()"
+                  (change)="toggleSelectAll()"
+                  class="tw:h-4 tw:w-4 tw:rounded tw:border-outline-variant tw:text-primary tw:accent-primary"
+                  />
+              </th>
+              <th class="tw:whitespace-nowrap tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-on-surface">Name</th>
+              <th class="tw:whitespace-nowrap tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-on-surface">Email</th>
+              <th class="tw:whitespace-nowrap tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-on-surface">Country</th>
+              <th class="tw:whitespace-nowrap tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-on-surface">Phone</th>
+              <th class="tw:whitespace-nowrap tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-on-surface">Created</th>
+              <th class="tw:whitespace-nowrap tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-on-surface">Updates</th>
+              <th class="tw:whitespace-nowrap tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-on-surface">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (contacts().length === 0) {
+              <tr>
+                <td colspan="8" class="tw:px-3 tw:py-8 tw:text-center tw:text-sm tw:text-on-surface-variant">No contacts found.</td>
+              </tr>
+            }
+            @for (contact of contacts(); track contact.id) {
+              <tr class="tw:border-b tw:border-outline-variant tw:last:border-0">
+                <td class="tw:whitespace-nowrap tw:px-3 tw:py-3" (click)="$event.stopPropagation()">
+                  <input
+                    type="checkbox"
+                    [checked]="isContactSelected(contact.id)"
+                    (change)="toggleContactSelection(contact.id)"
+                    class="tw:h-4 tw:w-4 tw:rounded tw:border-outline-variant tw:text-primary tw:accent-primary"
+                    />
+                </td>
+                <td class="tw:px-3 tw:py-3">
+                  <div class="tw:flex tw:items-center tw:gap-3">
+                    <div
+                      class="tw:flex tw:h-11 tw:w-11 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:text-base tw:font-semibold"
+                      [ngClass]="getContactBadgeClass(contact.id.toString())"
+                      >
+                      {{ getContactInitials(contact.person.firstName, contact.person.lastName) }}
+                    </div>
+                    <h6 class="tw:m-0 tw:text-base tw:font-semibold tw:text-on-surface">
+                      {{ contact.person.firstName }} {{ contact.person.lastName }}
+                    </h6>
+                  </div>
+                </td>
+                <td class="tw:whitespace-nowrap tw:px-3 tw:py-3 tw:text-sm tw:text-on-surface">{{ contact.person.email }}</td>
+                <td class="tw:whitespace-nowrap tw:px-3 tw:py-3 tw:text-sm tw:text-on-surface">
+                  @if (contact.person.country) {
+                    <img [src]="countryFlagSrc(contact.person.country)" alt="" class="tw:inline-block tw:h-3 tw:w-4 tw:rounded-[2px] tw:align-middle tw:object-cover" />
+                    {{ countryName(contact.person.country) }}
+                  } @else {
+                    -
+                  }
+                </td>
+                <td class="tw:whitespace-nowrap tw:px-3 tw:py-3 tw:text-sm tw:text-on-surface">{{ contact.person.phoneNumber || '-' }}</td>
+                <td class="tw:whitespace-nowrap tw:px-3 tw:py-3 tw:text-sm tw:text-on-surface">
+                  {{ contact.createdAt | date:'dd/MM/yyyy' }}
+                </td>
+                <td class="tw:whitespace-nowrap tw:px-3 tw:py-3 tw:text-sm tw:text-on-surface">
+                  {{ contact.updatedAt | date:'dd/MM/yyyy' }}
+                </td>
+                <td class="tw:whitespace-nowrap tw:px-3 tw:py-3 tw:text-sm" (click)="$event.stopPropagation()">
+                  <div class="tw:relative tw:inline-block" [attr.data-actions-menu-open]="openActionsMenuId() === contact.id ? '' : null">
+                    <button
+                      type="button"
+                      (click)="toggleActionsMenu(contact)"
+                      aria-label="Contact actions"
+                      class="tw:flex tw:h-10 tw:w-10 tw:items-center tw:justify-center tw:rounded-full tw:border-0 tw:bg-transparent tw:text-on-surface-variant tw:hover:bg-surface-variant"
+                    >
+                      <tabler-icon name="dots"></tabler-icon>
+                    </button>
+                    @if (openActionsMenuId() === contact.id) {
+                      <div class="tw:absolute tw:right-0 tw:z-20 tw:mt-1 tw:w-40 tw:rounded-xl tw:border tw:border-outline-variant tw:bg-surface tw:py-1 tw:shadow-lg">
+                        <button type="button" (click)="viewContactDetails(contact)" class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-4 tw:py-2 tw:text-left tw:text-sm tw:text-on-surface tw:hover:bg-surface-variant">
+                          <tabler-icon name="eye" class="tw:h-4 tw:w-4"></tabler-icon>
+                          <span>View Details</span>
+                        </button>
+                        <button type="button" (click)="editContact(contact)" class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-4 tw:py-2 tw:text-left tw:text-sm tw:text-on-surface tw:hover:bg-surface-variant">
+                          <tabler-icon name="edit" class="tw:h-4 tw:w-4"></tabler-icon>
+                          <span>Edit</span>
+                        </button>
+                        <button type="button" (click)="deleteContact(contact)" class="tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-4 tw:py-2 tw:text-left tw:text-sm tw:text-error tw:hover:bg-surface-variant">
+                          <tabler-icon name="trash" class="tw:h-4 tw:w-4"></tabler-icon>
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (totalElements() > 0) {
+        <div class="tw:mt-4">
+          <ds-pagination
+            [currentPage]="currentPage()"
+            [totalPages]="totalPages()"
+            [totalElements]="totalElements()"
+            [pageSize]="pageSize()"
+            [pageSizeOptions]="[10, 20, 30, 50]"
+            (pageChange)="onPageChange($event)"
+            (pageSizeChange)="onPageSizeChange($event)"
+          />
+        </div>
+      }
+    }
+  </div>
+
+</div>
+
+@if (contactPendingDelete(); as contact) {
+  <app-delete-contact-dialog
+    [contact]="contact"
+    (cancelled)="onDeleteCancelled()"
+    (deleted)="onDeleteConfirmed()"
+  />
+}
