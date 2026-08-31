@@ -12,12 +12,15 @@ import { AuthService } from '../features/authentication/services/auth.service';
 import { Router } from '@angular/router';
 import { WorkspaceService } from '../features/organization/services/workspace.service';
 
+/** Sentinel distinct from the initial/in-progress `null` state, signaling a completed, failed refresh. */
+const REFRESH_FAILED: unique symbol = Symbol('REFRESH_FAILED');
+
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private injector = inject(Injector);
 
   private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  private refreshTokenSubject = new BehaviorSubject<string | null | typeof REFRESH_FAILED>(null);
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
@@ -103,17 +106,25 @@ export class AuthInterceptor implements HttpInterceptor {
         }),
         catchError((err) => {
           this.isRefreshing = false;
-          this.refreshTokenSubject.error(err);
+          // Emit the REFRESH_FAILED sentinel (not .error()) so this
+          // BehaviorSubject stays alive for the next refresh cycle — .error()
+          // permanently closes a Subject, so any request already waiting on it
+          // here or arriving after this point would otherwise re-throw this
+          // same stale error forever instead of ever getting a chance to retry.
+          this.refreshTokenSubject.next(REFRESH_FAILED);
           this.forceLogout();
           return throwError(() => err);
         })
       );
     } else {
       return this.refreshTokenSubject.pipe(
-        filter(token => token != null),
+        filter(token => token !== null),
         take(1),
         switchMap(token => {
-          return next.handle(this.addToken(request, token!));
+          if (token === REFRESH_FAILED || token === null) {
+            return throwError(() => new Error('Session refresh failed'));
+          }
+          return next.handle(this.addToken(request, token));
         })
       );
     }

@@ -132,23 +132,21 @@ export class AuthService {
         return throwError(() => err);
       })
     ).subscribe({
-      next: () => {
-        this.clearSession();
-        this.currentUserSubject.next(null);
-        this.isAuthenticatedSubject.next(false);
-        // Clear permissions on logout
-        this.clearPermissions();
-        this.router.navigate(['/authentication/login']);
-      },
-      error: () => {
-        // Even if the server call failed, ensure client session is cleared
-        this.clearSession();
-        this.currentUserSubject.next(null);
-        this.isAuthenticatedSubject.next(false);
-        // Clear permissions on logout
-        this.clearPermissions();
-      }
+      next: () => this.finishLogout(),
+      // Even if the server call failed, ensure client session is cleared and
+      // the user is navigated away from the now-unauthenticated page — leaving
+      // them in place would let every subsequent request on that page retrigger
+      // the 401 -> refresh -> logout cycle.
+      error: () => this.finishLogout()
     });
+  }
+
+  private finishLogout(): void {
+    this.clearSession();
+    this.currentUserSubject.next(null);
+    this.isAuthenticatedSubject.next(false);
+    this.clearPermissions();
+    this.router.navigate(['/authentication/login']);
   }
 
   /**
