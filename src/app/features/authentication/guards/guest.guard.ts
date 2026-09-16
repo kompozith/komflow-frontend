@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { CanActivate, CanActivateChild, ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { WorkspaceService } from '../../organization/services/workspace.service';
 
 /**
  * Guest Guard (Inverse Auth Guard)
@@ -16,6 +17,7 @@ import { AuthService } from '../services/auth.service';
 export class GuestGuard implements CanActivate, CanActivateChild {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private workspaceService = inject(WorkspaceService);
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
@@ -44,8 +46,7 @@ export class GuestGuard implements CanActivate, CanActivateChild {
       return true;
     }
 
-    // User is already authenticated, redirect to contacts
-    console.log('GuestGuard: User already authenticated, redirecting to contacts');
-    return this.router.createUrlTree(['/contacts']);
+    // User is already authenticated, redirect to their workspace's contacts
+    return this.router.createUrlTree(this.workspaceService.workspacePath('contacts'));
   }
 }

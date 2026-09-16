@@ -1,14 +1,16 @@
+import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
 import { AuthGuard } from './features/authentication/guards/auth.guard';
 import { AuthzGuard } from './features/authentication/guards/authz.guard';
 import { workspaceGuard } from './features/organization/guards/workspace.guard';
-import { workspaceResolver } from './features/organization/resolvers/workspace.resolver';
+import { WorkspaceService } from './features/organization/services/workspace.service';
 
-// Shared children for both the workspace-prefixed (`:workspaceSlug/...`) and
-// the slug-less fallback tree (used transiently while the user has no
-// workspace yet — see the `''` sibling route below).
+// Shared children for both the slug-less tree and the workspace-prefixed
+// (`:workspaceSlug/...`) tree below. Keep this the single definition: when the
+// two trees drifted apart, a path present in only one of them silently fell
+// through to `:workspaceSlug` and was read as a workspace slug.
 const protectedChildren = [
   {
     path: 'user-management',
@@ -145,180 +147,44 @@ const protectedChildren = [
 
 export const routes: Routes = [
   {
-    // Workspace-prefixed tree: /{workspaceSlug}/contacts, /{workspaceSlug}/messages, ...
-    path: ':workspaceSlug',
-    canActivateChild: [AuthGuard, workspaceGuard, AuthzGuard],
-    resolve: { workspace: workspaceResolver },
-    component: FullComponent,
-    children: [
-      {
-        path: '',
-        redirectTo: 'contacts',
-        pathMatch: 'full',
-      },
-      ...protectedChildren,
-    ],
-  },
-  {
-    // Slug-less fallback: only reachable transiently while the user has no
+    // Slug-less tree: /contacts, /messages, ... Used while the user has no
     // workspace yet (FullComponent shows the blocking create-workspace modal
     // as an overlay here) or while workspace selection hasn't resolved.
+    //
+    // Declared BEFORE the `:workspaceSlug` tree on purpose: `:workspaceSlug`
+    // matches any single segment, so it would otherwise capture `/contacts`
+    // as the workspace slug "contacts" and this tree would be dead code.
+    // The trade-off is that a section name is reserved and cannot be used as
+    // a workspace slug.
     path: '',
     canActivateChild: [AuthGuard, workspaceGuard, AuthzGuard],
     component: FullComponent,
     children: [
       {
         path: '',
-        redirectTo: '/contacts',
-        pathMatch: 'full',
+        pathMatch: 'full' as const,
+        // Send the user straight to their own workspace when we already know
+        // it, so the slug-less tree stays the transient state it is meant to be.
+        redirectTo: () => {
+          const slug = inject(WorkspaceService).activeWorkspace()?.orgSlug;
+          return slug ? `/${slug}/contacts` : '/contacts';
+        },
       },
+      ...protectedChildren,
+    ],
+  },
+  {
+    // Workspace-prefixed tree: /{workspaceSlug}/contacts, /{workspaceSlug}/messages, ...
+    path: ':workspaceSlug',
+    canActivateChild: [AuthGuard, workspaceGuard, AuthzGuard],
+    component: FullComponent,
+    children: [
       {
-        path: 'user-management',
-        loadChildren: () =>
-          import('./features/user-management/user-management.routes').then(
-            (m) => m.UserManagementRoutes
-          ),
-        data: { roles: ['ADMIN', 'SUPER_ADMIN'] }
+        path: '',
+        redirectTo: 'contacts',
+        pathMatch: 'full' as const,
       },
-      {
-        path: 'roles',
-        loadChildren: () =>
-          import('./features/custom-roles/roles.routes').then(
-            (m) => m.RolesRoutes
-          ),
-        data: { roles: ['ADMIN', 'SUPER_ADMIN'], permissions: ['PERSONNEL_VIEW'] }
-      },
-      // {
-      //   path: 'products',
-      //   loadChildren: () =>
-      //     import('./features/products/products.routes').then(
-      //       (m) => m.ProductsRoutes
-      //     ),
-      //   data: { roles: ['ADMIN', 'SUPER_ADMIN'], permissions: ['product:view'] }
-      // },
-      // {
-      //   path: 'orders',
-      //   loadChildren: () =>
-      //     import('./features/orders/orders.routes').then(
-      //       (m) => m.OrdersRoutes
-      //     ),
-      //   data: { roles: ['ADMIN', 'SUPER_ADMIN', 'DELIVERY'], permissions: ['order:view'] }
-      // },
-      {
-        path: 'contacts',
-        loadChildren: () =>
-          import('./features/contacts/contacts.routes').then(
-            (m) => m.ContactsRoutes
-          ),
-        data: { permissions: ['CONTACT_LIST'] }
-      },
-      {
-        path: 'tags',
-        loadChildren: () =>
-          import('./features/tags/tags.routes').then(
-            (m) => m.TagsRoutes
-          ),
-        data: { permissions: ['TAG_LIST'] }
-      },
-      {
-        path: 'messages',
-        loadChildren: () =>
-          import('./features/messages/messages.routes').then(
-            (m) => m.MessagesRoutes
-          ),
-        data: { permissions: ['MESSAGE_LIST'] }
-      },
-      {
-        path: 'events',
-        loadChildren: () =>
-          import('./features/events/events.routes').then(
-            (m) => m.EventsRoutes
-          ),
-        data: { permissions: ['MESSAGE_LIST'] }
-      },
-      {
-        path: 'campaigns',
-        loadChildren: () =>
-          import('./features/campaigns/campaigns.routes').then(
-            (m) => m.CampaignsRoutes
-          ),
-        data: { permissions: ['CAMPAIGN_LIST'] }
-      },
-      {
-        path: 'files',
-        loadChildren: () =>
-          import('./features/files/files.routes').then(
-            (m) => m.FilesRoutes
-          ),
-      },
-      {
-        path: 'dashboards',
-        loadChildren: () =>
-          import('./features/dashboards/dashboards.routes').then(
-            (m) => m.DashboardsRoutes
-          ),
-      },
-
-      {
-        path: 'forms',
-        loadChildren: () =>
-          import('./features/forms/forms.routes').then((m) => m.FormsRoutes),
-      },
-      {
-        path: 'charts',
-        loadChildren: () =>
-          import('./features/charts/charts.routes').then((m) => m.ChartsRoutes),
-      },
-      {
-        path: 'apps',
-        loadChildren: () =>
-          import('./features/apps/apps.routes').then((m) => m.AppsRoutes),
-      },
-      {
-        path: 'widgets',
-        loadChildren: () =>
-          import('./features/widgets/widgets.routes').then((m) => m.WidgetsRoutes),
-      },
-      {
-        path: 'tables',
-        loadChildren: () =>
-          import('./features/tables/tables.routes').then((m) => m.TablesRoutes),
-      },
-      {
-        path: 'datatable',
-        loadChildren: () =>
-          import('./features/datatable/datatable.routes').then(
-            (m) => m.DatatablesRoutes
-          ),
-      },
-      {
-        path: 'theme-pages',
-        loadChildren: () =>
-          import('./features/theme-pages/theme-pages.routes').then(
-            (m) => m.ThemePagesRoutes
-          ),
-      },
-      {
-        path: 'ui-components',
-        loadChildren: () =>
-          import('./features/ui-components/ui-components.routes').then(
-            (m) => m.UiComponentsRoutes
-          ),
-      },
-      {
-        path: 'billing',
-        loadChildren: () =>
-          import('./features/billing/billing.routes').then(
-            (m) => m.BILLING_ROUTES
-          ),
-      },
-      {
-        path: 'organization',
-        loadChildren: () =>
-          import('./features/organization/organization.routes').then(
-            (m) => m.ORGANIZATION_ROUTES
-          ),
-      },
+      ...protectedChildren,
     ],
   },
   {

@@ -32,8 +32,6 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   private checkAuth(state: RouterStateSnapshot): boolean | UrlTree {
     const isAuth = this.authService.isAuthenticated();
 
-    console.debug('AuthGuard.checkAuth: isAuthenticated =', isAuth, 'url =', state.url);
-
     if (isAuth) {
       return true;
     }
@@ -41,7 +39,6 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     // If not authenticated, redirect to the authentication login page with returnUrl.
     // Fall back to root ('/') if state.url is falsy.
     const returnUrl = state && state.url ? state.url : '/';
-    console.debug('AuthGuard.checkAuth: redirecting to login with returnUrl =', returnUrl);
     // Return UrlTree to include the returnUrl as a query param.
     return this.router.createUrlTree(['/authentication/login'], { queryParams: { returnUrl } });
   }
