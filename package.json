@@ -8,7 +8,9 @@
     "start": "ng serve",
     "prebuild": "npm run build:css",
     "build": "ng build",
+    "prewatch": "npm run build:css",
     "watch": "ng build --watch --configuration development",
+    "pretest": "npm run build:css",
     "test": "ng test"
   },
   "private": true,
