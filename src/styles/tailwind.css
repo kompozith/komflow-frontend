@@ -71,6 +71,20 @@ button[class*="ds-btn"],
 button.search-bar {
   appearance: none;
   -webkit-appearance: none;
+}
+
+/*
+ * Dropping the browser's default border is a separate rule from the appearance
+ * reset above, because it must skip every control that draws its own: a button
+ * standing in for a form control (.ds-input — the contacts tag filter) or an
+ * outline button. These selectors weigh (0,1,1) and the class rules that set
+ * the border weigh (0,1,0), so without the exclusions the reset silently wins
+ * whatever the source order, and the control reads as borderless — visible
+ * only once the focus ring, which is a box-shadow, appears.
+ */
+button[class*="tw:"]:not(.ds-input):not(.ds-btn--outline),
+button[class*="ds-btn"]:not(.ds-input):not(.ds-btn--outline),
+button.search-bar:not(.ds-input):not(.ds-btn--outline) {
   border: 0;
 }
 
@@ -103,6 +117,22 @@ button.search-bar {
   --color-outline: var(--mat-sys-outline);
   --color-outline-variant: var(--mat-sys-outline-variant);
 
+  /* Design-system surfaces and radii, measured from Figma. Defined per theme in
+     theme-variables/_{light,dark}-theme-variables.scss so they follow the theme. */
+  --color-field: var(--ds-field);
+  --color-hairline: var(--ds-hairline);
+  --color-hairline-strong: var(--ds-hairline-strong);
+  --color-panel: var(--ds-panel);
+  --color-card: var(--ds-card);
+  --color-track: var(--ds-track);
+  --color-label: var(--ds-label);
+  --color-data-muted: var(--ds-data-muted);
+
+  --radius-control: 13px;
+  --radius-panel: 20px;
+  --radius-card: 24px;
+  --radius-shell: 32px;
+
   --font-sans: "Plus Jakarta Sans", sans-serif;
 }
 
@@ -128,8 +158,17 @@ button.search-bar {
   @apply tw:text-sm tw:font-semibold tw:text-on-surface;
 }
 
+/*
+ * 48px is the form-field size used on the auth screens. Toolbars use the 36px
+ * --sm variant. Both come from Figma; nothing should set a height inline.
+ */
 .ds-input {
-  @apply tw:h-12 tw:w-full tw:rounded-xl tw:border tw:border-outline-variant tw:bg-transparent tw:px-4 tw:text-sm tw:text-on-surface tw:placeholder:text-on-surface-variant tw:transition-colors tw:focus:outline-none tw:focus:ring-2 tw:focus:ring-primary/30;
+  @apply tw:h-12 tw:w-full tw:rounded-control tw:border tw:border-hairline tw:bg-field tw:px-3 tw:text-sm tw:text-on-surface tw:placeholder:text-on-surface-variant tw:transition-colors tw:focus:outline-none tw:focus:ring-2 tw:focus:ring-primary/30;
+}
+
+/* Compact control for toolbars (contacts list, filters). */
+.ds-input--sm {
+  @apply tw:h-9;
 }
 
 .ds-input--error {
@@ -150,6 +189,7 @@ button.search-bar {
 .ds-input--icon-left {
   @apply tw:pl-10;
 }
+
 
 .ds-hint {
   @apply tw:text-xs tw:text-on-surface-variant;
@@ -175,8 +215,20 @@ button.search-bar {
   @apply tw:border-success tw:bg-success-container tw:text-success;
 }
 
+/*
+ * Heights mirror .ds-input: 48px default, 36px in toolbars, 52px for the
+ * primary call to action on the auth screens.
+ */
 .ds-btn {
-  @apply tw:flex tw:h-12 tw:w-full tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:text-sm tw:font-semibold tw:transition-opacity tw:disabled:cursor-not-allowed tw:disabled:opacity-50;
+  @apply tw:flex tw:h-12 tw:w-full tw:items-center tw:justify-center tw:gap-2 tw:rounded-control tw:px-4 tw:text-sm tw:font-medium tw:transition-opacity tw:disabled:cursor-not-allowed tw:disabled:opacity-50;
+}
+
+.ds-btn--sm {
+  @apply tw:h-9 tw:px-3;
+}
+
+.ds-btn--lg {
+  @apply tw:h-13;
 }
 
 .ds-btn--grow-1 {
@@ -195,8 +247,13 @@ button.search-bar {
   @apply tw:bg-primary tw:text-on-primary tw:hover:opacity-90;
 }
 
+/*
+ * Filled white with a hairline border, not transparent — it sits on the tinted
+ * page background. Declaring a background is also required because preflight is
+ * disabled, so a <button> otherwise keeps the browser's grey ButtonFace.
+ */
 .ds-btn--outline {
-  @apply tw:border tw:border-outline-variant tw:text-on-surface tw:hover:bg-surface-variant;
+  @apply tw:border tw:border-hairline tw:bg-panel tw:text-on-surface tw:hover:bg-surface-variant;
 }
 
 /* Navbar search trigger (app-header) — looks like an inline search bar, opens the search dialog on click. */
@@ -209,8 +266,86 @@ button.search-bar {
  * container, detached from the component tree — so it needs a global class
  * rather than component-scoped styles, same reason mat-menu needed ::ng-deep.
  */
+/*
+ * Data tables and stat tiles. Figma distinguishes strong data (name, country,
+ * phone) from weak data (email, dates) by colour alone — same size and weight —
+ * so the distinction lives here rather than in each template.
+ */
+.ds-th {
+  @apply tw:whitespace-nowrap tw:px-3 tw:py-2 tw:text-sm tw:font-medium tw:text-label;
+}
+
+.ds-td {
+  @apply tw:px-3 tw:py-3 tw:text-sm tw:font-medium tw:text-on-surface;
+}
+
+.ds-td--muted {
+  @apply tw:text-data-muted;
+}
+
+.ds-flag {
+  @apply tw:h-6 tw:w-6 tw:shrink-0 tw:rounded-full tw:object-cover;
+}
+
+.ds-stat-label {
+  @apply tw:text-xs tw:font-medium tw:text-label;
+}
+
+.ds-stat-value {
+  @apply tw:text-[32px] tw:font-medium tw:leading-tight tw:text-on-surface;
+}
+
+/*
+ * Surfaces. Three radii, from the outermost shell down to a card, so a page is
+ * assembled from these rather than from ad-hoc rounded/border utilities.
+ */
+.ds-shell {
+  @apply tw:rounded-shell tw:border tw:border-hairline-strong tw:bg-panel;
+}
+
+.ds-panel {
+  @apply tw:rounded-panel tw:bg-panel;
+}
+
+.ds-card {
+  @apply tw:rounded-card tw:bg-card;
+}
+
+/*
+ * Segmented control — the list/grid switch. A 36px tinted track holding 32px
+ * segments with 2px of padding; the active segment is a raised white pill.
+ * Radii are 14/12 per Figma, close enough to --radius-control that they are
+ * written inline here rather than earning tokens of their own.
+ */
+.ds-segmented {
+  @apply tw:inline-flex tw:h-9 tw:shrink-0 tw:items-center tw:rounded-[14px] tw:bg-track tw:p-0.5;
+}
+
+.ds-segmented__item {
+  @apply tw:flex tw:h-8 tw:items-center tw:gap-2 tw:rounded-[12px] tw:border-0 tw:bg-transparent tw:px-2 tw:text-sm tw:font-medium tw:text-on-surface-variant tw:transition-colors;
+}
+
+.ds-segmented__item--active {
+  @apply tw:border tw:border-hairline tw:bg-panel tw:text-on-surface;
+}
+
 .ds-menu-panel {
   @apply tw:box-border tw:w-full tw:overflow-hidden tw:rounded-xl tw:border tw:border-outline-variant tw:bg-surface tw:py-1 tw:shadow-lg;
+}
+
+/* Declared after .ds-menu-panel so it wins: the panel sets `overflow: hidden`,
+   which would otherwise override a plain tw:overflow-y-auto on the element. */
+.ds-menu-panel--scroll {
+  @apply tw:overflow-y-auto;
+}
+
+/* A row inside .ds-menu-panel. */
+.ds-menu-item {
+  @apply tw:flex tw:w-full tw:items-center tw:gap-2 tw:border-0 tw:bg-transparent tw:px-4 tw:py-2 tw:text-left tw:text-sm tw:text-on-surface tw:hover:bg-surface-variant;
+}
+
+.ds-menu-item--danger {
+  @apply tw:text-error;
 }
 
 /* Circular icon-only button — mirrors what mat-icon-button gave for free. */

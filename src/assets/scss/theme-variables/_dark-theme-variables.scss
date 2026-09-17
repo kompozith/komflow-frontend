@@ -2,6 +2,16 @@
 
 html.dark-theme {
   color-scheme: dark;
+
+  /* Dark counterparts of the Figma-measured surfaces — see the light theme. */
+  --ds-field: rgb(255 255 255 / 0.04);
+  --ds-hairline: rgb(255 255 255 / 0.08);
+  --ds-hairline-strong: rgb(255 255 255 / 0.14);
+  --ds-panel: #19212a;
+  --ds-card: rgb(255 255 255 / 0.04);
+  --ds-track: rgb(255 255 255 / 0.10);
+  --ds-label: rgb(255 255 255 / 0.55);
+  --ds-data-muted: rgb(255 255 255 / 0.40);
   --mat-sys-background: #141a21;
   --mat-sys-on-background: rgba(255, 255, 255, 0.9);
   --mat-sys-on-primary: #fff;
