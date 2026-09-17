@@ -14,8 +14,9 @@ extends: .github/agents/base.md
 6. `.github/agents/review.md` for reviews and final self-checks
 7. `.agents/angular.md` for Angular-specific work
 8. `.agents/architecture.md` for structure, extraction, and shared-code decisions
-9. `.agents/skeleton-loaders.md` for async UI loading states
-10. `.agents/business.md` for DeleevX terminology and business rules
+9. `.agents/design-system.md` for UI, design tokens, and component styling
+10. `.agents/skeleton-loaders.md` for async UI loading states
+11. `.agents/business.md` for DeleevX terminology and business rules
 
 ## Rule
 
