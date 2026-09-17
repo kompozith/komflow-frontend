@@ -26,7 +26,7 @@ FROM nginx:alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copier les fichiers buildés depuis le stage précédent
-COPY --from=build /app/dist/deleevx/browser /usr/share/nginx/html
+COPY --from=build /app/dist/komflow/browser /usr/share/nginx/html
 
 # Copier le script d'injection de config
 COPY docker-entrypoint.sh /docker-entrypoint.sh
