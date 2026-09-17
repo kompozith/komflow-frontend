@@ -58,8 +58,8 @@
 
           <!-- Utilisateur -->
           <ng-container matColumnDef="user">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Utilisateur</th>
-            <td mat-cell *matCellDef="let m" class="py-2">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 cell-primary">Utilisateur</th>
+            <td data-label="Utilisateur" mat-cell *matCellDef="let m" class="py-2 cell-primary">
               <div class="d-flex align-items-center gap-2">
                 <div class="avatar rounded-circle bg-light d-flex align-items-center justify-content-center"
                      style="width:36px;height:36px;font-size:13px;font-weight:700;color:#6366f1">
@@ -76,7 +76,7 @@
           <!-- Rôle -->
           <ng-container matColumnDef="role">
             <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Rôle</th>
-            <td mat-cell *matCellDef="let m">
+            <td data-label="Rôle" mat-cell *matCellDef="let m">
               <mat-select [value]="m.role"
                           [disabled]="m.role === 'OWNER'"
                           (selectionChange)="changeRole(m, $event.value)"
@@ -92,7 +92,7 @@
           <!-- Statut -->
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">Statut</th>
-            <td mat-cell *matCellDef="let m">
+            <td data-label="Statut" mat-cell *matCellDef="let m">
               <app-badge [variant]="m.status === 'ACTIVE' ? 'success' : m.status === 'INVITED' ? 'warning' : 'error'"
                          [pill]="true">
                 <i-tabler [name]="statusIcon(m.status)" class="icon-12 me-1"></i-tabler>
@@ -103,8 +103,8 @@
 
           <!-- Actions -->
           <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let m" class="text-end">
+            <th class="cell-fit" mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let m" class="text-end cell-fit cell-actions">
               @if (m.role !== 'OWNER' && m.status !== 'SUSPENDED') {
                 <button mat-icon-button color="warn" (click)="revoke(m)"
                         matTooltip="Révoquer l'accès">

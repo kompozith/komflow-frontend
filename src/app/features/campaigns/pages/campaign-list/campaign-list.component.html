@@ -54,11 +54,11 @@
         @if (!isLoading) {
           <table mat-table [dataSource]="dataSource" class="w-100">
             <ng-container matColumnDef="rowNumber">
-              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">#</th>
-              <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 + (currentPage * pageSize) }}</td>
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 cell-fit cell-hide-card">#</th>
+              <td class="cell-fit cell-hide-card" mat-cell *matCellDef="let element; let i = index">{{ i + 1 + (currentPage * pageSize) }}</td>
             </ng-container>
             <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('name')" style="cursor: pointer;">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header cell-primary" (click)="onSortChange('name')" style="cursor: pointer;">
                 <div class="d-flex align-items-center gap-8">
                   <span>Name</span>
                   @if (sortBy === 'name') {
@@ -68,7 +68,7 @@
                   }
                 </div>
               </th>
-              <td mat-cell *matCellDef="let element">
+              <td data-label="Name" class="cell-primary" mat-cell *matCellDef="let element">
                 <div class="d-flex flex-column">
                   <h6 class="f-w-600 f-s-16 m-t-0">{{ element.name }}</h6>
                   @if (element.description) {
@@ -79,7 +79,7 @@
             </ng-container>
             <ng-container matColumnDef="message">
               <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Message</th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Message" mat-cell *matCellDef="let element" class="f-s-14">
                 <div class="d-flex flex-column gap-1">
                   <span class="f-w-600">{{ element.message?.name }}</span>
                   @let ch = element.message?.channel | channelBadge;
@@ -92,7 +92,7 @@
             </ng-container>
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Status</th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Status" mat-cell *matCellDef="let element" class="f-s-14">
                 <app-badge [variant]="getStatusColor(element.status)" [pill]="true">
                   {{ element.status }}
                 </app-badge>
@@ -100,7 +100,7 @@
             </ng-container>
             <ng-container matColumnDef="recipients">
               <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Recipients</th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Recipients" mat-cell *matCellDef="let element" class="f-s-14">
                 <div class="d-flex flex-column">
                   <span class="f-w-600">{{ element.totalRecipients }}</span>
                   <small class="text-muted">
@@ -120,7 +120,7 @@
                   }
                 </div>
               </th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Sent At" mat-cell *matCellDef="let element" class="f-s-14">
                 {{ element.sentAt ? (element.sentAt | date:'dd/MM/yyyy HH:mm') : '-' }}
               </td>
             </ng-container>
@@ -135,15 +135,15 @@
                   }
                 </div>
               </th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Created" mat-cell *matCellDef="let element" class="f-s-14">
                 {{ element.createdAt | date:'dd/MM/yyyy HH:mm' }}
               </td>
             </ng-container>
             <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14">
+              <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14 cell-fit">
                 Action
               </th>
-              <td mat-cell *matCellDef="let element" class="f-s-14" (click)="$event.stopPropagation()">
+              <td mat-cell *matCellDef="let element" class="f-s-14 cell-fit cell-actions" (click)="$event.stopPropagation()">
                 <button mat-icon-button [matMenuTriggerFor]="menu" type="button" aria-label="Example icon-button with a menu">
                   <mat-icon>
                     <tabler-icon name="dots-vertical"></tabler-icon>

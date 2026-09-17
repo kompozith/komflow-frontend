@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 export type DsButtonVariant = 'primary' | 'outline';
+export type DsButtonSize = 'sm' | 'md' | 'lg';
 export type DsButtonType = 'button' | 'submit';
 
 @Component({
@@ -11,6 +12,13 @@ export type DsButtonType = 'button' | 'submit';
 })
 export class DsButtonComponent {
   variant = input<DsButtonVariant>('primary');
+  /**
+   * Design-system heights: `md` (48px) everywhere by default, `sm` (36px) in a
+   * toolbar, `lg` (52px) for the primary call to action on the auth screens.
+   * Set this rather than a height utility — `.ds-btn` is declared after
+   * Tailwind's utilities and would win against one.
+   */
+  size = input<DsButtonSize>('md');
   type = input<DsButtonType>('button');
   disabled = input(false);
   loading = input(false);
@@ -29,6 +37,7 @@ export class DsButtonComponent {
   classes = computed(() => {
     const variantClass = this.variant() === 'primary' ? 'ds-btn--primary' : 'ds-btn--outline';
     const growClass = this.grow() ? `ds-btn--grow-${this.grow()}` : '';
-    return `ds-btn ${growClass} ${variantClass}`.trim();
+    const sizeClass = this.size() === 'md' ? '' : `ds-btn--${this.size()}`;
+    return `ds-btn ${growClass} ${sizeClass} ${variantClass}`.replace(/\s+/g, ' ').trim();
   });
 }

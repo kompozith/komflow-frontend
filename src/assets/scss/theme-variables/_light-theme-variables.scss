@@ -1,5 +1,17 @@
 html.light-theme {
     color-scheme: light;
+
+    /* ── Design-system surfaces, measured from Figma "TEMPLATES KOMPOZITH" ──
+       Semantic names so components never hardcode a colour, and so the dark
+       theme can answer with its own values. */
+    --ds-field: #f9f9f9;
+    --ds-hairline: rgb(0 0 0 / 0.05);
+    --ds-hairline-strong: rgb(0 0 0 / 0.10);
+    --ds-panel: #ffffff;
+    --ds-card: #f8f8f8;
+    --ds-track: #e5e5e5;
+    --ds-label: #6f6f77;
+    --ds-data-muted: rgb(0 0 0 / 0.40);
     --mat-sys-corner-small: 7px;
     --mat-sys-background: #fff;
     --mat-sys-surface-bright: #f2f6fa;
