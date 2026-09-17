@@ -42,6 +42,13 @@ body {
   padding: 24px;
   min-height: calc(100vh - 70px);
 
+  /* .contentWrapper is a flex column, so this is a flex item. Cross-axis `auto`
+     margins absorb the free space AND suppress the default `align-self: stretch`,
+     which shrink-wrapped the whole page to its content width and centred it.
+     An explicit width keeps the page stretched; the auto margins then have no
+     free space left to take, and still centre it in `boxed` mode where
+     max-width caps the width. */
+  width: 100%;
   margin: 0 auto;
 
   &.maxWidth {
