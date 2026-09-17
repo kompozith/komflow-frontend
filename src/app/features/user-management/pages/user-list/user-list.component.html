@@ -85,11 +85,11 @@
         @if (!isLoading) {
           <table mat-table [dataSource]="dataSource" class="w-100">
             <ng-container matColumnDef="rowNumber">
-              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">#</th>
-              <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 + (currentPage * pageSize) }}</td>
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 cell-fit cell-hide-card">#</th>
+              <td class="cell-fit cell-hide-card" mat-cell *matCellDef="let element; let i = index">{{ i + 1 + (currentPage * pageSize) }}</td>
             </ng-container>
             <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('firstName')" style="cursor: pointer;">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header cell-primary" (click)="onSortChange('firstName')" style="cursor: pointer;">
                 <div class="d-flex align-items-center gap-8">
                   <span>Name</span>
                   @if (sortBy === 'firstName') {
@@ -99,7 +99,7 @@
                   }
                 </div>
               </th>
-              <td mat-cell *matCellDef="let element">
+              <td data-label="Name" class="cell-primary" mat-cell *matCellDef="let element">
                 <div class="d-flex align-items-center gap-16">
                   <div
                     class="rounded-circle d-flex align-items-center justify-content-center f-w-600"
@@ -128,7 +128,7 @@
                   }
                 </div>
               </th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Mobile" mat-cell *matCellDef="let element" class="f-s-14">
                 {{ element.phone }}
               </td>
             </ng-container>
@@ -143,7 +143,7 @@
                   }
                 </div>
               </th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Role" mat-cell *matCellDef="let element" class="f-s-14">
                 <app-badge [variant]="getRoleVariant(element.role)" [pill]="true">
                   {{ element.role }}
                 </app-badge>
@@ -160,7 +160,7 @@
                   }
                 </div>
               </th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Status" mat-cell *matCellDef="let element" class="f-s-14">
                 <app-badge [variant]="getStatusVariant(element.accountStatus)" [pill]="true">
                   {{ element.accountStatus }}
                 </app-badge>
@@ -177,7 +177,7 @@
                   }
                 </div>
               </th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Registration Date" mat-cell *matCellDef="let element" class="f-s-14">
                 {{ element.registrationDate | date:'dd/MM/yyyy HH:mm' }}
               </td>
             </ng-container>
@@ -192,15 +192,15 @@
                   }
                 </div>
               </th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Last Updated" mat-cell *matCellDef="let element" class="f-s-14">
                 {{ element.lastUpdated | date:'dd/MM/yyyy HH:mm' }}
               </td>
             </ng-container>
             <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14">
+              <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14 cell-fit">
                 Action
               </th>
-              <td mat-cell *matCellDef="let element" class="f-s-14" (click)="$event.stopPropagation()">
+              <td mat-cell *matCellDef="let element" class="f-s-14 cell-fit cell-actions" (click)="$event.stopPropagation()">
                 <button mat-icon-button [matMenuTriggerFor]="menu" type="button" aria-label="Example icon-button with a menu">
                   <mat-icon>
                     <tabler-icon name="dots-vertical"></tabler-icon>

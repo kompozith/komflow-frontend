@@ -6,3 +6,200 @@
     background-color: var(--mat-card-elevated-container-color),
   )
 );
+
+/* ===========================================================================
+   Responsive data tables
+   ===========================================================================
+   `.table-responsive` wraps every data table in the app, both the plain
+   `<table>` markup and Angular Material's `mat-table`.
+
+   Wide screens: the table fills its container and the columns share the width
+   that is available. A value that is too long is truncated with an ellipsis
+   rather than pushing the table past the edge of the screen.
+
+   Narrow screens: the header is dropped and each row becomes a card, with
+   every cell labelled by its column name — read from the cell's `data-label`
+   attribute, so a cell without one renders as a plain value.
+   =========================================================================== */
+
+/* Matches Tailwind's `md`, the breakpoint the contacts list already uses to
+   swap its table for cards. Deliberately not the SCSS grid's `medium` (960px),
+   which would leave the two table styles disagreeing by 192px. */
+$table-card-breakpoint: 768px;
+
+/* The limit on a single column. A column is sized by its content; one long
+   value widens its column up to here and then truncates, so it cannot starve
+   the others. */
+$table-cell-max-width: 20rem;
+
+.table-responsive {
+  width: 100%;
+
+  /* Kept only as a safety net. Now that columns compress, it is reached just
+     by tables that genuinely cannot shrink further — many columns on a narrow
+     laptop — instead of on every table as before. */
+  overflow-x: auto;
+
+  table,
+  mat-table,
+  .mat-mdc-table {
+    width: 100%;
+    /* `auto` keeps the columns proportional to their content; `max-width` on
+       the cells below is what allows them to shrink past it. */
+    table-layout: auto;
+  }
+
+  th,
+  td,
+  mat-header-cell,
+  mat-cell {
+    padding: 12px 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    /* Columns stay proportional to their content — the auto table algorithm's
+       natural behaviour — and this only caps the outliers. A `max-width: 0`
+       here instead would let every column shrink freely, and the leftover
+       width then piles onto whichever columns are allowed to grow: a near
+       empty Name column ended up as wide as the longest one. */
+    max-width: $table-cell-max-width;
+  }
+
+  /* A flex row only collapses if its items are allowed to shrink; without this
+     an avatar + label cell keeps its full width and defeats the truncation. */
+  td .d-flex,
+  mat-cell .d-flex,
+  td .d-flex > *,
+  mat-cell .d-flex > * {
+    min-width: 0;
+  }
+
+  /* Columns that hold a fixed-size control — row number, checkbox, row actions
+     — size to their content instead of taking an equal share. */
+  .cell-fit {
+    width: 1%;
+    max-width: none;
+    white-space: nowrap;
+  }
+
+  /* Columns that read better wrapped onto a second line than truncated. */
+  .cell-wrap {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  /* Opt-in truncation for a nested element, for cells whose text sits inside a
+     flex row rather than directly in the cell. */
+  .cell-truncate {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: ($table-card-breakpoint - 1px)) {
+  .table-responsive {
+    /* The rows are blocks now, so there is nothing left to scroll sideways. */
+    overflow-x: visible;
+
+    thead,
+    .mat-mdc-header-row,
+    mat-header-row {
+      display: none;
+    }
+
+    table,
+    mat-table,
+    .mat-mdc-table,
+    tbody,
+    .mat-mdc-row,
+    mat-row,
+    tr,
+    td,
+    mat-cell {
+      display: block;
+      width: 100%;
+    }
+
+    tr,
+    mat-row,
+    .mat-mdc-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid var(--mat-sys-outline-variant);
+      border-radius: 12px;
+      background-color: var(--mat-sys-surface);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    td,
+    mat-cell {
+      /* `min-width: 0` keeps a cell inside its grid track: without it a grid
+         item floors at its content width, and an unbreakable value such as an
+         email address pushes straight out of the card. */
+      min-width: 0;
+      max-width: none;
+      padding: 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      overflow: visible;
+      border: none;
+    }
+
+    /* The column name, so a value still reads on its own once the header is
+       gone. Cells without the attribute simply render their value. */
+    td[data-label]::before,
+    mat-cell[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      margin-bottom: 2px;
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--mat-sys-on-surface-variant);
+    }
+
+    /* A `.cell-fit` column is only narrow while there are real columns to
+       compete with; on a card it takes the width of its grid track. */
+    .cell-fit {
+      width: 100%;
+    }
+
+    /* The row's identity — it heads the card, full width and unlabelled. */
+    .cell-primary {
+      grid-column: 1 / -1;
+      /* Leaves room for the actions button pinned to the top right. */
+      padding-right: 48px;
+    }
+
+    /* Pulled out of the grid and pinned to the card's top-right corner. */
+    .cell-actions {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: auto;
+    }
+
+    /* Written against the same element + attribute + pseudo-element weight as
+       the `data-label` rule above, so a labelled title or actions cell still
+       drops its label. A bare `.cell-primary::before` loses to it. */
+    td.cell-primary::before,
+    td.cell-actions::before,
+    mat-cell.cell-primary::before,
+    mat-cell.cell-actions::before {
+      content: none;
+    }
+
+    /* Row numbers and select-all checkboxes carry no meaning on a card. */
+    .cell-hide-card {
+      display: none;
+    }
+  }
+}

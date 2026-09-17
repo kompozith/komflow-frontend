@@ -33,8 +33,8 @@
       <div class="table-responsive">
         <table class="w-100" mat-table [dataSource]="filteredEvents">
           <ng-container matColumnDef="title">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Titre</th>
-            <td mat-cell *matCellDef="let e">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 cell-primary">Titre</th>
+            <td data-label="Titre" class="cell-primary" mat-cell *matCellDef="let e">
               <div class="d-flex flex-column">
                 <span class="f-w-600">{{ e.title }}</span>
                 @if (e.subtitle) {
@@ -45,19 +45,19 @@
           </ng-container>
           <ng-container matColumnDef="startDate">
             <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Date debut</th>
-            <td mat-cell *matCellDef="let e">
+            <td data-label="Date debut" mat-cell *matCellDef="let e">
               {{ e.startDate | date: 'dd/MM/yyyy' }}
             </td>
           </ng-container>
           <ng-container matColumnDef="startTime">
             <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Heure debut</th>
-            <td mat-cell *matCellDef="let e">
+            <td data-label="Heure debut" mat-cell *matCellDef="let e">
               <span class="time-badge">{{ e.startTime || '--:--' }}</span>
             </td>
           </ng-container>
           <ng-container matColumnDef="publicLink">
             <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Lien public</th>
-            <td mat-cell *matCellDef="let e" class="f-s-14">
+            <td data-label="Lien public" mat-cell *matCellDef="let e" class="f-s-14">
               <button
                 mat-stroked-button
                 type="button"
@@ -71,13 +71,13 @@
           </ng-container>
           <ng-container matColumnDef="mode">
             <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Type</th>
-            <td mat-cell *matCellDef="let e" class="f-s-14">
+            <td data-label="Type" mat-cell *matCellDef="let e" class="f-s-14">
               <span class="mode-pill" [class.online]="e.mode === 'ONLINE'">{{ getModeLabel(e.mode) }}</span>
             </td>
           </ng-container>
           <ng-container matColumnDef="location">
             <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Lieu</th>
-            <td mat-cell *matCellDef="let e" class="f-s-14">
+            <td data-label="Lieu" mat-cell *matCellDef="let e" class="f-s-14">
               @if (e.mode === 'ONLINE') {
                 @if (e.meetingUrl) {
                   <a [href]="e.meetingUrl" target="_blank" rel="noopener">Lien de connexion</a>
@@ -91,13 +91,13 @@
           </ng-container>
           <ng-container matColumnDef="updatedAt">
             <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Mise a jour</th>
-            <td mat-cell *matCellDef="let e" class="f-s-14">
+            <td data-label="Mise a jour" mat-cell *matCellDef="let e" class="f-s-14">
               {{ (e.updatedAt || e.createdAt) ? ((e.updatedAt || e.createdAt) | date:'dd/MM/yyyy HH:mm') : '-' }}
             </td>
           </ng-container>
           <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Action</th>
-            <td mat-cell *matCellDef="let e" (click)="$event.stopPropagation()">
+            <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 cell-fit">Action</th>
+            <td class="cell-fit cell-actions" mat-cell *matCellDef="let e" (click)="$event.stopPropagation()">
               <button mat-icon-button [matMenuTriggerFor]="menu" type="button" aria-label="Actions evenement">
                 <mat-icon>more_vert</mat-icon>
               </button>

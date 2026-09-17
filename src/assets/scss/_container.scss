@@ -92,16 +92,6 @@ body {
   position: relative;
 }
 
-.table-responsive {
-  overflow-x: auto;
-
-  td,
-  mat-cell {
-    white-space: nowrap;
-    padding: 16px;
-  }
-}
-
 .op-5 {
   opacity: 0.5;
 }
