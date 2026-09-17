@@ -29,7 +29,8 @@ extends: ../.agents/angular.md
 
 - Use separate action flags such as `isSaving`, `isDeleting`, `isRefreshing`, or `isDeletingId`.
 - Disable the triggering button or control while the action is pending.
-- Show `mat-spinner` inline inside the triggering button when using Angular Material buttons.
+- Show an inline spinner inside the triggering button. Use the project's Tailwind/design-system spinner;
+  `mat-spinner` only remains valid inside a button not yet migrated off Angular Material.
 - For icon buttons, replace the icon with an inline spinner only for the pending item.
 - Do not replace a loaded page section with skeletons for save, delete, approve, reject, refresh, or submit actions.
 

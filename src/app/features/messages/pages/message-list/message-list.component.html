@@ -66,11 +66,11 @@
         @if (!isLoading) {
           <table mat-table [dataSource]="dataSource" class="w-100">
             <ng-container matColumnDef="rowNumber">
-              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">#</th>
-              <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 + (currentPage * pageSize) }}</td>
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 cell-fit cell-hide-card">#</th>
+              <td class="cell-fit cell-hide-card" mat-cell *matCellDef="let element; let i = index">{{ i + 1 + (currentPage * pageSize) }}</td>
             </ng-container>
             <ng-container matColumnDef="title">
-              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header" (click)="onSortChange('title')" style="cursor: pointer;">
+              <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 sortable-header cell-primary" (click)="onSortChange('title')" style="cursor: pointer;">
                 <div class="d-flex align-items-center gap-8">
                   <span>Title</span>
                   @if (sortBy === 'title') {
@@ -80,7 +80,7 @@
                   }
                 </div>
               </th>
-              <td mat-cell *matCellDef="let element">
+              <td data-label="Title" class="cell-primary" mat-cell *matCellDef="let element">
                 <div class="d-flex justiify-content-center align-items-start gap-8">
                   <i-tabler [name]="getChannelIcon(element.channel)" [style.color]="getChannelColor(element.channel)"></i-tabler>
                   @if (element.title) {
@@ -92,7 +92,7 @@
             </ng-container>
             <ng-container matColumnDef="channel">
               <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Channel</th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Channel" mat-cell *matCellDef="let element" class="f-s-14">
                 <app-badge [variant]="getChannelColor(element.channel)" [pill]="true">
                   {{ element.channel }}
                 </app-badge>
@@ -100,7 +100,7 @@
             </ng-container>
             <ng-container matColumnDef="attachmentCount">
               <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Attachments</th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Attachments" mat-cell *matCellDef="let element" class="f-s-14">
                 {{ element.attachmentCount }}
               </td>
             </ng-container>
@@ -115,15 +115,15 @@
                   }
                 </div>
               </th>
-              <td mat-cell *matCellDef="let element" class="f-s-14">
+              <td data-label="Created" mat-cell *matCellDef="let element" class="f-s-14">
                 {{ element.createdAt | date:'dd/MM/yyyy HH:mm' }}
               </td>
             </ng-container>
             <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14">
+              <th mat-header-cell *matHeaderCellDef sticky class="f-w-600 mat-subtitle-1 f-s-14 cell-fit">
                 Action
               </th>
-              <td mat-cell *matCellDef="let element" class="f-s-14" (click)="$event.stopPropagation()">
+              <td mat-cell *matCellDef="let element" class="f-s-14 cell-fit cell-actions" (click)="$event.stopPropagation()">
                 <button mat-icon-button [matMenuTriggerFor]="menu" type="button" aria-label="Example icon-button with a menu">
                   <mat-icon>
                     <tabler-icon name="dots-vertical"></tabler-icon>

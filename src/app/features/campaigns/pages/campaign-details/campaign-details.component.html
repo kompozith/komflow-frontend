@@ -573,8 +573,8 @@
                     <table mat-table [dataSource]="resultsPage.content" class="w-100">
                       <!-- Contact Name + Email -->
                       <ng-container matColumnDef="name">
-                        <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Contact</th>
-                        <td mat-cell *matCellDef="let r">
+                        <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14 cell-primary">Contact</th>
+                        <td data-label="Contact" class="cell-primary" mat-cell *matCellDef="let r">
                           <div class="d-flex flex-column">
                             <span class="f-s-14 f-w-600">{{ r.contactFirstName }} {{ r.contactLastName }}</span>
                             <span class="f-s-12 text-muted">{{ r.contactEmail }}</span>
@@ -584,12 +584,12 @@
                       <!-- Channel -->
                       <ng-container matColumnDef="channel">
                         <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Channel</th>
-                        <td mat-cell *matCellDef="let r" class="f-s-14">{{ r.channel }}</td>
+                        <td data-label="Channel" mat-cell *matCellDef="let r" class="f-s-14">{{ r.channel }}</td>
                       </ng-container>
                       <!-- Status -->
                       <ng-container matColumnDef="status">
                         <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Status</th>
-                        <td mat-cell *matCellDef="let r">
+                        <td data-label="Status" mat-cell *matCellDef="let r">
                           <app-badge [variant]="r.status === 'SUCCESS' ? 'success' : 'error'" [pill]="true">
                             {{ r.status }}
                           </app-badge>
@@ -598,12 +598,12 @@
                       <!-- Sent At -->
                       <ng-container matColumnDef="sentAt">
                         <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Sent At</th>
-                        <td mat-cell *matCellDef="let r" class="f-s-14">{{ r.sentAt | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+                        <td data-label="Sent At" mat-cell *matCellDef="let r" class="f-s-14">{{ r.sentAt | date:'dd/MM/yyyy HH:mm:ss' }}</td>
                       </ng-container>
                       <!-- Error Message -->
                       <ng-container matColumnDef="error">
                         <th mat-header-cell *matHeaderCellDef class="f-w-600 mat-subtitle-1 f-s-14">Error</th>
-                        <td mat-cell *matCellDef="let r" class="f-s-13 text-muted">{{ r.errorMessage || '—' }}</td>
+                        <td data-label="Error" mat-cell *matCellDef="let r" class="f-s-13 text-muted">{{ r.errorMessage || '—' }}</td>
                       </ng-container>
                       <tr mat-header-row *matHeaderRowDef="resultsColumns"></tr>
                       <tr mat-row *matRowDef="let row; columns: resultsColumns;"></tr>

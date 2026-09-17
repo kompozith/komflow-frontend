@@ -10,7 +10,8 @@ extends: ../.github/agents/security.md
 ## Scope
 
 - Apply this file to Angular TypeScript, HTML templates, SCSS connected to Angular components, guards, interceptors, resolvers, pipes, directives, and routes.
-- The current project uses Angular 20, standalone components, SCSS, Angular Material, RxJS, and Angular Signals.
+- The current project uses Angular 20, standalone components, Tailwind, SCSS, RxJS, and Angular Signals.
+- Angular Material is being removed; treat it as legacy and see `## Styling`.
 
 ## Components
 
@@ -46,7 +47,14 @@ extends: ../.github/agents/security.md
 
 ## Styling
 
-- Use SCSS for component styles.
+- Tailwind is the styling system. Write new and modified UI with `tw:`-prefixed utilities and the project's design-system classes (`ds-input`, `ds-btn`, ...).
+- Follow `.agents/design-system.md` for tokens, control sizes, surfaces, menus, and the cascade rules that govern them. Do not restate those rules here.
+- Do not add new Angular Material components, `mat-*` markup, or `@angular/material` imports. Material is legacy and is being removed.
+- Migrate the part you touch when editing a file that still uses Material, rather than extending its Material markup. Do not rewrite unrelated Material code in the same change.
+- Treat the contacts list as the reference implementation of the target style.
+- Tailwind preflight is deliberately disabled, so no base reset applies: custom element hosts default to `display: inline`, and resets Tailwind normally provides must be written explicitly.
+- Keep colors on the `--mat-sys-*` M3 tokens. Tailwind's theme maps onto them, so they stay correct after Material's components are gone.
+- Use SCSS only for global stylesheets and for component styles that Tailwind utilities cannot express.
 - Use design-system tokens or existing SCSS variables for colors.
 - Do not wrap a page component template in `container-fluid`, `container`, or any Bootstrap container div. The full layout already applies `pageWrapper` which provides `padding: 24px`; adding a container inside it creates double indentation relative to pages that omit it.
 - Do not use hardcoded hex, RGB, HSL, or named colors in component SCSS when tokens exist.
@@ -75,3 +83,4 @@ extends: ../.github/agents/security.md
 - Search for `destroy$`, `takeUntil(`, `ngOnDestroy`, and `.unsubscribe()` when modernizing subscription cleanup.
 - Search for `| async` in templates when moving template Observables to signals.
 - Search for `environment.development` when checking runtime configuration.
+- Search for `mat-`, `@angular/material`, and `MaterialModule` when migrating a screen off Angular Material.

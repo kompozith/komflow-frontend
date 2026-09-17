@@ -12,6 +12,7 @@ import { TagService } from '../../../tags/services/tag.service';
 import { Tag } from '../../../tags/models/tag';
 import { SkeletonTableComponent } from 'src/app/shared/components/skeleton-table/skeleton-table.component';
 import { DsPaginationComponent } from 'src/app/shared/components/ui/ds-pagination/ds-pagination.component';
+import { DsMenuComponent } from '../../../../shared/components/ui/ds-menu/ds-menu.component';
 
 @Component({
   selector: 'app-contact-list',
@@ -25,6 +26,7 @@ import { DsPaginationComponent } from 'src/app/shared/components/ui/ds-paginatio
     CommonModule,
     SkeletonTableComponent,
     DsPaginationComponent,
+    DsMenuComponent,
     DeleteContactDialogComponent,
   ],
 })
@@ -62,9 +64,6 @@ export class ContactListComponent implements OnInit {
   // Export menu open state
   exportMenuOpen = signal(false);
 
-  // Row actions dropdown: id of the contact whose action menu is open, or null
-  openActionsMenuId = signal<number | null>(null);
-
   // Delete confirmation dialog state
   contactPendingDelete = signal<Contact | null>(null);
 
@@ -81,9 +80,6 @@ export class ContactListComponent implements OnInit {
     }
     if (this.exportMenuOpen() && !host.querySelector('[data-export-menu]')?.contains(target)) {
       this.exportMenuOpen.set(false);
-    }
-    if (this.openActionsMenuId() !== null && !host.querySelector('[data-actions-menu-open]')?.contains(target)) {
-      this.closeActionsMenu();
     }
   }
 
@@ -366,25 +362,14 @@ export class ContactListComponent implements OnInit {
   }
 
   editContact(contact: Contact): void {
-    this.closeActionsMenu();
     this.router.navigate(['contacts/edit', contact.id]);
   }
 
   viewContactDetails(contact: Contact): void {
-    this.closeActionsMenu();
     this.router.navigate(['contacts/details', contact.id]);
   }
 
-  toggleActionsMenu(contact: Contact): void {
-    this.openActionsMenuId.update((openId) => (openId === contact.id ? null : contact.id));
-  }
-
-  closeActionsMenu(): void {
-    this.openActionsMenuId.set(null);
-  }
-
   deleteContact(contact: Contact): void {
-    this.closeActionsMenu();
     this.contactPendingDelete.set(contact);
   }
 
